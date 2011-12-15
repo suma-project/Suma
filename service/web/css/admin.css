@@ -1,0 +1,39 @@
+ol {
+    list-style-type:none;
+}
+
+#activityArea {
+    width:40%;
+}
+
+.placeholder {
+    background-color: #cfcfcf;
+}
+
+.ui-nestedSortable-error {
+    background:#fbe3e4;
+    color:#8a1f11;
+}
+
+.sortable li div {
+    border: 1px solid black;
+    padding: 3px;
+    margin: 0;
+    cursor: move;
+}
+
+#locArea {
+    width:50%;
+}
+
+.editAct, .editLoc {
+    float:right;
+}
+
+.disabled-loc, .disabled-act {
+    background: gray;
+}
+
+.locDesc, .actDesc, .locID, .actID, #initID, #treeID {
+    display:none;
+}

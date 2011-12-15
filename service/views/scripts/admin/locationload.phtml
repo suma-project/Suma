@@ -1,0 +1,27 @@
+<h3>Location tree title: <span id="treeTitle"><?=$this->location->getMetadata('title')?></span></h3>
+<h3>Location tree description: <span id="treeDesc"><?=$this->location->getMetadata('description')?></span></h3>
+<div id="treeID"><?=$this->location->getMetadata('id')?></div>
+<a id="editTree" href="#">Edit tree title and description</a>
+<br />
+<div>
+<?php
+// if ($this->location['enabled'] == true) {
+//     // echo '<label for="toggleInit">Disable Initiative</label>';
+//     echo '<input id="disableLoc" class="toggleInit" type="button" value="Disable Location Tree" />';
+// } else {
+//     echo '<input id="enableLoc" class="toggleInit" type="button" value="Enable Location Tree" />';
+// }
+?>
+</div>
+<br />
+<div><a id="addLoc" href="#">Add a location</a></div>
+<ol id="locations" class="sortable">
+<?php 
+
+//TODO: This will need to be reworked -Eric
+$this->listChildLocs($this->location, true);
+
+?>
+</ol>
+<br />
+<h3><a id="saveLocs" href="#">Save Locations</a></h3>

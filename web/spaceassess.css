@@ -1,0 +1,204 @@
+html {
+    -webkit-user-select: none;
+}
+
+#project_title_heading {
+    float: left;
+}
+
+#count_heading {
+    margin: .5em;
+    margin-right: 0;
+    float: right;
+}
+
+#count_total {
+    font-size: 3.5em;
+    margin-left: .15em;
+    margin-right: .15em;
+    background-color: white;
+}
+
+#session_timer {
+    font-size: 1.9em;
+    background-color: white;
+}
+
+#current_loc_label {
+    min-height:2.5em;
+    font-size: 1.6em;
+    border-bottom: 1px dotted;
+    text-align: center;
+    margin: 0px;
+    padding: .5em;
+}
+
+#counting_container {
+    margin-top: 10%;
+}
+
+input#goesup {
+    width: 410px;
+    height: 320px;
+    font-size: 5em;
+}
+
+#entry_graf {
+    visibility:hidden;
+    font-size: 1.6em;
+    float: right;
+    padding-right: 5%;
+}
+
+input#count_input {
+    /*-webkit-user-select: text;*/
+    width: 90px;
+    height: 70px;
+    font-size: 2em;
+}
+
+#goesdown_heading {
+    float:left;
+}
+
+#abandon_heading {
+    float:left;
+}
+
+#save_session_heading {
+    float:right;
+    /*text-align: center;*/
+}
+
+#view_data {
+    float:left;
+}
+
+.sidebar, .main_entry {
+    min-height: 700px;
+}
+
+.sidebar {
+    background-color:#D9E2E1;
+}
+
+.main_entry {
+    /*background-color:#F4F3EE;*/
+}
+
+.pad_div {
+    padding:7px;
+}
+
+.header_content {
+    background-color:#A2ADBC;
+}
+
+a:visited {
+    color:#0000FF;
+}
+
+.footer_content {
+    background-color:#DF9496;
+}
+
+#goesup {
+    float: right;
+}
+
+#updownbuttons {
+    margin-top: 50px;
+}
+
+li.selected_loc a {
+    background-color:#EE8262;
+}
+
+ul.loc_list {
+    margin-left: 1em;
+    padding-left: 0;
+    padding-right: 1em;
+    margin-right: 0;
+    margin-bottom: 1.4em;
+}
+
+ul.loc_list li {
+    list-style-type:none;
+}
+
+ul.loc_list li a {
+    -webkit-tap-highlight-color:#EE8262;
+    padding:.1em;
+    padding-top:.2em;
+    padding-bottom:.2em;
+    font-size:1.5em;
+    border-bottom: 1px solid;
+    color:#488AC7;
+}
+
+ul.loc_list:last-child li, ul.loc_list:last-child li a {
+    color: blue;
+}
+
+ul.loc_list:last-child li.selected_loc a {
+    background-color:#FF7F24;
+}
+
+ul.loc_list:last-child li a {
+    /*-webkit-tap-highlight-color:#FF7F24;*/
+}
+
+li.loc_item a {
+    display: block;
+    text-decoration: none;
+}
+
+.ui-button {
+    padding: .2em .1em;
+    margin: .15em;
+    margin-bottom: .4em;
+}
+
+#abandon_session {
+    margin-top: 1.7em;
+    margin-left: 2em;
+    background: red;
+    border: 1px solid black;
+    color:white;
+}
+
+#abandon_session span.ui-button-text {
+    padding: .25em .5em;
+}
+
+.ui-dialog .ui-dialog-titlebar-close { 
+    display: none; 
+} 
+
+#loadingScreen {
+    background: url(loading.gif) no-repeat 5px 8px;
+    padding-left: 50px;
+    padding-top: 14px;
+}
+
+.activityContainer {
+    max-width: 210px;
+}
+
+#leftActivities {
+    float:left;
+}
+
+#rightActivities {
+    float:right;
+    text-align:right;
+}
+
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+    background: #D7EBF9;
+}
+
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active {
+    background:#3BAAE3;
+}
+

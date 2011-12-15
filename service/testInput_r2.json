@@ -1,0 +1,44 @@
+[
+{"initiativeID":1,
+    "startTime":xxxxxx,
+    "endTime":xxxxxx,
+    "counts": [
+    {"timestamp":xxxxxx,
+        "number":1,
+        "location": 17,
+        "activities": [5,2,9]},
+    {"timestamp":xxxxxx,
+        "number":1,
+        "location": 8,
+        "activities": [3]}
+    ]
+},
+{"initiativeID":2,
+    "startTime":xxxxxx,
+    "endTime":xxxxxx,
+    "counts": [
+    {"timestamp":xxxxxx,
+        "number":1,
+        "location": 17,
+        "activities": [5,2,9]},
+    {"timestamp":xxxxxx,
+        "number":1,
+        "location": 8,
+        "activities": [3]}
+    ]
+},   
+{"initiativeID":1,
+    "startTime":xxxxxx,
+    "endTime":xxxxxx,
+    "counts": [
+    {"timestamp":xxxxxx,
+        "number":1,
+        "location": 17,
+        "activities": [5,2,9]},
+    {"timestamp":xxxxxx,
+        "number":1,
+        "location": 8,
+        "activities": [3]}
+    ]
+}
+]

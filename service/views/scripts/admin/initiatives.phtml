@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<?php $baseDir = Zend_Controller_Front::getInstance()->getBaseUrl();?>
+<html>
+<head>
+<script src="http://www.google.com/jsapi" type="text/javascript"></script> 
+<script type="text/javascript">
+google.load("jquery", "1.6.4");
+google.load("jqueryui", "1.8.16");
+</script> 
+<link rel="stylesheet" type="text/css" href="<?=$baseDir?>/css/jquery-ui-theme/css/cupertino/jquery-ui-1.8.14.custom.css" />
+<link rel="stylesheet" type="text/css" href="<?=$baseDir?>/css/admin.css" />
+<script type="text/javascript">
+$(document).ready(function(){
+    // $('#toggle').hide();
+
+    var loadInit = function(initID) {
+        $("a#createInitLink").hide();
+        $('#metadata').load('initiativeload/id/'+initID, function() {
+            $('ol.sortable').sortable({
+                // disableNesting: 'no-nest',
+                    forcePlaceholderSize: true,
+                    handle: 'div',
+                    helper: 'clone',
+                    items: 'li',
+                    // maxLevels: 3,
+                    opacity: .6,
+                    placeholder: 'placeholder',
+                    revert: 250,
+                    tabSize: 25,
+                    tolerance: 'pointer',
+                    toleranceElement: '> div'
+            });
+        });
+    };
+
+
+    $("a#createInitLink").live('click', function() {
+        var initTitleInput = $("input#newInitTitleInput");
+        var initDescInput = $("textarea#newInitDescInput");
+        var locRootSel = $("select#locRootSel");
+
+        // Reqs: loc tree is selected, title is not empty
+
+        $("#newInitDialog").dialog({
+            bgiframe: true,
+            title: "Create Initiative",
+            autoOpen: true,
+            height: 400,
+            width: 325,
+            modal: true,
+            closeOnEscape: false,
+            resizable: false,
+            draggable: false,
+            open: function() {
+                $(".ui-dialog").css({overflow: 'visible'});
+            },
+            buttons: { 
+                'Cancel': function() {
+                    initTitleInput.val('');
+                    initDescInput.val('');
+                    locRootSel.val('');
+                    $(this).dialog("close");
+                },
+                'Save': function() {
+                    var newInitTitle = $.trim(initTitleInput.val());
+                    var newInitDesc = $.trim(initDescInput.val());
+                    var newLocTree = $(locRootSel).val();
+                    var myThis = this;
+
+                    if ((newInitTitle.length > 0) && (newLocTree.length > 0)) {
+                        $.ajax({
+                            type: 'POST',
+                            url: 'createinitiative',
+                            data: {title: newInitTitle,
+                                   desc: newInitDesc,
+                                   locRootID: newLocTree},
+                            async: false
+                        }).success(function() {
+                            initTitleInput.val('');
+                            initDescInput.val('');
+                            locRootSel.val('');
+                            $(myThis).dialog("close");
+                            alert("Created initiative...reloading.");
+                            location.reload();
+                        }).error(function() {
+                            alert("Unknown error when creating initiative");
+                        });
+                    } else {
+                        alert("Initiative title cannot be empty and location tree must be selected");
+                    }
+                    return false;
+                }},
+        });
+
+        return false;
+    });
+
+    $("a#editInitMetadata").live('click', function() {
+        var initTitleSpan = $("span#initTitle");
+        var initDescSpan = $("span#initDesc");
+        var initTitleInput = $("input#initTitleInput");
+        var initDescInput = $("textarea#initDescInput");
+        var initID = $("div#initID").text();
+
+        initTitleInput.val($(initTitleSpan[0]).text());
+        initDescInput.val($(initDescSpan[0]).text());
+
+        $("#initEditDialog").dialog({
+            bgiframe: true,
+            title: "Edit Initiative",
+            autoOpen: true,
+            height: 225,
+            width: 325,
+            modal: true,
+            closeOnEscape: false,
+            resizable: false,
+            draggable: false,
+            open: function() {
+                $(".ui-dialog").css({overflow: 'visible'});
+            },
+            buttons: { 
+                'Cancel': function() {
+                    initTitleInput.val('');
+                    initDescInput.val('');
+                    $(this).dialog("close");
+                },
+                'Save': function() {
+                    var newInitTitle = $.trim(initTitleInput.val());
+                    var newInitDesc = $.trim(initDescInput.val());
+                    var myThis = this;
+
+                    if (newInitTitle.length > 0) {
+                        $.ajax({
+                            type: 'POST',
+                            url: 'updateinitiative',
+                            data: {id: initID,
+                                   title: newInitTitle,
+                                   desc: newInitDesc},
+                            async: false
+                        }).success(function() {
+                            initTitleSpan.text(newInitTitle);
+                            initDescSpan.text(newInitDesc);
+
+                            initTitleInput.val('');
+                            initDescInput.val('');
+                            $(myThis).dialog("close");
+                        }).error(function() {
+                            alert("Unknown error when updating initiative");
+                        });
+                    } else {
+                        alert("Initiative title cannot be empty");
+                    }
+                }
+            }
+        });
+    });
+
+    $("a.editAct").live('click', function() {
+        // var actNode = $(this).closest("div")[0];
+        var actLi = $(this).closest("li")[0];
+        var titleSib = $(this).siblings("span.actTitle")[0];
+        var descSib = $(this).siblings("span.actDesc")[0];
+        var actTitleInput = $("input#actTitleInput")[0];
+        var actDescInput = $("textarea#actDescInput")[0];
+        var actEnabledCheck = $("input#actEnabledCheck")[0];
+
+        $(actTitleInput).val($(titleSib).text());
+        $(actDescInput).val($(descSib).text());
+
+        if ($(actLi).hasClass("enabled-act")){
+            $(actEnabledCheck).attr("checked", "checked");
+        } else {
+            $(actEnabledCheck).removeAttr("checked");
+        }
+
+        $("#actEditDialog").dialog({
+            bgiframe: true,
+            title: "Edit Activity",
+            autoOpen: true,
+            height: 350,
+            width: 325,
+            modal: true,
+            closeOnEscape: false,
+            resizable: false,
+            draggable: false,
+            open: function() {
+                $(".ui-dialog").css({overflow: 'visible'});
+            },
+            buttons: { 
+                'Cancel': function() {
+                    $(actTitleInput).val('');
+                    $(actDescInput).val('');
+                    $(actEnabledCheck).removeAttr("checked");
+                    $(this).dialog("close");
+                },
+                'Save': function() {
+                    var newActTitle = $.trim($(actTitleInput).val());
+                    var newActDesc = $.trim($(actDescInput).val());
+                    var myThis = this;
+
+                    if (newActTitle.length > 0) {
+                        $(titleSib).text(newActTitle);
+                        $(descSib).text(newActDesc);
+                        if ($(actEnabledCheck).is(":checked")) {
+                            $(actLi).removeClass("disabled-act").addClass("enabled-act");
+                        } else {
+                            $(actLi).removeClass("enabled-act").addClass("disabled-act");
+                        }
+
+                        $(actTitleInput).val('');
+                        $(actDescInput).val('');
+                        $(myThis).dialog("close");
+                    } else {
+                        alert("Activity title cannot be empty");
+                    }
+                }
+            }
+        });
+    });
+
+    $("div.toggleInit a").live("click", function() {
+        var initID = $("div#initID").text();
+        var boundThis = this;
+        if ($(this).hasClass('disableInit')) {
+            $.ajax({
+                type: 'POST',
+                url: 'disableinitiative',
+                data: {id: initID},
+                async: false
+            }).success(function() {
+                $(boundThis).removeClass('disableInit').addClass('enableInit').text("Enable Initiative");
+            }).error(function() {
+                alert("Unknown error when disabling initiative");
+            });
+        } else if ($(this).hasClass('enableInit')) {
+            $.ajax({
+                type: 'POST',
+                url: 'enableinitiative',
+                data: {id: initID},
+                async: false
+            }).success(function() {
+                $(boundThis).removeClass('enableInit').addClass('disableInit').text("Disable Initiative");
+            }).error(function() {
+                alert("Unknown error when enabling initiative");
+            });
+        }
+
+        return false;
+    });
+
+    $('#addActivity').live("click", function() {
+        $('#activities').prepend('<li class="enabled-act"><div><span class="actTitle">New Activity</span> <span class="actDesc"></span><span class="actID">new-act</span><a href="#" class="editAct">Edit</a></div></li>');
+        $('#activities').sortable('refresh');
+        return false;
+    });
+
+    $('a#saveActs').live("click", function() {
+        var initID = $("div#initID").text();
+        var serActs = [];
+        $("ol#activities > li").each(function() {
+            serActs.push({
+                id: $(this).find("span.actID").text(),
+                title: $(this).find("span.actTitle").text(),
+                desc: $(this).find("span.actDesc").text(),
+                enabled: $(this).hasClass("enabled-act")
+            });
+        });
+
+        console.log("hi");
+        $.ajax({
+            type: 'POST',
+            url: 'updateactivities',
+            data: {init: initID,
+                   activities: JSON.stringify(serActs)},
+            async: false
+        }).success(function() {
+            alert("Successfully updated activities");
+            loadInit($('#initSelect').val());
+        }).error(function() {
+            alert("Unknown error when updating activities");
+        });
+
+
+        return false;
+    });
+
+    $('form#initForm').live("submit", function() {
+        loadInit($('#initSelect').val());
+        return false;
+    });
+
+    $('form.deadForm').live('submit', function() {
+        return false;
+    });
+});
+</script>
+</head>
+<body>
+    <?=$this->render('admin/header.phtml') ?>
+    <div id="newInitDialog" style="display:none">
+        <form>
+            <input type="text" id="newInitTitleInput" name="newInitTitleInput" value="" /><br />
+            <textarea id="newInitDescInput" name="newInitDescInput"></textarea><br /><br />
+            <div><b>Note: Setting location tree is permanent. If you haven't created your location tree yet, please do that first.</b></div>
+            <br>
+            <select id="locRootSel">
+                <option value="" SELECTED>Select a location tree</option>
+            <?php
+            foreach($this->roots as $root)
+            {
+                echo '<option value="'.$root->getMetadata('id').'">'.$root->getMetadata('title').'</option>';
+            }
+            ?>
+            </select>
+        </form>
+    </div>
+
+    <div id="initEditDialog" style="display:none">
+        <form class="deadForm">
+            <input type="text" id="initTitleInput" name="initTitleInput" value="" /><br />
+            <textarea id="initDescInput" name="initDescInput"></textarea><br /><br />
+            <br />
+        </form>
+    </div>
+    <div id="actEditDialog" style="display:none">
+        <form class="deadForm">
+            <input type="text" id="actTitleInput" name="actTitleInput" value="" /><br />
+            <textarea id="actDescInput" name="actDescInput"></textarea><br /><br />
+            Enabled? <input name="actEnabledCheck" type="checkbox" id="actEnabledCheck" />
+            <br />
+        </form>
+        <p>Activity edits will not be permanent until the entire activity list is saved.</p>
+    </div>
+
+<div>
+<form id="initForm">
+<select id="initSelect">
+<?php 
+
+foreach($this->initiatives as $init)
+{
+    echo '<option value="'.$init->getMetadata('id').'">'.$init->getMetadata('title').'</option>';
+}
+
+?>
+</select>
+<input id="initSelBtn" type="submit" value="OK" />
+</div>
+</form>
+<h3><a href="#" id="createInitLink">Create new initiative</a></h3>
+<div id="metadata"></div>
+<?=$this->render('admin/footer.phtml') ?>
+</body>
+</html>

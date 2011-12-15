@@ -1,0 +1,17 @@
+<html>
+<body>
+<?=$this->render('admin/header.phtml') ?>
+<h5>
+    Enter JSON in textarea below and click "Submit".
+</h5>
+<form method="post" action="../sync">
+    <textarea name="json" rows="30" style="width:600px;"></textarea>
+    <div>
+        <p>
+            <input value="Submit" type="submit">
+        </p>
+    </div>
+</form>
+<?=$this->render('admin/footer.phtml') ?>
+</body>
+</html>

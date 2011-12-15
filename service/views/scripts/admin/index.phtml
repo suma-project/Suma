@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Suma administrative tools</title>
+</head>
+<body>
+    <?=$this->render('admin/header.phtml') ?>
+    <h3><a href="<?= $this->baseUrl() ?>/admin/locations">Edit locations</a></h3>
+    <h3><a href="<?= $this->baseUrl() ?>/admin/initiatives">Edit initiatives</a></h3>
+    <h3><a href="<?= $this->baseUrl() ?>/admin/sessions">Sessions List</a></h3>
+    <h3><a href="<?= $this->baseUrl() ?>/admin/jsonimport">Direct JSON Import</a></h3>
+    <?=$this->render('admin/footer.phtml') ?>
+</body>
+</html>

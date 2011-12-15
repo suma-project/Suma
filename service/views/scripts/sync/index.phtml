@@ -1,0 +1,15 @@
+<?php 
+
+if ($this->result)
+{
+    echo 'Transaction Complete';
+}
+else
+{
+    header("HTTP/1.1 500 Internal Server Error");
+    echo "<h1>500 Internal Server Error</h1>";
+    echo "An error occurred on the server which prevented your request from being completed.";
+    echo "<p><strong>Error:</strong> " . $this->error . "</p>";
+}
+
+?>

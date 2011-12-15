@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//Dth XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/Dth/xhtml1-strict.dth"> <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0" />
+    <title>Suma: Space Usage Tool</title>
+    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.2r1/build/reset/reset-min.css">
+    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.2r1/build/base/base-min.css">
+    <link rel="stylesheet" type="text/css" href="960.css" />
+    <link rel="stylesheet" type="text/css" href="jquery-ui-theme/css/cupertino/jquery-ui-1.8.13.custom.css" />
+    <link rel="stylesheet" type="text/css" href="spaceassess.css" />
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script> 
+
+    <script type="text/javascript">
+      google.load("jquery", "1.6.3");
+      google.load("jqueryui", "1.8.16");
+    </script> 
+
+    <script src="persistencejs/lib/persistence.js"></script>
+    <script src="persistencejs/lib/persistence.store.sql.js"></script>
+    <script src="persistencejs/lib/persistence.store.websql.js"></script>
+    <script src="spaceassessDB.js"></script>
+    <script src="spaceassess.js"></script>
+  </head>
+  <body>
+    <div id="loadingScreen" style="display:hidden">Please wait...</div>
+    <div id="abandonContent" style="display:hidden">Are you sure you want to delete the data you've just collected? The data you've collected since hitting "start" will be deleted permanently.</div>
+    <div id="spaceAssessDialog" style="display:hidden">
+      <p>Just hit the button to start collecting.</p>
+      <p>Don't worry if you didn't mean to end your session; the last session has been saved, and any new data will be stored in another session.</p>
+    </div>
+
+    <div data-role="page">
+    <div id="header" class="container_12">
+      <div id="" class="grid_12 header_content">
+        <div class="pad_div">
+        <!--<h1 id="count_heading">Current count in this location:<span id="count_total">0</span></h1>-->
+        <h2 id="goesdown_heading"><a href="#" id="goesdown" class="jqButton tappable">Undo last count</a></h2>
+        <h4 id="abandon_heading"><a href="#" id="abandon_session" class="jqButton">Abandon Counts</a></h4>
+        <h2 id="save_session_heading"><a id="save_session" class="jqButton" href="#">Finish Collecting</a></h2>
+        </div>
+      </div>
+
+    </div>
+
+
+
+    <div id="content" class="container_12">
+
+      <div id="" class="grid_5 sidebar">
+        <div class="pad_div">
+        <h2>Select a collection program:</h2>
+        <form id="init_form">
+          <select id="init_selector">
+            <option value="">Select an initiative</option>
+          </select>
+        </form>
+        <br />
+        <h2>Tap on a location:</h2>
+        <div id="loc_lists">
+          <ul class="loc_list">
+          </ul>
+        </div>
+        </div>
+      </div>
+
+      <div id="" class="grid_7 main_entry">
+        <h2 id="current_loc_label">No current location</h2>
+        <div id="counting_container">
+          <form id="count_form">
+            <div id="format">
+              <div id="leftActivities" class="activityContainer">
+            </div>
+            <div id="rightActivities" class="activityContainer">
+            </div>
+              <div class="clear"> </div>
+            </div>
+            <br />
+            <input type="button" id="goesup" class="tappable" name="goesup" value="Count" />
+          </form>
+        </div>
+      </div>
+
+
+
+    <div id="footer" class="container_12">
+
+      <div id="" class="grid_12 footer_content">
+      <div class="pad_div">
+        <!--<h3><a id="dump_data" href="#">About this session</a></h3>-->
+        <!--<h2><a id="view_data" href="viewData.html">View Data</a></h2>-->
+        <br />
+      </div>
+      </div>
+
+    </div>
+  </div>
+  </body>
+</html>

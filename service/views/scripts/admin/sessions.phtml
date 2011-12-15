@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Suma administrative tools</title>
+</head>
+<body>
+   <?=$this->render('admin/header.phtml') ?>
+
+<?php 
+$sessions = $this->sessions;
+
+echo '<table border="1" style="text-align:center;"><tr><th>Init Title</th><th>Sess ID</th><th>Sess Start</th>'
+     . '<th>Sess End</th><th>Trans Start</th><th>Trans End</th><th>Total</th><th>&nbsp;</th></tr>';
+
+foreach($sessions as $index => $session)
+{ 
+    $init = $session->getInitiative();
+    $sessMeta = $session->getMetadata();
+    $counts = $session->getCounts();
+    $trans = $session->getTransById($session->getMetadata('fk_transaction'));
+    
+    if ($index % 2)
+    {
+        echo '<tr style="background-color:white;">';
+    }
+    else 
+    {
+        echo '<tr style="background-color:lightblue;">';
+    }
+    
+    $sum = 'Null';
+    foreach($counts as $count)
+    {
+        $sum += $count['number'];
+    }
+
+    $base = Zend_Controller_Front::getInstance()->getBaseUrl();
+    echo '<td style="padding:5px;">' . $init->getMetadata('title') . '</td>';
+    echo '<td style="padding:5px;">'.$sessMeta['id'].'</td><td style="padding:5px;">'.$sessMeta['start'] . '</td>'
+         .'<td style="padding:5px;">'.$sessMeta['end'].'</td><td style="padding:5px;">'.$trans['start'].'</td>'
+         .'<td style="padding:5px;">'.$trans['end'].'</td><td style="padding:5px;">'.$sum.'</td>';
+    echo '<td style="padding:5px;"><a href="http://'.$_SERVER['HTTP_HOST'].$base.'/admin/session/id/'.$sessMeta['id'].'">Inspect</a></td></tr>';
+    
+}
+
+echo '</table>';
+
+?>
+<?=$this->render('admin/footer.phtml') ?>
+</body>
+</html>

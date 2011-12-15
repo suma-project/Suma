@@ -1,0 +1,34 @@
+<?php 
+
+if ($this->init->getMetadata('enabled') == true) {
+    // echo '<label for="toggleInit">Disable Initiative</label>';
+    echo '<div class="toggleInit"><a class="disableInit" href="#">Disable initiative</a></div>';
+} else {
+    echo '<div class="toggleInit"><a class="enableInit" href="#">Enable Initiative</a></div>';
+}
+
+echo '<div id="initID">' . $this->init->getMetadata('id') . '</div>';
+echo '<h3>Initiative Title: <span id="initTitle">'.$this->init->getMetadata('title').'</span></h3>';
+echo '<h3>Initiative Description: <span id="initDesc">'.$this->init->getMetadata('description').'</span></h3>';
+echo "<div><a href=\"#\" id=\"editInitMetadata\">Edit title and description</a></div>\n<br/>\n";
+
+
+
+// TODO: Check if the location tree can be changed
+echo "<h3>Location Tree: {$this->init->getRootLocation()->getMetadata('title')}</h3>";
+
+// echo '<p></p>';
+echo '<hr><div id="activityArea"><h3>Activities:</h3>'; 
+echo '<p><a href="#" id="addActivity">Add Activity</a></p>';
+echo '<ol id="activities" class="sortable">';
+
+$activities = $this->init->getActivities(false);
+foreach($activities as $activity)
+{
+    $actStatus = ($activity->getMetadata('enabled')) ? 'enabled-act' : 'disabled-act';
+    // echo '<option value="'.$activity['id'].'">'.$activity['title'].'</option>';
+    print "<li class=\"{$actStatus}\"><div><span class=\"actTitle\">".$activity->getMetadata('title')."</span> <span class=\"actDesc\">".$activity->getMetadata('description')."</span><span class=\"actID\">{$activity->getMetadata('id')}</span><a href=\"#\" class=\"editAct\">Edit</a></div></li>";
+}
+echo "</ol></div>\n";
+echo "<h3><a href=\"#\" id=\"saveActs\">Save Activities</a></h3>\n";
+?>

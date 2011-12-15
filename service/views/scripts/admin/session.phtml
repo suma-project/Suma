@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Suma administrative tools</title>
+</head>
+<body>
+   <?=$this->render('admin/header.phtml') ?>
+<?php 
+
+$session = $this->session;
+$init = $this->init;
+$trans = $session->getTransById($session->getMetadata('fk_transaction'));
+$counts = $session->getCounts();
+$activities = $init->getActivities();
+
+$sum = 'Null';
+foreach($counts as $c)
+{
+    $sum += $c['number'];
+}        
+
+echo '<p><strong>InitTitle:</strong> ' . $init->getMetadata('title');
+echo ' <strong>Session ID:</strong>'.$session->getMetadata('id').', <strong>Start:</strong>'.$session->getMetadata('start')
+     .', <strong>End:</strong>'.$session->getMetadata('end').', <strong>TranS:</strong>'.$trans['start']
+     .', <strong>TranE:</strong>'.$trans['end'].', <strong>Total:</strong>'.$sum.'</p>';
+
+     
+$locations = $this->locations;
+echo '<table border="1"><tr>';
+foreach($locations as $location)
+{
+    echo '<th>'. $location->getMetadata('title') . '</th>';
+}
+echo '</tr><tr style="text-align:center;">';     
+
+foreach($locations as $location)
+{
+    $localCounts = $session->getCountsByLoc($location->getMetadata('id'));
+    
+    $sum = 'Null';
+    foreach($localCounts as $lc)
+    {
+        $sum += $lc['number'];
+    }
+    
+    echo '<td>'.$sum.'</td>';
+}
+echo '</tr></table>';
+
+foreach($counts as $count)
+{
+    $workingLoc;
+    foreach($locations as $location)
+    {
+        if ($location->getMetadata('id') == $count['fk_location'])
+        {
+            $workingLoc = $location;
+            break;
+        }
+    }
+    
+    $activitiesJoin = $session->getJoinByCntId($count['id']);
+    
+    echo '<p>';
+    echo '<strong>Count ID:</strong> '.$count['id'].'<br>';
+    echo '<strong>Count Time:</strong> '.$count['occurrence'].'<br>';
+    echo '<strong>Count Number:</strong> '.$count['number'].'<br>';
+    echo '<strong>Count Location ID:</strong> '.$workingLoc->getMetadata('id').'<br>';
+    echo '<strong>Location Title:</strong> '.$workingLoc->getMetadata('title').'<br>';
+    
+    foreach ($activitiesJoin as $join)
+    {
+        foreach($activities as $activity)
+        {
+            $act;
+            if ($activity->getMetadata('id') == $join['fk_activity'])
+            {
+                $act = $activity;
+                break;
+            }
+        }
+        
+        echo '<strong>Activity ID:</strong> '.$act->getMetadata('id').'<br>';
+        echo '<strong>Activity Title:</strong> '.$act->getMetadata('title').'<br>';
+    }
+    echo '</p>';
+}
+
+?>
+<?=$this->render('admin/footer.phtml') ?>
+</body>
+</html>

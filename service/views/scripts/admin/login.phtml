@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Suma administrative tools</title>
+</head>
+<body>
+   <?=$this->render('admin/header.phtml') ?>
+   <p>Suma Admin Login</p> 
+   <form name="login" method="post" action='authenticate'>
+   <table>
+      <tr>
+        <td>Username:</td>
+        <td><input type='text' name='username'></td>
+      </tr>
+      <tr>
+        <td>Password:</td>
+        <td><input type='password' name='password'></td>
+      </tr>
+    </table>     
+    <input type='submit' name='login' value='Login'>
+    </form>
+    
+</body>
+</html>

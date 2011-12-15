@@ -1,0 +1,56 @@
+[{
+    "initiativeID":1,
+    "sessions": 
+        [
+        {"startTime":xxxxxx,
+            "endTime":xxxxxx,
+            "counts": [
+            {"timestamp":xxxxxx,
+                "location": 17,
+                "activities": [5,2,9]},
+            {"timestamp":xxxxxx,
+                "location": 8,
+                "activities": [3]}
+            ]
+        },
+        {"startTime":xxxxxx,
+            "endTime":xxxxxx,
+            "counts": [
+            {"timestamp":xxxxxx,
+                "location": 17,
+                "activities": [5,2,9]},
+            {"timestamp":xxxxxx,
+                "location": 8,
+                "activities": [3]}
+            ]
+        }   
+    ]
+},
+{
+    "initiativeID":1,
+    "sessions": 
+        [
+        {"startTime":xxxxxx,
+            "endTime":xxxxxx,
+            "counts": [
+            {"timestamp":xxxxxx,
+                "location": 17,
+                "activities": [5,2,9]},
+            {"timestamp":xxxxxx,
+                "location": 8,
+                "activities": [3]}
+            ]
+        },
+        {"startTime":xxxxxx,
+            "endTime":xxxxxx,
+            "counts": [
+            {"timestamp":xxxxxx,
+                "location": 17,
+                "activities": [5,2,9]},
+            {"timestamp":xxxxxx,
+                "location": 8,
+                "activities": [3]}
+            ]
+        }   
+    ]
+}]

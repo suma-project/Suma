@@ -1,0 +1,17 @@
+<?php 
+
+$qModel = $this->qModel;
+
+echo $qModel->getCountsSql() . '<p>&nbsp;</p>';
+
+echo 'Table Rows: '.$qModel->getRowCount().'<br />'; 
+echo '<table border="1">';
+echo '<tr><th>Session Id</th><th>Sess Start</th><th>Sess End</th><th>Count Id</th><th>Count Num</th><th>Activity Id</th><th>Loc Id</th><th>Time</th></tr>';
+$results = $qModel->getResults();
+foreach($results as $row)
+{
+    echo '<tr><td>' . $row['sid'] . '</td><td>'.$row['start'].'</td><td>'.$row['end'].'</td><td>'.$row['cid'].'</td><td>'.$row['cnum'].'</td><td>'.$row['act'].'</td><td>'.$row['loc'].'</td><td>'.$row['oc'].'</td></tr>';
+}
+echo '</table>';
+
+?>
