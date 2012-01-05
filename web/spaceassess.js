@@ -259,7 +259,7 @@ function fetchLocsActivities(init, callback)
             });
 
             $.ajax({url: locUrl, dataType: 'json', async:false}).success(function(locData){
-                var locTree = locData[0]["locations"][0];
+                var locTree = locData["locations"];
                 parentLoc = new Location({name:locTree["title"], serverId:locTree["id"]});
                 persistence.add(parentLoc);
                 init.location = parentLoc;
@@ -267,7 +267,7 @@ function fetchLocsActivities(init, callback)
                     parseLocs(locTree["children"], parentLoc);
                 }
 
-                $.each(locData[0]["activities"], function(key, activity) {
+                $.each(locData["activities"], function(key, activity) {
                     var newAct = new Activity({name:activity["title"],serverId:activity["id"]});
                     newAct.initiative = init;
                     persistence.add(newAct);
