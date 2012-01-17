@@ -2,11 +2,11 @@
 
 class TransformerFactory
 {
-    public static function factory($class, $flag=null)
+    public static function factory($class, $byCounts=null, $sum=null)
     {
         if (require_once $class.'.php')
         {
-            return new $class($flag);
+            return new $class($byCounts, $sum);
         }
         else
         {

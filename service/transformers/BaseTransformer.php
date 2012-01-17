@@ -4,14 +4,16 @@ abstract class BaseTransformer
 {
     protected $_nestedArrays = array('initiatives' => array());
     protected $_byCounts = false;
+    protected $_sum = false;
     
     
     abstract public function addRow($row);
     
     
-    public function __construct($byCounts = false)
+    public function __construct($byCounts=false, $sum=false)
     {   
         $this->_byCounts = $byCounts;
+        $this->_sum = $sum;
     }    
 
     public function setInitMetadata($metadata)

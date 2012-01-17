@@ -4,7 +4,6 @@ require_once 'BaseTransformer.php';
 
 class AlcTransformer extends BaseTransformer
 {
-    private $_countHash = array();
     private $_sessionHash = array();
         
     
@@ -54,7 +53,6 @@ class AlcTransformer extends BaseTransformer
     private function &addActivity($row, &$tier)
     {
         $activities =& $tier['activities'];
-        $selected = null;
         
         if (isset($row['act']))
         {
@@ -107,7 +105,6 @@ class AlcTransformer extends BaseTransformer
     private function &addLocation($row, &$activity)
     {
         $locations =& $activity['locations'];
-        $selected = null;
         
         foreach($locations as &$location)
         {
@@ -124,27 +121,36 @@ class AlcTransformer extends BaseTransformer
             return $selected;
         }        
         
-        $addition = array('id'     =>  (int)$row['loc'],
-                         'counts'  =>  array());
+        
+        if ($this->_sum == true)
+        {
+            $addition = array('id'     => (int)$row['loc'],
+                              'counts' => 0);                
+        }
+        else
+        {
+            $addition = array('id'     => (int)$row['loc'],
+                              'counts' => array());                
+        }
         
         $locations[] =& $addition;
         return $addition;
     }
     
     private function addCount($row, &$location)
-    {
-        if (isset($this->_countHash[(int)$row['cid']]))
-        {
-            return;
-        }
-        
-        $addition = array('id'    =>  (int)$row['cid'],
-                         'time'   =>  $row['oc'],
-                         'number' =>  (int)$row['cnum']);
-        
+    {   
         $counts =& $location['counts'];
-        $counts[] =& $addition;
-        $this->_countHash[(int)$row['cid']] =& $addition;
+        
+        if ($this->_sum == true)
+        {
+            $counts += (int)$row['cnum'];
+        }
+        else
+        {
+            $counts[] = array('id'    =>  (int)$row['cid'],
+                             'time'   =>  $row['oc'],
+                             'number' => (int)$row['cnum']);            
+        }
     }    
     
 }

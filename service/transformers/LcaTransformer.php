@@ -43,7 +43,7 @@ class LcaTransformer extends BaseTransformer
         $addition = array('id'         =>  (int)$row['sid'],
                           'start'      =>  $row['start'],
                           'end'        =>  $row['end'],
-                          'locations' =>  array());
+                          'locations'  =>  array());
         
         $sessions =& $this->_nestedArrays['initiatives']['sessions'];
         $sessions[] =& $addition;

@@ -4,7 +4,6 @@ require_once 'BaseTransformer.php';
 
 class LacTransformer extends BaseTransformer
 {
-    private $_countHash = array();
     private $_sessionHash = array();    
     
     
@@ -81,7 +80,6 @@ class LacTransformer extends BaseTransformer
     private function &addActivity($row, &$location)
     {
         $activities =& $location['activities'];
-        $selected = null;
         
         if (isset($row['act']))
         {
@@ -100,8 +98,17 @@ class LacTransformer extends BaseTransformer
                 return $selected;
             }
             
-            $addition = array('id'        => (int)$row['act'],
-                              'counts' => array());
+            if ($this->_sum == true)
+            {
+                $addition = array('id'     => (int)$row['act'],
+                                  'counts' => 0);                
+            }
+            else
+            {
+                $addition = array('id'     => (int)$row['act'],
+                                  'counts' => array());                
+            }
+            
             $activities[] =& $addition;
             return $addition;
         }
@@ -122,8 +129,16 @@ class LacTransformer extends BaseTransformer
                 return $selected;
             }        
             
-            $addition = array('id'        => '_No Activity',
-                              'counts' => array());
+            if ($this->_sum == true)
+            {
+                $addition = array('id'     => '_No Activity',
+                                  'counts' => 0);                
+            }
+            else
+            {
+                $addition = array('id'     => '_No Activity',
+                                  'counts' => array());                
+            }
             
             $activities[] =& $addition;
             return $addition;
@@ -132,19 +147,19 @@ class LacTransformer extends BaseTransformer
     }    
     
     private function addCount($row, &$activity)
-    {
-        if (isset($this->_countHash[(int)$row['cid']]))
-        {
-            return;
-        }
-        
-        $addition = array('id'    =>  (int)$row['cid'],
-                         'time'   =>  $row['oc'],
-                         'number' =>  (int)$row['cnum']);
-        
+    {        
         $counts =& $activity['counts'];
-        $counts[] =& $addition;
-        $this->_countHash[(int)$row['cid']] =& $addition;        
+        
+        if ($this->_sum == true)
+        {
+            $counts += (int)$row['cnum'];
+        }
+        else
+        {
+            $counts[] = array('id'    =>  (int)$row['cid'],
+                             'time'   =>  $row['oc'],
+                             'number' => (int)$row['cnum']);            
+        }       
     }    
     
 }

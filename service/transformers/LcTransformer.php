@@ -53,7 +53,6 @@ class LcTransformer extends BaseTransformer
     private function &addLocation($row, &$tier)
     {
         $locations =& $tier['locations'];
-        $selected = null;
         
         foreach($locations as &$location)
         {
@@ -70,8 +69,16 @@ class LcTransformer extends BaseTransformer
             return $selected;
         }        
         
-        $addition = array('id'     =>  (int)$row['loc'],
-                         'counts'  =>  array());
+        if ($this->_sum == true)
+        {
+            $addition = array('id'     => (int)$row['loc'],
+                              'counts' => 0);                
+        }
+        else
+        {
+            $addition = array('id'     => (int)$row['loc'],
+                              'counts' => array());                
+        }
         
         $locations[] =& $addition;
         return $addition;
@@ -84,13 +91,20 @@ class LcTransformer extends BaseTransformer
             return;
         }
         
-        $addition = array('id'    =>  (int)$row['cid'],
-                         'time'   =>  $row['oc'],
-                         'number' =>  (int)$row['cnum']);
-        
         $counts =& $location['counts'];
-        $counts[] =& $addition;
-        $this->_countHash[(int)$row['cid']] =& $addition;
+        
+        if ($this->_sum == true)
+        {
+            $counts += (int)$row['cnum'];
+        }
+        else
+        {
+            $counts[] = array('id'    =>  (int)$row['cid'],
+                             'time'   =>  $row['oc'],
+                             'number' => (int)$row['cnum']);            
+        }
+        
+        $this->_countHash[(int)$row['cid']] = true;
     }     
     
 }

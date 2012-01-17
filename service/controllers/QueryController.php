@@ -129,12 +129,12 @@ class QueryController extends BaseController
                 if ($this->_getParam('service') == 'sessions')
                 {
                     $results = $qModel->bySessions($params);
-                    $trans = TransformerFactory::factory($this->_transformers[$format]);
+                    $trans = TransformerFactory::factory($this->_transformers[$format], false, $sum);
                 }
                 else
                 {
                     $results = $qModel->byCounts($params);
-                    $trans = TransformerFactory::factory($this->_transformers[$format], true);
+                    $trans = TransformerFactory::factory($this->_transformers[$format], true, $sum);
                 }
                 
                 $trans->setInitMetadata($qModel->getInitMetadata());
