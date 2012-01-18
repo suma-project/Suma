@@ -19,6 +19,7 @@ API options
 	* stime: Starting time slide (applies for all days in sdate/edate range). Format: hhmm (24-hour)
 	* etime: Ending time slice (applies for all days in sdate/edate range). Format: hhmm (24-hour)
 	* format: one of "cal, cla, alc, lac, lca, ac, lc" (see "Return formats" below). Default: "cal"
+    * sum: "true". If requesting a format where the count is at the deepest level (alc, lac, ac, lc), individual counts are combined where possible. While this does not preserve the timestamp for each count, it does result in a more compact set of data. Default: No summing.
 
 Return formats
 ---------------
