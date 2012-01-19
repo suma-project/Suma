@@ -124,8 +124,15 @@ class QueryController extends BaseController
             }
             else 
             {
-                $trans = null;
-                $results = null;
+                if (strtolower($sum) === 'true')
+                {
+                    $sum = true;
+                }
+                else
+                {
+                    $sum = false;
+                }
+
                 if ($this->_getParam('service') == 'sessions')
                 {
                     $results = $qModel->bySessions($params);
