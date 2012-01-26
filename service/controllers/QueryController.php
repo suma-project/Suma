@@ -19,6 +19,11 @@ class QueryController extends BaseController
                                    'ac'  => 'AcTransformer',
                                    'lc'  => 'LcTransformer');
     
+    public function initiativesAction()
+    {
+        $this->view->initiatives = QueryModel::getInitiatives();
+    }
+    
     public function debugsessionsAction()
     {
         $this->_setParam('service', 'debugsessions');
@@ -72,6 +77,7 @@ class QueryController extends BaseController
                     $params['sDate'] = $sDate->get(Zend_Date::ISO_8601);
                 }
             }
+            
             if (! empty($eDate)) 
             {
                 $eDate = explode("T", strtoupper($eDate));
@@ -85,6 +91,7 @@ class QueryController extends BaseController
                     $params['eDate'] = $eDate->get(Zend_Date::ISO_8601);             
                 }
             }
+            
             if (! empty($sTime)) 
             { 
                 $hr = substr($sTime, 0, 2);
@@ -96,6 +103,7 @@ class QueryController extends BaseController
                     $params['sTimeM'] = $min;
                 }
             }
+            
             if (! empty($eTime)) 
             {
                 $hr = substr($eTime, 0, 2);
@@ -108,61 +116,69 @@ class QueryController extends BaseController
                 }
             }
             
-
-            $qModel = new QueryModel($initId);
-            if ($this->_getParam('service') == 'debugsessions')
+            
+            try 
             {
-                $qModel->bySessions($params);
-                $this->view->qModel = $qModel;
-                $this->render('debugsessions');
-            }
-            else if ($this->_getParam('service') == 'debugcounts')
-            {
-                $qModel->byCounts($params);
-                $this->view->qModel = $qModel;
-                $this->render('debugcounts');
-            }
-            else 
-            {
-                if (strtolower($sum) === 'true')
-                {
-                    $sum = true;
-                }
-                else
-                {
-                    $sum = false;
-                }
-
-                if ($this->_getParam('service') == 'sessions')
-                {
-                    $results = $qModel->bySessions($params);
-                    $trans = TransformerFactory::factory($this->_transformers[$format], false, $sum);
-                }
-                else
-                {
-                    $results = $qModel->byCounts($params);
-                    $trans = TransformerFactory::factory($this->_transformers[$format], true, $sum);
-                }
+                $qModel = new QueryModel($initId);
                 
-                $trans->setInitMetadata($qModel->getInitMetadata());
-                $trans->setInitLocs($qModel->getInitLocs());
-                $trans->setInitActs($qModel->getInitActs());
-                                
-                foreach($results as $row)
+                if ($this->_getParam('service') == 'debugsessions')
                 {
-                    $trans->addRow($row);
+                    $qModel->bySessions($params);
+                    $this->view->qModel = $qModel;
+                    $this->render('debugsessions');
                 }
-                
-                $this->view->trans = $trans;
+                else if ($this->_getParam('service') == 'debugcounts')
+                {
+                    $qModel->byCounts($params);
+                    $this->view->qModel = $qModel;
+                    $this->render('debugcounts');
+                }
+                else 
+                {   
+                    $sum = (strtolower($sum) === 'true') ? true : false;
+    
+                    if ($this->_getParam('service') == 'sessions')
+                    {
+                        $results = $qModel->bySessions($params);
+                        $trans = TransformerFactory::factory($this->_transformers[$format], false, $sum);
+                    }
+                    else
+                    {
+                        $results = $qModel->byCounts($params);
+                        $trans = TransformerFactory::factory($this->_transformers[$format], true, $sum);
+                    }
+                    
+                    $trans->setInitMetadata($qModel->getInitMetadata());
+                    $trans->setInitLocs($qModel->getInitLocs());
+                    $trans->setInitActs($qModel->getInitActs());
+                                    
+                    foreach($results as $row)
+                    {
+                        $trans->addRow($row);
+                    }
+                    
+                    $this->view->trans = $trans;
+                }
+            }
+            catch (Exception $e)
+            {
+                $this->view->error = $e->getMessage();
+                $this->_forward("error");
             }
 
         }
         else
         {
-            throw new Exception('Invalid initiative id provided.');
+            $this->view->error = 'Initiative ID must be numeric';
+            $this->_forward("error");
         }
         
     }
+    
+    public function errorAction()
+    {   
+    }
+    
 }
 
 ?>

@@ -29,13 +29,13 @@ class QueryModel
             ->where('id = '.$this->_initId);
         $metadata = $select->query()->fetch();
         
-        if ($metadata)
+        if (! empty($metadata))
         {
             $this->_initMetadata = $metadata;
         }
         else
         {
-            throw new Exception('Initiative does not exist.');
+            throw new Exception('Initiative does not exist');
         }
     }
 
@@ -317,7 +317,28 @@ class QueryModel
             $this->walkLocTree($node['id']);
         }
     }
+    
+    
+    
+    // ------ STATIC FUNCTIONS ------
         
+    static function getInitiatives()
+    {
+        $db = Globals::getDBConn();
+        $select = $db->select()
+            ->from(array('i' => 'initiative'),
+                   array('id', 'title', 'description'))
+            ->join(array('s' => 'session'),
+                         'i.id = s.fk_initiative',
+                   array())
+            ->where('s.deleted = false')
+            ->group('i.id')
+            ->order(array('i.title ASC'));
+        $initiatives = $select->query()->fetchAll();
+        
+        return $initiatives;
+    }
+    
 }
 
 ?>
