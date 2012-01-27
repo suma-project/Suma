@@ -2,7 +2,7 @@
 
 class Server_IO
 {
-    private static $_serverUrl = 'http://<host_dir>/query';
+    private static $_serverUrl = 'http://<host>/query';
     
     static function getData($params, $mode)
     {
@@ -16,17 +16,14 @@ class Server_IO
             throw new Exception('Must provide valid mode (sessions or counts)');
         }
         
-        if ($mode == 'sessions')
-        {
-            self::$_serverUrl .= '/sessions';
-        }
-        else
-        {
-            self::$_serverUrl .= '/counts';
-        }
+        self::$_serverUrl .= ($mode == 'sessions') ? '/sessions' : '/counts';
         
         foreach($params as $key => $val)
         {
+            if (($key == 'sdate' || $key == 'edate' || $key == 'stime' || $key == 'etime') && !empty($val) && !is_numeric($val))
+            {
+                throw new Exception('Supplied dates and times must be all numeric');
+            }
             self::$_serverUrl .= "/$key/$val";
         }
         

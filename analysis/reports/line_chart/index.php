@@ -23,12 +23,25 @@ $initDropDown .= '</select>';
 ?>
 
 <html>
+<head>
+    <link rel="stylesheet" type="text/css" href="../../includes/datepicker/smoothness.datepick.css" />
+    
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="../../includes/datepicker/jquery.datepick.pack.js"></script>
+    
+    <script type="text/javascript">
+      $(document).ready(function() {
+          $('#sdate').datepick({dateFormat: 'yymmdd'});
+          $('#edate').datepick({dateFormat: 'yymmdd'});
+      });
+    </script>
+</head>
 <body>
     <form method="get" action="results.php">
         <table>
             <tr><td>Initiative</td><td><?php echo $initDropDown; ?></td></tr>
-            <tr><td>Start Date</td><td><input type="text" name="sdate" />(YYYYMMDD)</td></tr>
-            <tr><td>End Date</td><td><input type="text" name="edate" />(YYYYMMDD)</td></tr>
+            <tr><td>Start Date</td><td><input type="text" id="sdate" name="sdate" />(YYYYMMDD)</td></tr>
+            <tr><td>End Date</td><td><input type="text" id="edate" name="edate" />(YYYYMMDD)</td></tr>
             <tr><td>Start Time</td><td><input type="text" name="stime" />(HHMM)</td></tr>
             <tr><td>End Time</td><td><input type="text" name="etime" />(HHMM)</td></tr>
         </table>
