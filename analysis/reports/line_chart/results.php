@@ -19,40 +19,43 @@ catch (Exception $e)
     header("HTTP/1.1 500 Internal Server Error");
     echo "<h1>500 Internal Server Error</h1>";
     echo '<p>An error occurred on the server which prevented your request from being completed: <strong>'.$e->getMessage().'</strong></p>';
-    die(1);
+    die;
 }
 
 $init = $response['initiatives'];
 $sessions = $init['sessions'];
 $hash = array();
 
-foreach($sessions as $sess)
-{  
-    $locations = $sess['locations'];
-    $total = 0;
-    foreach($locations as $loc)
-    {
-        $total += $loc['counts'];
-    }
-    
-    $day = substr($sess['start'], 0, -9);
-    
-    if (isset($hash[$day]))
-    {
-        $hash[$day] = $hash[$day] + $total;
-    }
-    else
-    {
-        $hash[$day] = $total;
-    }
-}
-
-foreach($hash as $key => $val)
+if ($sessions)
 {
-    $plots .= '[\''.$key.'\', '.$val.'],';
+    foreach($sessions as $sess)
+    {  
+        $locations = $sess['locations'];
+        $total = 0;
+        foreach($locations as $loc)
+        {
+            $total += $loc['counts'];
+        }
+        
+        $day = substr($sess['start'], 0, -9);
+        
+        if (isset($hash[$day]))
+        {
+            $hash[$day] = $hash[$day] + $total;
+        }
+        else
+        {
+            $hash[$day] = $total;
+        }
+    }
+    
+    foreach($hash as $key => $val)
+    {
+        $plots .= '[\''.$key.'\', '.$val.'],';
+    }
+    
+    $plots = substr($plots, 0, -1);
 }
-
-$plots = substr($plots, 0, -1);
 
 ?>
 
@@ -67,12 +70,12 @@ $plots = substr($plots, 0, -1);
         data.addColumn('string', 'Location');
         data.addColumn('number', 'Patrons');
         data.addRows([
-          <?= $plots ?>
+          <?php echo $plots; ?>
         ]);
 
         var options = {
           width: 500, height: 500,
-          title: '<?= $init['title'] ?>'
+          title: '<?php echo $init['title']; ?>'
         };
 
         var chart = new google.visualization.LineChart(document.getElementById('chart_div'));

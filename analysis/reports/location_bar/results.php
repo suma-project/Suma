@@ -19,26 +19,29 @@ catch (Exception $e)
     header("HTTP/1.1 500 Internal Server Error");
     echo "<h1>500 Internal Server Error</h1>";
     echo '<p>An error occurred on the server which prevented your request from being completed: <strong>'.$e->getMessage().'</strong></p>';
-    die(1);
+    die;
 }
 
 $init = $response['initiatives'];
 $locDictionary = $init['dictionary']['locations'];
 $locations = $init['locations'];
 
-foreach($locations as $loc)
-{  
-    foreach($locDictionary as $lookup)
-    {
-        if ($lookup['id'] == $loc['id'])
+if ($locations)
+{
+    foreach($locations as $loc)
+    {  
+        foreach($locDictionary as $lookup)
         {
-            $title = $lookup['title'];
+            if ($lookup['id'] == $loc['id'])
+            {
+                $title = $lookup['title'];
+            }
         }
+        $plots .= '[\''.$title.'\', '.$loc['counts'].'],';
     }
-    $plots .= '[\''.$title.'\', '.$loc['counts'].'],';
+    
+    $plots = substr($plots, 0, -1);
 }
-
-$plots = substr($plots, 0, -1);
 
 ?>
 
@@ -53,12 +56,12 @@ $plots = substr($plots, 0, -1);
         data.addColumn('string', 'Location');
         data.addColumn('number', 'Patrons');
         data.addRows([
-          <?= $plots ?>
+          <?php echo $plots; ?>
         ]);
 
         var options = {
           width: 500, height: 500,
-          title: '<?= $init['title'] ?>'
+          title: '<?php echo $init['title']; ?>'
         };
 
         var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
