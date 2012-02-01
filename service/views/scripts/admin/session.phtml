@@ -5,8 +5,8 @@
     <title>Suma administrative tools</title>
 </head>
 <body>
-   <?=$this->render('admin/header.phtml') ?>
 <?php 
+$this->render('admin/header.phtml');
 
 $session = $this->session;
 $init = $this->init;
@@ -87,7 +87,7 @@ foreach($counts as $count)
     echo '</p>';
 }
 
+$this->render('admin/footer.phtml'); 
 ?>
-<?=$this->render('admin/footer.phtml') ?>
 </body>
 </html>

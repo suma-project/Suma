@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<?php $baseDir = Zend_Controller_Front::getInstance()->getBaseUrl();?>
+<?php $baseDir = Zend_Controller_Front::getInstance()->getBaseUrl(); ?>
 <html>
 <head>
 <script src="http://www.google.com/jsapi" type="text/javascript"></script> 
@@ -7,8 +7,8 @@
 google.load("jquery", "1.6.4");
 google.load("jqueryui", "1.8.16");
 </script> 
-<link rel="stylesheet" type="text/css" href="<?=$baseDir?>/css/jquery-ui-theme/css/cupertino/jquery-ui-1.8.14.custom.css" />
-<link rel="stylesheet" type="text/css" href="<?=$baseDir?>/css/admin.css" />
+<link rel="stylesheet" type="text/css" href="<?php echo $baseDir; ?>/css/jquery-ui-theme/css/cupertino/jquery-ui-1.8.14.custom.css" />
+<link rel="stylesheet" type="text/css" href="<?php echo $baseDir; ?>/css/admin.css" />
 <script type="text/javascript">
 $(document).ready(function(){
     // $('#toggle').hide();
@@ -296,7 +296,7 @@ $(document).ready(function(){
 </script>
 </head>
 <body>
-    <?=$this->render('admin/header.phtml') ?>
+    <?php echo $this->render('admin/header.phtml'); ?>
     <div id="newInitDialog" style="display:none">
         <form>
             <input type="text" id="newInitTitleInput" name="newInitTitleInput" value="" /><br />
@@ -349,6 +349,6 @@ foreach($this->initiatives as $init)
 </form>
 <h3><a href="#" id="createInitLink">Create new initiative</a></h3>
 <div id="metadata"></div>
-<?=$this->render('admin/footer.phtml') ?>
+<?php echo $this->render('admin/footer.phtml'); ?>
 </body>
 </html>

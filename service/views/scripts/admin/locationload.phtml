@@ -1,6 +1,6 @@
-<h3>Location tree title: <span id="treeTitle"><?=$this->location->getMetadata('title')?></span></h3>
-<h3>Location tree description: <span id="treeDesc"><?=$this->location->getMetadata('description')?></span></h3>
-<div id="treeID"><?=$this->location->getMetadata('id')?></div>
+<h3>Location tree title: <span id="treeTitle"><?php echo $this->location->getMetadata('title'); ?></span></h3>
+<h3>Location tree description: <span id="treeDesc"><?php echo $this->location->getMetadata('description'); ?></span></h3>
+<div id="treeID"><?php echo $this->location->getMetadata('id'); ?></div>
 <a id="editTree" href="#">Edit tree title and description</a>
 <br />
 <div>

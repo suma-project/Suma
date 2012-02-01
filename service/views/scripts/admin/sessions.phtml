@@ -5,9 +5,9 @@
     <title>Suma administrative tools</title>
 </head>
 <body>
-   <?=$this->render('admin/header.phtml') ?>
-
 <?php 
+echo $this->render('admin/header.phtml'); 
+    
 $sessions = $this->sessions;
 
 echo '<table border="1" style="text-align:center;"><tr><th>Init Title</th><th>Sess ID</th><th>Sess Start</th>'
@@ -46,7 +46,7 @@ foreach($sessions as $index => $session)
 
 echo '</table>';
 
+echo $this->render('admin/footer.phtml'); 
 ?>
-<?=$this->render('admin/footer.phtml') ?>
 </body>
 </html>
