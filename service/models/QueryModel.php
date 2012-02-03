@@ -7,7 +7,7 @@ class QueryModel
     private $_countsSql;
     private $_sessCount;
     private $_rowCount;
-    private $_results = array();
+    private $_queryStmt;
     private $_initLocs = array();
     private $_initActs = array();
     private $_initId;
@@ -59,9 +59,9 @@ class QueryModel
         return $this->_rowCount;
     }
     
-    public function getResults()
+    public function getNextRow()
     {
-        return $this->_results;
+        return $this->_queryStmt->fetch();
     }
     
     public function getInitMetadata()
@@ -193,11 +193,11 @@ class QueryModel
 
         $this->_sessSql .= ' ORDER BY s.id ASC ';
 
-        $sessIds = $this->_db->fetchCol($this->_sessSql);
+        $sessQueryStmt = $this->_db->query($this->_sessSql);
 
-        if ($sessIds)
+        if ($sessQueryStmt->rowCount() > 0)
         {
-            $this->_sessCount = count($sessIds);
+            $this->_sessCount = $sessQueryStmt->rowCount();
             
             // SQL to pull query data
             $this->_countsSql = 'SELECT s.id as sid, s.start, s.end, c.id as cid, c.number as cnum, caj.fk_activity as act, c.fk_location as loc, c.occurrence as oc 
@@ -206,19 +206,17 @@ class QueryModel
                     WHERE s.deleted = false AND c.fk_session = s.id AND s.fk_initiative = '.$this->_initId.' AND '
                     .' s.id IN (';
     
-            foreach($sessIds as $id)
+            while($row = $sessQueryStmt->fetch())
             {
-                $this->_countsSql .= $id.', '; 
+                $this->_countsSql .= $row['id'].', '; 
             }
             
             $this->_countsSql = substr($this->_countsSql, 0, -2) . ') ';
             $this->_countsSql .= ' ORDER BY '.$this->_formats[$params['format']];
             
-            $this->_results = $this->_db->fetchAll($this->_countsSql);
-            $this->_rowCount = count($this->_results);
+            $this->_queryStmt = $this->_db->query($this->_countsSql);
+            $this->_rowCount = $this->_queryStmt->rowCount();
         }
-        
-        return $this->_results;
     }
     
     
@@ -285,10 +283,8 @@ class QueryModel
         $this->_countsSql .= ' ORDER BY '.$this->_formats[$params['format']];
         
 
-        $this->_results = $this->_db->fetchAll($this->_countsSql);
-        $this->_rowCount = count($this->_results);
-        
-        return $this->_results;
+        $this->_queryStmt = $this->_db->query($this->_countsSql);
+        $this->_rowCount = $this->_queryStmt->rowCount();
     }
     
     
@@ -340,5 +336,3 @@ class QueryModel
     }
     
 }
-
-?>

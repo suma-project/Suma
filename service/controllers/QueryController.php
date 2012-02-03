@@ -139,20 +139,20 @@ class QueryController extends BaseController
     
                     if ($this->_getParam('service') == 'sessions')
                     {
-                        $results = $qModel->bySessions($params);
+                        $qModel->bySessions($params);
                         $trans = TransformerFactory::factory($this->_transformers[$format], false, $sum);
                     }
                     else
                     {
-                        $results = $qModel->byCounts($params);
+                        $qModel->byCounts($params);
                         $trans = TransformerFactory::factory($this->_transformers[$format], true, $sum);
                     }
                     
                     $trans->setInitMetadata($qModel->getInitMetadata());
                     $trans->setInitLocs($qModel->getInitLocs());
                     $trans->setInitActs($qModel->getInitActs());
-                                    
-                    foreach($results as $row)
+                    
+                    while($row = $qModel->getNextRow())
                     {
                         $trans->addRow($row);
                     }
@@ -180,5 +180,3 @@ class QueryController extends BaseController
     }
     
 }
-
-?>
