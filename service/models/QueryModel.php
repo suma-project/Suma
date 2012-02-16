@@ -194,6 +194,7 @@ class QueryModel
         $this->_sessSql .= ' ORDER BY s.id ASC ';
 
         $sessQueryStmt = $this->_db->query($this->_sessSql);
+        $this->_queryStmt = $sessQueryStmt; // This line is a hack, but it fixes a non-object error.
 
         if ($sessQueryStmt->rowCount() > 0)
         {
@@ -215,8 +216,9 @@ class QueryModel
             $this->_countsSql .= ' ORDER BY '.$this->_formats[$params['format']];
             
             $this->_queryStmt = $this->_db->query($this->_countsSql);
-            $this->_rowCount = $this->_queryStmt->rowCount();
         }
+        
+        $this->_rowCount = $this->_queryStmt->rowCount();
     }
     
     
