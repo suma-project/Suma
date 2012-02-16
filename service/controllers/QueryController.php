@@ -88,7 +88,16 @@ class QueryController extends BaseController
                 if (is_numeric($yr) && is_numeric($month) && is_numeric($day))
                 {
                     $eDate = new Zend_Date(array('year' => $yr, 'month' => $month, 'day' => $day));
-                    $params['eDate'] = $eDate->get(Zend_Date::ISO_8601);             
+                    
+                    if (isset($sDate) && $eDate->isEarlier($sDate))
+                    {
+                        $params['sDate'] = $eDate->get(Zend_Date::ISO_8601);
+                        $params['eDate'] = $sDate->get(Zend_Date::ISO_8601);
+                    }
+                    else
+                    {
+                        $params['eDate'] = $eDate->get(Zend_Date::ISO_8601);
+                    }
                 }
             }
             
