@@ -146,6 +146,7 @@ class QueryModel
         // Time filtration
         if (isset($params['sTimeH']) || isset($params['eTimeH']))
         {
+            
             if (isset($params['sTimeH']) && isset($params['eTimeH']))
             {
                 $start = $params['sTimeH'].':'.$params['sTimeM'].':00';
@@ -170,6 +171,7 @@ class QueryModel
             }
             else if (isset($params['sTimeH']))
             {
+                $start = $params['sTimeH'].':'.$params['sTimeM'].':00';
                 $this->_sessSql .= ' (TIME(s.start) BETWEEN TIME(\''.$start.'\') AND TIME(\'23:59:59\') ';
                 $this->_sessSql .= ' OR TIME(s.end) BETWEEN TIME(\''.$start.'\') AND TIME(\'23:59:59\') ';
             }
@@ -177,7 +179,15 @@ class QueryModel
             {
                 $end = $params['eTimeH'].':'.$params['eTimeM'].':59';
                 $this->_sessSql .= ' (TIME(s.start) <= TIME(\''.$end.'\') ';
-                $this->_sessSql .= ' OR TIME(s.end) <= TIME(\''.$end.'\') ';
+                
+                if (isset($params['eDate']))
+                {
+                    $this->_sessSql .= ' OR (TIME(s.end) <= TIME(\''.$end.'\') AND DATE(s.end) <= DATE(\''.$params['eDate'].'\')) ';
+                }
+                else 
+                {
+                    $this->_sessSql .= ' OR TIME(s.end) <= TIME(\''.$end.'\') ';
+                }
             }
             
             // If a session spans >= 24hr period then it qualifies for any time constraint
@@ -192,7 +202,7 @@ class QueryModel
         }
 
         $this->_sessSql .= ' ORDER BY s.id ASC ';
-
+        
         $sessQueryStmt = $this->_db->query($this->_sessSql);
         $this->_queryStmt = $sessQueryStmt; // This line is a hack, but it fixes a non-object error.
 
@@ -200,7 +210,7 @@ class QueryModel
         {
             $this->_sessCount = $sessQueryStmt->rowCount();
             
-            // SQL to pull query data
+            // SQL to pull counts of returned session IDs of previous query
             $this->_countsSql = 'SELECT s.id as sid, s.start, s.end, c.id as cid, c.number as cnum, caj.fk_activity as act, c.fk_location as loc, c.occurrence as oc 
                     FROM session s, 
                     count c LEFT JOIN count_activity_join caj ON c.id = caj.fk_count 
