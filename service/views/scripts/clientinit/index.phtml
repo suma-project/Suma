@@ -4,6 +4,5 @@ header('Content-type: application/json');
 header('Content-Disposition: inline; filename="allinitiatives.json"');
 header('Content-Description: List of initiatives');
 
-echo $this->json;
-
-?>
+$json = Zend_Json::encode($this->array);
+echo Zend_Json::prettyPrint($json, array('format', 'html'));

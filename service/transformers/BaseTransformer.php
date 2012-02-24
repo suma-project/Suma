@@ -1,5 +1,7 @@
 <?php 
 
+Zend_Loader::loadClass('Zend_Json');
+
 abstract class BaseTransformer
 {
     protected $_nestedArrays = array('initiatives' => array());
@@ -40,9 +42,7 @@ abstract class BaseTransformer
     
     public function getJSON()
     {
-        return json_encode($this->_nestedArrays);
+        return Zend_Json::encode($this->_nestedArrays);
     }
 
 }
-
-?>

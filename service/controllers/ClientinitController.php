@@ -14,7 +14,7 @@ class ClientinitController extends BaseController
         {
             $array[] = array('initiativeId' => $init->getMetadata('id'), 'initiativeTitle' => $init->getMetadata('title'));
         }
-        $this->view->json = json_encode($array);
+        $this->view->array = $array;
     }
     
     public function loadAction()
@@ -38,5 +38,3 @@ class ClientinitController extends BaseController
         }
     }
 }
-
-?>

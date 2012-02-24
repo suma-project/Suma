@@ -4,6 +4,4 @@ header('Content-type: application/json');
 header('Content-Disposition: inline; filename="initiativeload.json"');
 header('Content-Description: Initiative load data');
 
-echo $this->json; 
-
-?>
+echo Zend_Json::prettyPrint($this->json, array('format', 'html'));

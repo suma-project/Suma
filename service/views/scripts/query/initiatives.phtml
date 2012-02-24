@@ -1,2 +1,8 @@
 <?php 
-echo json_encode($this->initiatives);
+
+header('Content-type: application/json');
+header('Content-Disposition: inline; filename="query_initiatives.json"');
+header('Content-Description: Query Initiatives');
+
+$json = Zend_Json::encode($this->initiatives);
+echo Zend_Json::prettyPrint($json, array('format' => 'html'));
