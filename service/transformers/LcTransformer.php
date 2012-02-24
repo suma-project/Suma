@@ -108,5 +108,3 @@ class LcTransformer extends BaseTransformer
     }     
     
 }
-
-?>

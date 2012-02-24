@@ -23,5 +23,3 @@ $front->setControllerDirectory('SUMA_CONTROLLER_PATH')
 
 // Go
 $front->dispatch();
-
-?>

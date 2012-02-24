@@ -1,4 +1,5 @@
 <?php
+
 class Zend_View_Helper_ListChildLocs
 {
     public function listChildLocs($locObj, $first=false) 
@@ -24,4 +25,3 @@ class Zend_View_Helper_ListChildLocs
     }
 
 }
-?>

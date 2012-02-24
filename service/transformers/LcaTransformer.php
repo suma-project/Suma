@@ -131,5 +131,3 @@ class LcaTransformer extends BaseTransformer
     }    
     
 }
-
-?>

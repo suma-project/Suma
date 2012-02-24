@@ -348,6 +348,3 @@ class AdminController extends BaseController
     }
    
 }
-
-
-?>

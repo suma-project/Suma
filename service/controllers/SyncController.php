@@ -31,5 +31,3 @@ class SyncController extends BaseController
     }
     
 }
-
-?>

@@ -69,5 +69,3 @@ class Server_IO
     }
     
 }
-
-?>

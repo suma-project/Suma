@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 require_once 'BaseController.php';
 
 class ErrorController extends BaseController
@@ -8,5 +9,3 @@ class ErrorController extends BaseController
         
     }    
 }
-
-?>

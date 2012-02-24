@@ -135,5 +135,3 @@ class AcTransformer extends BaseTransformer
     }     
         
 }
-
-?>

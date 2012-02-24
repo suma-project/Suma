@@ -154,5 +154,3 @@ class AlcTransformer extends BaseTransformer
     }    
     
 }
-
-?>

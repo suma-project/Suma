@@ -163,5 +163,3 @@ class LacTransformer extends BaseTransformer
     }    
     
 }
-
-?>
