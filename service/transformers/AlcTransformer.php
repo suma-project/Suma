@@ -12,19 +12,19 @@ class AlcTransformer extends BaseTransformer
         $tier = null;
         if ($this->_byCounts == false)
         {
-            if (! isset($this->_nestedArrays['initiatives']['sessions']))
+            if (! isset($this->_nestedArrays['initiative']['sessions']))
             {
-                $this->_nestedArrays['initiatives']['sessions'] = array();
+                $this->_nestedArrays['initiative']['sessions'] = array();
             }
             $tier =& $this->addSession($row);
         }
         else 
         {
-            if (! isset($this->_nestedArrays['initiatives']['activities']))
+            if (! isset($this->_nestedArrays['initiative']['activities']))
             {
-                $this->_nestedArrays['initiatives']['activities'] = array();
+                $this->_nestedArrays['initiative']['activities'] = array();
             }
-            $tier =& $this->_nestedArrays['initiatives'];
+            $tier =& $this->_nestedArrays['initiative'];
         }
         
         $activity =& $this->addActivity($row, $tier);
@@ -44,7 +44,7 @@ class AlcTransformer extends BaseTransformer
                           'end'        =>  $row['end'],
                           'activities' =>  array());
         
-        $sessions =& $this->_nestedArrays['initiatives']['sessions']; 
+        $sessions =& $this->_nestedArrays['initiative']['sessions']; 
         $sessions[] =& $addition;
         $this->_sessionHash[(int)$row['sid']] =& $addition;
         return $addition; 

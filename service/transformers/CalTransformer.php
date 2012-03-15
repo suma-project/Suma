@@ -13,19 +13,19 @@ class CalTransformer extends BaseTransformer
         $tier = null;
         if ($this->_byCounts == false)
         {
-            if (! isset($this->_nestedArrays['initiatives']['sessions']))
+            if (! isset($this->_nestedArrays['initiative']['sessions']))
             {
-                $this->_nestedArrays['initiatives']['sessions'] = array();
+                $this->_nestedArrays['initiative']['sessions'] = array();
             }
             $tier =& $this->addSession($row);
         }
         else 
         {
-            if (! isset($this->_nestedArrays['initiatives']['counts']))
+            if (! isset($this->_nestedArrays['initiative']['counts']))
             {
-                $this->_nestedArrays['initiatives']['counts'] = array();
+                $this->_nestedArrays['initiative']['counts'] = array();
             }
-            $tier =& $this->_nestedArrays['initiatives'];
+            $tier =& $this->_nestedArrays['initiative'];
         }
 
         $count =& $this->addCount($row, $tier);
@@ -45,7 +45,7 @@ class CalTransformer extends BaseTransformer
                           'counts' =>  array());
         
         
-        $sessions =& $this->_nestedArrays['initiatives']['sessions'];
+        $sessions =& $this->_nestedArrays['initiative']['sessions'];
         $sessions[] =& $addition;
         $this->_sessionHash[(int)$row['sid']] =& $addition;
         return $addition; 

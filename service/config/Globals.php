@@ -11,6 +11,7 @@ class Globals
     private static $_config;
     private static $_log;
     private static $_db;
+    private static $_qsDbLimit;
     
     static function getDBConn()
     {    
@@ -49,6 +50,16 @@ class Globals
             self::$_log = new Zend_Log($writer);            
             return self::$_log;
         }
+    }
+    
+    static function getQsDbLimit()
+    {
+        if (self::$_qsDbLimit == null)
+        {
+            self::$_qsDbLimit = self::getConfig()->queryserver->db->limit;
+        }
+        
+        return self::$_qsDbLimit;
     }
     
     static function getConfig()

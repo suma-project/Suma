@@ -13,19 +13,19 @@ class LcTransformer extends BaseTransformer
         $tier = null;
         if ($this->_byCounts == false)
         {
-            if (! isset($this->_nestedArrays['initiatives']['sessions']))
+            if (! isset($this->_nestedArrays['initiative']['sessions']))
             {
-                $this->_nestedArrays['initiatives']['sessions'] = array();
+                $this->_nestedArrays['initiative']['sessions'] = array();
             }
             $tier =& $this->addSession($row);
         }
         else 
         {
-            if (! isset($this->_nestedArrays['initiatives']['locations']))
+            if (! isset($this->_nestedArrays['initiative']['locations']))
             {
-                $this->_nestedArrays['initiatives']['locations'] = array();
+                $this->_nestedArrays['initiative']['locations'] = array();
             }
-            $tier =& $this->_nestedArrays['initiatives'];
+            $tier =& $this->_nestedArrays['initiative'];
         }
         
         $location =& $this->addLocation($row, $tier);
@@ -44,7 +44,7 @@ class LcTransformer extends BaseTransformer
                           'end'        =>  $row['end'],
                           'locations' =>  array());
         
-        $sessions =& $this->_nestedArrays['initiatives']['sessions'];
+        $sessions =& $this->_nestedArrays['initiative']['sessions'];
         $sessions[] =& $addition;
         $this->_sessionHash[(int)$row['sid']] =& $addition;
         return $addition; 

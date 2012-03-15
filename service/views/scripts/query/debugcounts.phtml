@@ -4,7 +4,22 @@ $qModel = $this->qModel;
 
 echo $qModel->getCountsSql() . '<p>&nbsp;</p>';
 
-echo 'Table Rows: '.$qModel->getRowCount().'<br />'; 
+$base = Zend_Controller_Front::getInstance()->getBaseUrl();
+$urlPrev = "http://" . $_SERVER['HTTP_HOST']  . $base . '/query/debugcounts/id/'.$this->id.'/limit/5000/offset/' . $this->prevOffset;
+$urlNext = "http://" . $_SERVER['HTTP_HOST']  . $base . '/query/debugcounts/id/'.$this->id.'/limit/5000/offset/' . $this->nextOffset;
+
+echo 'Total Rows: '.$qModel->getRowCount().'<br />'; 
+
+if ($this->offset > 0)
+{
+    echo '<a href="'.$urlPrev.'">Previous</a> ';
+}
+
+if ($qModel->hasMore())
+{
+    echo ' <a href="'.$urlNext.'">Next</a>';
+}
+
 echo '<table border="1">';
 echo '<tr><th>Session Id</th><th>Sess Start</th><th>Sess End</th><th>Count Id</th><th>Count Num</th><th>Activity Id</th><th>Loc Id</th><th>Time</th></tr>';
 

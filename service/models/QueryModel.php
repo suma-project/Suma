@@ -3,6 +3,7 @@
 class QueryModel
 {
     private $_db;
+    private $_hasMore;
     private $_sessSql;
     private $_countsSql;
     private $_sessCount;
@@ -39,6 +40,11 @@ class QueryModel
         }
     }
 
+    public function hasMore()
+    {
+        return $this->_hasMore;
+    }
+    
     public function getSessSql()
     {
         return $this->_sessSql;
@@ -61,7 +67,10 @@ class QueryModel
     
     public function getNextRow()
     {
-        return $this->_queryStmt->fetch();
+        if ($this->_queryStmt)
+        {
+            return $this->_queryStmt->fetch();
+        }
     }
     
     public function getInitMetadata()
@@ -108,7 +117,7 @@ class QueryModel
     public function bySessions($params)
     {
         // SQL to pull valid sessions
-        $this->_sessSql = 'SELECT s.id FROM session s WHERE s.fk_initiative = ' . $this->_initId . ' ';
+        $this->_sessSql = 'SELECT s.id FROM session s WHERE s.fk_initiative = ' . $this->_initId . ' AND s.deleted = false ';
         
         // Test if AND clause is needed
         if (isset($params['sDate']) || isset($params['eDate']))
@@ -204,38 +213,61 @@ class QueryModel
         $this->_sessSql .= ' ORDER BY s.id ASC ';
         
         $sessQueryStmt = $this->_db->query($this->_sessSql);
-        $this->_queryStmt = $sessQueryStmt; // This line is a hack, but it fixes a non-object error.
 
         if ($sessQueryStmt->rowCount() > 0)
         {
             $this->_sessCount = $sessQueryStmt->rowCount();
             
-            // SQL to pull counts of returned session IDs of previous query
+            // Get total number of counts
+            $this->_countsSql = 'SELECT COUNT(c.id) 
+                    FROM session s, 
+                    count c LEFT JOIN count_activity_join caj ON c.id = caj.fk_count 
+                    WHERE s.deleted = false AND c.fk_session = s.id AND s.fk_initiative = '.$this->_initId.' AND '
+                    .' s.id IN (';
+                    
+            $sessIds = '';
+            while($row = $sessQueryStmt->fetch())
+            {
+                $sessIds .= $row['id'].', '; 
+            }
+            $this->_countsSql .= substr($sessIds, 0, -2) . ') ';
+            $this->_rowCount = $this->_db->fetchOne($this->_countsSql);
+            
+            if ($this->_rowCount > ($params['offset'] + $params['limit']))
+            {
+                $this->_hasMore = true;
+            }
+            else
+            {
+                $this->_hasMore = false;
+            }
+            
+            // SQL to pull counts of returned session IDs 
             $this->_countsSql = 'SELECT s.id as sid, s.start, s.end, c.id as cid, c.number as cnum, caj.fk_activity as act, c.fk_location as loc, c.occurrence as oc 
                     FROM session s, 
                     count c LEFT JOIN count_activity_join caj ON c.id = caj.fk_count 
                     WHERE s.deleted = false AND c.fk_session = s.id AND s.fk_initiative = '.$this->_initId.' AND '
                     .' s.id IN (';
-    
-            while($row = $sessQueryStmt->fetch())
-            {
-                $this->_countsSql .= $row['id'].', '; 
-            }
             
-            $this->_countsSql = substr($this->_countsSql, 0, -2) . ') ';
+            $this->_countsSql .= substr($sessIds, 0, -2) . ') '; 
             $this->_countsSql .= ' ORDER BY '.$this->_formats[$params['format']];
+            $this->_countsSql .= ' LIMIT '.$params['offset'].', '.$params['limit'].' ';
             
             $this->_queryStmt = $this->_db->query($this->_countsSql);
         }
-        
-        $this->_rowCount = $this->_queryStmt->rowCount();
+        else
+        {
+            $this->_rowCount = 0;
+        }
     }
     
     
     public function byCounts($params)
     {
-        $this->_countsSql = 'SELECT s.id as sid, s.start, s.end, c.id as cid, c.number as cnum, caj.fk_activity as act, c.fk_location as loc, c.occurrence as oc 
-                FROM session s, 
+        $countSelect = 'SELECT COUNT(c.id) ';
+        $dataSelect = 'SELECT s.id as sid, s.start, s.end, c.id as cid, c.number as cnum, caj.fk_activity as act, c.fk_location as loc, c.occurrence as oc ';
+        
+        $this->_countsSql = ' FROM session s, 
                 count c LEFT JOIN count_activity_join caj ON c.id = caj.fk_count 
                 WHERE s.deleted = false AND c.fk_session = s.id AND s.fk_initiative = '.$this->_initId.' ';
         
@@ -257,7 +289,6 @@ class QueryModel
             $this->_countsSql .= ' AND (DATE(c.occurrence) < DATE(\''.$params['eDate'].'\')) ';
         }
         
-
         // Time filtration
         if (isset($params['sTimeH']))
         {
@@ -279,7 +310,6 @@ class QueryModel
                 {
                     $this->_countsSql .= ' AND (TIME(c.occurrence) BETWEEN TIME(\''.$start.'\') AND TIME(\''.$end.'\')) ';
                 }
-                
             }
             else
             {
@@ -292,11 +322,22 @@ class QueryModel
             $this->_countsSql .= ' AND (TIME(c.occurrence) <= TIME(\''.$end.'\')) ';
         }        
         
-        $this->_countsSql .= ' ORDER BY '.$this->_formats[$params['format']];
-        
+        $this->_rowCount = $this->_db->fetchOne($countSelect.$this->_countsSql);
 
+        if ($this->_rowCount > ($params['offset'] + $params['limit']))
+        {
+            $this->_hasMore = true;
+        }
+        else
+        {
+            $this->_hasMore = false;
+        }        
+        
+        $this->_countsSql = $dataSelect.$this->_countsSql;
+        $this->_countsSql .= ' ORDER BY '.$this->_formats[$params['format']];
+        $this->_countsSql .= ' LIMIT '.$params['offset'].', '.$params['limit'].' ';
+        
         $this->_queryStmt = $this->_db->query($this->_countsSql);
-        $this->_rowCount = $this->_queryStmt->rowCount();
     }
     
     

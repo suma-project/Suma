@@ -51,6 +51,8 @@ class QueryController extends BaseController
         $eTime = Zend_Filter::filterStatic($this->getRequest()->getParam('etime'), 'StripTags');
         $sum = Zend_Filter::filterStatic($this->getRequest()->getParam('sum'), 'StripTags');
         $format = Zend_Filter::filterStatic($this->getRequest()->getParam('format'), 'StripTags');
+        $offset = Zend_Filter::filterStatic($this->getRequest()->getParam('offset'), 'StripTags');
+        $limit = Zend_Filter::filterStatic($this->getRequest()->getParam('limit'), 'StripTags');
         
         $params = array();
         
@@ -62,7 +64,8 @@ class QueryController extends BaseController
             }
 
             $params['format'] = $format;
-            
+            $params['offset'] = (! empty($offset) && is_numeric($offset)) ? (int)$offset : 0;
+            $params['limit'] = (! empty($limit) && is_numeric($limit)) ? (int)$limit : Globals::getQsDbLimit();
             
             if (! empty($sDate)) 
             {
@@ -133,12 +136,20 @@ class QueryController extends BaseController
                 {
                     $qModel->bySessions($params);
                     $this->view->qModel = $qModel;
+                    $this->view->offset = $params['offset'];
+                    $this->view->nextOffset = $params['offset'] + $params['limit'];
+                    $this->view->prevOffset = ($params['offset'] - $params['limit'] > 0) ? $params['offset'] - $params['limit'] : 0;
+                    $this->view->id = $initId;
                     $this->render('debugsessions');
                 }
                 else if ($this->_getParam('service') == 'debugcounts')
                 {
                     $qModel->byCounts($params);
                     $this->view->qModel = $qModel;
+                    $this->view->offset = $params['offset'];
+                    $this->view->nextOffset = $params['offset'] + $params['limit'];
+                    $this->view->prevOffset = ($params['offset'] - $params['limit'] > 0) ? $params['offset'] - $params['limit'] : 0;
+                    $this->view->id = $initId;
                     $this->render('debugcounts');
                 }
                 else 
@@ -165,6 +176,11 @@ class QueryController extends BaseController
                         $trans->addRow($row);
                     }
                     
+                    if ($qModel->hasMore())
+                    {
+                        $trans->setHasMore(true, ($params['offset']+$params['limit']));
+                    }
+
                     $this->view->trans = $trans;
                 }
             }
