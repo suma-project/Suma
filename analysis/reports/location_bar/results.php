@@ -2,19 +2,41 @@
 
 require_once '../../lib/Server_IO.php';
 
-$params = array('id'     =>   $_GET['id'],
-                'sdate'  =>   $_GET['sdate'],
-                'edate'  =>   $_GET['edate'],
-                'stime'  =>   $_GET['stime'],
-                'etime'  =>   $_GET['etime'],
-                'format' =>  'lc',
-                'sum'    =>  'true');
+$hash = array();
 
-try 
+function populateHash($response)
 {
-    $response = Server_IO::getData($params, 'counts');
+    global $hash;
+    $init = $response['initiative'];
+    $locDictionary = $init['dictionary']['locations'];
+    $locations = $init['locations'];
+    
+    if ($locations)
+    {
+        foreach($locations as $loc)
+        {
+            foreach($locDictionary as $lookup)
+            {
+                if ($lookup['id'] == $loc['id'])
+                {
+                    $title = $lookup['title'];
+                    break;
+                }
+            }
+            
+            if (isset($hash[$title]))
+            {
+                $hash[$title] = $hash[$title] + $loc['counts'];
+            }
+            else
+            {
+                $hash[$title] = $loc['counts'];
+            }
+        }
+    }
 }
-catch (Exception $e)
+
+function echo500($e)
 {
     header("HTTP/1.1 500 Internal Server Error");
     echo "<h1>500 Internal Server Error</h1>";
@@ -22,27 +44,46 @@ catch (Exception $e)
     die;
 }
 
-$init = $response['initiatives'];
-$locDictionary = $init['dictionary']['locations'];
-$locations = $init['locations'];
+// --- END FUNCTIONS ---
 
-if ($locations)
+
+$params = array('id'     =>   $_GET['id'],
+                'sdate'  =>   $_GET['sdate'],
+                'edate'  =>   $_GET['edate'],
+                'stime'  =>   $_GET['stime'],
+                'etime'  =>   $_GET['etime'],
+                'format' =>  'lc',
+                'sum'    =>  'true',
+                'limit'  =>  160000);
+
+try 
 {
-    foreach($locations as $loc)
-    {  
-        foreach($locDictionary as $lookup)
-        {
-            if ($lookup['id'] == $loc['id'])
-            {
-                $title = $lookup['title'];
-            }
-        }
-        $plots .= '[\''.$title.'\', '.$loc['counts'].'],';
-    }
-    
-    $plots = substr($plots, 0, -1);
+    $io = new Server_IO();
+    populateHash($io->getData($params, 'counts'));
+}
+catch (Exception $e)
+{
+    echo500($e);
 }
 
+while($io->hasMore())
+{
+    try
+    {
+        populateHash($io->next());
+    }
+    catch (Exception $e)
+    {
+        echo500($e);
+    }
+}
+
+foreach($hash as $key => $val)
+{
+    $plots .= '[\''.$key.'\', '.$val.'],';
+}
+
+$plots = substr($plots, 0, -1);
 ?>
 
 <html>

@@ -2,19 +2,45 @@
 
 require_once '../../lib/Server_IO.php';
 
-$params = array('id'     =>   $_GET['id'],
-                'sdate'  =>   $_GET['sdate'],
-                'edate'  =>   $_GET['edate'],
-                'stime'  =>   $_GET['stime'],
-                'etime'  =>   $_GET['etime'],
-                'format' =>  'ac',
-                'sum'    =>  'true');
+$hash = array();
 
-try 
+function populateHash($response)
 {
-    $response = Server_IO::getData($params, 'counts');
+    global $hash;
+    $init = $response['initiative'];
+    $actDictionary = $init['dictionary']['activities'];
+    $activities = $init['activities'];
+    
+    if ($activities)
+    {
+        foreach($activities as $act)
+        {  
+            foreach($actDictionary as $lookup)
+            {
+                if ($act['id'] == '_No Activity')
+                {
+                    $title = 'No Activity';
+                    break;
+                }
+                else if ($lookup['id'] == $act['id'])
+                {
+                    $title = $lookup['title'];
+                }
+            }
+            
+            if (isset($hash[$title]))
+            {
+                $hash[$title] = $hash[$title] + $act['counts'];
+            }
+            else
+            {
+                $hash[$title] = $act['counts'];
+            }
+        }
+    }
 }
-catch (Exception $e)
+
+function echo500($e)
 {
     header("HTTP/1.1 500 Internal Server Error");
     echo "<h1>500 Internal Server Error</h1>";
@@ -22,34 +48,48 @@ catch (Exception $e)
     die;
 }
 
-$init = $response['initiatives'];
-$actDictionary = $init['dictionary']['activities'];
-$activities = $init['activities'];
+// --- END FUNCTIONS ---
 
-if ($activities)
+
+$params = array('id'     =>   $_GET['id'],
+                'sdate'  =>   $_GET['sdate'],
+                'edate'  =>   $_GET['edate'],
+                'stime'  =>   $_GET['stime'],
+                'etime'  =>   $_GET['etime'],
+                'format' =>  'ac',
+                'sum'    =>  'true',
+                'limit'  =>  160000);
+
+
+try 
 {
-    foreach($activities as $act)
-    {  
-        foreach($actDictionary as $lookup)
-        {
-            if ($act['id'] == '_No Activity')
-            {
-                $title = 'No Activity';
-                break;
-            }
-            else if ($lookup['id'] == $act['id'])
-            {
-                $title = $lookup['title'];
-            }
-            
-        }
-        
-        $plots .= '[\''.$title.'\', '.$act['counts'].'],';
-    }
-    
-    $plots = substr($plots, 0, -1);
+    $io = new Server_IO();
+    populateHash($io->getData($params, 'counts'));
+}
+catch (Exception $e)
+{
+    echo500($e);
 }
 
+
+while($io->hasMore())
+{
+    try
+    {
+        populateHash($io->next());
+    }
+    catch (Exception $e)
+    {
+        echo500($e);
+    }
+}
+
+foreach($hash as $key => $val)
+{
+    $plots .= '[\''.$key.'\', '.$val.'],';
+}
+
+$plots = substr($plots, 0, -1);
 ?>
 
 <html>

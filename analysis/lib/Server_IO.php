@@ -3,8 +3,10 @@
 class Server_IO
 {
     private static $_serverUrl = 'http://<host>/query';
+    private static $_hasMore;
+    private static $_offset;
     
-    static function getData($params, $mode)
+    public function getData($params, $mode)
     {
         if (! isset($params['id']) || ! is_numeric($params['id']))
         {
@@ -22,23 +24,30 @@ class Server_IO
         {
             if (($key == 'sdate' || $key == 'edate' || $key == 'stime' || $key == 'etime') && !empty($val) && !is_numeric($val))
             {
-                throw new Exception('Supplied dates and times must be all numeric');
+                throw new Exception('All supplied dates and times must be numeric');
             }
             self::$_serverUrl .= "/$key/$val";
         }
         
-        return self::sendRequest();
+        return $this->sendRequest(self::$_serverUrl);
     }
     
-    static function getInitiatives()
+    public function hasMore()
     {
-        self::$_serverUrl .= '/initiatives';
-        return self::sendRequest();
+        return self::$_hasMore;
     }
     
-    private function sendRequest()
+    public function next()
     {
-        $ch = curl_init(self::$_serverUrl);
+        return $this->sendRequest(self::$_serverUrl.'/offset/'.self::$_offset);
+    }
+    
+    
+    // ------ PRIVATE FUNCTIONS ------    
+    
+    private function sendRequest($url)
+    {
+        $ch = curl_init($url);
     
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 20);
@@ -59,6 +68,16 @@ class Server_IO
             
             if ($results)
             {
+                if (strtolower($results['status']['has more']) == 'true')
+                {
+                    self::$_hasMore = true;
+                    self::$_offset = $results['status']['offset'];
+                }
+                else 
+                {
+                    self::$_hasMore = false;
+                }
+                
                 return $results;
             }
             else
@@ -67,5 +86,13 @@ class Server_IO
             }
         }
     }
+    
+    
+    // ------ STATIC FUNCTIONS ------    
+    
+    static function getInitiatives()
+    {
+        return self::sendRequest(self::$_serverUrl.'/initiatives');
+    }    
     
 }

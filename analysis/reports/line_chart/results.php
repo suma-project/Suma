@@ -2,19 +2,40 @@
 
 require_once '../../lib/Server_IO.php';
 
-$params = array('id'     =>   $_GET['id'],
-                'sdate'  =>   $_GET['sdate'],
-                'edate'  =>   $_GET['edate'],
-                'stime'  =>   $_GET['stime'],
-                'etime'  =>   $_GET['etime'],
-                'format' =>  'lc',
-                'sum'    =>  'true');
+$hash = array();
 
-try 
+function populateHash($response)
 {
-    $response = Server_IO::getData($params, 'sessions');
+    global $hash;
+    $init = $response['initiative'];
+    $sessions = $init['sessions'];
+
+    if ($sessions)
+    {
+        foreach($sessions as $sess)
+        {  
+            $locations = $sess['locations'];
+            $total = 0;
+            foreach($locations as $loc)
+            {
+                $total += $loc['counts'];
+            }
+            
+            $day = substr($sess['start'], 0, -9);
+            
+            if (isset($hash[$day]))
+            {
+                $hash[$day] = $hash[$day] + $total;
+            }
+            else
+            {
+                $hash[$day] = $total;
+            }
+        }
+    }     
 }
-catch (Exception $e)
+
+function echo500($e)
 {
     header("HTTP/1.1 500 Internal Server Error");
     echo "<h1>500 Internal Server Error</h1>";
@@ -22,41 +43,46 @@ catch (Exception $e)
     die;
 }
 
-$init = $response['initiatives'];
-$sessions = $init['sessions'];
-$hash = array();
+// --- END FUNCTIONS ---
 
-if ($sessions)
+
+$params = array('id'     =>   $_GET['id'],
+                'sdate'  =>   $_GET['sdate'],
+                'edate'  =>   $_GET['edate'],
+                'stime'  =>   $_GET['stime'],
+                'etime'  =>   $_GET['etime'],
+                'format' =>  'lc',
+                'sum'    =>  'true',
+                'limit'  =>  160000);
+
+try 
 {
-    foreach($sessions as $sess)
-    {  
-        $locations = $sess['locations'];
-        $total = 0;
-        foreach($locations as $loc)
-        {
-            $total += $loc['counts'];
-        }
-        
-        $day = substr($sess['start'], 0, -9);
-        
-        if (isset($hash[$day]))
-        {
-            $hash[$day] = $hash[$day] + $total;
-        }
-        else
-        {
-            $hash[$day] = $total;
-        }
-    }
-    
-    foreach($hash as $key => $val)
-    {
-        $plots .= '[\''.$key.'\', '.$val.'],';
-    }
-    
-    $plots = substr($plots, 0, -1);
+    $io = new Server_IO();
+    populateHash($io->getData($params, 'sessions'));
+}
+catch (Exception $e)
+{
+    echo500($e);
 }
 
+while($io->hasMore())
+{
+    try
+    {
+        populateHash($io->next());
+    }
+    catch (Exception $e)
+    {
+        echo500($e);
+    }
+}
+
+foreach($hash as $key => $val)
+{
+    $plots .= '[\''.$key.'\', '.$val.'],';
+}
+
+$plots = substr($plots, 0, -1);
 ?>
 
 <html>
