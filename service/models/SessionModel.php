@@ -93,6 +93,15 @@ class SessionModel
         return $select->query()->fetchAll();
     }
     
+    public function getCountTotal()
+    {
+        $select = $this->_db->select()
+            ->from('count', 'SUM(number)')
+            ->where('fk_session = '.$this->_metadata['id']);
+        $row = $select->query()->fetch(Zend_Db::FETCH_NUM);
+        return $row[0];
+    }    
+    
     public function getCountsByLoc($locId)
     {
         if (is_numeric($locId))
@@ -103,6 +112,18 @@ class SessionModel
             return $select->query()->fetchAll();
         }
     }
+
+    public function getCountTotalByLoc($locId)
+    {
+        if (is_numeric($locId))
+        {
+            $select = $this->_db->select()
+                ->from('count', 'SUM(number)')
+                ->where('fk_session = '.$this->_metadata['id'].' AND fk_location = '.$locId);
+            $row = $select->query()->fetch(Zend_Db::FETCH_NUM);
+            return $row[0];
+        }
+    }    
     
     public function getJoinByCntId($cntId)
     {
