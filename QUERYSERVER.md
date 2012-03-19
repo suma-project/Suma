@@ -16,7 +16,7 @@ API options
 	* id: Initiative ID.
 	* sdate: Starting date range for query. If querying sessions, will return a session that overlaps with any part of the range, otherwise this will return only counts that are within the range. Format: YYMMDD, YYMMDDThhmm. 
 	* edate: Ending date range for query. If querying sessions, will return a session that overlaps with any part of the range, otherwise this will return only counts that are within the range. Format: YYMMDD, YYMMDDThhmm. 
-	* stime: Starting time slide (applies for all days in sdate/edate range). Format: hhmm (24-hour)
+	* stime: Starting time slice (applies for all days in sdate/edate range). Format: hhmm (24-hour)
 	* etime: Ending time slice (applies for all days in sdate/edate range). Format: hhmm (24-hour)
 	* format: one of "cal, cla, alc, lac, lca, ac, lc" (see "Return formats" below). Default: "cal"
     * sum: "true". If requesting a format where the count is at the deepest level (alc, lac, ac, lc), individual counts are combined where possible. While this does not preserve the timestamp for each count, it does result in a more compact set of data. Default: No summing.
