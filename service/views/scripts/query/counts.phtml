@@ -5,4 +5,4 @@ header('Content-Disposition: inline; filename="results.json"');
 header('Content-Description: Query results');
 
 $json = $this->trans->getJSON();
-echo Zend_Json::prettyPrint($json, array('format' => 'html'));
+echo $json;
