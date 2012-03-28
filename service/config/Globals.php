@@ -21,7 +21,6 @@ class Globals
         }
         else
         {
-            //self::getLog()->debug("Creating DB Connection to Suma DB");
             self::$_db = Zend_DB::factory(self::getConfig()->sumaserver->db->platform, array(
                                        'host' => self::getConfig()->sumaserver->db->host,
                                        'username' => self::getConfig()->sumaserver->db->user,
@@ -46,9 +45,21 @@ class Globals
         {
             $path = self::getConfig()->sumaserver->log->path;
             $name = self::getConfig()->sumaserver->log->name;
-            $writer = new Zend_Log_Writer_Stream($path . $name);
-            self::$_log = new Zend_Log($writer);            
-            return self::$_log;
+            
+            if (file_exists($path . $name) && is_writable($path . $name))
+            {
+                $writer = new Zend_Log_Writer_Stream($path . $name);
+                self::$_log = new Zend_Log($writer);
+                return self::$_log;
+            }
+            else
+            {
+                header("HTTP/1.1 500 Internal Server Error");
+                echo "<h1>500 Internal Server Error</h1>";
+                echo "<p>An error occurred on the server which prevented your request from being completed.</p>";
+                echo "<strong>Log file does not exist or is not writable</strong>";
+                die;
+            }
         }
     }
     
@@ -71,7 +82,6 @@ class Globals
         else 
         {
             $file = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'config.ini';
-            //self::getLog()->debug("Reading Configuration file: " . $file);
             self::$_config = new Zend_Config_Ini($file, 'production');
             return self::$_config;
         }

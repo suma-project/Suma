@@ -18,7 +18,8 @@ class SessionModel
         
         if (empty($row))
         {
-            throw new Exception('Object not found in database with id ' . $id);
+            Globals::getLog()->err('NONEXISTENT SESSION - SessionModel id: '.$id);
+            throw new Exception('Session object not found in database with id ' . $id);
         }
         
         foreach ($row as $key => $value)

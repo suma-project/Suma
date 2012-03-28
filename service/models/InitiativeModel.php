@@ -23,7 +23,8 @@ class InitiativeModel
         
         if (empty($row))
         {
-            throw new Exception('Object not found in database with id ' . $id);
+            Globals::getLog()->err('NONEXISTENT INITIATIVE - InitiativeModel id: '.$id);
+            throw new Exception('Initiative object not found in database with id ' . $id);
         }
             
         foreach ($row as $key => $value)
@@ -160,6 +161,7 @@ class InitiativeModel
     {
         $data = array('enabled'  =>  true);
         $this->_db->update('initiative', $data, 'id = '.$this->_id);
+        Globals::getLog()->info('INITIATIVE ENABLED - id: '.$this->_id.', title: '.$this->getMetadata('title'));
         $this->jettisonMetadata();
     }
     
@@ -167,6 +169,7 @@ class InitiativeModel
     {
         $data = array('enabled'  =>  false);
         $this->_db->update('initiative', $data, 'id = '.$this->_id);
+        Globals::getLog()->info('INITIATIVE DISABLED - id: '.$this->_id.', title: '.$this->getMetadata('title'));
         $this->jettisonMetadata();
     }
     
@@ -175,6 +178,7 @@ class InitiativeModel
         $hash = array('title'       =>  $data['title'],
                       'description' =>  $data['description']);
         $this->_db->update('initiative', $hash, 'id = '.$this->_id);
+        Globals::getLog()->info('INITIATIVE UPDATED - id: '.$this->_id.', title: '.$this->getMetadata('title'));
         $this->jettisonMetadata();
     }
     
@@ -189,7 +193,12 @@ class InitiativeModel
         {
             $data = array('fk_root_location' => $rootId);
             $this->_db->update('initiative', $data, 'id = '.$this->_id);
+            Globals::getLog()->info('INITIATIVE ROOT SET - id: '.$this->_id.', title: '.$this->getMetadata('title').', root_id: '.$rootId);
             $this->jettisonMetadata();
+        }
+        else
+        {
+            Globals::getLog()->warn('CANNOT SET INITIATIVE ROOT, LOCATION DOES NOT EXIST - init_id: '.$this->_id.', title: '.$this->getMetadata('title').', root_id: '.$rootId);
         }
     }
     
@@ -261,7 +270,14 @@ class InitiativeModel
                               'description' =>  $data['description']);
             
             $db->insert('initiative', $hash);
-            return $db->lastInsertId();
+            $initId = $db->lastInsertId();
+            Globals::getLog()->info('INITIATIVE CREATED - id: '.$initId.', title: '.$data['title']);
+            return $initId;
+        }
+        else
+        {
+            Globals::getLog()->warn('DUPLICATE INITIATIVE CREATION DENIED - title: '.$data['title']);
+            throw new Exception('Initiative already exists with the title "' . $data['title'].'"');
         }
     }
     

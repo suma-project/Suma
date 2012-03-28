@@ -16,7 +16,8 @@ class ActivityModel
 
         if (empty($row))
         {
-            throw new Exception('Object not found in database with id ' . $id);
+            Globals::getLog()->err('NONEXISTENT ACTIVITY - ActivityModel id: '.$id);
+            throw new Exception('Activity object not found in database with id ' . $id);
         }
 
         foreach ($row as $key => $value)
@@ -78,6 +79,7 @@ class ActivityModel
     {
         $data = array('enabled'  =>  true);
         $this->_db->update('activity', $data, 'id = '.$this->_id);
+        Globals::getLog()->info('ACTIVITY ENABLED - id: '.$this->_id.', init: '.$this->getMetadata('fk_initiative'));
         $this->jettisonMetadata();
     }
 
@@ -85,6 +87,7 @@ class ActivityModel
     {
         $data = array('enabled'  =>  false);
         $this->_db->update('activity', $data, 'id = '.$this->_id);
+        Globals::getLog()->info('ACTIVITY DISABLED - id: '.$this->_id.', init: '.$this->getMetadata('fk_initiative'));
         $this->jettisonMetadata();
     }
     
@@ -116,8 +119,14 @@ class ActivityModel
                               'description'   =>  isset($data['desc']) ? $data['desc'] : null,
                               'rank'          =>  isset($data['rank']) ? $data['rank'] : null);
 
-            $db->insert('activity', $hash);            
-            return $db->lastInsertId();
+            $db->insert('activity', $hash);
+            $actId = $db->lastInsertId();
+            Globals::getLog()->info('ACTIVITY CREATED - id: '.$actId.', title: '.$data['title'].', init: '.$data['init']);
+            return $actId;
+        }
+        else
+        {
+            Globals::getLog()->warn('DUPLICATE ACTIVITY CREATION DENIED - title: '.$data['title'].', init: '.$data['init']);
         }
     }    
 

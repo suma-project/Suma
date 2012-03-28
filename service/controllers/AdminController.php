@@ -31,6 +31,7 @@ class AdminController extends BaseController
       {
         case Zend_Auth_Result::FAILURE:
           $this->_forward("login");
+          Globals::getLog()->warn('FAILED ADMIN LOGIN');
           //echo "failure";
           break;
         case Zend_Auth_Result::SUCCESS:
@@ -90,11 +91,18 @@ class AdminController extends BaseController
         {
             $data['title'] = $title;
             $data['description'] = $description;
-            $this->view->id = InitiativeModel::create($data);
+            
+            try
+            {
+                $this->view->id = InitiativeModel::create($data);
+            } catch (Exception $e){
+                $this->view->error = $e->getMessage();
+                $this->render('error');
+                return false;               
+            }
+            
             $initModel = new InitiativeModel($this->view->id);
             $initModel->setRoot($locRootID);
-            // TODO: see if this fails...
-            // if so, delete init and throw an error
         } else {
             $this->view->error = 'Title must not be empty and location root ID must be numeric';
             $this->render('error');
@@ -198,7 +206,7 @@ class AdminController extends BaseController
             return false;
         }
 
-        if(!ActivityModel::updateActivitiesArray($activities, $initID))
+        if (!ActivityModel::updateActivitiesArray($activities, $initID))
         {
             $this->view->error = 'Error updating activities';
             $this->render('error');

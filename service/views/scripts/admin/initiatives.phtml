@@ -83,7 +83,7 @@ $(document).ready(function(){
                             alert("Created initiative...reloading.");
                             location.reload();
                         }).error(function() {
-                            alert("Unknown error when creating initiative");
+                            alert("Error when creating initiative, make sure title is unique");
                         });
                     } else {
                         alert("Initiative title cannot be empty and location tree must be selected");

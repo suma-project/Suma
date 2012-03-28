@@ -33,6 +33,7 @@ class ClientinitController extends BaseController
         }
         else
         {
+            Globals::getLog()->err('INVALID INITIATIVE ID - ClientInitController id: '.$id);
             $this->view->error = 'Initiative ID must be numeric';
             $this->render('error');
         }

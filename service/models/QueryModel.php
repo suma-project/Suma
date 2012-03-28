@@ -37,6 +37,7 @@ class QueryModel
         else
         {
             throw new Exception('Initiative does not exist');
+            Globals::getLog()->err('NONEXISTENT INITIATIVE - id: '.$initId);
         }
     }
 

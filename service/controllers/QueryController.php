@@ -194,6 +194,7 @@ class QueryController extends BaseController
         else
         {
             $this->view->error = 'Initiative ID must be numeric';
+            Globals::getLog()->err('INVALID INITIATIVE ID - QueryController id: '.$initId);
             $this->_forward("error");
         }
         

@@ -19,10 +19,11 @@ class LocationModel
 
         if (empty($row))
         {
-            throw new Exception('Location not found in database with id ' . $id);
+            Globals::getLog()->err('NONEXISTENT LOCATION - LocationModel id: '.$id);
+            throw new Exception('Location object not found in database with id ' . $id);
         }
 
-        //TODO: Re-enable caching, for it is temporarily disabled for now.
+        //TODO: Re-enable caching, it is disabled for now.
         /*
         foreach($row as $key => $value)
         {
@@ -35,7 +36,7 @@ class LocationModel
 
     public function getMetadata($key = null)
     {
-        //TODO: Re-enable caching, for it is temporarily disabled for now.
+        //TODO: Re-enable caching, it is disabled for now.
         $metadata = array();
         
         if (empty($this->_metadata))
@@ -74,7 +75,7 @@ class LocationModel
 
     public function getChildren($filterDisabled = true)
     {
-        //TODO: Re-enable caching, for it is temporarily disabled for now.
+        //TODO: Re-enable caching, it is disabled for now.
         $children = array();
         
         if (isset($this->_children))
@@ -109,7 +110,7 @@ class LocationModel
 
     public function getParent()
     {
-        //TODO: Re-enable caching, for it is temporarily disabled for now.
+        //TODO: Re-enable caching, it is disabled for now.
         $parent = $this->getMetadata('fk_parent');
         
         if (isset($this->_parent))
@@ -144,12 +145,14 @@ class LocationModel
     {
         $data = array('enabled'  =>  true);
         $this->_db->update('location', $data, 'id = '.$this->_id);
+        Globals::getLog()->info('LOCATION ENABLED - id: '.$this->_id);
     }
 
     public function disable()
     {
         $data = array('enabled'  =>  false);
         $this->_db->update('location', $data, 'id = '.$this->_id);
+        Globals::getLog()->info('LOCATION DISABLED - id: '.$this->_id);
     }    
 
 
@@ -166,7 +169,9 @@ class LocationModel
                           'rank'        =>  isset($data['rank']) ? $data['rank'] : 0);
 
         $db->insert('location', $hash);
-        return $db->lastInsertId();
+        $locId = $db->lastInsertId();
+        Globals::getLog()->info('LOCATION CREATED - id: '.$locId.', title: '.$data['title']);
+        return $locId;
     }    
 
     public static function walkTree($root)
