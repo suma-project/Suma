@@ -148,11 +148,13 @@ class InitiativeModel
         $rootTitle = $rootMeta['title'];
         $locations = $this->walkLocTree($rootMeta['id']);
         $activities = $this->fetchActivities();
+        $activityGroups = $this->fetchActivityGroups();
         
         $array = array('initiativeId'    => (int)$this->_id,
                        'initiativeTitle' => $this->getMetadata('title'),
                        'locations'       => array('id' => (int)$rootId, 'title' => $rootTitle, 'children' => $locations),
-                       'activities'      => $activities);
+                       'activities'      => $activities,
+                       'activityGroups'  => $activityGroups);
         
         return json_encode($array);
     }
@@ -240,11 +242,36 @@ class InitiativeModel
         foreach($this->getActivities() as $activity)
         {
             $meta = $activity->getMetaData();
-            $array[] = array('id' => (int)$meta['id'], 'title' => $meta['title']);
+            $group = $activity->getActivityGroup();
+            $array[] = array('id'            => (int)$meta['id'], 
+                             'title'         => $meta['title'],
+                             'groupId'       => (int)$group->getMetadata('id'));
         }
         
         return $array;
-    }  
+    }
+    
+    private function fetchActivityGroups()
+    {
+        $array = array();
+        $groupsHash = array();
+        
+        foreach($this->getActivities() as $activity)
+        {
+            $groupsHash[(int)$activity->getMetadata('fk_activity_group')] = null;
+        }
+        
+        foreach($groupsHash as $key => $val)
+        {
+            $group = new ActivityGroupModel($key);
+            $array[] = array('id'       => (int)$group->getMetadata('id'), 
+                             'title'    => $group->getMetadata('title'),
+                             'rank'     => (int)$group->getMetadata('rank'),
+                             'required' => ($group->getMetadata('required')) ? 'true' : 'false');
+        }
+        
+        return $array;
+    }
     
     private function jettisonMetadata()
     {

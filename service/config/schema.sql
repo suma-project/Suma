@@ -80,3 +80,17 @@ CREATE TABLE IF NOT EXISTS `count_activity_join` (
 ) ENGINE=InnoDB ;
 
 
+CREATE TABLE IF NOT EXISTS `activity_group` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT,
+    `title` VARCHAR(255) NOT NULL,
+    `rank` INT NOT NULL,
+    `description` LONGTEXT NULL,
+    `required` BOOLEAN NOT NULL DEFAULT false,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB ;
+
+
+ALTER TABLE `activity` 
+ADD COLUMN `fk_activity_group` BIGINT NOT NULL, 
+ADD CONSTRAINT FOREIGN KEY (`fk_activity_group`) REFERENCES `activity_group` (`id`);
+

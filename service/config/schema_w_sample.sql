@@ -83,6 +83,21 @@ CREATE TABLE IF NOT EXISTS `count_activity_join` (
 ) ENGINE=InnoDB ;
 
 
+CREATE TABLE IF NOT EXISTS `activity_group` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT,
+    `title` VARCHAR(255) NOT NULL,
+    `rank` INT NOT NULL,
+    `description` LONGTEXT NULL,
+    `required` BOOLEAN NOT NULL DEFAULT false,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB ;
+
+
+ALTER TABLE `activity` 
+ADD COLUMN `fk_activity_group` BIGINT NOT NULL, 
+ADD CONSTRAINT FOREIGN KEY (`fk_activity_group`) REFERENCES `activity_group` (`id`);
+
+
 -- SAMPLE DATA --
 
 
@@ -114,11 +129,18 @@ INSERT INTO `session` (`id`, `start`, `end`, `fk_initiative`, `fk_transaction`, 
 (3, '2011-12-15 15:20:02', '2011-12-15 15:22:34', 1, 3, 0);
 
 
-INSERT INTO `activity` (`id`, `title`, `enabled`, `fk_initiative`, `rank`, `description`) VALUES
-(1, 'Reading', 1, 1, 0, ''),
-(2, 'Computing', 1, 1, 1, ''),
-(3, 'Collaborating', 1, 1, 2, ''),
-(4, 'Training/Class', 1, 1, 3, '');
+INSERT INTO `activity_group` (`id`, `title`, `rank`, `description`, `required`) VALUES
+(1, 'Type', 1, '', 1),
+(2, 'Medium', 2, '', 0);
+
+
+INSERT INTO `activity` (`id`, `title`, `enabled`, `fk_initiative`, `rank`, `description`, `fk_activity_group`) VALUES
+(1, 'Reading', 1, 1, 0, '', 1),
+(2, 'Computing', 1, 1, 1, '', 1),
+(3, 'Collaborating', 1, 1, 2, '', 1),
+(4, 'Training/Class', 1, 1, 3, '', 1),
+(5, 'In-Person', 1, 1, 4, '', 2),
+(6, 'Online', 1, 1, 5, '', 2);
 
 
 INSERT INTO `count` (`id`, `occurrence`, `number`, `fk_location`, `fk_session`) VALUES
@@ -341,9 +363,9 @@ INSERT INTO `count` (`id`, `occurrence`, `number`, `fk_location`, `fk_session`) 
 (217, '2011-12-15 15:22:14', 1, 5, 3),
 (218, '2011-12-15 15:22:15', 1, 5, 3),
 (219, '2011-12-15 15:22:16', 1, 5, 3),
-(220, '2011-12-15 15:22:17', 1, 5, 3),
-(221, '2011-12-15 15:22:18', 1, 5, 3),
-(222, '2011-12-15 15:22:20', 1, 5, 3);
+(220, '2011-12-15 15:22:17', 1, 9, 3),
+(221, '2011-12-15 15:22:18', 1, 9, 3),
+(222, '2011-12-15 15:22:20', 1, 9, 3);
 
 
 INSERT INTO `count_activity_join` (`id`, `fk_count`, `fk_activity`) VALUES
@@ -513,7 +535,12 @@ INSERT INTO `count_activity_join` (`id`, `fk_count`, `fk_activity`) VALUES
 (164, 217, 1),
 (165, 218, 1),
 (166, 219, 1),
-(167, 220, 1),
-(168, 221, 1),
-(169, 222, 1);
+(167, 220, 3),
+(168, 220, 5),
+(169, 221, 2),
+(170, 221, 3),
+(171, 221, 6),
+(172, 222, 2),
+(173, 222, 3),
+(174, 222, 5);
 

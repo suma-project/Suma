@@ -1,9 +1,12 @@
 <?php 
 
+require_once 'models/ActivityGroupModel.php';
+
 class ActivityModel
 {
     private $_db;
     private $_metadata;
+    private $_group;
     private $_id;
 
     public function __construct($id)
@@ -60,6 +63,16 @@ class ActivityModel
         }
     }
 
+    public function getActivityGroup()
+    {
+        if (empty($this->_group))
+        {
+            $this->_group = new ActivityGroupModel($this->getMetadata('fk_activity_group'));
+        }
+        
+        return $this->_group;
+    }
+    
     public function update($data)
     {
         $hash = array('title'       =>  $data['title'],
@@ -97,6 +110,7 @@ class ActivityModel
     private function jettisonMetadata()
     {
         $this->_metadata = null;
+        $this->_activityGroup = null;
     }
 
     
