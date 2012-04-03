@@ -40,6 +40,11 @@ abstract class BaseTransformer
         $this->_nestedArrays['initiative']['dictionary']['activities'] = $activityArray;
     }
     
+    public function setInitActGroups($actGroupsArray)
+    {
+        $this->_nestedArrays['initiative']['dictionary']['activityGroups'] = $actGroupsArray;
+    }
+    
     public function setHasMore($status, $rowCount=0)
     {
         if ($status)

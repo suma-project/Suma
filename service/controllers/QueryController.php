@@ -198,6 +198,7 @@ class QueryController extends BaseController
                     $trans->setInitMetadata($qModel->getInitMetadata());
                     $trans->setInitLocs($qModel->getInitLocs());
                     $trans->setInitActs($qModel->getInitActs());
+                    $trans->setInitActGroups($qModel->getInitActGroups());
                     
                     while($row = $qModel->getNextRow())
                     {

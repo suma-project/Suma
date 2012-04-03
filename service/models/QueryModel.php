@@ -11,6 +11,7 @@ class QueryModel
     private $_queryStmt;
     private $_initLocs = array();
     private $_initActs = array();
+    private $_initActGroups = array();
     private $_initId;
     private $_initMetadata = array();
     private $_formats = array('alc' => ' caj.fk_activity ASC, c.fk_location ASC, c.id ASC ', 
@@ -26,7 +27,7 @@ class QueryModel
         $this->_db = Globals::getDBConn();
         $this->_initId = $initId;
         $select = $this->_db->select()
-            ->from('initiative')
+            ->from('initiative', array('id', 'title', 'fk_root_location as rootLocation', 'description'))
             ->where('id = '.$this->_initId);
         $metadata = $select->query()->fetch();
         
@@ -83,7 +84,7 @@ class QueryModel
     {
         if (empty($this->_initLocs))
         {
-            $this->walkLocTree($this->_initMetadata['fk_root_location']);
+            $this->walkLocTree($this->_initMetadata['rootLocation']);
         }
         return $this->_initLocs;
     }
@@ -93,7 +94,7 @@ class QueryModel
         if (empty($this->_initActs))
         {
             $select = $this->_db->select()
-                ->from('activity')
+                ->from('activity', array('id', 'title', 'rank', 'description', 'fk_activity_group as activityGroup'))
                 ->where('enabled = true AND fk_initiative = ' . $this->_initId)
                 ->order('rank ASC');
             $acts = $select->query()->fetchAll();
@@ -113,6 +114,40 @@ class QueryModel
         }
         
         return $this->_initActs;
+    }
+
+    public function getInitActGroups()
+    {
+        if (empty($this->_initActGroups))
+        {
+            $select = $this->_db->select()
+                ->distinct()
+                ->from(array('ag' => 'activity_group'),
+                       array('id', 'title', 'rank', 'description', 'required'))
+                ->join(array('a' => 'activity'),
+                             'a.fk_activity_group = ag.id', array())
+                ->where('a.fk_initiative = ' . $this->_initId);
+            $groups = $select->query()->fetchAll();
+            
+            // Cast numerical string(s) into type int
+            foreach($groups as $grp)
+            {
+                foreach($grp as $key => $val)
+                {
+                    if ($key == 'required')
+                    {
+                        $grp[$key] = ($val == 1 || $val == 'true') ? 'true' : 'false';
+                    }
+                    else if (is_numeric($val))
+                    {
+                        $grp[$key] = (int)$val;
+                    }
+                }
+                $this->_initActGroups[] = $grp;
+            }
+        }
+        
+        return $this->_initActGroups;
     }
     
     public function bySessions($params)
@@ -347,7 +382,7 @@ class QueryModel
     private function walkLocTree($parentId)
     {
         $select = $this->_db->select()
-            ->from('location')
+            ->from('location', array('id', 'title', 'fk_parent as parent', 'description', 'rank'))
             ->where('enabled = true AND fk_parent = ' . $parentId)
             ->order('rank ASC');
         $nodes = $select->query()->fetchAll();
@@ -379,14 +414,25 @@ class QueryModel
             ->from(array('i' => 'initiative'),
                    array('title', 'id', 'description'))
             ->join(array('s' => 'session'),
-                         'i.id = s.fk_initiative',
-                   array())
+                         'i.id = s.fk_initiative', array())
             ->where('s.deleted = false')
             ->group('i.id')
             ->order(array('i.title ASC'));
         $initiatives = $select->query()->fetchAll();
         
-        return array('initiatives' => $initiatives);
+        // This block is to cast string id into an int
+        $parentArray = array();
+        foreach ($initiatives as $init)
+        {
+            $array = array();
+            foreach ($init as $key => $val)
+            {
+                $array[$key] = ($key == 'id') ? (int)$val : $val;
+            }
+            $parentArray[] = $array;
+        }
+        
+        return $parentArray;
     }
     
 }

@@ -241,13 +241,12 @@ class InitiativeModel
         $array = array();
         foreach($this->getActivities() as $activity)
         {
-            $meta = $activity->getMetaData();
             $group = $activity->getActivityGroup();
-            $array[] = array('id'            => (int)$meta['id'], 
-                             'title'         => $meta['title'],
-                             'groupId'       => (int)$group->getMetadata('id'));
+            $array[] = array('id'       =>  (int)$activity->getMetaData('id'), 
+                             'title'    =>  $activity->getMetaData('title'),
+                             'rank'     =>  (int)$activity->getMetaData('rank'),
+                             'groupId'  =>  (int)$group->getMetadata('id'));
         }
-        
         return $array;
     }
     
