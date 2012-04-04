@@ -107,6 +107,7 @@ class ActivityModel
     
     // ------ PRIVATE FUNCTIONS ------        
     
+    
     private function jettisonMetadata()
     {
         $this->_metadata = null;
@@ -115,6 +116,7 @@ class ActivityModel
 
     
     // ------ STATIC FUNCTIONS ------
+    
     
     public static function create($data)
     {

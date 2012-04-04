@@ -60,6 +60,45 @@ class ActivityGroupModel
         }
     }
     
-    //TODO: UPDATE & CREATE functions
+    public function update($data)
+    {
+        $hash = array('title'        =>  $data['title'],
+                      'rank'         =>  $data['rank'],
+                      'description'  =>  $data['descr'],
+                      'required'     =>  $data['required']);
+
+        $this->_db->update('activity_group', $hash, 'id = '.$this->_id);
+        Globals::getLog()->info('ACTIVITY GROUP UPDATED - id: '.$this->_id.', title: '.$data['title']);
+        $this->jettisonMetadata();
+    }
+
+    
+    // ------ PRIVATE FUNCTIONS ------        
+    
+    
+    private function jettisonMetadata()
+    {
+        $this->_metadata = null;
+    }
+    
+    
+    // ------ STATIC FUNCTIONS ------
+    
+    
+    public static function create($data)
+    {
+        $db = Globals::getDBConn();
+
+        $hash = array('title'        =>  $data['title'],
+                      'rank'         =>  isset($data['rank']) ? $data['rank'] : 1,
+                      'description'  =>  isset($data['descr']) ? $data['descr'] : null,
+                      'required'     =>  isset($data['required']) ? $data['required'] : false);
+
+        $db->insert('activity_group', $hash);
+        $actGrpId = $db->lastInsertId();
+        Globals::getLog()->info('ACTIVITY GROUP CREATED - id: '.$actGrpId.', title: '.$data['title']);
+        
+        return $actGrpId;
+    }
     
 }

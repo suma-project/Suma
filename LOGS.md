@@ -20,6 +20,8 @@ Log actions
     * ACTIVITY ENABLED - Activity flagged as enabled.
     * ACTIVITY DISABLED - Activity flagged as disabled.
     * ACTIVITY CREATED - New database activity entry.
+    * ACTIVITY GROUP CREATED - New database activity_group entry.
+    * ACTIVITY GROUP UPDATED - Activity Group updated.
     * INITIATIVE ENABLED - Initiative flagged as enabled.
     * INITIATIVE DISABLED - Initiative flagged as disabled.
     * INITIATIVE UPDATED - Initiative updated.
@@ -37,6 +39,7 @@ Log actions
     * NONEXISTENT ACTIVITY - No activity found with requested id.
     * NONEXISTENT LOCATION - No location found with requested id.
     * NONEXISTENT SESSION - No session found with requested id.
+    * NONEXISTENT ACTIVITY GROUP - No activity group found with requested id.
 * Warning
     * SKIPPING SESSION WITH INVALID INITIATIVE ID - Sessions references a nonexistent initiative.
     * SKIPPING DUPLICATE SESSION - An identical session already exists in the database and is considered to have already been submitted.

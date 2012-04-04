@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS `count_activity_join` (
 
 
 CREATE TABLE IF NOT EXISTS `activity_group` (
-    `id` BIGINT NOT NULL AUTO_INCREMENT,
+    `id` INT NOT NULL AUTO_INCREMENT,
     `title` VARCHAR(255) NOT NULL,
     `rank` INT NOT NULL,
     `description` LONGTEXT NULL,
@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS `activity_group` (
 
 
 ALTER TABLE `activity` 
-ADD COLUMN `fk_activity_group` BIGINT NOT NULL, 
+ADD COLUMN `fk_activity_group` INT NOT NULL, 
 ADD CONSTRAINT FOREIGN KEY (`fk_activity_group`) REFERENCES `activity_group` (`id`);
 
 
