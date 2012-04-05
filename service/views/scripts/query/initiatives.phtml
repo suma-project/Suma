@@ -4,5 +4,4 @@ header('Content-type: application/json');
 header('Content-Disposition: inline; filename="query_initiatives.json"');
 header('Content-Description: Query Initiatives');
 
-$json = Zend_Json::encode($this->initiatives);
-echo $json;
+echo Zend_Json::encode($this->initiatives);

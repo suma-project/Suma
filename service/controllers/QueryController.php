@@ -19,6 +19,10 @@ class QueryController extends BaseController
                                    'ac'  => 'AcTransformer',
                                    'lc'  => 'LcTransformer');
     
+    public function indexAction()
+    {
+    }
+    
     public function initiativesAction()
     {
         $this->view->initiatives = QueryModel::getInitiatives();
@@ -27,22 +31,46 @@ class QueryController extends BaseController
     public function debugsessionsAction()
     {
         $this->_setParam('service', 'debugsessions');
-        $this->_forward("counts");
+        $this->_forward('process');
     }
     
     public function debugcountsAction()
     {
         $this->_setParam('service', 'debugcounts');
-        $this->_forward("counts");
+        $this->_forward('process');
     }
     
     public function sessionsAction()
     {
-        $this->_setParam('service', 'sessions');
-        $this->_forward("counts");
+        $initId = Zend_Filter::filterStatic($this->getRequest()->getParam('id'), 'StripTags');
+        
+        if ($initId)
+        {
+            $this->_setParam('service', 'sessions');
+            $this->_forward('process');           
+        }
+        else
+        {
+            $this->view->inits = QueryModel::getInitiatives();
+        }
     }
     
     public function countsAction()
+    {
+        $initId = Zend_Filter::filterStatic($this->getRequest()->getParam('id'), 'StripTags');
+        
+        if ($initId)
+        {
+            $this->_setParam('service', 'counts');
+            $this->_forward('process');           
+        }
+        else
+        {
+            $this->view->inits = QueryModel::getInitiatives();
+        }  
+    }
+    
+    public function processAction()
     {
         $initId = Zend_Filter::filterStatic($this->getRequest()->getParam('id'), 'StripTags');
         $sDate = Zend_Filter::filterStatic($this->getRequest()->getParam('sdate'), 'StripTags');

@@ -1,0 +1,10 @@
+<?php 
+
+header('Content-type: application/json');
+header('Content-Disposition: inline; filename="queryserver.json"');
+header('Content-Description: Suma Query Server');
+
+$array = array('sessions' =>  $this->serverUrl().$this->url().'/sessions',
+               'counts'   =>  $this->serverUrl().$this->url().'/counts');
+
+echo Zend_Json::encode($array);

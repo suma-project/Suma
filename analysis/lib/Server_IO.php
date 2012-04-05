@@ -92,7 +92,8 @@ class Server_IO
     
     static function getInitiatives()
     {
-        return self::sendRequest(self::$_serverUrl.'/initiatives');
+        $response = self::sendRequest(self::$_serverUrl.'/initiatives');
+        return $response['initiatives'];
     }    
     
 }

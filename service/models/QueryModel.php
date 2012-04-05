@@ -377,7 +377,7 @@ class QueryModel
         $db = Globals::getDBConn();
         $select = $db->select()
             ->from(array('i' => 'initiative'),
-                   array('id', 'title', 'description'))
+                   array('title', 'id', 'description'))
             ->join(array('s' => 'session'),
                          'i.id = s.fk_initiative',
                    array())
@@ -386,7 +386,7 @@ class QueryModel
             ->order(array('i.title ASC'));
         $initiatives = $select->query()->fetchAll();
         
-        return $initiatives;
+        return array('initiatives' => $initiatives);
     }
     
 }

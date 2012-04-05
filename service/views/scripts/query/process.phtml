@@ -1,7 +1,7 @@
-<?php 
+<?php
 
 header('Content-type: application/json');
 header('Content-Disposition: inline; filename="results.json"');
 header('Content-Description: Query results');
 
-echo Zend_Json::encode($this->inits);
+echo $this->trans->getJSON();
