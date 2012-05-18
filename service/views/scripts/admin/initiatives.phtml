@@ -2,33 +2,53 @@
 <?php $baseDir = Zend_Controller_Front::getInstance()->getBaseUrl(); ?>
 <html>
 <head>
+<link rel="stylesheet" type="text/css" href="<?php echo $baseDir; ?>/css/jquery-ui-theme/css/cupertino/jquery-ui-1.8.14.custom.css" />
+<link rel="stylesheet" type="text/css" href="<?php echo $baseDir; ?>/css/admin.css" />
 <script src="http://www.google.com/jsapi" type="text/javascript"></script> 
 <script type="text/javascript">
 google.load("jquery", "1.6.4");
 google.load("jqueryui", "1.8.16");
 </script> 
-<link rel="stylesheet" type="text/css" href="<?php echo $baseDir; ?>/css/jquery-ui-theme/css/cupertino/jquery-ui-1.8.14.custom.css" />
-<link rel="stylesheet" type="text/css" href="<?php echo $baseDir; ?>/css/admin.css" />
+<script src="<?php echo $baseDir; ?>/js/nestedSortable/nestedSortable.js" type="text/javascript"></script> 
+<script src="<?php echo $baseDir; ?>/js/jquery.history.html4html5/jquery.history.js" type="text/javascript"></script> 
 <script type="text/javascript">
 $(document).ready(function(){
     // $('#toggle').hide();
+    var History = window.History; // Note: We are using a capital H instead of a lower h
+    if ( !History.enabled ) {
+         // History.js is disabled for this browser.
+         // This is because we can optionally choose to support HTML4 browsers or not.
+        alert("This browser is not supported.");
+        return false;
+    }
 
-    var loadInit = function(initID) {
+    History.Adapter.bind(window,'statechange',function(){
+        var currentState = History.getState();
+        if (currentState.data.initID) {
+            loadInit(currentState.data.initID);
+        } else {
+            $("#metadata").empty();
+            $("a#createInitLink").show();
+        }
+    });
+
+
+    function loadInit(initID) {
         $("a#createInitLink").hide();
-        $('#metadata').load('initiativeload/id/'+initID, function() {
-            $('ol.sortable').sortable({
-                // disableNesting: 'no-nest',
-                    forcePlaceholderSize: true,
-                    handle: 'div',
-                    helper: 'clone',
-                    items: 'li',
-                    // maxLevels: 3,
-                    opacity: .6,
-                    placeholder: 'placeholder',
-                    revert: 250,
-                    tabSize: 25,
-                    tolerance: 'pointer',
-                    toleranceElement: '> div'
+        $('#metadata').load('../initiativeload/id/'+initID, function() {
+            $('ol.sortable').nestedSortable({
+                disableNesting: 'no-nest',
+                forcePlaceholderSize: true,
+                handle: 'div',
+                helper: 'clone',
+                items: 'li',
+                // maxLevels: 3,
+                opacity: .6,
+                placeholder: 'placeholder',
+                revert: 250,
+                tabSize: 25,
+                tolerance: 'pointer',
+                toleranceElement: '> div'
             });
         });
     };
@@ -250,7 +270,7 @@ $(document).ready(function(){
 
     $('#addActivity').live("click", function() {
         $('#activities').prepend('<li class="enabled-act"><div><span class="actTitle">New Activity</span> <span class="actDesc"></span><span class="actID">new-act</span><a href="#" class="editAct">Edit</a></div></li>');
-        $('#activities').sortable('refresh');
+        $('#activities').nestedSortable('refresh');
         return false;
     });
 
@@ -266,7 +286,6 @@ $(document).ready(function(){
             });
         });
 
-        console.log("hi");
         $.ajax({
             type: 'POST',
             url: 'updateactivities',
@@ -275,7 +294,10 @@ $(document).ready(function(){
             async: false
         }).success(function() {
             alert("Successfully updated activities");
-            loadInit($('#initSelect').val());
+            var currentState = History.getState();
+            if (currentState.data.initID) {
+                loadInit(currentState.data.initID);
+            }
         }).error(function() {
             alert("Unknown error when updating activities");
         });
@@ -285,13 +307,42 @@ $(document).ready(function(){
     });
 
     $('form#initForm').live("submit", function() {
-        loadInit($('#initSelect').val());
+        var currentState = History.getState();
+        if (currentState.data.initID) {
+            History.replaceState({initID: $('#initSelect').val()}, "Edit Suma Initiative", "?initID=" + $('#initSelect').val());
+        } else {
+            History.pushState({initID: $('#initSelect').val()}, "Edit Suma Initiative", "?initID=" + $('#initSelect').val());
+        }
         return false;
     });
 
     $('form.deadForm').live('submit', function() {
         return false;
     });
+
+<?php
+
+    if (isset($_GET['initID'])) {
+        echo 'var recoveredID = ' . $_GET['initID'] . ';';
+        $pushStateString = <<<PUSHSTATE
+
+        var currentState = History.getState();
+        if (currentState.data.initID) {
+            if (currentState.data.initID === recoveredID) {
+                History.replaceState({initID: recoveredID}, "Edit Suma Initiative", "?initID=" + recoveredID);
+                loadInit(currentState.data.initID);
+            } else {
+                History.replaceState({initID: recoveredID}, "Edit Suma Initiative", "?initID=" + recoveredID);
+            }
+        } else {
+            History.replaceState({}, "Suma Initiative Admin Tool", "");
+            History.pushState({initID: recoveredID}, "Edit Suma Initiative", "?initID=" + recoveredID);
+        }
+
+PUSHSTATE;
+        echo $pushStateString;
+    }
+?>
 });
 </script>
 </head>
