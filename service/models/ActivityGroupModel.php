@@ -118,14 +118,15 @@ class ActivityGroupModel
     {
         $db = Globals::getDBConn();
 
-        $hash = array('title'        =>  isset($data['title']) ? $data['title'] : 'Default',
-                      'rank'         =>  isset($data['rank']) ? $data['rank'] : 1,
-                      'description'  =>  isset($data['descr']) ? $data['descr'] : null,
-                      'required'     =>  isset($data['required']) ? $data['required'] : false);
+        $hash = array('title'          =>  isset($data['title']) ? $data['title'] : 'Default',
+                      'rank'           =>  isset($data['rank']) ? $data['rank'] : 1,
+                      'description'    =>  isset($data['descr']) ? $data['descr'] : null,
+                      'required'       =>  isset($data['required']) ? $data['required'] : false,
+                      'fk_initiative'  =>  $data['init']);
 
         $db->insert('activity_group', $hash);
         $actGrpId = $db->lastInsertId();
-        Globals::getLog()->info('ACTIVITY GROUP CREATED - id: '.$actGrpId.', title: '.$data['title']);
+        Globals::getLog()->info('ACTIVITY GROUP CREATED - id: '.$actGrpId.', title: '.$data['title'].', init: '.$data['init']);
         
         return $actGrpId;
     }
