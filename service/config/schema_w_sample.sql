@@ -25,15 +25,27 @@ CREATE TABLE IF NOT EXISTS `initiative` (
 ) ENGINE=InnoDB ;
 
 
+CREATE TABLE IF NOT EXISTS `activity_group` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `title` VARCHAR(255) NOT NULL,
+    `rank` INT NOT NULL,
+    `description` LONGTEXT NULL,
+    `required` BOOLEAN NOT NULL DEFAULT false,
+    `fk_initiative` INT NOT NULL,
+    FOREIGN KEY (fk_initiative) REFERENCES initiative (id),
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB ;
+
+
 CREATE TABLE IF NOT EXISTS `activity` (
     `id` INT NOT NULL AUTO_INCREMENT,
     `title` VARCHAR(255) NOT NULL,
     `enabled` BOOLEAN NOT NULL,
-    `fk_initiative` INT NOT NULL,
+    `fk_activity_group` INT NOT NULL,
     `rank` INT NULL,
     `description` LONGTEXT NULL,
-    FOREIGN KEY (fk_initiative) REFERENCES initiative (id),
-    UNIQUE (title, fk_initiative),
+    FOREIGN KEY (fk_activity_group) REFERENCES activity_group (id),
+    UNIQUE (title, fk_activity_group),
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB ;
 
@@ -83,20 +95,6 @@ CREATE TABLE IF NOT EXISTS `count_activity_join` (
 ) ENGINE=InnoDB ;
 
 
-CREATE TABLE IF NOT EXISTS `activity_group` (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `title` VARCHAR(255) NOT NULL,
-    `rank` INT NOT NULL,
-    `description` LONGTEXT NULL,
-    `required` BOOLEAN NOT NULL DEFAULT false,
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB ;
-
-
-ALTER TABLE `activity` 
-ADD COLUMN `fk_activity_group` INT NOT NULL, 
-ADD CONSTRAINT FOREIGN KEY (`fk_activity_group`) REFERENCES `activity_group` (`id`);
-
 
 -- SAMPLE DATA --
 
@@ -129,18 +127,18 @@ INSERT INTO `session` (`id`, `start`, `end`, `fk_initiative`, `fk_transaction`, 
 (3, '2011-12-15 15:20:02', '2011-12-15 15:22:34', 1, 3, 0);
 
 
-INSERT INTO `activity_group` (`id`, `title`, `rank`, `description`, `required`) VALUES
-(1, 'Type', 1, '', 1),
-(2, 'Medium', 2, '', 0);
+INSERT INTO `activity_group` (`id`, `title`, `rank`, `description`, `required`, `fk_initiative`) VALUES
+(1, 'Type', 1, '', 1, 1),
+(2, 'Medium', 2, '', 0, 1);
 
 
-INSERT INTO `activity` (`id`, `title`, `enabled`, `fk_initiative`, `rank`, `description`, `fk_activity_group`) VALUES
-(1, 'Reading', 1, 1, 0, '', 1),
-(2, 'Computing', 1, 1, 1, '', 1),
-(3, 'Collaborating', 1, 1, 2, '', 1),
-(4, 'Training/Class', 1, 1, 3, '', 1),
-(5, 'In-Person', 1, 1, 4, '', 2),
-(6, 'Online', 1, 1, 5, '', 2);
+INSERT INTO `activity` (`id`, `title`, `enabled`, `rank`, `description`, `fk_activity_group`) VALUES
+(1, 'Reading', 1, 0, '', 1),
+(2, 'Computing', 1, 1, '', 1),
+(3, 'Collaborating', 1, 2, '', 1),
+(4, 'Training/Class', 1, 3, '', 1),
+(5, 'In-Person', 1, 4, '', 2),
+(6, 'Online', 1, 5, '', 2);
 
 
 INSERT INTO `count` (`id`, `occurrence`, `number`, `fk_location`, `fk_session`) VALUES

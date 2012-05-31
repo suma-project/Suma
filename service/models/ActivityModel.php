@@ -6,7 +6,6 @@ class ActivityModel
 {
     private $_db;
     private $_metadata;
-    private $_group;
     private $_id;
 
     public function __construct($id)
@@ -65,12 +64,7 @@ class ActivityModel
 
     public function getActivityGroup()
     {
-        if (empty($this->_group))
-        {
-            $this->_group = new ActivityGroupModel($this->getMetadata('fk_activity_group'));
-        }
-        
-        return $this->_group;
+        return new ActivityGroupModel($this->getMetadata('fk_activity_group'));
     }
     
     public function update($data)
@@ -111,7 +105,6 @@ class ActivityModel
     private function jettisonMetadata()
     {
         $this->_metadata = null;
-        $this->_activityGroup = null;
     }
 
     
@@ -124,25 +117,25 @@ class ActivityModel
 
         $select = $db->select()
             ->from('activity')
-            ->where('fk_initiative = '.$data['init'].' AND LOWER(title) = '.$db->quote(strtolower($data['title']))); 
+            ->where('fk_activity_group = '.$data['group'].' AND LOWER(title) = '.$db->quote(strtolower($data['title']))); 
         $existingActivity = $select->query()->fetch();
 
         if (empty($existingActivity))
         {
-            $hash =     array('title'         =>  $data['title'],
-                              'enabled'       =>  isset($data['enabled']) ? $data['enabled'] : false,
-                              'fk_initiative' =>  $data['init'],
-                              'description'   =>  isset($data['desc']) ? $data['desc'] : null,
-                              'rank'          =>  isset($data['rank']) ? $data['rank'] : null);
+            $hash =     array('title'             =>  $data['title'],
+                              'enabled'           =>  isset($data['enabled']) ? $data['enabled'] : false,
+                              'fk_activity_group' =>  $data['group'],
+                              'description'       =>  isset($data['desc']) ? $data['desc'] : null,
+                              'rank'              =>  isset($data['rank']) ? $data['rank'] : null);
 
             $db->insert('activity', $hash);
             $actId = $db->lastInsertId();
-            Globals::getLog()->info('ACTIVITY CREATED - id: '.$actId.', title: '.$data['title'].', init: '.$data['init']);
+            Globals::getLog()->info('ACTIVITY CREATED - id: '.$actId.', title: '.$data['title'].', group: '.$data['group']);
             return $actId;
         }
         else
         {
-            Globals::getLog()->warn('DUPLICATE ACTIVITY CREATION DENIED - title: '.$data['title'].', init: '.$data['init']);
+            Globals::getLog()->warn('DUPLICATE ACTIVITY CREATION DENIED - title: '.$data['title'].', group: '.$data['group']);
         }
     }    
 

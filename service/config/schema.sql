@@ -22,15 +22,27 @@ CREATE TABLE IF NOT EXISTS `initiative` (
 ) ENGINE=InnoDB ;
 
 
+CREATE TABLE IF NOT EXISTS `activity_group` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `title` VARCHAR(255) NOT NULL,
+    `rank` INT NOT NULL,
+    `description` LONGTEXT NULL,
+    `required` BOOLEAN NOT NULL DEFAULT false,
+    `fk_initiative` INT NOT NULL,
+    FOREIGN KEY (fk_initiative) REFERENCES initiative (id),
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB ;
+
+
 CREATE TABLE IF NOT EXISTS `activity` (
     `id` INT NOT NULL AUTO_INCREMENT,
     `title` VARCHAR(255) NOT NULL,
     `enabled` BOOLEAN NOT NULL,
-    `fk_initiative` INT NOT NULL,
+    `fk_activity_group` INT NOT NULL,
     `rank` INT NULL,
     `description` LONGTEXT NULL,
-    FOREIGN KEY (fk_initiative) REFERENCES initiative (id),
-    UNIQUE (title, fk_initiative),
+    FOREIGN KEY (fk_activity_group) REFERENCES activity_group (id),
+    UNIQUE (title, fk_activity_group),
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB ;
 
@@ -78,19 +90,3 @@ CREATE TABLE IF NOT EXISTS `count_activity_join` (
     FOREIGN KEY (fk_activity) REFERENCES activity (id),
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB ;
-
-
-CREATE TABLE IF NOT EXISTS `activity_group` (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `title` VARCHAR(255) NOT NULL,
-    `rank` INT NOT NULL,
-    `description` LONGTEXT NULL,
-    `required` BOOLEAN NOT NULL DEFAULT false,
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB ;
-
-
-ALTER TABLE `activity` 
-ADD COLUMN `fk_activity_group` INT NOT NULL, 
-ADD CONSTRAINT FOREIGN KEY (`fk_activity_group`) REFERENCES `activity_group` (`id`);
-

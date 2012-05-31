@@ -1,5 +1,7 @@
 <?php 
 
+require_once 'models/ActivityModel.php';
+
 class ActivityGroupModel
 {
     private $_db;
@@ -60,6 +62,33 @@ class ActivityGroupModel
         }
     }
     
+    public function getActivities($filterDisabled = true)
+    {
+        if (isset($this->_id))
+        {
+            $select = $this->_db->select()
+                ->from(array('a' => 'activity'), array('id'))
+                ->join(array('ag' => 'activity_group'), 'a.fk_activity_group = ag.id', array())
+                ->where('ag.id = '.$this->_id);
+
+            if ($filterDisabled)
+            {
+                $select->where('a.enabled = true');
+            }
+
+            $select->order('a.rank ASC');
+            $rows = $select->query()->fetchAll();
+            
+            $activities = array();
+            foreach($rows as $row)
+            {
+                $activities[] = new ActivityModel($row['id']);
+            }
+            
+            return $activities;
+        }    
+    }
+    
     public function update($data)
     {
         $hash = array('title'        =>  $data['title'],
@@ -89,7 +118,7 @@ class ActivityGroupModel
     {
         $db = Globals::getDBConn();
 
-        $hash = array('title'        =>  $data['title'],
+        $hash = array('title'        =>  isset($data['title']) ? $data['title'] : 'Default',
                       'rank'         =>  isset($data['rank']) ? $data['rank'] : 1,
                       'description'  =>  isset($data['descr']) ? $data['descr'] : null,
                       'required'     =>  isset($data['required']) ? $data['required'] : false);

@@ -94,9 +94,11 @@ class QueryModel
         if (empty($this->_initActs))
         {
             $select = $this->_db->select()
-                ->from('activity', array('id', 'title', 'rank', 'description', 'fk_activity_group as activityGroup'))
-                ->where('enabled = true AND fk_initiative = ' . $this->_initId)
-                ->order('rank ASC');
+                ->from(array('a' => 'activity'), array('id', 'title', 'rank', 'description', 'fk_activity_group as activityGroup'))
+                ->join(array('ag' => 'activity_group'),
+                             'a.fk_activity_group = ag.id', array())
+                ->where('a.enabled = true AND ag.fk_initiative = ' . $this->_initId)
+                ->order('a.rank ASC');
             $acts = $select->query()->fetchAll();
 
             // Cast numerical string(s) into type int
@@ -126,7 +128,7 @@ class QueryModel
                        array('id', 'title', 'rank', 'description', 'required'))
                 ->join(array('a' => 'activity'),
                              'a.fk_activity_group = ag.id', array())
-                ->where('a.fk_initiative = ' . $this->_initId);
+                ->where('ag.fk_initiative = ' . $this->_initId);
             $groups = $select->query()->fetchAll();
             
             // Cast numerical string(s) into type int

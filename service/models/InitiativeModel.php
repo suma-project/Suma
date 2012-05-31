@@ -3,6 +3,7 @@
 require_once 'models/LocationModel.php';
 require_once 'models/SessionModel.php';
 require_once 'models/ActivityModel.php';
+require_once 'models/ActivityGroupModel.php';
 
 class InitiativeModel
 {
@@ -67,6 +68,24 @@ class InitiativeModel
         }
     }    
     
+    public function getActivityGroups()
+    {
+        $select = $this->_db->select()
+            ->from('activity_group', array('id'))
+            ->where('fk_initiative = '.$this->_id)
+            ->order('rank ASC');
+            
+        $rows = $select->query()->fetchAll();
+        
+        $groups = array();
+        foreach($rows as $row)
+        {
+            $groups[] = new ActivityGroupModel($row['id']);
+        }
+        
+        return $groups;
+    }
+    
     public function getActivities($filterDisabled = true)
     {
         if (isset($this->_activities) && ! empty($this->_activities))
@@ -76,18 +95,18 @@ class InitiativeModel
         else if (isset($this->_id))
         {
             $select = $this->_db->select()
-                ->from('activity')
-                ->where('fk_initiative = '.$this->_id);
+                ->from(array('a' => 'activity'), array('id'))
+                ->join(array('ag' => 'activity_group'), 'a.fk_activity_group = ag.id', array())
+                ->where('ag.fk_initiative = '.$this->_id);
 
             if ($filterDisabled)
             {
-                $select->where('enabled = true');
+                $select->where('a.enabled = true');
             }
 
-            $select->order('rank ASC');
+            $select->order('a.rank ASC');
 
             $rows = $select->query()->fetchAll();
-            
             foreach($rows as $row)
             {
                 $this->_activities[] = new ActivityModel($row['id']);
