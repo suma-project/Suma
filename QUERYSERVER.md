@@ -21,7 +21,7 @@ API options
 	* format: one of "cal, cla, alc, lac, lca, ac, lc" (see "Return formats" below). Default: "cal"
     * sum: "true". If requesting a format where the count is at the deepest level (alc, lac, ac, lc), individual counts are combined where possible. While this does not preserve the timestamp for each count, it does result in a more compact set of data. Default: No summing.
     * offset: Starting position of desired database result set
-    * limit: Maximum number of database rows to return (override server setting)
+    * limit: Maximum number of database rows to return (override server setting). The server config contains a default number of records to process per transaction. The analysis query library provides several methods to ease the process of stitching the full data set together across multiple requests. Increasing the limit will result in fewer requests to the server (improving performance), but it could also cause the Query Server process to exceed its memory limit, resulting in an error.
 
 Return formats
 ---------------
