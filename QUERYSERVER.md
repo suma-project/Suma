@@ -14,8 +14,8 @@ API options
 		* A HTML display of the counts query service.
 * GET parameters
 	* id: Initiative ID.
-	* sdate: Starting date range for query. If querying sessions, will return a session that overlaps with any part of the range, otherwise this will return only counts that are within the range. Format: YYMMDD, YYMMDDThhmm. 
-	* edate: Ending date range for query. If querying sessions, will return a session that overlaps with any part of the range, otherwise this will return only counts that are within the range. Format: YYMMDD, YYMMDDThhmm. 
+	* sdate: Starting date range for query. If querying sessions, will return a session that overlaps with any part of the range, otherwise this will return only counts that are within the range. Format: YYYYMMDD, YYYYMMDDThhmm.
+	* edate: Ending date range for query. If querying sessions, will return a session that overlaps with any part of the range, otherwise this will return only counts that are within the range. Format: YYYYMMDD, YYYYMMDDThhmm.
 	* stime: Starting time slice (applies for all days in sdate/edate range). Format: hhmm (24-hour)
 	* etime: Ending time slice (applies for all days in sdate/edate range). Format: hhmm (24-hour)
 	* format: one of "cal, cla, alc, lac, lca, ac, lc" (see "Return formats" below). Default: "cal"
