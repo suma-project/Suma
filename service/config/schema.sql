@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS `activity_group` (
     `rank` INT NOT NULL,
     `description` LONGTEXT NULL,
     `required` BOOLEAN NOT NULL DEFAULT false,
+    `allowMulti` BOOLEAN NOT NULL DEFAULT true,
     `fk_initiative` INT NOT NULL,
     FOREIGN KEY (fk_initiative) REFERENCES initiative (id),
     PRIMARY KEY (`id`)

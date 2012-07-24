@@ -94,7 +94,8 @@ class ActivityGroupModel
         $hash = array('title'        =>  $data['title'],
                       'rank'         =>  $data['rank'],
                       'description'  =>  $data['descr'],
-                      'required'     =>  $data['required']);
+                      'required'     =>  $data['required'],
+                      'allowMulti'   =>  $data['allowMulti']);
 
         $this->_db->update('activity_group', $hash, 'id = '.$this->_id);
         Globals::getLog()->info('ACTIVITY GROUP UPDATED - id: '.$this->_id.', title: '.$data['title']);
@@ -122,6 +123,7 @@ class ActivityGroupModel
                       'rank'           =>  isset($data['rank']) ? $data['rank'] : 1,
                       'description'    =>  isset($data['descr']) ? $data['descr'] : null,
                       'required'       =>  isset($data['required']) ? $data['required'] : false,
+                      'allowMulti'     =>  isset($data['allowMulti']) ? $data['allowMulti'] : true,
                       'fk_initiative'  =>  $data['init']);
 
         $db->insert('activity_group', $hash);

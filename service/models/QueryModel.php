@@ -125,7 +125,7 @@ class QueryModel
             $select = $this->_db->select()
                 ->distinct()
                 ->from(array('ag' => 'activity_group'),
-                       array('id', 'title', 'rank', 'description', 'required'))
+                       array('id', 'title', 'rank', 'description', 'required', 'allowMulti'))
                 ->join(array('a' => 'activity'),
                              'a.fk_activity_group = ag.id', array())
                 ->where('ag.fk_initiative = ' . $this->_initId);
@@ -136,7 +136,7 @@ class QueryModel
             {
                 foreach($grp as $key => $val)
                 {
-                    if ($key == 'required')
+                    if (($key === 'required') || ($key === 'allowMulti'))
                     {
                         $grp[$key] = ($val == 1 || $val == 'true') ? 'true' : 'false';
                     }
