@@ -53,6 +53,12 @@ function initSADB(callback) {
         description: "TEXT"
     });
 
+    Note = persistence.define('Note', {
+        timestamp: "DATE",
+        title: "TEXT",
+        body: "TEXT"
+    });
+
     Initiative.hasMany('sessions', Session, 'initiative');
     Initiative.hasMany('activities', Activity, 'initiative');
     Initiative.hasMany('activityGroups', ActivityGroup, 'initiative');
@@ -64,6 +70,7 @@ function initSADB(callback) {
     Activity.hasMany('people', Person, 'activities');
 
     Session.hasMany('people', Person, 'session');
+    Session.hasMany('notes', Note, 'session');
 
     // This points to just the top-level location for an initiative
     Location.hasMany('initiatives', Initiative, 'location');

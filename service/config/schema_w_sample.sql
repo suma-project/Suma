@@ -96,6 +96,17 @@ CREATE TABLE IF NOT EXISTS `count_activity_join` (
 ) ENGINE=InnoDB ;
 
 
+CREATE TABLE IF NOT EXISTS `note` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT,
+    `occurrence` TIMESTAMP NULL,
+    `fk_session` BIGINT NOT NULL,
+    `title` VARCHAR(255) NOT NULL,
+    `body` LONGTEXT NULL,
+    FOREIGN KEY (fk_session) REFERENCES session (id),
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB ;
+
+
 
 -- SAMPLE DATA --
 
