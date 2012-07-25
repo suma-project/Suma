@@ -3,24 +3,11 @@
 <div id="treeID"><?php echo $this->location->getMetadata('id'); ?></div>
 <a id="editTree" href="#">Edit tree title and description</a>
 <br />
-<div>
-<?php
-// if ($this->location['enabled'] == true) {
-//     // echo '<label for="toggleInit">Disable Initiative</label>';
-//     echo '<input id="disableLoc" class="toggleInit" type="button" value="Disable Location Tree" />';
-// } else {
-//     echo '<input id="enableLoc" class="toggleInit" type="button" value="Enable Location Tree" />';
-// }
-?>
-</div>
 <br />
 <div><a id="addLoc" href="#">Add a location</a></div>
 <ol id="locations" class="sortable">
-<?php 
-
-//TODO: This will need to be reworked -Eric
-$this->listChildLocs($this->location, true);
-
+<?php
+$this->listChildLocs($this->location, TRUE);
 ?>
 </ol>
 <br />

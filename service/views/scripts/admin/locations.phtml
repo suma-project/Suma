@@ -1,313 +1,30 @@
 <!DOCTYPE html>
 <?php $baseDir = Zend_Controller_Front::getInstance()->getBaseUrl(); ?>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
-    <title>Suma Location Tree Editor</title>
-    <link rel="stylesheet" type="text/css" href="<?php echo $baseDir; ?>/css/jquery-ui-theme/css/cupertino/jquery-ui-1.8.14.custom.css" />
-    <link rel="stylesheet" type="text/css" href="<?php echo $baseDir; ?>/css/admin.css" />
-    <script src="http://www.google.com/jsapi" type="text/javascript"></script> 
-    <script type="text/javascript">
-    google.load("jquery", "1.6.4");
-    google.load("jqueryui", "1.8.16");
-    </script> 
+    <head>
+        <title>Suma Location Tree Editor</title>
+        <link rel="stylesheet" type="text/css" href="<?php echo $baseDir; ?>/css/jquery-ui-theme/css/cupertino/jquery-ui-1.8.14.custom.css" />
+        <link rel="stylesheet" type="text/css" href="<?php echo $baseDir; ?>/css/admin.css" />
 
-    <script src="<?php echo $baseDir; ?>/js/nestedSortable/nestedSortable.js" type="text/javascript"></script> 
-    <script src="<?php echo $baseDir; ?>/js/jquery.history.html4html5/jquery.history.js" type="text/javascript"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/jquery-ui.js" type="text/javascript"></script>
+        <script src="<?php echo $baseDir; ?>/js/nestedSortable/nestedSortable.js" type="text/javascript"></script>
+        <script src="<?php echo $baseDir; ?>/js/jquery.history.html4html5/jquery.history.js" type="text/javascript"></script>
 
-    <script type="text/javascript">
-
-    function objectifyChildLocs(root_node) {
-        var serializedLocs = [];
-        $(root_node).children("li.location").each(function(index) {
-            var locArr = {id:'unknown',
-                        title: '',
-                        description: '',
-                        enabled: true};
-
-            if ($(this).hasClass("disabled-loc")) {
-                locArr.enabled = false;
-            }
-
-            var metadata = $(this).children("div").children("span").each(function(index) {
-                if ($(this).hasClass("locTitle")) {
-                    locArr.title = $(this).text();
-                } else if ($(this).hasClass("locDesc")) {
-                    locArr.description = $(this).text();
-                } else if ($(this).hasClass("locID")) {
-                    locArr.id = $(this).text();
-                }
-            });
-
-            var children = $(this).children('ol');
-            if (children.length) {
-                locArr.children = objectifyChildLocs(children[0]);
-            }
-            serializedLocs.push(locArr);
-        });
-
-        return serializedLocs;
-    }
-
-    $(document).ready(function(){
-
-
-        $("a#createTreeLink").live('click', function() {
-            var treeTitleInput = $("input#newTreeTitleInput");
-            var treeDescInput = $("textarea#newTreeDescInput");
-
-            // Reqs: loc tree is selected, title is not empty
-
-            $("#newTreeDialog").dialog({
-                bgiframe: true,
-                title: "Create Location Tree",
-                autoOpen: true,
-                height: 400,
-                width: 325,
-                modal: true,
-                closeOnEscape: false,
-                resizable: false,
-                draggable: false,
-                open: function() {
-                    $(".ui-dialog").css({overflow: 'visible'});
-                },
-                buttons: { 
-                    'Cancel': function() {
-                        treeTitleInput.val('');
-                        treeDescInput.val('');
-                        $(this).dialog("close");
-                    },
-                    'Save': function() {
-                        var newTreeTitle = $.trim(treeTitleInput.val());
-                        var newTreeDesc = $.trim(treeDescInput.val());
-                        var myThis = this;
-
-                        if (newTreeTitle.length > 0) {
-                            $.ajax({
-                                type: 'POST',
-                                url: 'createloctree',
-                                data: {title: newTreeTitle,
-                                    desc: newTreeDesc},
-                                async: false
-                            }).success(function() {
-                                treeTitleInput.val('');
-                                treeDescInput.val('');
-                                $(myThis).dialog("close");
-                                alert("Created tree...reloading.");
-                                location.reload();
-                            }).error(function() {
-                                alert("Unknown error when updating location tree");
-                            });
-                        } else {
-                            alert("Tree title cannot be empty");
-                        }
-                        return false;
-                    }},
-            });
-
-            return false;
-        });
-
-        $("a#saveLocs").live("click", function(){
-            var locTree = {id:$("div#treeID").text(),
-                        title:$("span#treeTitle").text(),
-                        description:$("span#treeDesc").text(),
-                        enabled: true};
-            locTree.children = objectifyChildLocs($("ol#locations")[0]);
-
-            console.log(locTree);
-            $.ajax({
-                type: 'POST',
-                async: false,
-                url: 'updateloctree',
-                data: {loc_tree: JSON.stringify(locTree)}
-            }).success(function(){
-                alert("Location tree successfully updated");
-                var currentState = History.getState();
-                if (currentState.data.locID) {
-                    loadLoc(currentState.data.locID);
-                }
-                loadLoc($("div#treeID").text());
-            }).error(function(){alert("Error updating location tree");});
-
-            return false;
-        });
-
-        function loadLoc(locID) {
-            $('#locArea').load('../locationload/id/'+locID, function() {
-                $('ol.sortable').nestedSortable({
-                    disableNesting: 'no-nest',
-                        forcePlaceholderSize: true,
-                        handle: 'div',
-                        helper: 'clone',
-                        items: 'li',
-                        opacity: .6,
-                        placeholder: 'placeholder',
-                        revert: 250,
-                        tabSize: 25,
-                        tolerance: 'pointer',
-                        toleranceElement: '> div'
-                });
-            });
-        };
-
-        $('#addLoc').live('click', function() {
-            $('#locations').prepend('<li class="enabled-loc newLoc location"><div><span class=\"locTitle\">New Location</span> <span class=\"locDesc\"></span><span class="locID">new-loc</span><a href=\"#\" class=\"editLoc\">Edit</a></div></li>');
-            $('#locations').sortable('refresh');
-            return false;
-        });
-
-        $("a#editTree").live('click', function() {
-            var treeTitleSpan = $("span#treeTitle");
-            var treeDescSpan = $("span#treeDesc");
-            var treeTitleInput = $("input#treeTitleInput");
-            var treeDescInput = $("textarea#treeDescInput");
-
-            treeTitleInput.val($(treeTitleSpan[0]).text());
-            treeDescInput.val($(treeDescSpan[0]).text());
-
-            $("#treeEditDialog").dialog({
-                bgiframe: true,
-                title: "Edit Location",
-                autoOpen: true,
-                height: 375,
-                width: 325,
-                modal: true,
-                closeOnEscape: false,
-                resizable: false,
-                draggable: false,
-                open: function() {
-                    $(".ui-dialog").css({overflow: 'visible'});
-                },
-                buttons: { 
-                    'Cancel': function() {
-                        treeTitleInput.val('');
-                        treeDescInput.val('');
-                        $(this).dialog("close");
-                    },
-                    'Save': function() {
-                        // TODO: Enforce non-empty title
-                        treeTitleSpan.text(treeTitleInput.val());
-                        treeDescSpan.text(treeDescInput.val());
-
-                        treeTitleInput.val('');
-                        treeDescInput.val('');
-                        $(this).dialog("close");
-                    }
-                }
-            });
-        });
-
-        $("a.editLoc").live('click', function() {
-            // var locNode = $(this).closest("div")[0];
-            var locLi = $(this).closest("li")[0];
-            var titleSib = $(this).siblings("span.locTitle");
-            var descSib = $(this).siblings("span.locDesc");
-            var locTitleInput = $("input#locTitleInput");
-            var locDescInput = $("textarea#locDescInput");
-            var locEnabledCheck = $("input#locEnabledCheck");
-
-            locTitleInput.val($(titleSib[0]).text());
-            locDescInput.val($(descSib[0]).text());
-
-            if ($(locLi).hasClass("enabled-loc")){
-                locEnabledCheck.attr("checked", "checked");
-            } else {
-                locEnabledCheck.removeAttr("checked");
-            }
-
-            $("#locEditDialog").dialog({
-                bgiframe: true,
-                title: "Edit Location",
-                autoOpen: true,
-                height: 375,
-                width: 325,
-                modal: true,
-                closeOnEscape: false,
-                resizable: false,
-                draggable: false,
-                open: function() {
-                    $(".ui-dialog").css({overflow: 'visible'});
-                },
-                buttons: { 
-                    'Cancel': function() {
-                        locTitleInput.val('');
-                        locDescInput.val('');
-                        locEnabledCheck.removeAttr("checked");
-                        $(this).dialog("close");
-                    },
-                    'Save': function() {
-                        titleSib.text(locTitleInput.val());
-                        // TODO: Enforce non-empty title
-                        descSib.text(locDescInput.val());
-                        if (locEnabledCheck.is(":checked")) {
-                            $(locLi).removeClass("disabled-loc").addClass("enabled-loc");
-                        } else {
-                            $(locLi).removeClass("enabled-loc").addClass("disabled-loc");
-                        }
-
-                        locTitleInput.val('');
-                        locDescInput.val('');
-                        $(this).dialog("close");
-                    }
-                }
-            });
-        });
-
-        var currentState = History.getState();
-        console.dir(currentState);
-
-
-        History.Adapter.bind(window,'statechange',function(){
-            var currentState = History.getState();
-            if (currentState.data.locID) {
-                loadLoc(currentState.data.locID);
-            } else {
-                $("#locArea").empty();
-                $("a#createTreeLink").show();
-            }
-        });
-
-        $('form#locForm').live('submit', function() {
-            var currentState = History.getState();
-            var newLocID = $('#rootSelect').val();
-            $("a#createTreeLink").hide();
-            if (currentState.data.locID) {
-                History.replaceState({locID: newLocID}, "Edit Suma Location", "?locID=" + newLocID);
-            } else {
-                History.pushState({locID: newLocID}, "Edit Suma Location", "?locID=" + newLocID);
-            }
-            return false;
-        });
-
-        $('form.deadForm').live('submit', function() {
-            return false;
-        });
-
-<?php
-    if (isset($_GET['locID'])) {
+        <script type="text/javascript">
+        <?php
+            if (isset($_GET['locID'])) {
                 echo 'var recoveredID = ' . $_GET['locID'] . ';';
-                        $pushStateString = <<<PUSHSTATE
-
-        var currentState = History.getState();
-        if (currentState.data.locID) {
-            if (currentState.data.locID === recoveredID) {
-                History.replaceState({locID: recoveredID}, "Edit Suma Locations", "?locID=" + recoveredID);
-                loadLoc(currentState.data.locID);
             } else {
-                History.replaceState({locID: recoveredID}, "Edit Suma Locations", "?locID=" + recoveredID);
+                echo 'var recoveredID = null';
             }
-        } else {
-            History.replaceState({}, "Suma Locations Admin Tool", "");
-            History.pushState({locID: recoveredID}, "Edit Suma Locations", "?locID=" + recoveredID);
-        }
 
-PUSHSTATE;
-                        echo $pushStateString;
-                    }
-?>
+            echo "\nvar basePath=$baseDir;\n";
 
-    });
-    </script>
+        ?>
+        </script>
+
+        <script src="<?php echo $baseDir; ?>/js/views/admin/locations.js" type="text/javascript"></script>
 
         <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
         <title></title>
@@ -339,23 +56,20 @@ PUSHSTATE;
                 <p>Location edits will not be permanent until the entire location tree is saved.</p>
             </div>
         </div>
-    <form id="locForm">
-    <select id="rootSelect">
+        <form id="locForm">
+        <select id="rootSelect">
 
-    <?php 
-
-    foreach($this->roots as $root)
-    {
-        echo '<option value="'.$root->getMetadata('id').'">'.$root->getMetadata('title').'</option>';
-    }
-
-    ?>
-</select>
-<input id="locSelBtn" type="submit" value="OK" />
-<div id="locArea">
-</div>
-</form>
-<h3><a href="#" id="createTreeLink">Create new location tree</a></h3>
-<?php echo $this->render('admin/footer.phtml'); ?>
-</body>
+        <?php
+        foreach ($this->roots as $root) {
+            echo '<option value="'.$root->getMetadata('id').'">'.$root->getMetadata('title').'</option>';
+        }
+        ?>
+        </select>
+        <input id="locSelBtn" type="submit" value="OK" />
+        <div id="locArea">
+        </div>
+        </form>
+        <h3><a href="#" id="createTreeLink">Create new location tree</a></h3>
+        <?php echo $this->render('admin/footer.phtml'); ?>
+    </body>
 </html>
