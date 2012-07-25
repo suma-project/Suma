@@ -26,14 +26,23 @@ ol {
     width:50%;
 }
 
-.editAct, .editLoc {
+.activityControls {
     float:right;
+}
+
+/*.editAct, .editActGroup, .editLoc {
+    float:right;
+}*/
+
+.editActGroup, .editAct {
+    margin-left: 15px;
 }
 
 .disabled-loc, .disabled-act {
     background: gray;
 }
 
-.locDesc, .actDesc, .locID, .actID, #initID, #treeID {
+.locDesc, .actDesc, .actGroupDesc .locID, .actID, .actGroupID, #initID, #treeID {
     display:none;
 }
+

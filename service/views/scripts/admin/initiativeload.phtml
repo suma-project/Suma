@@ -1,34 +1,46 @@
-<?php 
-
-if ($this->init->getMetadata('enabled') == true) {
-    // echo '<label for="toggleInit">Disable Initiative</label>';
+<?php
+if ($this->init->getMetadata('enabled')) {
     echo '<div class="toggleInit"><a class="disableInit" href="#">Disable initiative</a></div>';
 } else {
     echo '<div class="toggleInit"><a class="enableInit" href="#">Enable Initiative</a></div>';
 }
 
-echo '<div id="initID">' . $this->init->getMetadata('id') . '</div>';
-echo '<h3>Initiative Title: <span id="initTitle">'.$this->init->getMetadata('title').'</span></h3>';
-echo '<h3>Initiative Description: <span id="initDesc">'.$this->init->getMetadata('description').'</span></h3>';
+echo "\n<div id=\"initID\">" . $this->init->getMetadata('id') . "</div>\n";
+echo '<h3>Initiative Title: <span id="initTitle">' . $this->init->getMetadata('title') . "</span></h3>\n";
+echo '<h3>Initiative Description: <span id="initDesc">' . $this->init->getMetadata('description') . "</span></h3>\n";
 echo "<div><a href=\"#\" id=\"editInitMetadata\">Edit title and description</a></div>\n<br/>\n";
 
+// TODO: Check if the location tree can be changed.
+echo "<h3>Location Tree: {$this->init->getRootLocation()->getMetadata('title')}</h3>\n";
 
+echo "<hr><div id=\"activityArea\"><h3>Activities:</h3>\n";
+echo "<p><a href=\"#\" id=\"addActivityGroup\">Add Activity Group</a></p>\n";
+echo "<ol id=\"activities\" class=\"sortable\">\n";
 
-// TODO: Check if the location tree can be changed
-echo "<h3>Location Tree: {$this->init->getRootLocation()->getMetadata('title')}</h3>";
+$activityGroups = $this->init->getActivityGroups(TRUE);
+foreach ($activityGroups as $activityGroup) {
+    $actGroupRequired = ($activityGroup->getMetadata('required')) ? 'required-act-group' : '';
+    $actGroupAllowMulti = ($activityGroup->getMetadata('allowMulti')) ? 'allowMulti-act-group' : '';
 
-// echo '<p></p>';
-echo '<hr><div id="activityArea"><h3>Activities:</h3>'; 
-echo '<p><a href="#" id="addActivity">Add Activity</a></p>';
-echo '<ol id="activities" class="sortable">';
+    echo "<li class=\"activityGroup {$actGroupRequired} {$actGroupAllowMulti}\"><div><span class=\"actGroupTitle\">".$activityGroup->getMetadata('title') .
+        "</span> <span class=\"actGroupDesc\">".$activityGroup->getMetadata('description') .
+        "</span><span class=\"actGroupID\">{$activityGroup->getMetadata('id')}</span><span class=\"activityControls\">" .
+        "<a href=\"#\" class=\"addActivity\">Add Activity</a><a href=\"#\" class=\"editActGroup\">Edit</a></span></div>\n";
 
-$activities = $this->init->getActivities(false);
-foreach($activities as $activity)
-{
-    $actStatus = ($activity->getMetadata('enabled')) ? 'enabled-act' : 'disabled-act';
-    // echo '<option value="'.$activity['id'].'">'.$activity['title'].'</option>';
-    print "<li class=\"{$actStatus}\"><div><span class=\"actTitle\">".$activity->getMetadata('title')."</span> <span class=\"actDesc\">".$activity->getMetadata('description')."</span><span class=\"actID\">{$activity->getMetadata('id')}</span><a href=\"#\" class=\"editAct\">Edit</a></div></li>";
+    echo "<ol>\n";
+
+    foreach ($activityGroup->getActivities(FALSE) as $activity) {
+        $actStatus = ($activity->getMetadata('enabled')) ? 'enabled-act' : 'disabled-act';
+
+        echo "<li class=\"activity no-nest {$actStatus}\"><div><span class=\"actTitle\">".$activity->getMetadata('title') .
+            "</span> <span class=\"actDesc\">".$activity->getMetadata('description') .
+            "</span><span class=\"actID\">{$activity->getMetadata('id')}</span><span class=\"activityControls\">" .
+            "<a href=\"#\" class=\"editAct\">Edit</a></span></div></li>\n";
+    }
+
+    echo "</li>\n</ol>\n";
 }
+
 echo "</ol></div>\n";
 echo "<h3><a href=\"#\" id=\"saveActs\">Save Activities</a></h3>\n";
 ?>

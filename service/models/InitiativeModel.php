@@ -261,7 +261,7 @@ class InitiativeModel
         foreach($this->getActivities() as $activity)
         {
             $group = $activity->getActivityGroup();
-            $array[] = array('id'       =>  (int)$activity->getMetaData('id'), 
+            $array[] = array('id'       =>  (int)$activity->getMetaData('id'),
                              'title'    =>  $activity->getMetaData('title'),
                              'rank'     =>  (int)$activity->getMetaData('rank'),
                              'groupId'  =>  (int)$group->getMetadata('id'));
@@ -282,10 +282,12 @@ class InitiativeModel
         foreach($groupsHash as $key => $val)
         {
             $group = new ActivityGroupModel($key);
-            $array[] = array('id'       => (int)$group->getMetadata('id'), 
+            $array[] = array('id'       => (int)$group->getMetadata('id'),
                              'title'    => $group->getMetadata('title'),
                              'rank'     => (int)$group->getMetadata('rank'),
-                             'required' => ($group->getMetadata('required')) ? 'true' : 'false');
+                             'required' => ($group->getMetadata('required')) ? TRUE : FALSE,
+                             'allowMulti' => ($group->getMetadata('allowMulti')) ? TRUE : FALSE,
+                             );
         }
         
         return $array;

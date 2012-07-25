@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 require_once 'models/ActivityGroupModel.php';
 
@@ -26,7 +26,7 @@ class ActivityModel
         {
             $this->_metadata[$key] = $value;
         }
-        
+
         $this->_id = $id;
     }
 
@@ -38,18 +38,18 @@ class ActivityModel
                 ->from('activity')
                 ->where('id = '.$this->_id);
             $row = $select->query()->fetch();
-            
+
             foreach ($row as $index => $val)
             {
                 $this->_metadata[$index] = $val;
             }
         }
-        
+
         if ($key == null)
         {
             return $this->_metadata;
         }
-        else 
+        else
         {
             if (isset($this->_metadata[$key]))
             {
@@ -66,12 +66,14 @@ class ActivityModel
     {
         return new ActivityGroupModel($this->getMetadata('fk_activity_group'));
     }
-    
+
     public function update($data)
     {
-        $hash = array('title'       =>  $data['title'],
-                      'description' =>  $data['desc'],
-                      'rank'        =>  $data['rank']);
+        $hash = array('title'             =>  isset($data['enabled']) ? $data['title'] : $this->getMetadata('title'),
+                      'enabled'           =>  isset($data['enabled']) ? $data['enabled'] : $this->getMetadata('enabled'),
+                      'fk_activity_group' =>  isset($data['group']) ? $data['group'] : $this->getMetadata('fk_activity_group'),
+                      'description'       =>  isset($data['desc']) ? $data['desc'] : $this->getMetadata('desc'),
+                      'rank'              =>  isset($data['rank']) ? $data['rank'] : $this->getMetadata('rank'));
 
         if (isset($data['enabled']) && is_bool($data['enabled']))
         {
@@ -97,88 +99,141 @@ class ActivityModel
         Globals::getLog()->info('ACTIVITY DISABLED - id: '.$this->_id.', init: '.$this->getMetadata('fk_initiative'));
         $this->jettisonMetadata();
     }
-    
-    
-    // ------ PRIVATE FUNCTIONS ------        
-    
-    
+
+
+    // ------ PRIVATE FUNCTIONS ------
+
+
     private function jettisonMetadata()
     {
         $this->_metadata = null;
     }
 
-    
+
     // ------ STATIC FUNCTIONS ------
-    
-    
+
+
     public static function create($data)
     {
         $db = Globals::getDBConn();
 
-        $select = $db->select()
-            ->from('activity')
-            ->where('fk_activity_group = '.$data['group'].' AND LOWER(title) = '.$db->quote(strtolower($data['title']))); 
-        $existingActivity = $select->query()->fetch();
+        if ((!empty($data['group']) && is_numeric($data['group'])) && !empty($data['title'])) {
+            $select = $db->select()
+                ->from('activity')
+                ->where('fk_activity_group = '.$data['group'].' AND LOWER(title) = '.$db->quote(strtolower($data['title'])));
+            $existingActivity = $select->query()->fetch();
 
-        if (empty($existingActivity))
-        {
-            $hash =     array('title'             =>  $data['title'],
-                              'enabled'           =>  isset($data['enabled']) ? $data['enabled'] : false,
-                              'fk_activity_group' =>  $data['group'],
-                              'description'       =>  isset($data['desc']) ? $data['desc'] : null,
-                              'rank'              =>  isset($data['rank']) ? $data['rank'] : null);
+            if (empty($existingActivity)) {
+                $hash = array(
+                    'title'             =>  $data['title'],
+                    'enabled'           =>  isset($data['enabled']) ? $data['enabled'] : false,
+                    'fk_activity_group' =>  $data['group'],
+                    'description'       =>  isset($data['desc']) ? $data['desc'] : null,
+                    'rank'              =>  isset($data['rank']) ? $data['rank'] : null
+                    );
 
-            $db->insert('activity', $hash);
-            $actId = $db->lastInsertId();
-            Globals::getLog()->info('ACTIVITY CREATED - id: '.$actId.', title: '.$data['title'].', group: '.$data['group']);
-            return $actId;
+                $db->insert('activity', $hash);
+                $actId = $db->lastInsertId();
+                Globals::getLog()->info('ACTIVITY CREATED - id: '.$actId.', title: '.$data['title'].', group: '.$data['group']);
+                return $actId;
+            }
+            else {
+                Globals::getLog()->warn('DUPLICATE ACTIVITY CREATION DENIED - title: '.$data['title'].', group: '.$data['group']);
+            }
+        } else {
+                Globals::getLog()->warn('MINIMUM METADATA FOR NEW ACTIVITY (ACTIVITY GROUP AND TITLE) not provided');
         }
-        else
-        {
-            Globals::getLog()->warn('DUPLICATE ACTIVITY CREATION DENIED - title: '.$data['title'].', group: '.$data['group']);
-        }
-    }    
+
+        return FALSE;
+    }
 
     public static function updateActivitiesArray($activities, $initID=null)
     {
         if (!$initID || !$activities || !is_array($activities) || !is_numeric($initID)) {
-            return false;
+            throw new Exception('Invalid data structure');
         }
 
-        foreach($activities as $actKey=>$activity)
-        {
-            if (!empty($activity['title']) && isset($activity['id'])
-                && isset($activity['desc'])
-                && (isset($activity['enabled']) && is_bool($activity['enabled'])))
-            {
-                $actData = Array('id' => $activity['id'],
-                    'title' => $activity['title'],
-                    'desc' => $activity['desc'],
-                    'enabled' => $activity['enabled'],
-                    'rank' => $actKey);
+        // TODO: Fail more gracefully?
+        foreach($activities as $actGroupKey => $activityGroup) {
 
-                if (is_numeric($actData['id']))
+            if (!empty($activityGroup['title']) && !empty($activityGroup['id'])
+                && isset($activityGroup['desc'])  && (isset($activityGroup['required']) && is_bool($activityGroup['required']))
+                     && (isset($activityGroup['allowMulti']) && is_bool($activityGroup['allowMulti'])))
+            {
+                $actGroupData = Array(
+                    'title'    => $activityGroup['title'],
+                    'desc'     => $activityGroup['desc'],
+                    'rank'     => $actGroupKey,
+                    'required' => $activityGroup['required'],
+                    'allowMulti' => $activityGroup['allowMulti']
+                    );
+
+                if (is_numeric($activityGroup['id']))
                 {
-                    $activityObj = new ActivityModel($actData['id']);
-                    if (!$activityObj) {
-                        return false;
+                    $activityGroupObj = new ActivityGroupModel($activityGroup['id']);
+
+                    if (!$activityGroupObj) {
+                        throw new Exception('Failed to retrieve activity group');
                     }
-                    $activityObj->update($actData);
-                } elseif ('new-act' === $actData['id'])
+
+                    $activityGroupObj->update($actGroupData);
+                    $activityGroupID = $activityGroupObj->getMetadata('id');
+                } else if ('new-act-group' === $activityGroup['id'])
                 {
-                    $actData['init'] = $initID;
-                    $activityID = self::create($actData);
-                    if (false === $activityID) {
-                        return false;
+                    $actGroupData['init'] = $initID;
+                    $activityGroupID = ActivityGroupModel::create($actGroupData);
+
+                    if (false === $activityGroupID) {
+                        throw new Exception('Failed to create activity group');
                     }
                 } else {
-                    return false;
+                    throw new Exception('Invalid activity group ID');
+                }
+
+                foreach($activityGroup[activities] as $actKey => $activity)
+                {
+                    if (!empty($activity['title']) && !empty($activity['id'])
+                        && isset($activity['desc'])
+                        && (isset($activity['enabled']) && is_bool($activity['enabled'])))
+                    {
+                        $actData = Array(
+                            'title'   => $activity['title'],
+                            'desc'    => $activity['desc'],
+                            'enabled' => $activity['enabled'],
+                            'group'   => $activityGroupID,
+                            'rank'    => $actKey
+                            );
+
+
+                        if (is_numeric($activity['id']))
+                        {
+                            $activityObj = new ActivityModel($activity['id']);
+
+                            if (!$activityObj) {
+                                throw new Exception('Failed to retrieve activity');
+                            }
+
+                            $activityObj->update($actData);
+                        } else if ('new-act' === $activity['id'])
+                        {
+                            //$actData['init'] = $initID;
+                            $activityID = self::create($actData);
+
+                            if (false === $activityID) {
+                                throw new Exception('Failed to create activity');
+                            }
+                        } else {
+                            throw new Exception('Invalid activity ID');
+                        }
+                    } else {
+                        throw new Exception('Missing required activity  fields (title, ID, enabled, or desc)');
+                    }
                 }
             } else {
-                return false;
+                throw new Exception('Missing required activity group fields (title, ID, required, allowMulti, or desc)');
             }
         }
         return true;
     }
-    
+
 }

@@ -138,9 +138,8 @@ class QueryModel
                 {
                     if (($key === 'required') || ($key === 'allowMulti'))
                     {
-                        $grp[$key] = ($val == 1 || $val == 'true') ? 'true' : 'false';
-                    }
-                    else if (is_numeric($val))
+                        $grp[$key] = ($val == 1 || $val == TRUE) ? TRUE : FALSE;
+                    } else if (is_numeric($val))
                     {
                         $grp[$key] = (int)$val;
                     }
