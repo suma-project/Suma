@@ -1,8 +1,5 @@
-var Session;
-var Initiative;
-var Activity;
-var Person;
-var Location;
+var Session, Initiative, Activity, ActivityGroup, Person, Location;
+
 
 function initSADB(callback) {
     try
@@ -16,7 +13,7 @@ function initSADB(callback) {
 
     Session = persistence.define('Session', {
         startTime: "DATE",
-        stopTime: "DATE",
+        stopTime: "DATE"
     });
 
     Session.index('startTime');
@@ -25,13 +22,22 @@ function initSADB(callback) {
     Initiative = persistence.define('Initiative', {
         serverId: "INT",
         name: "TEXT",
-        description: "TEXT",
+        description: "TEXT"
     });
 
     Activity = persistence.define('Activity', {
         serverId: "INT",
         name: "TEXT",
         description: "TEXT",
+        rank: "INT"
+    });
+
+    ActivityGroup = persistence.define('ActivityGroup', {
+        serverId: "INT",
+        title: "TEXT",
+        required: "BOOL",
+        rank: "INT",
+        allowMulti: "BOOL"
     });
 
     Person = persistence.define('Person', {
@@ -47,22 +53,21 @@ function initSADB(callback) {
         description: "TEXT"
     });
 
-
     Initiative.hasMany('sessions', Session, 'initiative');
-
     Initiative.hasMany('activities', Activity, 'initiative');
+    Initiative.hasMany('activityGroups', ActivityGroup, 'initiative');
 
     Person.hasMany('activities', Activity, 'people');
-    Activity.hasMany('people', Person, 'activities');
 
+    ActivityGroup.hasMany('activities', Activity, 'activityGroup');
+
+    Activity.hasMany('people', Person, 'activities');
 
     Session.hasMany('people', Person, 'session');
 
     // This points to just the top-level location for an initiative
     Location.hasMany('initiatives', Initiative, 'location');
-
     Location.hasMany('people', Person, 'location');
-
     Location.hasMany('children', Location, 'parent');
 
     // TODO: This is inefficient. Basically, reset the DB if we have no sessions

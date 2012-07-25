@@ -34,7 +34,7 @@ html {
 }
 
 #counting_container {
-    margin-top: 10%;
+    margin-top: 17px;
 }
 
 input#goesup {
@@ -82,12 +82,19 @@ input#count_input {
     background-color:#D9E2E1;
 }
 
+.sidebar h3 {
+    margin-bottom: 9px;
+}
 .main_entry {
     /*background-color:#F4F3EE;*/
 }
 
 .pad_div {
     padding:7px;
+}
+
+.pad_div h2, .pad_div h4 {
+    margin-bottom:5px;
 }
 
 .header_content {
@@ -153,14 +160,15 @@ li.loc_item a {
     text-decoration: none;
 }
 
-.ui-button {
-    padding: .2em .1em;
+.ui-button, .ui-widget .ui-button {
+    padding: .4em .1em;
     margin: .15em;
     margin-bottom: .4em;
+    font-size: 16px;
 }
 
 #abandon_session {
-    margin-top: 1.7em;
+    margin-top: .3em;
     margin-left: 2em;
     background: red;
     border: 1px solid black;
@@ -171,9 +179,9 @@ li.loc_item a {
     padding: .25em .5em;
 }
 
-.ui-dialog .ui-dialog-titlebar-close { 
-    display: none; 
-} 
+.ui-dialog .ui-dialog-titlebar-close {
+    display: none;
+}
 
 #loadingScreen {
     background: url(loading.gif) no-repeat 5px 8px;
@@ -181,20 +189,33 @@ li.loc_item a {
     padding-top: 14px;
 }
 
+.activityGroup {
+    margin-top: 7px;
+    padding: 2px 5px 1px;
+    border: 1px solid DarkGray;
+    border-radius: 5px;
+}
+
+.actGroupLabel {
+    margin-bottom: 4px;
+    margin-left: 5px;
+}
+
 .activityContainer {
     max-width: 210px;
 }
 
-#leftActivities {
+.leftActivities {
     float:left;
 }
 
-#rightActivities {
+.rightActivities {
     float:right;
     text-align:right;
 }
 
 .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+    font-family: 'Helvetica Neue', Arial, 'Liberation Sans', FreeSans, sans-serif;
     background: #D7EBF9;
 }
 

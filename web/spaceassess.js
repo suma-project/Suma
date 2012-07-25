@@ -23,7 +23,7 @@ var countForm = null;
 var countIndicator = null;
 var submitTouchState = [];
 
-// This has been converted from a function that serializes all data and once and syncs it to 
+// This has been converted from a function that serializes all data and once and syncs it to
 // one that just syncs one session at a time. This is a performance optimization.
 // There is still some cruft in here from the old way.
 // It is still pretty slow. Ideally, using transactions could speed it up,
@@ -37,14 +37,15 @@ function serializeCollectedData(callback) {
 
     persistence.flush(function() {
         Session.all().filter('stopTime', '!=', null).prefetch("initiative").each(function(session) {
-            currentlySyncing++;
-            var serializedSessions = [];
+            var serializedSessions = [],
+                countJson = {device:deviceName, version:appVersion},
+                currSessionIndex = 0,
+                sessInitId = 'orphan';
 
-            var countJson = {device:deviceName, version:appVersion}
+            currentlySyncing++;
             countJson['sessions'] = new Array(1);
             serializedSessions[0] = session.id;
-            var currSessionIndex = 0;
-            var sessInitId = 'orphan';
+
             if (session.initiative !== null) {
                 sessInitId = session.initiative.serverId;
             }
@@ -53,6 +54,7 @@ function serializeCollectedData(callback) {
 
             session.people.prefetch("location").order('timestamp', true).list(function(counts) {
                 var completionCounter = counts.length * 2;
+
                 if (completionCounter === 0) {
                     callback(countJson, serializedSessions);
                     return;
@@ -61,6 +63,7 @@ function serializeCollectedData(callback) {
                 $.each(counts, function(peopleKey, count) {
                     // Reference counts.length and sessions.length
                     var currCountIndex = peopleKey;
+
                     countJson['sessions'][currSessionIndex]["counts"][currCountIndex] = {timestamp: Math.round(count.timestamp/1000), number:count.count, location: count.location.serverId, activities: []};
                     count.activities.list(function(activities) {
                         $.each(activities, function(actKey, activity) {
@@ -91,6 +94,7 @@ function clearPlaceholderCounts (callback) {
     // error on mobile devices
     Session.all().list(function(sessions) {
         var sessionsCounter = sessions.length;
+
         if (sessionsCounter === 0) {
             setTimeout(function(){callback();}, 0);
         }
@@ -98,6 +102,7 @@ function clearPlaceholderCounts (callback) {
         $.each(sessions, function(key, session) {
             session.people.filter('count', '=', 0).prefetch('location').list(function(counts) {
                 var numCounts = counts.length;
+
                 if (numCounts === 0) {
                     sessionsCounter--;
                     if (sessionsCounter === 0) {
@@ -143,10 +148,12 @@ function showStartDialog() {
 }
 
 function updateHeights() {
-    var sidebar_height = $("div.sidebar").height();
-    var mainentry_height = $("div.main_entry").height();
-    var initheader_height = $("div.initiatives_content").height();
-    var mainheader_height = $("div.header_content").height();
+    var sidebar_height, mainentry_height, initheader_height, mainheader_height;
+
+    sidebar_height = $("div.sidebar").height();
+    mainentry_height = $("div.main_entry").height();
+    initheader_height = $("div.initiatives_content").height();
+    mainheader_height = $("div.header_content").height();
 
     if (initheader_height >= mainheader_height) {
         $("div.header_content").css("min-height",initheader_height);
@@ -179,40 +186,51 @@ function updateInitiatives() {
 }
 
 function removeActivities() {
-    $(".activityContainer").empty();
+    $("div#format").empty();
     currentActivities = {};
 }
 
 function displayActivities(actInit, callback) {
-    removeActivities();
-    var countForm = $("form#count_form");
-    var leftActivity = $("#leftActivities", countForm);
-    var rightActivity = $("#rightActivities", countForm);
-    var currentColumn = leftActivity;
+    var countForm, activityContainer;
 
+    removeActivities();
+    countForm = $("form#count_form");
+    activityContainer = $("div#format", countForm).first();
     currentActivities = {};
 
-    actInit.activities.list(function(activities) {
-        $.each(activities, function(key, activity) {
+    actInit.activityGroups.list(function(activityGroups) {
+        $.each(activityGroups, function(key, activityGroup) {
+            var currentActivityGroup, leftActivity, rightActivity, currentColumn;
 
-            currentActivities[activity.id] = activity;
+            currentActivityGroup = $('<div class="activityGroup clearfix"><h5 class="actGroupLabel">' + activityGroup.title + '</h5></div>').appendTo(activityContainer);
+            (true === activityGroup.required) ? currentActivityGroup.addClass('requiredGroup') : false;
+            (true === activityGroup.allowMulti) ? currentActivityGroup.addClass('allowMulti') : false;
 
-            // Hack to support grouped activity hacks
-            var actClass = "actA";
+            leftActivity = $('<div class="leftActivities activityContainer"></div>').appendTo(currentActivityGroup);
+            rightActivity = $('<div class="rightActivities activityContainer"></div>').appendTo(currentActivityGroup);
+            currentColumn = leftActivity;
 
-            var buttonStr = '<input type="checkbox" value="' + activity["id"] + '" id="check' + activity["serverId"] + '" class="check jqButton" /><label for="check' + activity["serverId"] + '" class="' + actClass + '">' + activity["name"] + '</label><br />';
+            console.log(currentActivityGroup);
+            activityGroup.activities.list(function(activities) {
+                $.each(activities, function(key, activity) {
 
-            currentColumn.append(buttonStr);
+                    currentActivities[activity.id] = activity;
 
-            if (currentColumn === leftActivity) {
-                currentColumn = rightActivity;
-            } else {
-                currentColumn = leftActivity;
-            }
+                    var buttonStr = '<input type="checkbox" value="' + activity["id"] + '" id="check' + activity["serverId"] + '" class="check jqButton activityButton" /><label for="check' + activity["serverId"] + '">' + activity["name"] + '</label><br />';
 
+                    currentColumn.append(buttonStr);
 
-            $("input.check", countForm).button();
+                    if (currentColumn === leftActivity) {
+                        currentColumn = rightActivity;
+                    } else {
+                        currentColumn = leftActivity;
+                    }
+
+                    $("input.check", countForm).button();
+                });
+            });
         });
+
         callback();
     });
 }
@@ -226,7 +244,7 @@ function removeLocs() {
 function displayLocs(parent, callback) {
     removeLocs();
     var topLocSelector = $("ul.loc_list:first");
-    topLocSelector.append('<h2>' + parent.name + '</h2>');
+    topLocSelector.append('<h3>' + parent.name + '</h3>');
     parent.children.list(function(locs) {
         $.each(locs, function(key, loc) {
             topLocSelector.append('<li class="loc_item"><a id="loc' + loc.id + '" href="' + loc.id + '">' + loc.name + '    <span class="locCount"></span></a></li>');
@@ -249,8 +267,9 @@ function annotateLoc(locObj) {
 
 function fetchLocsActivities(init, callback)
 {
-    var locUrl = initiativeUrl + init['serverId'];
-    var parentLoc;
+    var parentLoc, activityGroups = [], locUrl;
+    locUrl = initiativeUrl + init['serverId'];
+
     persistence.transaction(function(dbTransaction) {
         init.activities.list(dbTransaction, function(activs) {
 
@@ -267,14 +286,26 @@ function fetchLocsActivities(init, callback)
                     parseLocs(locTree["children"], parentLoc);
                 }
 
+                $.each(locData["activityGroups"], function(key, activityGroup) {
+                    var newActGroup = new ActivityGroup({title: activityGroup["title"], serverId: activityGroup["id"],
+                        rank: activityGroup["rank"], required: activityGroup["required"], allowMulti: activityGroup["allowMulti"]});
+                    newActGroup.initiative = init;
+                    persistence.add(newActGroup);
+                    activityGroups[activityGroup["id"]] = newActGroup;
+                });
+
                 $.each(locData["activities"], function(key, activity) {
-                    var newAct = new Activity({name:activity["title"],serverId:activity["id"]});
+                    var newAct = new Activity({name: activity["title"], serverId: activity["id"], rank: activity["rank"]});
                     newAct.initiative = init;
+                    newAct.activityGroup = activityGroups[activity["groupId"]];
                     persistence.add(newAct);
                 });
+
                 persistence.flush(dbTransaction, function() {
+                    activityGroups = [];
                     callback();
                 });
+
             }).error(function() {
                 alert("Error fetching locations. Please reload and try again");
             });
@@ -356,7 +387,7 @@ function syncSessions() {
             $.ajax({
                 url: syncUrl,
                 type: 'POST',
-                data: {json:JSON.stringify(serJson)},
+                data: {json:JSON.stringify(serJson)}
             }).success(function() {
                 var syncStop = (new Date).getTime();
                 console.log((syncStop - syncStart) + " milliseconds to server");
@@ -376,13 +407,13 @@ function syncSessions() {
             }).error(function(xhr, ajaxOptions, thrownError) {
                 currentlySyncing--;
                 alert("Error sending data to server, please contact an administrator: " + thrownError);
-            }); 
+            });
         });
     }
 }
 
 function readyToCollect() {
-    if ((currentLoc) && (initSelectObj.val() != '')) {
+    if ((currentLoc) && (initSelectObj.val() !== '')) {
         return true;
     } else {
         $("div.sidebar").stop(true,true).effect("pulsate", {times:3}, 500);
@@ -434,22 +465,24 @@ function startCollecting(){
 
 function updateTimer() {
     if (currentlyCollecting) {
-        var date = new Date();
-        var timeDiff = (date.getTime() - sessionStart) / 1000;
-        var hours = Math.floor(timeDiff/3600) + 'h';
+        var date, timeDiff, hours, minutes, seconds, timeString;
+
+        date = new Date();
+        timeDiff = (date.getTime() - sessionStart) / 1000;
+        hours = Math.floor(timeDiff/3600) + 'h';
         if (hours.length === 2) {
             hours = '0' + hours;
         }
-        var minutes = Math.floor((timeDiff / 3600) / 60) + 'm';
+        minutes = Math.floor((timeDiff / 3600) / 60) + 'm';
         if (minutes.length === 2) {
             minutes = '0' + minutes;
         }
-        var seconds = Math.floor((timeDiff / 3600) / 60) + 's';
+        seconds = Math.floor((timeDiff / 3600) / 60) + 's';
         if (seconds.length === 2) {
             seconds = '0' + seconds;
         }
 
-        var timeString = hours + ':' + minutes + ':' + seconds;
+        timeString = hours + ':' + minutes + ':' + seconds;
         $("#session_timer").text(timeString);
         setTimeout(function(){updateTimer();}, 1000);
     }
@@ -459,8 +492,9 @@ function undoCount() {
 
     if (readyToCollect() && startCollecting()) {
         persistence.transaction(function(dbTransaction) {
-            var currentPeople = Person.all().filter('session', '=', currentSession).filter('location', '=', currentLoc).order('timestamp', false);
-            var lastTimestamp = null;
+            var currentPeople, lastTimestamp;
+            currentPeople = Person.all().filter('session', '=', currentSession).filter('location', '=', currentLoc).order('timestamp', false);
+            lastTimestamp = null;
             currentPeople.one(dbTransaction, function(person){
                 if (person.count > 0) {
                     countIndicator.val(parseInt(countIndicator.val()) - person.count);
@@ -497,7 +531,7 @@ function countPeople(doubleTap) {
         var countObj = new Person({timestamp:date.getTime()});
         $("input.check:checked", countForm).each(function() {
             countObj.activities.add(currentActivities[$(this).val()]);
-        }).removeAttr("checked").button("refresh");
+        }).prop("checked", false).button("refresh");
         countObj.location = currentLoc;
         countObj.session = currentSession;
         countObj.count = newCount;
@@ -599,7 +633,7 @@ $(function() {
     if(agent.indexOf('iphone') >= 0 || agent.indexOf('ipad') >= 0 || agent.indexOf('android') >= 0){
         buttonEventType = 'tap';
 
-        $('.tappable').bind('touchstart', function(event) {
+        $('body').on('touchstart', '.tappable', function(event) {
             var e = event.originalEvent;
             submitTouchState.numTouches = e.touches.length;
             submitTouchState.startTime  = (new Date).getTime();
@@ -609,14 +643,14 @@ $(function() {
         });
 
 
-        $('.tappable').bind('touchend', function(event) {
+        $('body').on('touchend', '.tappable', function(event) {
             var timeDelta = (new Date).getTime() - submitTouchState.startTime;
             var e = event.originalEvent;
             var deltaX = Math.abs(submitTouchState.startX - e.changedTouches[0].clientX);
             var deltaY = Math.abs(submitTouchState.startX - e.changedTouches[0].clientX);
             if ((submitTouchState === []) || ((submitTouchState.numTouches === 1) && (timeDelta <= 500) && (deltaX < 50) && (deltaY < 50))) {
                 $(this).trigger('tap');
-            } 
+            }
 
             submitTouchState = [];
             return false;
@@ -624,7 +658,7 @@ $(function() {
     }
 
 
-    $("div#loc_lists").delegate("li.loc_item a", "click", function() {
+    $("div#loc_lists").on("click", "li.loc_item a", function() {
         currentLoc = null;
         currentLocCount = null;
         $("#loadingScreen").dialog('open');
@@ -637,12 +671,12 @@ $(function() {
         $(this).parent().addClass("selected_loc deepest_loc");
         persistence.transaction(function(dbTransaction) {
             Location.load(dbTransaction, $(clickEl).attr("href"), function(loc){
-
+                var parentLoc, i=0, combinedLocTitle;
                 // Build a string showing the chain of selected locations
-                var parentLoc = loc;
+                parentLoc = loc;
+                combinedLocTitle = '';
+
                 // Arbitrary max depth of 20
-                var i = 0;
-                var combinedLocTitle = '';
                 while ((parentLoc != null) || i > 20) {
                     if ('' !== combinedLocTitle) {
                         combinedLocTitle = parentLoc.name + ' | ' + combinedLocTitle;
@@ -650,7 +684,7 @@ $(function() {
                         combinedLocTitle = parentLoc.name;
                     }
                     parentLoc = parentLoc.parent;
-                    i++; 
+                    i++;
                 }
 
                 $("#current_loc_label").text(combinedLocTitle);
@@ -702,7 +736,7 @@ $(function() {
         return false;
     });
 
-    $("form#init_form").delegate('select#init_selector', 'change', function() {
+    $("form#init_form").on('change', 'select#init_selector', function() {
 
         $("#loadingScreen").dialog('open');
         stopCollecting(false);
@@ -743,11 +777,26 @@ $(function() {
         return false;
     });
 
-    $("body").delegate("a#abandon_session", "click", function(){
+    $("form#count_form").on("change", "input.activityButton", function() {
+        var activityGroup;
+
+        activityGroup = $(this).closest(".activityGroup");
+
+        if (!activityGroup.hasClass("allowMulti")) {
+            if (activityGroup.find("input.activityButton:checked").length > 1) {
+             activityGroup.stop(true,true).effect("pulsate", {times:2}, 500);
+                $(this).prop('checked', false).button("refresh");
+            }
+        }
+        return true;
+    });
+
+
+    $("body").on("click", "a#abandon_session", function(){
         hitAbandonButton();
     });
 
-    $("body").delegate("a#save_session", "click", function(){
+    $("body").on("click", "a#save_session", function(){
         initSelectObj.val("");
         showStartDialog();
         stopCollecting(true);
@@ -756,21 +805,33 @@ $(function() {
         return false;
     });
 
-    $("input#goesup").bind(buttonEventType, function() {
-        countPeople(false);
+    $("body").on(buttonEventType, "input#goesup", function() {
+        var hasRequiredActivities = true;
+
+        $(".activityGroup.requiredGroup").each(function() {
+            if ($(this).find("input.activityButton:checked").length < 1) {
+                $(this).add("input#goesup").effect("pulsate", {times:3}, 500);
+                hasRequiredActivities = false;
+            }
+        });
+
+        if (hasRequiredActivities) {
+            countPeople(false);
+        }
+
         return false;
     });
 
-    $("a#goesdown").bind(buttonEventType, function() {
+    $("body").on(buttonEventType, "a#goesdown", function() {
         undoCount();
         return false;
     });
 
-    $("a").live("click", function() {
+    $("body").on("click", "a", function() {
         return false;
     });
 
-    $("form").live("submit", function() {
+    $("body").on("submit", "form", function() {
         return false;
     });
 });
