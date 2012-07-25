@@ -206,9 +206,10 @@ class AdminController extends BaseController
             return false;
         }
 
-        if (!ActivityModel::updateActivitiesArray($activities, $initID))
-        {
-            $this->view->error = 'Error updating activities';
+        try {
+            ActivityModel::updateActivitiesArray($activities, $initID);
+        } catch (Exception $e) {
+            $this->view->error = 'Error updating activities: ' . $e->getMessage();
             $this->render('error');
             return false;
         }
