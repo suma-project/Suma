@@ -147,21 +147,6 @@ function showStartDialog() {
     $("#spaceAssessDialog").dialog("open");
 }
 
-function updateHeights() {
-    var sidebar_height, mainentry_height, initheader_height, mainheader_height;
-
-    sidebar_height = $("div.sidebar").height();
-    mainentry_height = $("div.main_entry").height();
-    initheader_height = $("div.initiatives_content").height();
-    mainheader_height = $("div.header_content").height();
-
-    if (initheader_height >= mainheader_height) {
-        $("div.header_content").css("min-height",initheader_height);
-    } else {
-        $("div.initiatives_content").css("min-height",mainheader_height);
-    }
-}
-
 function updateInitiatives() {
     persistence.transaction(function(dbTransaction) {
         Initiative.all().count(dbTransaction, function(initCount) {
@@ -354,7 +339,6 @@ function stopCollecting(sync){
 
     removeLocs();
     removeActivities();
-
 }
 
 function closeOldSessions(callback) {
@@ -500,8 +484,8 @@ function undoCount() {
                     countIndicator.val(parseInt(countIndicator.val()) - person.count);
                     currentLocCount.text('(' + countIndicator.val() + ')');
                 } else {
-                    countIndicator.val("Count");
-                    currentLocCount.text("");
+                    countIndicator.val("0");
+                    currentLocCount.text("(0)");
                 }
                 persistence.remove(person);
                 persistence.flush(dbTransaction);
@@ -625,8 +609,6 @@ $(function() {
     });
 
     $(".jqButton").button();
-    updateHeights();
-
 
     var agent = navigator.userAgent.toLowerCase();
 
@@ -665,7 +647,6 @@ $(function() {
         var currentList = $(this).parent().parent();
         clickEl = this;
         currentList.nextAll().remove();
-        updateHeights();
         $(this).parent().siblings("li").removeClass("selected_loc");
         $("li.deepest_loc").removeClass("deepest_loc");
         $(this).parent().addClass("selected_loc deepest_loc");
@@ -698,7 +679,7 @@ $(function() {
                             childSel.append('<li class="loc_item"><a id="loc' + loc.id + '" href="' + loc.id + '">' + loc.name + '    <span class="locCount"></span></a></li>');
                             annotateLoc(loc);
                         });
-                        updateHeights();
+                
                         countIndicator.val('Count');
                         $("#loadingScreen").dialog('close');
                     } else {
