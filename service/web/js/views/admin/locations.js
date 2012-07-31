@@ -115,14 +115,14 @@
         });
 
         function loadLoc(locID) {
-            $('#locArea').load('../locationload/id/'+locID, function() {
+            $('#locArea').load(basePath + '/admin/locationload/id/' + locID, function() {
                 $('ol.sortable').nestedSortable({
                     disableNesting: 'no-nest',
                     forcePlaceholderSize: true,
                     handle: 'div',
                     helper: 'clone',
                     items: 'li',
-                    opacity: .6,
+                    opacity: 0.6,
                     placeholder: 'placeholder',
                     revert: 250,
                     tabSize: 25,

@@ -37,7 +37,7 @@ $(document).ready(function(){
         $("a#createInitLink").hide();
         $('#initSelect').val(initID);
         // TODO use base path
-        $('#metadata').load('../initiativeload/id/'+initID, function() {
+        $('#metadata').load(basePath + '/admin/initiativeload/id/' + initID, function() {
             $('ol.sortable').nestedSortable({
                 disableNesting: 'no-nest',
                 forcePlaceholderSize: true,
