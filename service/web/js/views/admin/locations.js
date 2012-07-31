@@ -131,10 +131,10 @@
                     toleranceElement: '> div'
                 });
             });
-        };
+        }
 
         $('#addLoc').live('click', function() {
-            $('#locations').prepend('<li class="enabled-loc newLoc location"><div><span class=\"locTitle\">New Location</span> <span class=\"locDesc\"></span><span class="locID">new-loc</span><a href=\"#\" class=\"editLoc\">Edit</a></div></li>');
+            $('#locations').prepend('<li class="enabled-loc newLoc location"><div><span class=\"locTitle\">New Location</span> <span class=\"locDesc\"></span><span class="locID">new-loc</span><span class=\"activityControls\"><a href=\"#\" class=\"editLoc\">Edit</a></span></div></li>');
             $('#locations').sortable('refresh');
             return false;
         });

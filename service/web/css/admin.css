@@ -42,7 +42,7 @@ ol {
     background: gray;
 }
 
-.locDesc, .actDesc, .actGroupDesc .locID, .actID, .actGroupID, #initID, #treeID {
+.locDesc, .actDesc, .actGroupDesc, .locID, .actID, .actGroupID, #initID, #treeID {
     display:none;
 }
 
