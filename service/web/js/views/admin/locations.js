@@ -33,7 +33,6 @@
 
     $(document).ready(function(){
 
-
         $("a#createTreeLink").live('click', function() {
             var treeTitleInput = $("input#newTreeTitleInput");
             var treeDescInput = $("textarea#newTreeDescInput");
@@ -84,11 +83,11 @@
                             alert("Tree title cannot be empty");
                         }
                         return false;
-                    }},
+                    }}
             });
-
             return false;
         });
+
 
         $("a#saveLocs").live("click", function(){
             var locTree = {id:$("div#treeID").text(),
@@ -285,3 +284,6 @@
         $('form.deadForm').live('submit', function() {
             return false;
         });
+
+    });
+
