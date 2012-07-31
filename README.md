@@ -19,7 +19,7 @@ As a safeguard, all JSON input from the client is logged. This will lead to larg
 
 Documentation
 ==============
-* LICENSE.
+* LICENSE.md
 * README.md
 * INSTALL.md
 * LOGS.md
