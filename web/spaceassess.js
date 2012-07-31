@@ -1,5 +1,5 @@
 var deviceName = 'iPad';
-var appVersion = '0.6.5';
+var appVersion = '0.7.5';
 
 var baseInitUrl = "/sumaserver/clientinit/";
 var initiativeUrl = "/sumaserver/clientinit/load/initiative/";
