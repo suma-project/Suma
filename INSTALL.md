@@ -97,7 +97,7 @@ Database Setup
 It is recommended you create two databases for Suma.  One for production and one for testing.  The database instructions are the same for both except for changing the database name.
 
 Create database in MySQL using whatever tool you have available.
-Create suma account with permissions to `INSERT`, `CREATE`, `DELETE`, `UPDATE`, `INDEX`, and `ALTER` permissions.
+Create suma account with permissions to `SELECT`, `INSERT`, `CREATE`, `DELETE`, `UPDATE`, `INDEX`, and `ALTER` permissions.
 
 Now you have to run a database initialization script included in the suma download. 
 
