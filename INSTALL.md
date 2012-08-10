@@ -49,7 +49,7 @@ If you need to copy it to a directory other than
 
 For Suma Server Installation:
 
-* Copy contents of `/SUMA_DOWNLOAD_DIR/service` to a location outside your web directory.
+* Copy contents of `/SUMA_DOWNLOAD_DIR/service` to a location outside your web directory. For example, if your web directory is `/var/www/htdocs` you could copy the contents of the `/SUMA_DOWNLOAD_DIR/service` to `/var/www/app/sumaserver`.
 
     Note this location, we will refer to it later as `SUMA_SERVER_INSTALL_DIR`
 
@@ -131,6 +131,7 @@ Suma Server Software Configuration
         sumaserver.db.port      = mysql port number
         sumaserver.log.path = path to log directory.  You must make sure this directory is writable by Apache.
 
+* Be sure that the log directory specified in sumaserver.log.path both exists and is writable. 
 
 Other Things You Can Configure
 -------------------------------
