@@ -43,9 +43,10 @@ Note path to suma download directory.  We will refer to this as SUMA_DOWNLOAD_DI
 
 For Suma Client Installation:
 
-Copy contents of `/SUMA_DOWNLOAD_DIR/web` to `/YOUR_WEB_DIR/suma`
-If you need to copy it to a directory other than
-'suma', just change the server URLs at the top of spaceassess.js
+* Copy contents of `/SUMA_DOWNLOAD_DIR/web` to `/YOUR_WEB_DIR/suma/web`
+
+* Copy contents of `/SUMA_DOWNLOAD_DIR/analysis` to `/YOUR_WEB_DIR/suma/analysis`
+
 
 For Suma Server Installation:
 
@@ -55,10 +56,9 @@ For Suma Server Installation:
 
 * Copy contents of `/SUMA_DOWNLOAD_DIR/service/web` to `/YOUR_WEB_DIR/sumaserver`
 
-If you need to copy it to a directory other than
-'sumaserver', you must change a line in `OUR_WEB_DIR/sumaserver/index.php` 
-
-Change `'sumaserver'` the line `->setBaseUrl('/sumaserver')` to the name of the directory where you installed the Suma server index.php.
+> If you need to copy it to a directory other than 'sumaserver', you must change a line in `YOUR_WEB_DIR/sumaserver/index.php` 
+> Change `'sumaserver'` the line `->setBaseUrl('/sumaserver')` to the     name of the directory where you installed the Suma server index.php.
+> Also, change the server URLs at the top of `YOUR_WEB_DIR/suma/web/spaceassess.js`
 
 
 Apache Configuration
@@ -122,7 +122,7 @@ Suma Server Software Configuration
 
 * config.ini
 
-    In the `SUMER_SERVER_INSTALL_DIR/config/config.ini` file you must modify the following:
+    In the `SUMA_SERVER_INSTALL_DIR/config/config.ini` file you must modify the following:
 
         sumaserver.db.host      = host location of your mysql database
         sumaserver.db.dbname    = suma mysql database name
@@ -132,6 +132,12 @@ Suma Server Software Configuration
         sumaserver.log.path = path to log directory.  You must make sure this directory is writable by Apache.
 
 * Be sure that the log directory specified in sumaserver.log.path both exists and is writable. 
+
+Suma Analysis Tools Configuration
+----------------------------------
+
+* In `YOUR_WEB_DIR/suma/analysis/lib/Server_IO.php` change `<host>` to your hostname (e.g. lib.abc.edu).
+* You can view the Suma analysis tools by visting `http://YOUR_SERVER/suma/analysis/reports`.
 
 Other Things You Can Configure
 -------------------------------
