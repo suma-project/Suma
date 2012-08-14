@@ -56,9 +56,11 @@ For Suma Server Installation:
 
 * Copy contents of `/SUMA_DOWNLOAD_DIR/service/web` to `/YOUR_WEB_DIR/sumaserver`
 
-> If you need to copy it to a directory other than 'sumaserver', you must change a line in `YOUR_WEB_DIR/sumaserver/index.php` 
+> If you need to copy it to a directory other than 'sumaserver', you must change a line in `YOUR_WEB_DIR/sumaserver/index.php`:
+>
 > Change `'sumaserver'` the line `->setBaseUrl('/sumaserver')` to the     name of the directory where you installed the Suma server index.php.
-> Also, change the server URLs at the top of `YOUR_WEB_DIR/suma/web/spaceassess.js`
+>
+> Also, change the server URLs at the top of `YOUR_WEB_DIR/suma/web/spaceassess.js`.
 
 
 Apache Configuration
