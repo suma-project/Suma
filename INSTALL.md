@@ -31,8 +31,8 @@ Or do the following:
 3. Modify your php.ini's include_path to add path to Zend framework library directory
 
 
-Suma Software Installation
----------------------------
+Suma Software Installation (file copying)
+------------------------------------------
 
 Download code: Either clone the repository or download a zip of the
 code. GitHub provides instructions on the repository page.
@@ -62,6 +62,21 @@ For Suma Server Installation:
 >
 > Also, change the server URLs at the top of `YOUR_WEB_DIR/suma/web/spaceassess.js`.
 
+Suma Software Installation (symbolic links)
+----------------------------------------
+
+If your Apache configuration has the `FollowSymLinks` directive enabled, there is a simpler way to deploy Suma that also improves the update process. 
+
+* Clone the GitHub repository to a directory outside of your web space (e.g. `/var/www/app/suma`)
+* Create the following symbolic links from your web space to the local suma repository (these instructions assume `/var/www/app` and `/var/www/htdocs` as base directories--please change as appropriate):
+
+
+        /var/www/htdocs/sumaserver/      =>  /var/www/app/suma/service/web/
+        /var/www/htdocs/suma/web/        =>  /var/www/app/suma/web/
+        /var/www/htdocs/suma/analysis/   =>  /var/www/app/suma/analysis/
+
+
+Now all of your code is in one place, allowing you to update Suma by running `git pull --rebase origin master`. There is a chance this could result in merge conflicts with your local changes, so please allow for time to resolve these before updating.
 
 Apache Configuration
 ---------------------
@@ -80,6 +95,7 @@ If using Apache's rewrite module add these lines in your web server (likely http
     RewriteRule ^.*$ index.php [NC,L]
     </Directory>
                 
+**Don't forget to change YOUR_WEB_DIR to the directory in your web space that contains the `service/web/` content**
 Restart apache after adding these lines for configuration to apply
 
 .htaccess
@@ -152,18 +168,21 @@ Other Things You Can Configure
 
     Change the following lines in index.php:
 
-        ini_set('display_errors', 'off') change 'off' to 'on'
+        error_reporting(0); to error_reporting(E_ERROR | E_WARNING | E_PARSE);
+        ini_set('display_errors', 'off'); change 'off' to 'on'
         ->throwExceptions(false); change "false" to "true"
 
+    **Be sure to change these lines back before you use Suma in production**
 
 How to create your first initiative
 ------------------------------------
 
 1. Log in to the administrative console (see below)
 2. Create and populate a location tree by clicking on the "Edit locations" link
-3. Create and populate an initiative by clicking on the "Edit initiatives" link
-4. Collect some data using the Suma client
+3. Create and populate an initiative by clicking on the "Edit initiatives" link (don't forget also to enable the initiative using this tool)
+4. Collect some data using the Suma client (`http://YOUR_SERVER/suma/web`) with a WebKit-based browser (e.g. Chrome, Safari, or iOS and Android browsers)
 5. View your session log in the "Sessions list" page linked from the administrative console
+6. Analyze your data using the analysis tools (`http://YOUR_SERVER/suma/analysis/reports`)
 
 
 Overview of administrative tools
