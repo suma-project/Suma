@@ -48,3 +48,4 @@ Credits and contacts
 * Rob Rucker – Project team member and our first stakeholder. Research Information Services department head responsible for NCSU D. H. Hill Libraries head counts and reference desk transactions. 
 * Eric McEachern – Backend developer, responsible for much of the development of the server-side components. 
 * Rusty Earl – Backend developer and technical consultant. 
+* Bret Davidson - Data analysis tool developer.
