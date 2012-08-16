@@ -124,7 +124,7 @@ Now you have to run a database initialization script included in the suma downlo
     
     To run it you can use the command line MySQL tools, phpmyadmin, or any other database management tool you like
 
-*Optional* If you wish to initialize the database with preloaded sample data so you can play around with Suma more quickly, then run the schema_w_sample.sql script instead of schema.sql.
+> *Optional, but recommended:* If you wish to initialize the database with preloaded sample data so you can play around with Suma more quickly, then run the schema_w_sample.sql script instead of schema.sql.
 
 
 Suma Server Software Configuration
