@@ -7,12 +7,12 @@ class Server_IO
     private static $_offset;
     
     public function getData($params, $mode)
-    {
+    {  
         if (! isset($params['id']) || ! is_numeric($params['id']))
         {
             throw new Exception('Must provide numeric Initiative ID');
         }
-        
+         
         if ($mode != 'sessions' && $mode != 'counts')
         {
             throw new Exception('Must provide valid mode (sessions or counts)');
@@ -28,7 +28,7 @@ class Server_IO
             }
             self::$_serverUrl .= "/$key/$val";
         }
-        
+
         return $this->sendRequest(self::$_serverUrl);
     }
     
