@@ -1,0 +1,63 @@
+/*body {
+  font-family: Verdana;
+}
+td {
+  font-size:14px;
+}*/
+
+#loading {
+    position:relative;
+    width:50%;
+    top:50%;
+    left:50%;
+    display:none;
+}
+
+.formatText {
+  font-size:12px;
+  padding-left:5px;
+  color:#666;
+
+}
+#chart{
+    width:940px;
+    height:400px;
+   /* margin:10px 10px 25px 10px;*/
+   margin-bottom:25px;
+}
+svg {
+  font: 10px sans-serif;
+}
+
+.mainGraph path, .subGraph path {
+  fill:steelblue;
+}
+
+.dot {
+  fill:steelblue;
+  stroke: #f7f7f7;
+  stroke-width: 2px;
+}
+#legendCircle {
+  fill:steelblue;
+  stroke: #f7f7f7;
+  stroke-width: 2px;
+}
+
+.axis path, .axis line {
+  fill:none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.brush rect.extent {
+  stroke: #333;
+  
+  fill-opacity: .125;
+  shape-rendering: crispEdges;
+}
+
+.brush .resize path {
+  fill: #eee;
+  stroke: #666;
+}
