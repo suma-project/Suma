@@ -1,0 +1,43 @@
+ #loading {
+    position:relative;
+    width:50%;
+    top:50%;
+    left:50%;
+    display:none;
+}
+#chart{
+    width:960px;
+    height:320px;
+    margin:30px;
+    font: 10px sans-serif;
+    shape-rendering: crispEdges;
+}
+
+path {
+    fill: none;
+    stroke: #666;
+}
+circle {
+    fill:#666;
+}
+.line {
+    stroke-width:3px;
+}
+.xaxis, .yaxis {
+    font-family: Verdana;
+    font-size:12px;
+}
+.tick {
+    stroke:#666;
+}
+
+.day {
+  fill: #fff;
+  stroke: #ccc;
+}
+
+.month {
+  fill: none;
+  stroke: #000;
+  stroke-width: 2px;
+}
