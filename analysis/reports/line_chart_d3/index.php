@@ -13,11 +13,14 @@ catch (Exception $e)
     echo '<p>Unable to fetch Initiatives from Query Server.</p>';
     die;
 }
+
 $initDropDown = '<select name="id" id="initiatives">';
+
 foreach($initiatives as $init)
 {
     $initDropDown .= '<option value="' . $init['id'] . '">' . $init['title'] . '</option>' . "\n";
 }
+
 $initDropDown .= '</select>';
 ?>
 
@@ -30,7 +33,7 @@ $initDropDown .= '</select>';
         <meta name="description" content="">
         <meta name="author" content="">
 
-        <link href="../../lib/css/bootstrap.css" rel="stylesheet">
+        <link href="../../lib/css/bootstrap.min.css" rel="stylesheet">
         <link href="../../lib/css/datepicker.css" rel="stylesheet">
         <link href="css/style.css" rel="stylesheet">
         <style>
@@ -38,7 +41,7 @@ $initDropDown .= '</select>';
             padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
           }
         </style>
-        <link href="../../lib/css/bootstrap-responsive.css" rel="stylesheet">
+        <link href="../../lib/css/bootstrap-responsive.min.css" rel="stylesheet">
     
         <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
         <!--[if lt IE 9]>
@@ -49,7 +52,7 @@ $initDropDown .= '</select>';
 
     <body>
 
-        <div class="navbar navbar-fixed-top">
+        <div class="navbar navbar-fixed-top navbar-inverse">
             <div class="navbar-inner">
                 <div class="container">
                     <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
