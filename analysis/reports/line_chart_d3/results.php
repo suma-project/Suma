@@ -25,20 +25,20 @@ function createDateRangeArray($strDateFrom,$strDateTo)
     // takes two dates formatted as YYYY-MM-DD and creates an
     // inclusive array of the dates between the from and to dates.
 
-    $aryRange  = array();
+    $dateRange  = array();
     $iDateFrom = mktime(1,0,0,substr($strDateFrom,5,2), substr($strDateFrom,8,2),substr($strDateFrom,0,4));
     $iDateTo   = mktime(1,0,0,substr($strDateTo,5,2), substr($strDateTo,8,2),substr($strDateTo,0,4));
 
     if ($iDateTo>=$iDateFrom)
     {
-        $aryRange[] = date('Y-m-d', $iDateFrom); // first entry
+        $dateRange[] = date('Y-m-d', $iDateFrom); // first entry
         while ($iDateFrom < $iDateTo)
         {
             $iDateFrom+=86400; // add 24 hours
-            $aryRange[] = date('Y-m-d', $iDateFrom);
+            $dateRange[] = date('Y-m-d', $iDateFrom);
         }
     }
-    return $aryRange;
+    return $dateRange;
 }
 
 function populateLocations($locDict, $locID, $locArray = array())
@@ -112,6 +112,10 @@ function populateHash($response, $params)
         // Once activity groups are implemented, use above code
         // and delete $actList = array($actID)
         $actList = array($actID);
+    }
+    else
+    {
+        $actList = array();
     }
 
     if ($sessions)
@@ -351,7 +355,21 @@ else
     $data = calculateAvg($countHash);
 }
 
-// Remove any days outside of query range (Sessions will sometimes pull in extra days)
+// If $sdate and $edate are empty, say for a full query, set dummy values
+// using min/max values of data stored on server
+if (empty($sdate))
+{
+    $keys  = __::keys($data);
+    $sdate = __::min($keys);
+}
+
+if (empty($edate))
+{
+    $keys  = __::keys($data);
+    $edate = __::max($keys);
+}
+
+//Remove any days outside of query range (Sessions will sometimes pull in extra days)
 foreach($data as $key => $val) 
 {
     if (($key < $sdate) || ($key > $edate) )
@@ -360,8 +378,9 @@ foreach($data as $key => $val)
     }
 }
 
-// Pad out missing dates with zero counts
+//Pad out missing dates with zero counts
 $dateRange = createDateRangeArray($sdate, $edate);
+
 foreach ($dateRange as $date)
 {
     if(!isset($data[$date]))
