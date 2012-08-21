@@ -1,83 +1,82 @@
-<?php 
+<?php
+
+require_once "../../lib/guzzle.phar";
 
 class Server_IO
 {
-    private static $_serverUrl = 'http://<host>/query';
+    private $_client = NULL;
+    private static $_baseUrl = 'http://<host>/query';
+    private static $_urlParams = '';
     private static $_hasMore;
     private static $_offset;
-    
+
     public function getData($params, $mode)
-    {  
+    {
         if (! isset($params['id']) || ! is_numeric($params['id']))
         {
             throw new Exception('Must provide numeric Initiative ID');
         }
-         
+
         if ($mode != 'sessions' && $mode != 'counts')
         {
             throw new Exception('Must provide valid mode (sessions or counts)');
         }
-        
-        self::$_serverUrl .= ($mode == 'sessions') ? '/sessions' : '/counts';
-        
+
+        self::$_urlParams .= ($mode == 'sessions') ? 'sessions' : 'counts';
+
         foreach($params as $key => $val)
         {
             if (($key == 'sdate' || $key == 'edate' || $key == 'stime' || $key == 'etime') && !empty($val) && !is_numeric($val))
             {
                 throw new Exception('All supplied dates and times must be numeric');
             }
-            self::$_serverUrl .= "/$key/$val";
+            self::$_urlParams .= "/$key/$val";
         }
 
-        return $this->sendRequest(self::$_serverUrl);
+        return $this->sendRequest(self::$_urlParams);
     }
-    
+
     public function hasMore()
     {
         return self::$_hasMore;
     }
-    
+
     public function next()
     {
-        return $this->sendRequest(self::$_serverUrl.'/offset/'.self::$_offset);
+        return $this->sendRequest(self::$_urlParams.'/offset/'.self::$_offset);
     }
-    
-    
+
     // ------ PRIVATE FUNCTIONS ------    
-    
+
     private function sendRequest($url)
     {
-        $ch = curl_init($url);
-    
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 20);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-        
-        $response = curl_exec($ch);
-        
-        $curlInfo = curl_getinfo($ch);
-        curl_close($ch);
-        
-        if ($curlInfo['http_code'] != 200) 
+        if (empty($_client))
         {
-            throw new Exception('HTTP ERROR CODE: ' . $curlInfo['http_code']);
+            $_client = new Guzzle\Service\Client(self::$_baseUrl);
         }
-        else
+
+        $request  = $_client->get($url);
+        $response = $request->send();
+
+        try
         {
-            $results = json_decode($response, true);
-            
+            $results = json_decode($response->getBody(), true);
+
             if ($results)
             {
-                if (strtolower($results['status']['has more']) == 'true')
+                if (isset($results['status']))
                 {
-                    self::$_hasMore = true;
-                    self::$_offset = $results['status']['offset'];
+                    if (strtolower($results['status']['has more']) == 'true')
+                    {
+                        self::$_hasMore = true;
+                        self::$_offset = $results['status']['offset'];
+                    }
+                    else
+                    {
+                        self::$_hasMore = false;
+                    }
                 }
-                else 
-                {
-                    self::$_hasMore = false;
-                }
-                
+
                 return $results;
             }
             else
@@ -85,15 +84,16 @@ class Server_IO
                 throw new Exception('JSON Parse Error');
             }
         }
+        catch (Guzzle\Http\Exception\BadResponseException $e)
+        {
+            throw new Exception($e->getMessage());
+        }
     }
-    
-    
-    // ------ STATIC FUNCTIONS ------    
-    
+
+    // ------ STATIC FUNCTIONS ------
+
     static function getInitiatives()
     {
-        $response = self::sendRequest(self::$_serverUrl.'/initiatives');
-        return $response['initiatives'];
-    }    
-    
+        return self::sendRequest(self::$_urlParams . 'initiatives');
+    }
 }
