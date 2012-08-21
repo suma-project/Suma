@@ -286,10 +286,10 @@ class LocationModel
                 $locID = self::create($locDataArr);
                 $loc = new LocationModel($locID);
                 if (!$loc) {
-                    return false;
+                    throw new Exception("Unable to create new location");
                 }
             } else {
-                return false;
+                throw new Exception('Invalid location ID: ' . $locTree['id']);
             }
 
             if (isset($locTree['children']) && is_array($locTree['children'])) 
@@ -297,14 +297,10 @@ class LocationModel
                 foreach($locTree['children'] as $locKey => $childLoc)
                 {
                     $updateRes = self::updateLocTree($childLoc, $loc->getMetadata('id'), $locKey);
-                    if (!$updateRes)
-                    {
-                        return false;
-                    }
                 }
             }
         } else {
-            return false;
+            throw new Exception('Invalid location tree');
         }
 
         return true;

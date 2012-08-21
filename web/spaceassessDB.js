@@ -8,7 +8,9 @@ function initSADB(callback) {
     }
     catch(err)
     {
-    alert("DB Error");
+    alert("Error in browser (Web SQL) database setup. Are you using a WebKit browser (e.g. Chrome, Safari, Android Browser)?" +
+          " This Suma client unfortunately does not support Firefox or IE at this point. If you still are getting this message," +
+          " try clearing your browser data");
     }
 
     Session = persistence.define('Session', {

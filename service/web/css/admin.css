@@ -2,6 +2,19 @@ ol {
     list-style-type:none;
 }
 
+.toggleInit {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.enableInit {
+    color: green;
+}
+
+.disableInit {
+    color: red;
+}
+
 #activityArea {
     width:40%;
 }
