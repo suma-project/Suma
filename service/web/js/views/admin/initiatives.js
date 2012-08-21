@@ -1,5 +1,4 @@
 $(document).ready(function(){
-    // $('#toggle').hide();
     var History = window.History; // Note: We are using a capital H instead of a lower h
     if ( !History.enabled ) {
          // History.js is disabled for this browser.
