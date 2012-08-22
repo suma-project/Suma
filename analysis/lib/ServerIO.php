@@ -2,7 +2,7 @@
 
 require_once "../../lib/guzzle.phar";
 
-class Server_IO
+class ServerIO
 {
     private $_client = NULL;
     private static $_baseUrl = 'http://<host>/query';
@@ -46,7 +46,7 @@ class Server_IO
         return $this->sendRequest(self::$_urlParams.'/offset/'.self::$_offset);
     }
 
-    // ------ PRIVATE FUNCTIONS ------    
+    // ------ PRIVATE FUNCTIONS ------
 
     private function sendRequest($url)
     {
