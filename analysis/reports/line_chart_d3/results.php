@@ -3,7 +3,9 @@ header('Content-type: application/json');
 
 require_once '../../lib/ChromePhp.php';
 require_once '../../lib/underscore.php';
-require_once '../../lib/Server_IO.php';
+require_once '../../lib/ServerIO.php';
+require_once '../../lib/Gump.php';
+require_once '../../lib/SumaGump.php';
 
 // Build possible arrays for daygroup filter from client
 $weekdays = array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday');
@@ -20,24 +22,109 @@ function echo500($e)
     die;
 }
 
-function createDateRangeArray($strDateFrom,$strDateTo)
+function validateInput($_GET)
 {
-    // takes two dates formatted as YYYY-MM-DD and creates an
-    // inclusive array of the dates between the from and to dates.
+    $validator = new SumaGump();
 
-    $dateRange  = array();
-    $iDateFrom = mktime(1,0,0,substr($strDateFrom,5,2), substr($strDateFrom,8,2),substr($strDateFrom,0,4));
-    $iDateTo   = mktime(1,0,0,substr($strDateTo,5,2), substr($strDateTo,8,2),substr($strDateTo,0,4));
+    $_GET = $validator->sanitize($_GET);
 
-    if ($iDateTo>=$iDateFrom)
+    $rules = array(
+        'activities' => 'alpha_numeric',
+        'avgsum'     => 'alpha',
+        'daygroup'   => 'alpha',
+        'id'         => 'required|numeric',
+        'locations'  => 'alpha_numeric'
+    );
+
+    $filters = array(
+        'activities' => 'trim',
+        'avgsum'     => 'trim',
+        'daygroup'   => 'trim',
+        'id'         => 'trim',
+        'locations'  => 'trim',
+        'sdate'      => 'trim|sanitize_numbers|rmhyphen',
+        'edate'      => 'trim|sanitize_numbers|rmhyphen',
+        'stime'      => 'trim|sanitize_numbers',
+        'etime'      => 'trim|sanitize_numbers'
+    );
+
+    $_GET = $validator->filter($_GET, $filters);
+
+    $validated = $validator->validate($_GET, $rules);
+
+    if ($validated === TRUE)
     {
-        $dateRange[] = date('Y-m-d', $iDateFrom); // first entry
-        while ($iDateFrom < $iDateTo)
+        $params = array(
+                'activities' => $_GET['activities'],
+                'avgsum'     => $_GET['avgsum'],
+                'daygroup'   => $_GET['daygroup'],
+                'id'         => $_GET['id'],
+                'locations'  => $_GET['locations'],
+                'sdate'      => $_GET['sdate'],
+                'edate'      => $_GET['edate'],
+                'stime'      => $_GET['stime'],
+                'etime'      => $_GET['etime'],
+        );
+
+        // If end date parameter is greater than or equal
+        // to today, set end date to yesterday
+        $today = date('Ymd');
+
+        if ($params['edate'] >= $today)
         {
-            $iDateFrom+=86400; // add 24 hours
-            $dateRange[] = date('Y-m-d', $iDateFrom);
+            $params['edate'] = date('Ymd', time() - 60 * 60 * 24);
+        }
+
+        return $params;
+    }
+    else
+    {
+        throw new Exception('Input Error.'); 
+    }
+    
+}
+
+function populateSumaParams($params)
+{
+    $sumaParams = array(
+        'id'     => $params['id'],
+        'format' => $params['format'],
+        'sdate'  => $params['sdate'],
+        'edate'  => $params['edate'],
+        'stime'  => $params['stime'],
+        'etime'  => $params['etime'],
+    );
+
+    foreach ($sumaParams as $key => $value)
+    {
+        if (empty($value))
+        {
+            unset($sumaParams[$key]);
         }
     }
+
+    return $sumaParams;
+}
+
+function createDateRangeArray($dateFrom, $dateTo)
+{
+    // takes two dates formatted as YYYYMMDD and creates an
+    // inclusive array of the dates between the from and to dates.
+
+    $dateRange = array();
+    $tsFrom    = strtotime($dateFrom);
+    $tsTo      = strtotime($dateTo);
+
+    if ($tsTo >= $tsFrom)
+    {
+        $dateRange[] = date('Y-m-d', $tsFrom);
+        while ($tsFrom < $tsTo)
+        {
+            $tsFrom += 60 * 60 * 24;
+            $dateRange[] = date('Y-m-d', $tsFrom);
+        }
+    }
+
     return $dateRange;
 }
 
@@ -90,16 +177,13 @@ function populateActivities($actDict, $actID) {
 }
 
 function populateHash($response, $params)
-{   
+{
     global $countHash;
 
-    $init       = $response['initiative'];
-    $sessions   = $init['sessions'];
-    $locations  = $init['locations'];
-    $locDict    = $response['initiative']['dictionary']['locations'];
-    $locID      = $params['locations'];
-    $actDict    = $response['initiative']['dictionary']['activities'];
-    $actID      = $params['activities'];
+    $actID   = $params['activities'];
+    $locID   = $params['locations'];
+    $actDict = $response['initiative']['dictionary']['activities'];
+    $locDict = $response['initiative']['dictionary']['locations'];
 
     if ($locID !== 'all')
     {
@@ -108,7 +192,7 @@ function populateHash($response, $params)
     }
 
     if ($actID !== 'all'){
-        //$actList = populateActivities($actDict, $actID);
+        // $actList = populateActivities($actDict, $actID);
         // Once activity groups are implemented, use above code
         // and delete $actList = array($actID)
         $actList = array($actID);
@@ -118,8 +202,9 @@ function populateHash($response, $params)
         $actList = array();
     }
 
-    if ($sessions)
+    if (isset($response['initiative']['sessions']))
     {
+        $sessions = $response['initiative']['sessions'];
         foreach ($sessions as $sess)
         {
             // Get date of session
@@ -141,9 +226,9 @@ function populateHash($response, $params)
                     $countHash[$day][$sess['id']] = array();
                 }
 
-                $locations = $sess['locations'];
+                $sessLocations = $sess['locations'];
 
-                foreach ($locations as $loc)
+                foreach ($sessLocations as $loc)
                 {
                     // Test if location is in locations array
                     if ($params['locations'] === 'all' || in_array($loc['id'], $locListIds))
@@ -174,8 +259,9 @@ function populateHash($response, $params)
             }            
         }
     }
-    elseif ($locations)
+    elseif (isset($response['initiative']['locations']))
     {
+        $locations = $response['initiative']['locations'];
         foreach ($locations as $loc)
         {
             // Test if location is in location array
@@ -250,7 +336,7 @@ function calculateAvg($countHash)
         $total = 0;
         foreach ($day as $locationID => $location)
         {
-            $avgHash[$date][$locationID]['avg'] = $avgHash[$date][$locationID]['count']/$avgHash[$date][$locationID]['divisor'];
+            $avgHash[$date][$locationID]['avg'] = $avgHash[$date][$locationID]['count'] / $avgHash[$date][$locationID]['divisor'];
             $total += $avgHash[$date][$locationID]['avg'];
         }
 
@@ -259,39 +345,59 @@ function calculateAvg($countHash)
 
    return $avgHash;
 }
+
+function cullData($data, $params)
+{
+    $sdate = $params['sdate'];
+    $edate = $params['edate'];
+
+    // If $sdate and $edate are empty, say for a full query, set dummy values
+    // using min/max values of data from server
+    if (empty($sdate))
+    {
+        $keys  = __::keys($data);
+        $sdate = __::min($keys);
+        $sdate = str_replace("-", "", $sdate);
+    }
+
+    if (empty($edate))
+    {
+        $keys  = __::keys($data);
+        $edate = __::max($keys);
+        $edate = str_replace("-", "", $edate);
+
+    }
+
+    //Pad out missing dates with zero counts
+    $dateRange = createDateRangeArray($sdate, $edate);
+
+    foreach ($dateRange as $date)
+    {
+        if(!isset($data[$date]))
+        {
+            $data[$date]['dayCount'] = 0;
+        }
+    }
+
+    //Remove any days outside of query range (Sessions will sometimes pull in extra days)
+    $sdate = strtotime($sdate);
+    $sdate = date('Y-m-d', $sdate);
+    $edate = strtotime($edate);
+    $edate = date('Y-m-d', $edate);
+
+    foreach($data as $key => $val) 
+    {
+        if (($key < $sdate) || ($key > $edate))
+        {
+            unset($data[$key]);
+        }
+    }
+
+    return $data;
+}
 // --- END FUNCTIONS ---
 
-$params = array('id'         => $_GET['id'],
-                'sdate'      => $_GET['sdate'],
-                'edate'      => $_GET['edate'],
-                'stime'      => $_GET['stime'],
-                'etime'      => $_GET['etime'],
-                'daygroup'   => $_GET['daygroup'],
-                'avgsum'     => $_GET['avgsum'],
-                'locations'  => $_GET['locations'],
-                'activities' => $_GET['activities']
-            );
-
-// If end date parameter is greater than or equal
-// to today, set end date to yesterday
-$today = date('Y-m-d');
-
-if ($params['edate'] >= $today)
-{
-    $params['edate'] = date('Y-m-d', time() - 60 * 60 * 24);
-}
-
-// Capture date params with hyphens for string processing below
-$sdate = $params['sdate'];
-$edate = $params['edate'];
-
-// Strip hyphens from date
-$params['sdate'] = str_replace("-", "", $params['sdate']);
-$params['edate'] = str_replace("-", "", $params['edate']);
-
-// Strip colons from time
-$params['stime'] = str_replace(":", "", $params['stime']);
-$params['etime'] = str_replace(":", "", $params['etime']);
+$params = validateInput($_GET);
 
 // Adjust format, and query type based on avgsum value
 if ($params['avgsum'] === 'sum')
@@ -319,21 +425,14 @@ else
     $params['days'] = $all;
 }
 
-// Create new params array to send to Suma Sever
-$sumaParams = array(
-        'id'     => $params['id'],
-        'sdate'  => $params['sdate'],
-        'edate'  => $params['edate'],
-        'stime'  => $params['stime'],
-        'etime'  => $params['etime'],
-        'format' => $params['format']
-    );
+// Create params array for Suma server
+$sumaParams = populateSumaParams($params);
 
-// Instantiate Server_IO class, begin retrieval of data from Suma Server,
+// Instantiate ServerIO class, begin retrieval of data from Suma Server,
 // and continue retrieval until the hasMore property is false
 try 
 {
-    $io = new Server_IO();
+    $io = new ServerIO();
     populateHash($io->getData($sumaParams, $queryType), $params);
     while ($io->hasMore())
     {
@@ -346,47 +445,15 @@ catch (Exception $e)
 }
 
 // Perform additional data processing if necessary (calculate averages)
-if ($params['avgsum'] === 'sum')
-{
-    $data = $countHash;
-}
-else
+if ($params['avgsum'] === 'avg')
 {
     $data = calculateAvg($countHash);
 }
-
-// If $sdate and $edate are empty, say for a full query, set dummy values
-// using min/max values of data stored on server
-if (empty($sdate))
+else
 {
-    $keys  = __::keys($data);
-    $sdate = __::min($keys);
+    $data = $countHash;
 }
 
-if (empty($edate))
-{
-    $keys  = __::keys($data);
-    $edate = __::max($keys);
-}
-
-//Remove any days outside of query range (Sessions will sometimes pull in extra days)
-foreach($data as $key => $val) 
-{
-    if (($key < $sdate) || ($key > $edate) )
-    {
-        unset($data[$key]);
-    }
-}
-
-//Pad out missing dates with zero counts
-$dateRange = createDateRangeArray($sdate, $edate);
-
-foreach ($dateRange as $date)
-{
-    if(!isset($data[$date]))
-    {
-        $data[$date]['dayCount'] = 0;
-    }
-}
+$data = cullData($data, $params);
 
 echo json_encode($data);
