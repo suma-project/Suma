@@ -86,7 +86,6 @@
             d3.select("#chart")
                 .datum(counts)
                 .call(chart);
-            
         }
     };
 
