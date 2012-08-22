@@ -1,10 +1,10 @@
 <?php 
 
-require_once '../../lib/Server_IO.php';
+require_once '../../lib/ServerIO.php';
 
 try 
 {
-    $initiatives = Server_IO::getInitiatives();
+    $initiatives = ServerIO::getInitiatives();
 }
 catch (Exception $e)
 {
