@@ -74,10 +74,10 @@
                 optionsList = ['<option value="all">All</option>'];
             }
 
-            $.each(nestedList, function (index, value) {
-                optionsList.push('<option value="' + value.id + '">' + value.level + value.title + '</option>');
-                if (value.children.length > 0) {
-                    self.buildOptList(value.children, optionsList);
+            _.each(nestedList, function (element, index) {
+                optionsList.push('<option value="' + element.id + '">' + element.level + element.title + '</option>');
+                if (element.children.length > 0) {
+                    self.buildOptList(element.children, optionsList);
                 }
             });
 
@@ -91,11 +91,11 @@
                 optionsList = ['<option value="all">All</option>'];
             }
 
-            $.each(nestedList, function (index, value) {
-                optionsList.push('<option value="' + value.type + '-' + value.id + '">' + value.level + value.title + '</option>');
-                if (value.children) {
-                    if (value.children.length > 0) {
-                        self.buildActOptList(value.children, optionsList);
+            _.each(nestedList, function (element, index) {
+                optionsList.push('<option value="' + element.type + '-' + element.id + '">' + element.level + element.title + '</option>');
+                if (element.children) {
+                    if (element.children.length > 0) {
+                        self.buildActOptList(element.children, optionsList);
                     }
                 }
             });
@@ -107,23 +107,23 @@
 
             // Recursive function
             function getDepth(children, count) {
-                $.each(children, function (index, value) {
-                    value.level = count;
-                    if (value.children) {
-                        if (value.children.length > 0) {
-                            getDepth(value.children, count + '&mdash;');
+                _.each(children, function (element, index) {
+                    element.level = count;
+                    if (element.children) {
+                        if (element.children.length > 0) {
+                            getDepth(element.children, count + '&mdash;');
                         }
                     }
                 });
             }
 
-            $.each(nestedList, function (index, value) {
-                value.level = '';
+            _.each(nestedList, function (element, index) {
+                element.level = '';
 
-                if (value.children) {
-                    if (value.children.length > 0) {
+                if (element.children) {
+                    if (element.children.length > 0) {
                         var count = '&mdash;';
-                        getDepth(value.children, count);
+                        getDepth(element.children, count);
                     }
                 }
             });
@@ -142,14 +142,14 @@
             function findDescLocs(parentId, locations) {
                 var locTree = [];
 
-                $.each(locations, function (index, value) {
-                    if (value.fk_parent === parentId) {
+                _.each(locations, function (element, index) {
+                    if (element.fk_parent === parentId) {
                         locTree.push({
-                            'id'       : value.id,
-                            'title'    : value.title,
-                            'rank'     : value.rank,
-                            'fk_parent': value.fk_parent,
-                            'children' : findDescLocs(value.id, locations)
+                            'id'       : element.id,
+                            'title'    : element.title,
+                            'rank'     : element.rank,
+                            'fk_parent': element.fk_parent,
+                            'children' : findDescLocs(element.id, locations)
                         });
                     }
                 });
@@ -157,14 +157,14 @@
                 return locTree;
             }
 
-            $.each(locations, function (index, value) {
-                if (value.fk_parent === rootParent) {
+            _.each(locations, function (element, index) {
+                if (element.fk_parent === rootParent) {
                     locationList.push({
-                        'id'       : value.id,
-                        'title'    : value.title,
-                        'rank'     : value.rank,
-                        'fk_parent': value.fk_parent,
-                        'children' : findDescLocs(value.id, locations)
+                        'id'       : element.id,
+                        'title'    : element.title,
+                        'rank'     : element.rank,
+                        'fk_parent': element.fk_parent,
+                        'children' : findDescLocs(element.id, locations)
                     });
                 }
             });
@@ -183,17 +183,17 @@
                 finalList,
                 html;
 
-            $.each(activityGroups, function (index, value) {
+            _.each(activityGroups, function (element, index) {
                 var childrenArray = [],
-                    testID = value.id;
+                    testID = element.id;
 
-                $.each(activities, function (index, value) {
-                    if (value.activityGroup === testID) {
+                _.each(activities, function (element, index) {
+                    if (element.activityGroup === testID) {
                         childrenArray.push({
-                            'id'           : value.id,
-                            'rank'         : value.rank,
-                            'activityGroup': value.activityGroup,
-                            'title'        : value.title,
+                            'id'           : element.id,
+                            'rank'         : element.rank,
+                            'activityGroup': element.activityGroup,
+                            'title'        : element.title,
                             'children'     : [],
                             'type'         : 'activity'
                         });
@@ -201,9 +201,9 @@
                 });
 
                 activityList.push({
-                    'id'      : value.id,
-                    'title'   : value.title,
-                    'rank'    : value.rank,
+                    'id'      : element.id,
+                    'title'   : element.title,
+                    'rank'    : element.rank,
                     'children': childrenArray,
                     'type'    : 'activityGroup'
                 });
@@ -222,8 +222,8 @@
             var self = this,
                 optionsList = ['<option value="all">All</option>'];
 
-            $.each(list, function (index, value) {
-                optionsList.push('<option value="' + value.id + '">' + value.title + '</option>');
+            _.each(list, function (element, index) {
+                optionsList.push('<option value="' + element.id + '">' + element.title + '</option>');
             });
 
             return optionsList;
@@ -234,10 +234,10 @@
                 finalList,
                 html;
 
-            $.each(activities, function (index, value) {
+            _.each(activities, function (element, index) {
                 activityList.push({
-                    'id': value.id,
-                    'title': value.title
+                    'id': element.id,
+                    'title': element.title
                 });
             });
 
