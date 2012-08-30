@@ -1,4 +1,4 @@
-var timeSeries = (function () {
+var timeSeries = function () {
     var margin,     // Margin of svg canvas
         margin2,    // Margin of scroll/zoom chart
         width,      // Width of Canvas
@@ -118,6 +118,13 @@ var timeSeries = (function () {
                 .attr("width", width)
                 .attr("height", height);
 
+            svg.append("defs").append("clipPath")
+                .attr("id", "dotClip")
+                .append("rect")
+                .attr("x", -5)
+                .attr("width", width + 10)
+                .attr("height", height + 10);
+
             focus = svg.append("g")
                 .attr("class", "mainGraph")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -137,11 +144,10 @@ var timeSeries = (function () {
                 .call(yAxis);
 
             focus.append("g")
-               
                 .selectAll(".dot")
                 .data(data)
                 .enter().append("circle")
-                 //.attr("clip-path", "url(#clip)")
+                .attr("clip-path", "url(#dotClip)")
                 .attr("class", "dot")
                 .attr("cx", function (d) {return x(d.date); })
                 .attr("cy", function (d) {return y(d.count); })
@@ -166,7 +172,7 @@ var timeSeries = (function () {
                         rightPoint  = data[cut].date,                   // Convert cut to date (milliseconds from Epoch)
                         midpoint    = (leftPoint.getTime() + rightPoint.getTime()) / 2; // Calculate midpoint
 
-                    // Is current postion less than the midpoint
+                    // Is current postion less than the midpoint?
                     if (xInvert.getTime() < midpoint) {
                         cut -= 1;
                     }
@@ -238,8 +244,9 @@ var timeSeries = (function () {
         if (!arguments.length) {
             return width;
         }
+
         width = value - margin.left - margin.right;
         return timeSeriesChart;
     };
     return timeSeriesChart;
-});    
+};
