@@ -1,9 +1,3 @@
-/*body {
-  font-family: Verdana;
-}
-td {
-  font-size:14px;
-}*/
 
 #loading {
     position:relative;
@@ -21,7 +15,7 @@ td {
 }
 #chart{
     width:940px;
-    height:400px;
+    height: 400px;
    /* margin:10px 10px 25px 10px;*/
    margin-bottom:25px;
 }
@@ -60,4 +54,14 @@ svg {
 .brush .resize path {
   fill: #eee;
   stroke: #666;
+}
+
+
+/* Additional Interface Rules */
+.alert-error {
+  display:none;
+}
+
+#secondary-filters {
+  display:none;
 }

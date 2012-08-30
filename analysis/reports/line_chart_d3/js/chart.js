@@ -35,10 +35,17 @@
                 dataType: 'json',
                 beforeSend: function () {
                     $('svg').remove();
+                    $('.alert').hide();
                     $('#loading').show();
+                    var text = $('#submit').data('loading-text');
+                    $('#submit').addClass('disabled').val(text);
+                    $('#submit').attr('disabled', 'true');
                 },
                 complete: function () {
+                    var text = $('#submit').data('default-text');
+                    $('#submit').removeClass('disabled').val(text);
                     $('#loading').hide();
+                    $('#submit').removeAttr('disabled');
                 }
             });
         },
@@ -48,14 +55,9 @@
             return new Date(a.date).getTime() - new Date(b.date).getTime();
         },
 
-        sumData: function (counts) {
-            var sum = d3.sum(_.pluck(counts, 'count'));
-            $('#sum').text(Math.floor(sum));
-        },
-
-        avgData: function (counts) {
-            var avg = d3.sum(_.pluck(counts, 'count')) / counts.length;
-            $('#avg').text(Math.floor(avg));
+        showError: function () {
+            $('.alert-error').show();
+            $('#submit').removeAttr('disabled');
         },
 
         // Process and prepare data for display, accepts response from getData
@@ -72,16 +74,19 @@
                 counts.push(newObj);
             });
 
+            var test = _.unique(_.pluck(_.values(counts), 'count'));
+            if(test.length === 1) {
+                Chart.showError();
+                return;
+            }
             // Sort by date
             counts.sort(Chart.sortData);
 
-            Chart.sumData(counts);
-            Chart.avgData(counts);
             Chart.drawChart(counts);
         },
 
         drawChart: function (counts) {
-            var chart = timeSeries();
+            var chart = new timeSeries();
 
             d3.select("#chart")
                 .datum(counts)

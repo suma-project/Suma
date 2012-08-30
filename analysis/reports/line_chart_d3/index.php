@@ -4,7 +4,8 @@ require_once '../../lib/ServerIO.php';
 
 try 
 {
-    $initiatives = ServerIO::getInitiatives();
+    $io = new ServerIO();
+    $initiatives = $io->getInitiatives();
 }
 catch (Exception $e)
 {
@@ -15,7 +16,7 @@ catch (Exception $e)
 }
 
 $initDropDown = '<select name="id" id="initiatives">';
-
+$initDropDown .= '<option value="' . 'default' . '">' . 'Select an Initiative' . '</option>' . "\n";
 foreach($initiatives as $init)
 {
     $initDropDown .= '<option value="' . $init['id'] . '">' . $init['title'] . '</option>' . "\n";
@@ -75,9 +76,16 @@ $initDropDown .= '</select>';
             <div class="row">
                 <div id="chart" class="span12">
                     <div id="loading"><img src="../../lib/img/spinner.gif"></div>
+                    <div class="alert alert-error alert-block">
+                        <h4>Warning!</h4>
+                            There was insufficient data for display based on your search parameters. Please try a different combination of filters.
+                    </div>
+                    <div class="alert alert-info alert-block">
+                        <h4>Welcome!</h4>
+                            Please select an initiative from the select menu below. Once you have chosen an initiative, additional filter options will appear. You can also limit your search by date or time. 
+                    </div>
                 </div>
             </div>
-        
 
             <div class="row">
                 <form id="chartFilters">
@@ -116,7 +124,7 @@ $initDropDown .= '</select>';
                         </div>
                     </div>
                 </div>
-                <div class="span4">
+                <div id="secondary-filters" class="span4">
                       <div class="control-group">
                         <label class="control-label" for="daygroup">Days</label>
                         <div class="controls">
@@ -140,7 +148,6 @@ $initDropDown .= '</select>';
                         <label class="control-label" for="locations">Locations</label>
                         <div class="controls">
                             <select name="locations" id="locations">
-                                <option value="all">All</option>
                             </select>
                         </div>
                     </div>
@@ -148,28 +155,41 @@ $initDropDown .= '</select>';
                         <label class="control-label" for="activities">Activities</label>
                         <div class="controls">
                             <select name="activities" id="activities">
-                                <option value="all">All</option>
                             </select>
                         </div>
                     </div>
                      <div>
-                        <input type="submit" id="submit" class="btn btn-success" value="Submit" />
+                        <input type="submit" id="submit" class="btn btn-success" data-default-text ="Submit" data-loading-text="Loading..." value="Submit" />
                     </div>
-                </div>
-               
-                <div id="summary" class="span4">
-                    <h3>Summary</h3>
-                    <h4>Sum</h4>
-                        <p id="sum"></p>
-                    <h4>Avg</h4>
-                        <p id="avg"></p>
                 </div>
                 </fieldset>
                 </form>
             </div>
         </div>
 
+        <!-- TEMPLATES -->
+
+        <script id="locations-template" type="text/x-handlebars-template">
+            <option value="all">All</option>
+            {{#each items}}
+                <option value="{{id}}">{{indent depth}}{{title}}</option>
+            {{/each}}
+        </script>
+        <script id="activities-template" type="text/x-handlebars-template">
+            <option value="all">All</option>
+            {{#each items}}
+                <option value="{{id}}">{{indent depth}}{{title}}</option>
+            {{/each}}
+        </script>
+        <script id="activitiestemp-template" type="text/x-handlebars-template">
+            <option value="all">All</option>
+            {{#each activities}}
+                <option value="{{id}}">{{title}}</option>
+            {{/each}}
+        </script>
+
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+        <script src="../../lib/js/handlebars.js"></script>
         <script src="../../lib/js/bootstrap.min.js"></script>
         <script src="../../lib/js/bootstrap-datepicker.js"></script>
         <script src="../../lib/js/d3.v2.min.js"></script>
