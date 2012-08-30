@@ -1,12 +1,12 @@
 <?php
 header('Content-type: application/json');
 
-include '../../lib/ChromePhp.php';
 require_once '../../lib/ServerIO.php';
 
 $params = array('id'     => $_GET['id'],
                 'format' => 'alc',
                 'limit'  => '1');
+
 try 
 {
     $io = new ServerIO();
