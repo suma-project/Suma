@@ -13,6 +13,8 @@ class TimeSeriesData
     public $weekends = array('Saturday', 'Sunday');
     public $all      = array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday');
 
+    public $locListIds;
+    public $actList = array();
     public $countHash = array();
 
     public function echo500($e)
@@ -67,6 +69,13 @@ class TimeSeriesData
                     'stime'      => $input['stime'],
                     'etime'      => $input['etime']
             );
+
+            $actSplit = explode("-", $params['activities']);
+            $actType  = $actSplit[0];
+            $actId    = $actSplit[1];
+
+            $params['actType'] = $actType;
+            $params['actId']   = $actId;
 
             // If end date parameter is greater than or equal
             // to today, set end date to yesterday
@@ -154,17 +163,14 @@ class TimeSeriesData
         return $locArray;
     }
 
-    public function populateActivities($actDict, $actID) {
+    public function populateActivities($actDict, $actID, $actType) {
         $actArray = array();
-        $test     = explode("-", $actID);
-        $type     = $test[0];
-        $id       = $test[1];
 
-        if ($type === 'activityGroup')
+        if ($actType === 'activityGroup')
         {
             foreach ($actDict as $act)
             {
-                if ($act['activityGroup'] === $id)
+                if ($act['activityGroup'] === $actId)
                 {
                     $actArray[] = $act['id'];
                 }
@@ -172,7 +178,7 @@ class TimeSeriesData
         }
         else
         {
-            $actArray[] = $id;
+            $actArray[] = $actId;
         }
 
         return $actArray;
@@ -180,26 +186,29 @@ class TimeSeriesData
 
     public function populateHash($response, $params)
     {
-        $actID   = $params['activities'];
+        $actID   = $params['actId'];
+        $actType = $params['actType'];
         $locID   = $params['locations'];
         $actDict = $response['initiative']['dictionary']['activities'];
         $locDict = $response['initiative']['dictionary']['locations'];
 
-        if ($locID !== 'all')
+        if (!isset($this->locListIds))
         {
-            $locList    = $this->populateLocations($locDict, $locID);
-            $locListIds = __::pluck($locList, 'id');
+            if ($locID !== 'all')
+            {
+                $locList    = $this->populateLocations($locDict, $locID);
+                $this->locListIds = __::pluck($locList, 'id');
+            }
         }
-
-        if ($actID !== 'all'){
-            // $actList = populateActivities($actDict, $actID);
-            // Once activity groups are implemented, use above code
-            // and delete $actList = array($actID)
-            $actList = array($actID);
-        }
-        else
+        
+        if (empty($this->actList))
         {
-            $actList = array();
+            if ($actID !== 'all'){
+                // $actList = populateActivities($actDict, $actID, $actType);
+                // Once activity groups are implemented, use above code
+                // and delete $actList = array($actID)
+                $actList = array($actID);
+            }
         }
 
         if (isset($response['initiative']['sessions']))
@@ -231,7 +240,7 @@ class TimeSeriesData
                     foreach ($sessLocations as $loc)
                     {
                         // Test if location is in locations array
-                        if ($params['locations'] === 'all' || in_array($loc['id'], $locListIds))
+                        if ($params['locations'] === 'all' || in_array($loc['id'], $this->locListIds))
                         {
                             $counts = $loc['counts'];
                             foreach ($counts as $count)
@@ -240,7 +249,7 @@ class TimeSeriesData
                                 $countActs = __::pluck($count['activities'], 'id');
 
                                 // Test for intersection between input and count activities
-                                $intersect = __::intersection($countActs, $actList);
+                                $intersect = __::intersection($countActs, $this->actList);
 
                                 if ($params['activities'] === 'all' || $intersect)
                                 {
@@ -265,7 +274,7 @@ class TimeSeriesData
             foreach ($locations as $loc)
             {
                 // Test if location is in location array
-                if ($params['locations'] === 'all' || in_array($loc['id'], $locListIds))
+                if ($params['locations'] === 'all' || in_array($loc['id'], $this->locListIds))
                 {
                     $counts = $loc['counts'];
                    
@@ -281,7 +290,7 @@ class TimeSeriesData
                         $countActs = __::pluck($count['activities'], 'id');
 
                         // Test for intersection between input and count activities
-                        $intersect = __::intersection($countActs, $actList);
+                        $intersect = __::intersection($countActs, $this->actList);
 
                         // Test if weekday is in days array AND if count matches requested activities
                         if ((in_array($weekday, $params['days'])) && ($params['activities'] === 'all' || $intersect))
@@ -373,9 +382,14 @@ class TimeSeriesData
 
         foreach ($dateRange as $date)
         {
-            if(!isset($data[$date]))
+            if (!isset($data[$date]))
             {
-                $data[$date]['dayCount'] = 0;
+                $weekday = date('l', strtotime($date));
+                // This check is to avoid padding days we don't want
+                if (in_array($weekday, $params['days']))
+                {
+                    $data[$date]['dayCount'] = 0;
+                }
             }
         }
 
