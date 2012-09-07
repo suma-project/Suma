@@ -1,56 +1,77 @@
-(function () {
+var ReportFilters = function (p_options) {
 
-    var Interface = {
+    var options = {
+            url: '', // URL for AJAX request (initiative dictionary)
+            triggerForm: '', // Form element that triggers AJAX request (CSS ID)
+            filterForm: '', // Wrapper element that controls visibility of filters (CSS ID)
+            locationsTemplate: '', // CSS ID of locations template
+            activitiesTemplate: '', // CSS ID of activities template
+            locationsSelect: '', // CSS ID of locations select list
+            activitiesSelect: '' // CSS ID of activities select list
+
+        };
+
+    return {
 
         init: function () {
-            var self = this;
+            // Check passed options. Copied from http://www.engfers.com/code/javascript-module-pattern/
+            // Not sure if this is best way
+            if (p_options !== null && p_options !== undefined && p_options !== 'undefined') {
+                _.each(options, function (element, index) {
+                    if (p_options[index] !== null && p_options[index] !== undefined && p_options[index] !== 'undefined') {
+                        options[index] = p_options[index];
+                    }
+                });
+            }
 
             // Bind event listeners
-            self.bindEvents();
+            this.bindEvents();
         },
 
         bindEvents: function () {
             var self = this;
 
             // Listen for change of initiative
-            $('#initiatives').on('change', function (e) {
+            $(options.triggerForm).on('change', function (e) {
                 if (this.value !== 'default') {
                     // Retrieve updated display data
                     $.when(self.getDictionary(this.value)).then(function (data) {
                         // Process data and populate templates
                         self.buildInterfaceElements(data);
                         // Show new filters
-                        $('#secondary-filters').fadeIn();
+                        $(options.filterForm).fadeIn();
                     });
                 } else {
                     // Hide new filters
-                    $('#secondary-filters').fadeOut();
+                    $(options.filterForm).fadeOut();
                 }
             });
         },
 
         buildInterfaceElements: function (data) {
             // Process locations and activities
-            var self = this,
-                locations = self.processLocations(data.initiative.dictionary.locations),
-                activities = self.processActivities(data.initiative.dictionary.activities, data.initiative.dictionary.activityGroups);
+            var locations = this.processLocations(data.initiative.dictionary.locations),
+                activities = this.processActivities(data.initiative.dictionary.activities, data.initiative.dictionary.activityGroups);
 
             // Populate templates
-            self.buildTemplate(locations, '#locations-template', '#locations');
-            self.buildTemplate(activities, '#activities-template', '#activities');
+            this.buildTemplate(locations, options.locationsTemplate, options.locationsSelect);
+            this.buildTemplate(activities, options.activitiesTemplate, options.activitiesSelect);
         },
 
         getDictionary: function (initiative) {
-            //var url = 'interface.php';
-            var url = 'ag.json';
-
             // AJAX call is returned here to take advantage of jQuery promise object
             return $.ajax({
                 // data: {
                 //     id: initiative
                 // },
                 dataType: 'json',
-                url: url
+                url: options.url,
+                beforeSend: function () {
+                    $(options.triggerForm).attr('disabled', 'true');
+                },
+                complete: function () {
+                    $(options.triggerForm).removeAttr('disabled', 'true');
+                }
             });
         },
 
@@ -63,22 +84,21 @@
         },
 
         sortLocations: function (arr) {
-            var self = this,
-                len = arr.length;
+            var len = arr.length;
 
             while (len > 0) {
                 len -= 1;
                 if (arr[len].children) {
-                    self.sortLocations(arr[len].children);
+                    this.sortLocations(arr[len].children);
                 }
             }
 
-            arr.sort(self.propertySort);
+            arr.sort(this.propertySort);
         },
 
         buildLocList: function (nestedList, flatArray) {
             var self = this;
-            flatArray = flatArray || [];
+                flatArray = flatArray || [];
 
             _.each(nestedList, function (obj) {
                 flatArray.push(obj);
@@ -107,6 +127,7 @@
 
                 // Loop over locations
                 _.each(locations, function (obj, index) {
+
                     // Start at top of tree
                     if (obj.fk_parent === parentId) {
                         delete memo[obj.id];
@@ -118,10 +139,11 @@
                             'rank'     : obj.rank,
                             'fk_parent': obj.fk_parent,
                             'depth'    : depth,
-                            'children' : locMemo(memo, obj.id, depth + 1)
+                            'children' : locMemo(_.clone(memo), obj.id, depth + 1)
                         });
                     }
                 });
+
                 return locTree;
             }
 
@@ -129,29 +151,27 @@
         },
 
         processLocations: function (locations) {
-            var self = this,
-                locTree,
+            var locTree,
                 locList;
 
             // Build location tree from adjacency list
-            locTree = self.buildLocTree(locations);
+            locTree = this.buildLocTree(locations);
 
             // Sort locations based on rank at each level of depth
-            self.sortLocations(locTree);
+            this.sortLocations(locTree);
 
             // Flatten tree to sorted array
-            locList = self.buildLocList(locTree);
+            locList = this.buildLocList(locTree);
 
             return locList;
         },
 
         processActivities: function (activities, activityGroups) {
-            var self = this,
-                activityList = [];
+            var activityList = [];
 
             // Sort activities and activity groups
-            activities.sort(self.sortActivities);
-            activityGroups.sort(self.sortActivities);
+            activities.sort(this.sortActivities);
+            activityGroups.sort(this.sortActivities);
 
             // For each activity group, build a list of activities
             _.each(activityGroups, function (activityGroup) {
@@ -223,28 +243,27 @@
         },
 
         // TEMPORARY METHODS UNTIL ACTIVITY GROUPS ARE IMPLEMENTED
-        activitiesTemplateTemp: function (activities) {
+        activitiesTemplateTemp: function (items, templateId, elementId) {
             var json,
                 html,
                 template;
 
             // Insert list into object for template iteration
-            json = {activities: activities};
+            json = {items: items};
 
             // Retrieve template from index.php (in script tag)
-            html = $('#activitiestemp-template').html();
+            html = $(templateId).html();
 
             // Compile template
             template = Handlebars.compile(html);
 
             // Populate template with data and insert into DOM
-            $('#activities').empty();
-            $('#activities').append(template(json));
+            $(elementId).empty();
+            $(elementId).append(template(json));
         },
 
         processActivitiesTemp: function (activities) {
-            var self = this,
-                activityList   = [];
+            var activityList   = [];
 
             _.each(activities, function (obj) {
                 activityList.push({
@@ -253,8 +272,7 @@
                 });
             });
 
-            self.activitiesTemplateTemp(activityList);
+            this.activitiesTemplateTemp(activityList);
         }
     };
-    Interface.init();
-}());
+};
