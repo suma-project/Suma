@@ -1,4 +1,3 @@
-
 #loading {
     position:relative;
     width:50%;
@@ -8,60 +7,60 @@
 }
 
 .formatText {
-  font-size:12px;
-  padding-left:5px;
-  color:#666;
-
+    font-size:12px;
+    padding-left:5px;
+    color:#666;
 }
+
 #chart{
     width:940px;
     height: 400px;
-   /* margin:10px 10px 25px 10px;*/
-   margin-bottom:25px;
+    /* margin:10px 10px 25px 10px;*/
+    margin-bottom:25px;
 }
+
 svg {
-  font: 10px sans-serif;
+    font: 10px sans-serif;
 }
 
 .mainGraph path, .subGraph path {
-  fill:steelblue;
+    fill:steelblue;
 }
 
 .dot {
-  fill:steelblue;
-  stroke: #f7f7f7;
-  stroke-width: 2px;
+    fill:steelblue;
+    stroke: #f7f7f7;
+    stroke-width: 2px;
 }
+
 #legendCircle {
-  fill:steelblue;
-  stroke: #f7f7f7;
-  stroke-width: 2px;
+    fill:steelblue;
+    stroke: #f7f7f7;
+    stroke-width: 2px;
 }
 
 .axis path, .axis line {
-  fill:none;
-  stroke: #000;
-  shape-rendering: crispEdges;
+    fill:none;
+    stroke: #000;
+    shape-rendering: crispEdges;
 }
 
 .brush rect.extent {
-  stroke: #333;
-  
-  fill-opacity: .125;
-  shape-rendering: crispEdges;
+    stroke: #333;
+    fill-opacity: .125;
+    shape-rendering: crispEdges;
 }
 
 .brush .resize path {
-  fill: #eee;
-  stroke: #666;
+    fill: #eee;
+    stroke: #666;
 }
-
 
 /* Additional Interface Rules */
 .alert-error {
-  display:none;
+    display:none;
 }
 
 #secondary-filters {
-  display:none;
+    display:none;
 }
