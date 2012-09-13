@@ -89,6 +89,28 @@ class ActivityGroupModel
         }    
     }
     
+    public function numberOfActivities($filterDisabled = true) {
+        $select = $this->_db->select()
+        ->from(array('a' => 'activity'), array('id'))
+        ->join(array('ag' => 'activity_group'), 'a.fk_activity_group = ag.id', array())
+        ->where('ag.id = '.$this->_id);
+
+        if ($filterDisabled)
+        {
+            $select->where('a.enabled = true');
+        }
+
+        $rows = $select->query()->fetchAll();
+
+        if (empty($rows)) {
+            $actCount = 0;
+        } else {
+            $actCount = count($rows);
+        }
+
+        return $actCount;
+    }
+
     public function update($data)
     {
         $hash = array('title'        =>  $data['title'],

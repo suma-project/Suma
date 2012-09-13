@@ -37,6 +37,10 @@ html {
     margin-top: 17px;
 }
 
+#activityGroupContainer {
+    margin-left: 10px;
+}
+
 input#goesup {
     width: 410px;
     height: 320px;
@@ -50,11 +54,12 @@ input#goesup {
     padding-right: 5%;
 }
 
-input#count_input {
-    /*-webkit-user-select: text;*/
-    width: 90px;
-    height: 70px;
+input#countInput {
+    display: none;
+    width: 80px;
+    height: 50px;
     font-size: 2em;
+    margin-left: 30px;
 }
 
 #goesdown_heading {
@@ -75,7 +80,7 @@ input#count_input {
 }
 
 .sidebar, .main_entry {
-    min-height: 700px;
+    min-height: 850px;
 }
 
 .sidebar {

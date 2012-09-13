@@ -68,7 +68,7 @@ class InitiativeModel
         }
     }    
     
-    public function getActivityGroups()
+    public function getActivityGroups($filterEmpty = true)
     {
         $select = $this->_db->select()
             ->from('activity_group', array('id'))
@@ -80,7 +80,11 @@ class InitiativeModel
         $groups = array();
         foreach($rows as $row)
         {
-            $groups[] = new ActivityGroupModel($row['id']);
+            $actGroup = new ActivityGroupModel($row['id']);
+
+            if (!filterEmpty || ($actGroup->numberOfActivities() > 0)) {
+                $groups[] = $actGroup;
+            }
         }
         
         return $groups;
@@ -271,18 +275,11 @@ class InitiativeModel
     
     private function fetchActivityGroups()
     {
-        $array = array();
-        $groupsHash = array();
+        $activityGroupMetadata = array();
         
-        foreach($this->getActivities() as $activity)
+        foreach($this->getActivityGroups(true) as $group)
         {
-            $groupsHash[(int)$activity->getMetadata('fk_activity_group')] = null;
-        }
-        
-        foreach($groupsHash as $key => $val)
-        {
-            $group = new ActivityGroupModel($key);
-            $array[] = array('id'       => (int)$group->getMetadata('id'),
+            $activityGroupMetadata[] = array('id'       => (int)$group->getMetadata('id'),
                              'title'    => $group->getMetadata('title'),
                              'rank'     => (int)$group->getMetadata('rank'),
                              'required' => ($group->getMetadata('required')) ? TRUE : FALSE,
@@ -290,7 +287,7 @@ class InitiativeModel
                              );
         }
         
-        return $array;
+        return $activityGroupMetadata;
     }
     
     private function jettisonMetadata()

@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//Dth XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/Dth/xhtml1-strict.dth"> <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
   <head>
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0" />
     <title>Suma: Space Usage Tool</title>
@@ -62,9 +62,10 @@
         <h3 id="current_loc_label">No current location</h3>
         <div id="counting_container">
           <form id="count_form">
-            <div id="format">
+            <div id="activityGroupContainer">
             </div>
             <br />
+            <input type="number" id="countInput" name="countInput" value="1" min="1" />
             <input type="button" id="goesup" class="tappable" name="goesup" value="Count" />
           </form>
         </div>

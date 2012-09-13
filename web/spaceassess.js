@@ -171,7 +171,7 @@ function updateInitiatives() {
 }
 
 function removeActivities() {
-    $("div#format").empty();
+    $("div#activityGroupContainer").empty();
     currentActivities = {};
 }
 
@@ -180,7 +180,7 @@ function displayActivities(actInit, callback) {
 
     removeActivities();
     countForm = $("form#count_form");
-    activityContainer = $("div#format", countForm).first();
+    activityContainer = $("div#activityGroupContainer", countForm).first();
     currentActivities = {};
 
     actInit.activityGroups.list(function(activityGroups) {
