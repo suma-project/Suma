@@ -82,7 +82,7 @@ class InitiativeModel
         {
             $actGroup = new ActivityGroupModel($row['id']);
 
-            if (!filterEmpty || ($actGroup->numberOfActivities() > 0)) {
+            if (!$filterEmpty || ($actGroup->numberOfActivities() > 0)) {
                 $groups[] = $actGroup;
             }
         }

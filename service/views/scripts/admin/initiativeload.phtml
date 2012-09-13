@@ -17,7 +17,7 @@ echo "<hr><div id=\"activityArea\"><h3>Activities:</h3>\n";
 echo "<p><a href=\"#\" id=\"addActivityGroup\">Add Activity Group</a></p>\n";
 echo "<ol id=\"activities\" class=\"sortable\">\n";
 
-$activityGroups = $this->init->getActivityGroups(TRUE);
+$activityGroups = $this->init->getActivityGroups(FALSE);
 foreach ($activityGroups as $activityGroup) {
     $actGroupRequired = ($activityGroup->getMetadata('required')) ? 'required-act-group' : '';
     $actGroupAllowMulti = ($activityGroup->getMetadata('allowMulti')) ? 'allowMulti-act-group' : '';
