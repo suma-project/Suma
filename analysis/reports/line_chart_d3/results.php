@@ -1,17 +1,24 @@
 <?php
 header('Content-type: application/json');
 
-require_once '../../lib/ChromePhp.php';
-require_once '../../lib/underscore.php';
-require_once '../../lib/ServerIO.php';
-require_once '../../lib/Gump.php';
-require_once '../../lib/SumaGump.php';
-require_once '../../lib/TimeSeriesData.php';
-
+require_once '../../lib/php/underscore.php';
+require_once '../../lib/php/ServerIO.php';
+require_once '../../lib/php/Gump.php';
+require_once '../../lib/php/SumaGump.php';
+require_once '../../lib/php/TimeSeriesData.php';
+/**
+ * Function invoked when results.php receives an AJAX call
+ * from the client. Handles the assembly and processing of data
+ * to return to the client.
+ * 
+ * @return array
+ */
 function lineChartData()
 {
+    // Instantiate TimeSeriesData class
     $data = new TimeSeriesData();
 
+    // Validate form input
     $params = $data->validateInput($_GET);
 
     // Adjust format, and query type based on avgsum value
@@ -25,6 +32,7 @@ function lineChartData()
         $params['format'] = 'lca';
         $queryType        = 'sessions';
     }
+
     // Determine which array to use as filter for daygroup
     if ($params['daygroup'] === 'weekdays')
     {
@@ -58,23 +66,20 @@ function lineChartData()
         $data->echo500($e);
     }
 
-    $test = $data->countHash;
-
     // Perform additional data processing if necessary (calculate averages)
     if ($params['avgsum'] === 'avg')
     {
-        $returnData = $data->calculateAvg($test);
+        $returnData = $data->calculateAvg($data->countHash);
     }
     else
     {
         $returnData = $data->countHash;
     }
 
+    // Cull data, removing or padding days as necessary
     $returnData = $data->cullData($returnData, $params);
 
     return $returnData;
 }
-
-
-$test = lineChartData();
-echo json_encode($test);
+$chartData = lineChartData();
+echo json_encode($chartData);
