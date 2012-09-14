@@ -43,7 +43,7 @@
         insertFilters: function () {
             // Create options object for filters
             var filterOptions = {
-                url: '../line_chart_d3/reportFilters.php',
+                url: '../../lib/php/reportFilters.php',
                 triggerForm: '#initiatives',
                 filterForm: '#secondary-filters',
                 locationsTemplate: '#locations-template',
