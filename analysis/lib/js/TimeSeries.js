@@ -1,4 +1,13 @@
-var timeSeries = function () {
+/**
+ * Module for the display of a time series using d3.js
+ *
+ * @description  Base context/brush graph from
+ * https://gist.github.com/1667367 courtesy of Mike Bostock
+ *
+ * @author  Mike Bostock
+ * @author  Bret Davidson <bret_davidson@ncsu.edu>
+ */
+var TimeSeries = function () {
     var margin,     // Margin of svg canvas
         margin2,    // Margin of scroll/zoom chart
         width,      // Width of Canvas
@@ -50,7 +59,10 @@ var timeSeries = function () {
             .y0(height2)
             .y1(function (d) {return y2(d.count); });
 
+        // Date formatter
         formatDate = d3.time.format("%Y-%m-%d");
+
+        // Days of the week for display
         daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
         selection.each(function (data) {
@@ -63,6 +75,7 @@ var timeSeries = function () {
                 legend,         // SVG container for chart legend
                 svg;            // Principle SVG element for entire chart
 
+            // Path to display handles on brush
             function resizePath(d) {
                 var e = +(d === "e"),
                     x = e ? 1 : -1,
@@ -79,6 +92,7 @@ var timeSeries = function () {
                     + "V" + (2 * y - 8);
             }
 
+            // Function called by brush event handler
             function chartBrush() {
                 x.domain(brush.empty() ? x2.domain() : brush.extent());
 
@@ -96,6 +110,7 @@ var timeSeries = function () {
                 d.count = +d.count;
             });
 
+            // Set domains and ranges
             x.domain(d3.extent(data.map(function (d) {return d.date; })));
             y.domain([0, d3.max(data.map(function (d) {return d.count; }))]);
             x2.domain(x.domain());
@@ -125,6 +140,7 @@ var timeSeries = function () {
                 .attr("width", width + 10)
                 .attr("height", height + 10);
 
+            // Focus is the main graph
             focus = svg.append("g")
                 .attr("class", "mainGraph")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -155,6 +171,7 @@ var timeSeries = function () {
                 .attr("opacity", 0)
                 .attr("data-tooltip", function (d) {return d.title + " : " + d.count; });
 
+            // Interaction is an overlay layer for mouse position
             interaction = svg.append("g")
                 .attr("id", "interaction")
                 .append("rect")
@@ -200,6 +217,7 @@ var timeSeries = function () {
                         .attr("opacity", 0);
                 });
 
+            // Legend display
             legend = svg.append("g")
                 .attr("id", "legend")
                 .attr("opacity", 0);
@@ -215,6 +233,7 @@ var timeSeries = function () {
                 .attr("x", 70)
                 .attr("y", 13);
 
+            // Context is the 'brush' graph
             context = svg.append("g")
                 .attr("class", "subGraph")
                 .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
@@ -240,6 +259,7 @@ var timeSeries = function () {
                 .attr("d", resizePath);
         });
     }
+    // Accessor method to customize width
     timeSeriesChart.width = function (value) {
         if (!arguments.length) {
             return width;
@@ -248,5 +268,7 @@ var timeSeries = function () {
         width = value - margin.left - margin.right;
         return timeSeriesChart;
     };
+    // TODO Add additional accessors for other properties
+
     return timeSeriesChart;
 };
