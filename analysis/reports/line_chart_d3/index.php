@@ -1,6 +1,6 @@
 <?php 
 
-require_once '../../lib/ServerIO.php';
+require_once '../../lib/php/ServerIO.php';
 
 try 
 {
@@ -76,11 +76,16 @@ $initDropDown .= '</select>';
             <div class="row">
                 <div id="chart" class="span12">
                     <div id="loading"><img src="../../lib/img/spinner.gif"></div>
-                    <div class="alert alert-error alert-block">
+                    <div id="no-data" class="alert alert-error alert-block">
                         <h4>Warning!</h4>
                             There was insufficient data for display based on your search parameters. Please try a different combination of filters.
                     </div>
-                    <div class="alert alert-info alert-block">
+                    <div id="ajax-error" class="alert alert-error alert-block">
+                        <h4>Warning!</h4>
+                            There was a problem retrieving data from the server. Please try again or contact your system
+                            administrator.
+                    </div>
+                    <div id ="welcome" class="alert alert-info alert-block">
                         <h4>Welcome!</h4>
                             Please select an initiative from the select menu below. Once you have chosen an initiative, additional filter options will appear. You can also limit your search by date or time. 
                     </div>
@@ -112,18 +117,19 @@ $initDropDown .= '</select>';
                     <div class="control-group">
                         <label class="control-label" for="stime">Start Time</label>
                         <div class="controls">
-                            <input type="text" id="stime" name="stime" />
-                            <span class="help-block">24-hour format, e.g. 0800</span>
+                            <input type="text" id="stime" name="stime" placeholder="00:00" />
+                            <span class="help-block">24-hour format, e.g. 08:00</span>
                         </div>
                     </div>
                     <div class="control-group">
                         <label class="control-label" for="etime">End Time</label>
                         <div class="controls">
-                            <input type="text" id="etime" name="etime" />
-                            <span class="help-block">24-hour format, e.g. 0800</span>
+                            <input type="text" id="etime" name="etime" placeholder="24:00"/>
+                            <span class="help-block">24-hour format, e.g. 08:00</span>
                         </div>
                     </div>
                 </div>
+                <div id="secondary-loading" class="span4"><img src="../../lib/img/spinner.gif"></div>
                 <div id="secondary-filters" class="span4">
                       <div class="control-group">
                         <label class="control-label" for="daygroup">Days</label>
@@ -136,11 +142,11 @@ $initDropDown .= '</select>';
                         </div>
                     </div>
                     <div class="control-group">
-                        <label class="control-label" for="avgsum">Avg/Sum</label>
+                        <label class="control-label" for="avgsum">Sum/Avg</label>
                         <div class="controls">
                             <select name="avgsum" id="avgsum">
-                                <option value="avg">Average</option>
                                 <option value="sum">Sum</option>
+                                <option value="avg">Average</option>
                             </select>
                         </div>
                     </div>
@@ -168,7 +174,6 @@ $initDropDown .= '</select>';
         </div>
 
         <!-- TEMPLATES -->
-
         <script id="locations-template" type="text/x-handlebars-template">
             <option value="all">All</option>
             {{#each items}}
@@ -178,13 +183,7 @@ $initDropDown .= '</select>';
         <script id="activities-template" type="text/x-handlebars-template">
             <option value="all">All</option>
             {{#each items}}
-                <option value="{{id}}">{{indent depth}}{{title}}</option>
-            {{/each}}
-        </script>
-        <script id="activitiestemp-template" type="text/x-handlebars-template">
-            <option value="all">All</option>
-            {{#each activities}}
-                <option value="{{id}}">{{title}}</option>
+                <option value="{{type}}-{{id}}">{{indent depth}}{{title}}</option>
             {{/each}}
         </script>
 
@@ -195,9 +194,9 @@ $initDropDown .= '</select>';
         <script src="../../lib/js/d3.v2.min.js"></script>
         <script src="../../lib/js/underscore.js"></script>
         <script src="../../lib/js/moment.js"></script>
-        <script src="js/interface.js"></script>
-        <script src="js/timeSeries.js"></script>
-        <script src="js/chart.js"></script>
+        <script src="../../lib/js/ReportFilters.js"></script>
+        <script src="../../lib/js/TimeSeries.js"></script>
+        <script src="js/app.js"></script>
 
     </body>
 </html>

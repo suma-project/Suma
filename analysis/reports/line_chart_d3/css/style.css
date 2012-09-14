@@ -6,6 +6,13 @@
     display:none;
 }
 
+#secondary-loading {
+    position:relative;
+    margin-top:100px;
+    margin-left: 120px;
+    display:none;
+}
+
 .formatText {
     font-size:12px;
     padding-left:5px;
