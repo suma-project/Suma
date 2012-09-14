@@ -1,15 +1,57 @@
 <?php
 
-require_once "../../lib/guzzle.phar";
-
+require_once "../../lib/php/guzzle.phar";
+/**
+ * ServerIO - Class that facilitates retrieval of data from Suma server.
+ *
+ * @author  Eric McEachern
+ * @author  Bret Davidson <bret_davidson@ncsu.edu>
+ */
 class ServerIO
 {
+    /**
+     * Guzzle client
+     * 
+     * @var object
+     * @access  private
+     */
     private $_client = NULL;
-    private static $_baseUrl = 'http://<host>/query';
-    private static $_urlParams = '';
-    private static $_hasMore;
-    private static $_offset;
-
+    /**
+     * Base url of Suma query server
+     * 
+     * @var string
+     * @access  private
+     */
+    private $_baseUrl = '<sumaserver/query>';
+    /**
+     * Parameters to append to $_baseUrl
+     * 
+     * @var string
+     * @access  private
+     */
+    private $_urlParams = '';
+    /**
+     * Record of server response field hasMore
+     * 
+     * @var boolean
+     * @access  private
+     */
+    private $_hasMore = NULL;
+    /**
+     * Record of incremented (5000) offset
+     * 
+     * @var string
+     * @access  private
+     */
+    private $_offset = NULL;
+    /**
+     * Builds full URL and returns result of sendRequest
+     *
+     * @access  public
+     * @param  array $params
+     * @param  string $mode
+     * @return array
+     */
     public function getData($params, $mode)
     {
         if (! isset($params['id']) || ! is_numeric($params['id']))
@@ -22,7 +64,7 @@ class ServerIO
             throw new Exception('Must provide valid mode (sessions or counts)');
         }
 
-        self::$_urlParams .= ($mode == 'sessions') ? 'sessions' : 'counts';
+        $this->_urlParams .= ($mode == 'sessions') ? 'sessions' : 'counts';
 
         foreach($params as $key => $val)
         {
@@ -30,29 +72,55 @@ class ServerIO
             {
                 throw new Exception('All supplied dates and times must be numeric');
             }
-            self::$_urlParams .= "/$key/$val";
+            $this->_urlParams .= "/$key/$val";
         }
 
-        return $this->sendRequest(self::$_urlParams);
+        return $this->sendRequest($this->_urlParams);
     }
-
+    /**
+     * Returns value of $this->_hasMore
+     *
+     * @access  public
+     * @return boolean
+     */
     public function hasMore()
     {
-        return self::$_hasMore;
+        return $this->_hasMore;
     }
-
+    /**
+     * Calls sendRequest, appending appropriate offset to 
+     * $this->_urlParams
+     *
+     * @access  public
+     * @return array
+     */
     public function next()
     {
-        return $this->sendRequest(self::$_urlParams.'/offset/'.self::$_offset);
+        return $this->sendRequest($this->_urlParams . '/offset/'. $this->_offset);
     }
-
-    // ------ PRIVATE FUNCTIONS ------
-
+    /**
+     * Retrieve a dictionary of available initiatives
+     *
+     * @access  public
+     * @return array
+     */
+    public function getInitiatives()
+    {
+        return $this->sendRequest($this->_urlParams . 'initiatives');
+    }
+    /**
+     * Sends request to Suma server using base url
+     * and parameters defined elsewhere in this class.
+     *
+     * @access  private
+     * @param  string $url
+     * @return array
+     */
     private function sendRequest($url)
     {
         if (empty($_client))
         {
-            $_client = new Guzzle\Service\Client(self::$_baseUrl);
+            $_client = new Guzzle\Service\Client($this->_baseUrl);
         }
 
         $request  = $_client->get($url);
@@ -68,12 +136,12 @@ class ServerIO
                 {
                     if (strtolower($results['status']['has more']) == 'true')
                     {
-                        self::$_hasMore = true;
-                        self::$_offset = $results['status']['offset'];
+                        $this->_hasMore = true;
+                        $this->_offset = $results['status']['offset'];
                     }
                     else
                     {
-                        self::$_hasMore = false;
+                        $this->_hasMore = false;
                     }
                 }
 
@@ -88,12 +156,5 @@ class ServerIO
         {
             throw new Exception($e->getMessage());
         }
-    }
-
-    // ------ STATIC FUNCTIONS ------
-
-    static function getInitiatives()
-    {
-        return self::sendRequest(self::$_urlParams . 'initiatives');
     }
 }

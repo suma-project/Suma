@@ -1,8 +1,14 @@
 <?php
 require_once("Gump.php");
-
+/**
+ * SumaGump - A subclass that extends GUMP
+ *
+ * @author  Bret Davidson <bret_davidson@ncsu.edu>
+ * @uses Gump
+ */
 class SumaGump extends GUMP
 {
+    // Removes hyphens from string
     public function filter_rmhyphen($value)
     {
         return $value = str_replace("-", "", $value);

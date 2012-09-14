@@ -1,22 +1,65 @@
 <?php 
 
-require_once '../../lib/ChromePhp.php';
-require_once '../../lib/underscore.php';
-require_once '../../lib/ServerIO.php';
-require_once '../../lib/Gump.php';
-require_once '../../lib/SumaGump.php';
+require_once '../../lib/php/underscore.php';
+require_once '../../lib/php/ServerIO.php';
+require_once '../../lib/php/Gump.php';
+require_once '../../lib/php/SumaGump.php';
 
+/**
+ * TimeSeriesData - Class to process data for display in a time series.
+ *
+ * @author  Bret Davidson <bret_davidson@ncsu.edu>
+ */
 class TimeSeriesData
 {
-    // Build possible arrays for daygroup filter from client
+    /**
+     * Define weekdays
+     * 
+     * @var array
+     * @access  public
+     */
     public $weekdays = array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday');
+    /**
+     * Define weekends
+     * 
+     * @var array
+     * @access  public
+     */
     public $weekends = array('Saturday', 'Sunday');
+    /**
+     * Define full week
+     * 
+     * @var array
+     * @access  public
+     */
     public $all      = array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday');
-
-    public $locListIds;
-    public $actList = array();
+    /**
+     * Main hash to store data as it is retrieved from the server
+     * 
+     * @var array
+     * @access  public
+     */
     public $countHash = array();
-
+    /**
+     * Stores location ids for filtering
+     * 
+     * @var NULL
+     * @access  private
+     */
+    private $locListIds = NULL;
+    /**
+     * Stores activity ids for filtering
+     * 
+     * @var array
+     * @access  private
+     */
+    private $actList = array();
+    /**
+     * Error Message
+     *
+     * @access  public
+     * @param  array $e Event array
+     */
     public function echo500($e)
     {
         header("HTTP/1.1 500 Internal Server Error");
@@ -24,11 +67,19 @@ class TimeSeriesData
         echo "<p>An error occurred on the server which prevented your request from being completed: <strong>" . $e->getMessage() . "</strong></p>";
         die;
     }
-
+    /**
+     * Validates form input from client
+     *
+     * @access  public
+     * @param  array $input Form input from client
+     * @return array
+     */
     public function validateInput($input)
     {
+        // Initialize SumaGump class
         $validator = new SumaGump();
 
+        // Sanitize input
         $input = $validator->sanitize($input);
 
         // Define filters
@@ -70,6 +121,8 @@ class TimeSeriesData
                     'etime'      => $input['etime']
             );
 
+            // Manipulate activities field, maybe not the best place for this
+            // but this is where the main params array is being built
             $actSplit = explode("-", $params['activities']);
             $actType  = $actSplit[0];
             $actId    = $actSplit[1];
@@ -94,9 +147,16 @@ class TimeSeriesData
         }
         
     }
-
+    /**
+     * Builds params to pass to Suma server
+     *
+     * @access  public
+     * @param  array $params 
+     * @return array
+     */
     public function populateSumaParams($params)
     {
+        // Build suma array
         $sumaParams = array(
             'id'     => $params['id'],
             'format' => $params['format'],
@@ -106,6 +166,7 @@ class TimeSeriesData
             'etime'  => $params['etime'],
         );
 
+        // Remove any empty parameters
         foreach ($sumaParams as $key => $value)
         {
             if (empty($value))
@@ -116,7 +177,14 @@ class TimeSeriesData
 
         return $sumaParams;
     }
-
+    /**
+     * Creates a date range array
+     *
+     * @access  public
+     * @param  string $dateFrom 
+     * @param  string $dateTo
+     * @return array
+     */
     public function createDateRangeArray($dateFrom, $dateTo)
     {
         // takes two dates formatted as YYYYMMDD and creates an
@@ -138,14 +206,25 @@ class TimeSeriesData
 
         return $dateRange;
     }
-
+    /**
+     * Creates an array of location ids for filtering
+     *
+     * @access  public
+     * @param  array $locDict
+     * @param  string $locID
+     * @param  array  $locArray 
+     * @return array
+     */
     public function populateLocations($locDict, $locID, $locArray = array())
     {
+        // Convert locID to integer
         if (is_numeric($locID))
         {
             $locID = (int)$locID;
         }
 
+        // Build array of locations that match locID 
+        // or have locID as a parent
         foreach ($locDict as $loc)
         {
             if ($locID === $loc['id'])
@@ -156,21 +235,30 @@ class TimeSeriesData
             { 
                 $newLocID = $loc['id'];
                 $locArray[] = $loc;
-                populateLocations($locDict, $newLocID, $locArray);
+                $this->populateLocations($locDict, $newLocID, $locArray);
             }
         }
 
         return $locArray;
     }
-
+    /**
+     * Creates an array of activity ids for filtering
+     *
+     * @access  public
+     * @param  array $actDict
+     * @param  string $actID
+     * @param  string $actType
+     * @return array
+     */
     public function populateActivities($actDict, $actID, $actType) {
         $actArray = array();
-
+        // If actID is an activityGroup, find its children
+        // otherwise, return the actID
         if ($actType === 'activityGroup')
         {
             foreach ($actDict as $act)
             {
-                if ($act['activityGroup'] === $actId)
+                if ($act['activityGroup'] === (int)$actID)
                 {
                     $actArray[] = $act['id'];
                 }
@@ -178,12 +266,18 @@ class TimeSeriesData
         }
         else
         {
-            $actArray[] = $actId;
+            $actArray[] = $actID;
         }
 
         return $actArray;
     }
-
+    /**
+     * Populates countHash class variable with data from Server
+     *
+     * @access  public
+     * @param  array $response Response from Suma server
+     * @param  array $params
+     */
     public function populateHash($response, $params)
     {
         $actID   = $params['actId'];
@@ -192,6 +286,7 @@ class TimeSeriesData
         $actDict = $response['initiative']['dictionary']['activities'];
         $locDict = $response['initiative']['dictionary']['locations'];
 
+        // Populate location list for filters
         if (!isset($this->locListIds))
         {
             if ($locID !== 'all')
@@ -201,16 +296,15 @@ class TimeSeriesData
             }
         }
         
+        // Populate activity list for filters
         if (empty($this->actList))
         {
             if ($actID !== 'all'){
-                // $actList = populateActivities($actDict, $actID, $actType);
-                // Once activity groups are implemented, use above code
-                // and delete $actList = array($actID)
-                $actList = array($actID);
+                $this->actList = $this->populateActivities($actDict, $actID, $actType);
             }
         }
 
+        // If response is by sessions
         if (isset($response['initiative']['sessions']))
         {
             $sessions = $response['initiative']['sessions'];
@@ -268,6 +362,7 @@ class TimeSeriesData
                 }            
             }
         }
+        // If response is by counts
         elseif (isset($response['initiative']['locations']))
         {
             $locations = $response['initiative']['locations'];
@@ -314,7 +409,13 @@ class TimeSeriesData
             throw new Exception('Error retrieving data.');
         }
     }
-
+    /**
+     * Returns array with calculations of mean based on locations
+     *
+     * @access  public
+     * @param  array $countHash
+     * @return array
+     */
     public function calculateAvg($countHash) 
     {
         $avgHash = array();
@@ -354,7 +455,18 @@ class TimeSeriesData
 
        return $avgHash;
     }
-
+    /**
+     * Function that removes days outside of the 
+     * query range that might have been pulled in 
+     * by sessions and pads the data set with 
+     * zero values for any days in the range/filter set
+     * that doesn't have a count.
+     *
+     * @access  public
+     * @param  array $data
+     * @param  array $params
+     * @return array
+     */
     public function cullData($data, $params)
     {
         $sdate = $params['sdate'];
