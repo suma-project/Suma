@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 require_once '../../lib/php/underscore.php';
 require_once '../../lib/php/ServerIO.php';
@@ -14,42 +14,42 @@ class TimeSeriesData
 {
     /**
      * Define weekdays
-     * 
+     *
      * @var array
      * @access  public
      */
     public $weekdays = array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday');
     /**
      * Define weekends
-     * 
+     *
      * @var array
      * @access  public
      */
     public $weekends = array('Saturday', 'Sunday');
     /**
      * Define full week
-     * 
+     *
      * @var array
      * @access  public
      */
     public $all      = array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday');
     /**
      * Main hash to store data as it is retrieved from the server
-     * 
+     *
      * @var array
      * @access  public
      */
     public $countHash = array();
     /**
      * Stores location ids for filtering
-     * 
+     *
      * @var NULL
      * @access  private
      */
     private $locListIds = NULL;
     /**
      * Stores activity ids for filtering
-     * 
+     *
      * @var array
      * @access  private
      */
@@ -143,15 +143,15 @@ class TimeSeriesData
         }
         else
         {
-            throw new Exception('Input Error.'); 
+            throw new Exception('Input Error.');
         }
-        
+
     }
     /**
      * Builds params to pass to Suma server
      *
      * @access  public
-     * @param  array $params 
+     * @param  array $params
      * @return array
      */
     public function populateSumaParams($params)
@@ -181,7 +181,7 @@ class TimeSeriesData
      * Creates a date range array
      *
      * @access  public
-     * @param  string $dateFrom 
+     * @param  string $dateFrom
      * @param  string $dateTo
      * @return array
      */
@@ -212,7 +212,7 @@ class TimeSeriesData
      * @access  public
      * @param  array $locDict
      * @param  string $locID
-     * @param  array  $locArray 
+     * @param  array  $locArray
      * @return array
      */
     public function populateLocations($locDict, $locID, $locArray = array())
@@ -223,7 +223,7 @@ class TimeSeriesData
             $locID = (int)$locID;
         }
 
-        // Build array of locations that match locID 
+        // Build array of locations that match locID
         // or have locID as a parent
         foreach ($locDict as $loc)
         {
@@ -231,8 +231,8 @@ class TimeSeriesData
             {
                 $locArray[] = $loc;
             }
-            elseif ($locID === $loc['fk_parent'])
-            { 
+            elseif ($locID === $loc['parent'])
+            {
                 $newLocID = $loc['id'];
                 $locArray[] = $loc;
                 $this->populateLocations($locDict, $newLocID, $locArray);
@@ -295,7 +295,7 @@ class TimeSeriesData
                 $this->locListIds = __::pluck($locList, 'id');
             }
         }
-        
+
         // Populate activity list for filters
         if (empty($this->actList))
         {
@@ -325,7 +325,7 @@ class TimeSeriesData
                     }
 
                     if (!isset($this->countHash[$day][$sess['id']]))
-                    {   
+                    {
                         $this->countHash[$day][$sess['id']] = array();
                     }
 
@@ -359,7 +359,7 @@ class TimeSeriesData
                             }
                         }
                     }
-                }            
+                }
             }
         }
         // If response is by counts
@@ -372,7 +372,7 @@ class TimeSeriesData
                 if ($params['locations'] === 'all' || in_array($loc['id'], $this->locListIds))
                 {
                     $counts = $loc['counts'];
-                   
+
                     foreach ($counts as $count)
                     {
                         // Get date of count
@@ -402,7 +402,7 @@ class TimeSeriesData
                     }
                 }
             }
-           
+
         }
         else
         {
@@ -416,7 +416,7 @@ class TimeSeriesData
      * @param  array $countHash
      * @return array
      */
-    public function calculateAvg($countHash) 
+    public function calculateAvg($countHash)
     {
         $avgHash = array();
 
@@ -424,7 +424,7 @@ class TimeSeriesData
         foreach ($countHash as $date => $day)
         {
             foreach ($day as $sessID => $sess)
-            {   
+            {
                 foreach ($sess as $locationID => $count)
                 {
                     if (!isset($avgHash[$date][$locationID]))
@@ -456,9 +456,9 @@ class TimeSeriesData
        return $avgHash;
     }
     /**
-     * Function that removes days outside of the 
-     * query range that might have been pulled in 
-     * by sessions and pads the data set with 
+     * Function that removes days outside of the
+     * query range that might have been pulled in
+     * by sessions and pads the data set with
      * zero values for any days in the range/filter set
      * that doesn't have a count.
      *
@@ -511,7 +511,7 @@ class TimeSeriesData
         $edate = strtotime($edate);
         $edate = date('Y-m-d', $edate);
 
-        foreach($data as $key => $val) 
+        foreach($data as $key => $val)
         {
             if (($key < $sdate) || ($key > $edate))
             {

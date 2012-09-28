@@ -1,6 +1,6 @@
 /**
  * Module for display of locations and activities filters
- * 
+ *
  * @param {object} p_options
  * @author  Bret Davidson <bret_davidson@ncsu.edu>
  */
@@ -45,7 +45,7 @@ var ReportFilters = function (p_options) {
             // Listen for change of initiative
             $(options.triggerForm).on('change', function (e) {
                 if (this.value !== 'default') {
-                    // Hide filters 
+                    // Hide filters
                     $(options.filterForm).hide();
                     // Retrieve updated display data
                     $.when(self.getDictionary(this.value))
@@ -66,13 +66,13 @@ var ReportFilters = function (p_options) {
         },
         /**
          * Processes data and populates templates for filters
-         * 
+         *
          * @param {object} data
          * @this {ReportFilters}
          */
         buildInterfaceElements: function (data) {
             // Process locations and activities
-            var locations = this.processLocations(data.locations),
+            var locations = this.processLocations(data.locations, data.rootLocation),
                 activities = this.processActivities(data.activities, data.activityGroups);
 
             // Populate templates
@@ -81,7 +81,7 @@ var ReportFilters = function (p_options) {
         },
         /**
          * AJAX call to retrieve dictionary
-         * 
+         *
          * @param  {string} initiative
          * @return {object} Returns a jQuery promise object.
          */
@@ -106,7 +106,7 @@ var ReportFilters = function (p_options) {
         /**
          * Sort activities by rank, meant to be used
          * with native arr.sort() method
-         * 
+         *
          * @param  {object} a
          * @param  {object} b
          * @return {integer}
@@ -117,7 +117,7 @@ var ReportFilters = function (p_options) {
         /**
          * Sort locations by rank, meant to be used with native
          * arr.sort() method. Used by sortLocations.
-         * 
+         *
          * @param  {object} a
          * @param  {object} b
          * @return {integer}
@@ -127,7 +127,7 @@ var ReportFilters = function (p_options) {
         },
         /**
          * Sort nested array of locations
-         * 
+         *
          * @param  {arr} arr
          * @this {ReportFilters}
          */
@@ -145,7 +145,7 @@ var ReportFilters = function (p_options) {
         },
         /**
          * Flatten nested location array
-         * 
+         *
          * @param  {arr} nestedList
          * @param  {arr} flatArray
          * @return {arr}
@@ -166,11 +166,12 @@ var ReportFilters = function (p_options) {
         },
         /**
          * Build location tree
-         * 
+         *
          * @param  {arr} locations
+         * @param  {arr} rootLocation
          * @return {arr}
          */
-        buildLocTree: function (locations) {
+        buildLocTree: function (locations, rootLocation) {
             var memo = {};
 
             // Build memo object using location ids as keys
@@ -181,15 +182,14 @@ var ReportFilters = function (p_options) {
             function locMemo(locations, parentId, depth) {
                 var locTree = [];
 
-                // Set defaults
-                parentId = parentId || 1;
+                // Set default depth
                 depth    = depth    || 0;
 
                 // Loop over locations
                 _.each(locations, function (obj, index) {
 
                     // Start at top of tree
-                    if (obj.fk_parent === parentId) {
+                    if (obj.parent === parentId) {
                         delete memo[obj.id];
 
                         // Build object and recursively build children
@@ -197,7 +197,7 @@ var ReportFilters = function (p_options) {
                             'id'       : obj.id,
                             'title'    : obj.title,
                             'rank'     : obj.rank,
-                            'fk_parent': obj.fk_parent,
+                            'parent'   : obj.parent,
                             'depth'    : depth,
                             'children' : locMemo(_.clone(memo), obj.id, depth + 1)
                         });
@@ -207,20 +207,21 @@ var ReportFilters = function (p_options) {
                 return locTree;
             }
 
-            return locMemo(locations);
+            return locMemo(locations, rootLocation);
         },
         /**
          * Build a sorted list of locations
-         * 
+         *
          * @param  {arr} locations
+         * @param  {arr} rootLocation
          * @return {arr}
          */
-        processLocations: function (locations) {
+        processLocations: function (locations, rootLocation) {
             var locTree,
                 locList;
-
+                console.log(arguments)
             // Build location tree from adjacency list
-            locTree = this.buildLocTree(locations);
+            locTree = this.buildLocTree(locations, rootLocation);
 
             // Sort locations based on rank at each level of depth
             this.sortLocations(locTree);
@@ -231,7 +232,7 @@ var ReportFilters = function (p_options) {
         },
         /**
          * Build a sorted list of activities
-         * 
+         *
          * @param  {arr} activities
          * @param  {arr} activityGroups
          * @return {arr}
@@ -284,7 +285,7 @@ var ReportFilters = function (p_options) {
         },
         /**
          * Build and insert template
-         * 
+         *
          * @param  {arr} items
          * @param  {string} templateId
          * @param  {string} elementId

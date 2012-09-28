@@ -11,35 +11,35 @@ class ServerIO
 {
     /**
      * Guzzle client
-     * 
+     *
      * @var object
      * @access  private
      */
     private $_client = NULL;
     /**
      * Base url of Suma query server
-     * 
+     *
      * @var string
      * @access  private
      */
     private $_baseUrl = '<sumaserver/query>';
     /**
      * Parameters to append to $_baseUrl
-     * 
+     *
      * @var string
      * @access  private
      */
     private $_urlParams = '';
     /**
      * Record of server response field hasMore
-     * 
+     *
      * @var boolean
      * @access  private
      */
     private $_hasMore = NULL;
     /**
      * Record of incremented (5000) offset
-     * 
+     *
      * @var string
      * @access  private
      */
@@ -88,7 +88,7 @@ class ServerIO
         return $this->_hasMore;
     }
     /**
-     * Calls sendRequest, appending appropriate offset to 
+     * Calls sendRequest, appending appropriate offset to
      * $this->_urlParams
      *
      * @access  public
