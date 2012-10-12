@@ -12,7 +12,7 @@
         chart: undefined,
         /**
          * Initializes app
-         * 
+         *
          * @this {App}
          */
         init: function () {
@@ -90,7 +90,7 @@
         },
         /**
          * AJAX call to retrieve data
-         * 
+         *
          * @param  {array} input
          * @return {object} Returns a jQuery promise object
          */
@@ -119,7 +119,7 @@
         /**
          * Sort ascending according to date, meant to be used with
          * native arr.sort() method.
-         * 
+         *
          * @param  {object} a
          * @param  {object} b
          * @return {integer}
@@ -136,19 +136,20 @@
         },
         /**
          * Process response from AJAX call
-         * 
+         *
          * @param  {object} response
          * @return {array}
          */
         processData: function (response) {
+            console.log('from app.js', response);
             var self = this,
                 counts = [],
                 testLength;
 
-            _.each(response, function (element, index) {
+            _.each(response.periodAvg, function (element, index) {
                 var newObj = {
                     date: index,
-                    count: element.dayCount.toFixed(2)
+                    count: element.avg ? element.avg.toFixed(2) : 0
                 };
 
                 // Create array for d3.js
@@ -169,7 +170,7 @@
         },
         /**
          * Draw chart
-         * 
+         *
          * @param  {array} counts
          */
         drawChart: function (counts) {

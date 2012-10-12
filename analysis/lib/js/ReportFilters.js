@@ -219,7 +219,7 @@ var ReportFilters = function (p_options) {
         processLocations: function (locations, rootLocation) {
             var locTree,
                 locList;
-                console.log(arguments)
+
             // Build location tree from adjacency list
             locTree = this.buildLocTree(locations, rootLocation);
 

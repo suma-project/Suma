@@ -10,7 +10,7 @@ require_once '../../lib/php/TimeSeriesData.php';
  * Function invoked when results.php receives an AJAX call
  * from the client. Handles the assembly and processing of data
  * to return to the client.
- * 
+ *
  * @return array
  */
 function lineChartData()
@@ -21,27 +21,19 @@ function lineChartData()
     // Validate form input
     $params = $data->validateInput($_GET);
 
-    // Adjust format, and query type based on avgsum value
-    if ($params['avgsum'] === 'sum')
-    {
-        $params['format'] = 'lca';
-        $queryType        = 'counts';
-    }
-    else
-    {
-        $params['format'] = 'lca';
-        $queryType        = 'sessions';
-    }
+    // Set query type and format
+    $params['format'] = 'lca';
+    $queryType        = 'sessions';
 
     // Determine which array to use as filter for daygroup
     if ($params['daygroup'] === 'weekdays')
     {
         $params['days'] = $data->weekdays;
-    } 
-    elseif ($params['daygroup'] === 'weekends') 
+    }
+    elseif ($params['daygroup'] === 'weekends')
     {
         $params['days'] = $data->weekends;
-    } 
+    }
     else
     {
         $params['days'] = $data->all;
@@ -52,7 +44,7 @@ function lineChartData()
 
     // Instantiate ServerIO class, begin retrieval of data from Suma Server,
     // and continue retrieval until the hasMore property is false
-    try 
+    try
     {
         $io = new ServerIO();
         $data->populateHash($io->getData($sumaParams, $queryType), $params);
@@ -66,20 +58,15 @@ function lineChartData()
         $data->echo500($e);
     }
 
-    // Perform additional data processing if necessary (calculate averages)
-    if ($params['avgsum'] === 'avg')
-    {
-        $returnData = $data->calculateAvg($data->countHash);
-    }
-    else
-    {
-        $returnData = $data->countHash;
-    }
+    // Calculate averages for appropriate sub-arrays of countHash
+    $returnData = $data->calculateAvg($data->countHash);
 
     // Cull data, removing or padding days as necessary
     $returnData = $data->cullData($returnData, $params);
 
     return $returnData;
 }
+
 $chartData = lineChartData();
+
 echo json_encode($chartData);

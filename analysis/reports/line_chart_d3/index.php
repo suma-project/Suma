@@ -1,8 +1,8 @@
-<?php 
+<?php
 
 require_once '../../lib/php/ServerIO.php';
 
-try 
+try
 {
     $io = new ServerIO();
     $initiatives = $io->getInitiatives();
@@ -43,7 +43,7 @@ $initDropDown .= '</select>';
           }
         </style>
         <link href="../../lib/css/bootstrap-responsive.min.css" rel="stylesheet">
-    
+
         <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
         <!--[if lt IE 9]>
           <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -72,7 +72,12 @@ $initDropDown .= '</select>';
         </div>
 
         <div class="container">
-
+            <div class="row">
+                <div class="btn-group span4 offset8" data-toggle="buttons-radio">
+                    <button type="button" class="btn">Avg</button>
+                    <button type="button" class="btn">Sum</button>
+                </div>
+            </div>
             <div class="row">
                 <div id="chart" class="span12">
                     <div id="loading"><img src="../../lib/img/spinner.gif"></div>
@@ -87,7 +92,7 @@ $initDropDown .= '</select>';
                     </div>
                     <div id ="welcome" class="alert alert-info alert-block">
                         <h4>Welcome!</h4>
-                            Please select an initiative from the select menu below. Once you have chosen an initiative, additional filter options will appear. You can also limit your search by date or time. 
+                            Please select an initiative from the select menu below. Once you have chosen an initiative, additional filter options will appear. You can also limit your search by date or time.
                     </div>
                 </div>
             </div>
@@ -138,15 +143,6 @@ $initDropDown .= '</select>';
                                 <option value="all">All</option>
                                 <option value="weekdays">Weekdays Only</option>
                                 <option value="weekends">Weekends Only</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="avgsum">Sum/Avg</label>
-                        <div class="controls">
-                            <select name="avgsum" id="avgsum">
-                                <option value="sum">Sum</option>
-                                <option value="avg">Average</option>
                             </select>
                         </div>
                     </div>
