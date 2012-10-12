@@ -122,8 +122,12 @@ a:visited {
     margin-top: 50px;
 }
 
+#loc_header {
+    display:none;
+}
+
 li.selected_loc a {
-    background-color:#EE8262;
+    font-weight: bold;
 }
 
 ul.loc_list {
@@ -153,7 +157,7 @@ ul.loc_list:last-child li, ul.loc_list:last-child li a {
 }
 
 ul.loc_list:last-child li.selected_loc a {
-    background-color:#FF7F24;
+    font-weight: bold;
 }
 
 ul.loc_list:last-child li a {
@@ -173,11 +177,8 @@ li.loc_item a {
 }
 
 #abandon_session {
-    margin-top: .3em;
-    margin-left: 2em;
-    background: red;
-    border: 1px solid black;
-    color:white;
+    margin-top: .275em;
+    margin-left: 2.2em;
 }
 
 #abandon_session span.ui-button-text {
