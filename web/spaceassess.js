@@ -222,6 +222,7 @@ function displayActivities(actInit, callback) {
 
 function removeLocs() {
     $("ul.loc_list:first").empty().siblings().remove();
+    currentLoc = null;
     $("#current_loc_label").text("No current location");
     $("#loc_header").hide();
 }
