@@ -118,12 +118,12 @@ class ServerIO
      */
     private function sendRequest($url)
     {
-        if (empty($_client))
+        if (empty($this->_client))
         {
-            $_client = new Guzzle\Service\Client($this->_baseUrl);
+            $this->_client = new Guzzle\Service\Client($this->_baseUrl);
         }
 
-        $request  = $_client->get($url);
+        $request  = $this->_client->get($url);
         $response = $request->send();
 
         try
