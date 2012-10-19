@@ -223,11 +223,12 @@ function displayActivities(actInit, callback) {
 function removeLocs() {
     $("ul.loc_list:first").empty().siblings().remove();
     $("#current_loc_label").text("No current location");
-
+    $("#loc_header").hide();
 }
 
 function displayLocs(parent, callback) {
     removeLocs();
+    $("#loc_header").show();
     var topLocSelector = $("ul.loc_list:first");
     topLocSelector.append('<h3>' + parent.name + '</h3>');
     parent.children.list(function(locs) {
