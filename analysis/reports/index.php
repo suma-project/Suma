@@ -12,8 +12,13 @@
       body {
         padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
       }
+
+      .head-icon {
+        margin-top: 20px;
+        margin-right: 10px;
+        float: right;
+      }
     </style>
-    <link href="../lib/css/bootstrap-responsive.css" rel="stylesheet">
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -27,15 +32,12 @@
     <div class="navbar navbar-fixed-top navbar-inverse">
         <div class="navbar-inner">
             <div class="container">
-                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </a>
                 <a class="brand" href="#">Suma Reports</a>
                 <div class="nav-collapse">
                     <ul class="nav">
                         <li class="active"><a href="#">Home</a></li>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="contact.html">Contact</a></li>
                     </ul>
                 </div>
             </div>
@@ -44,10 +46,22 @@
 
     <div class="container">
 
-        <h1>Available Reports</h1>
-      
-        <a href="line_chart_d3">Line Chart with d3.js</a><br />
-        <a href="calendar">Calendar</a><br />
+        <div class="row">
+            <div class="span6">
+                <div class="row">
+                    <div class="span5"><h3><a href="line_chart_d3">Time Series</a></h3></div>
+                    <div class="span1"><img class="head-icon" src="../lib/img/stats.png" /></div>
+                </div>
+                <p>Explore your data with an interactive set of tools, including a graph of usage over time, a chart comparing activities and location usage, and tabular summaries of important data points. Export raw data or summary statistics to spreadsheets and export images for use in presentations or documents. This tool allows the user to make detailed choices about what data to analyze by choosing a date range and allowing the user to limit data to a certain part of the day, view weekday versus weekend trends, and select the exact locations or activities that they are interested in viewing. The Time Series is Suma's main data exploration tool.</p>
+            </div>
+            <div class="span6">
+               <div class="row">
+                    <div class="span5"><h3><a href="calendar">Calendar Heat Map</a></h3></div>
+                    <div class="span1"><img class="head-icon" src="../lib/img/pie_chart.png" /></div>
+                </div>
+                <p>This chart shows a heat map of usage data over time. Instead of surface area representing physical space as it typically does in a heat map, this visualization maps the days of the month and months of the year in a set of small multiples to help you quickly pull out patterns of high and low usage over the course of the year or semester. Choose a date range, limit data to a certain part of the day, view weekday versus weekend trends, and select the exact locations or activities that they are interested in viewing. Export visualization as an image for presentations or reports.</p>
+            </div>
+        </div>
 
     </div>
 

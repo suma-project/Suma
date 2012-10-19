@@ -1,7 +1,6 @@
 <?php
 header('Content-type: application/json');
 
-require_once '../../lib/php/underscore.php';
 require_once '../../lib/php/ServerIO.php';
 require_once '../../lib/php/Gump.php';
 require_once '../../lib/php/SumaGump.php';

@@ -7,9 +7,15 @@
 }
 
 #secondary-loading {
-    position:relative;
-    margin-top:100px;
-    margin-left: 120px;
+    display:none;
+}
+
+#secondary-spinner {
+   margin: 50px 0 0 75px;
+
+}
+
+#supplemental-charts {
     display:none;
 }
 
@@ -25,7 +31,12 @@
     /* margin:10px 10px 25px 10px;*/
     margin-bottom:25px;
 }
-
+#chart2 {
+    margin-top: 10px;
+}
+#main-chart-header {
+    visibility:hidden;
+}
 svg {
     font: 10px sans-serif;
 }

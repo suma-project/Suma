@@ -6,10 +6,13 @@
  * @property {object} filters Instantiated filter module
  * @property {object} chart Instantiated time series chart
  */
-(function (ReportFilters, TimeSeries) {
+(function (ReportFilters, TimeSeries, BarChart) {
     var App = {
         filters: undefined,
-        chart: undefined,
+        mainChart: undefined,
+        suppChart: undefined,
+        updateListeners: undefined,
+        counts: undefined,
         /**
          * Initializes app
          *
@@ -51,7 +54,8 @@
                 locationsSelect: '#locations',
                 activitiesSelect: '#activities'
             };
-                // Initialize filters
+
+            // Initialize filters
             if (this.filters === undefined) {
                 this.filters = new ReportFilters(filterOptions);
             }
@@ -78,6 +82,8 @@
 
                         if (counts) {
                             self.drawChart(counts);
+                            self.counts = counts;
+                            self.drawTable(counts);
                         } else {
                             self.noData();
                         }
@@ -86,6 +92,43 @@
                     });
 
                 e.preventDefault();
+            });
+
+            // Live Filters
+            $('#main-chart-avgsum').on('click', function (e) {
+                var mainState,
+                    locState,
+                    avgState;
+
+                mainState = e.target.value;
+                locState = $('#supp-chart-locact > .active')[0].value;
+                avgState = $('#supp-chart-avgsum > .active')[0].value;
+
+                self.updateMainChart(self.counts, mainState, locState, avgState);
+            });
+
+            $('#supp-chart-locact').on('click', function (e) {
+                var mainState,
+                    locState,
+                    avgState;
+
+                mainState = $('#main-chart-avgsum > .active')[0].value;
+                locState = e.target.value;
+                avgState = $('#supp-chart-avgsum > .active')[0].value;
+
+                self.updateSuppChart(self.counts, mainState, locState, avgState);
+            });
+
+            $('#supp-chart-avgsum').on('click', function (e) {
+                var mainState,
+                    locState,
+                    avgState;
+
+                mainState = $('#main-chart-avgsum > .active')[0].value;
+                locState = $('#supp-chart-locact > .active')[0].value;
+                avgState = e.target.value;
+
+                self.updateSuppChart(self.counts, mainState, locState, avgState);
             });
         },
         /**
@@ -107,6 +150,12 @@
                     $('svg').remove();
                     $('.alert').hide();
                     $('#loading').show();
+                    $('#supplemental-charts').hide();
+                    $('#main-chart-header').css('visibility', 'hidden');
+                },
+                success: function () {
+                    $('#supplemental-charts').show();
+                    $('#main-chart-header').css('visibility', 'visible');
                 },
                 complete: function () {
                     var text = $('#submit').data('default-text');
@@ -133,6 +182,8 @@
         noData: function () {
             $('#no-data').show();
             $('#submit').removeAttr('disabled');
+            $('#supplemental-charts').hide();
+            $('#main-chart-header').css('visibility', 'hidden');
         },
         /**
          * Process response from AJAX call
@@ -141,31 +192,266 @@
          * @return {array}
          */
         processData: function (response) {
-            console.log('from app.js', response);
             var self = this,
-                counts = [],
+                counts,
+                locations,
+                activities,
                 testLength;
 
+            if (!response.locationsSum) {
+                return false;
+            }
+
+            console.log('from app.js', response);
+            // Convert response into arrays of objects
+            counts = {};
+
+            // Get location/activity data from filters object
+            locations = this.filters.locations;
+            activities = this.filters.activities;
+
+            // Total Sum
+            counts.total = [{
+                total : response.total
+            }];
+
+            // Locations Sum
+            counts.locationsSum = [];
+            _.each(response.locationsSum, function (element, index) {
+                var locDict,
+                    newObj;
+
+                locDict = _.filter(locations, function (parent) {
+                    //console.log('test', element, index, parent)
+                    return parent.id === parseInt(index, 10);
+                });
+                //console.log('locations', locations)
+                newObj = {
+                    id    : index,
+                    name  : locDict[0].title,
+                    depth : locDict[0].depth,
+                    rank  : locDict[0].rank,
+                    parent: locDict[0].parent,
+                    count : element,
+                    percent: (element / response.total * 100).toFixed(2)
+                };
+                counts.locationsSum.push(newObj);
+            });
+
+            // Locations Avg Sum
+            counts.locationsAvgSum = [];
+            _.each(response.locationsAvgSum, function (element, index) {
+                var locDict,
+                    newObj;
+
+                locDict = _.filter(locations, function (parent) {
+                    return parent.id === parseInt(index, 10);
+                });
+
+                newObj = {
+                    id    : index,
+                    name  : locDict[0].title,
+                    depth : locDict[0].depth,
+                    rank  : locDict[0].rank,
+                    parent: locDict[0].parent,
+                    count : element
+                };
+                counts.locationsAvgSum.push(newObj);
+            });
+
+            //Locations Avg Avg
+            counts.locationsAvgAvg = [];
+            delete response.locationsAvgAvg.averages;
+            delete response.locationsAvgAvg.days;
+
+            _.each(response.locationsAvgAvg, function (element, index) {
+                var locDict,
+                    newObj;
+
+                locDict = _.filter(locations, function (parent) {
+                    return parent.id === parseInt(index, 10);
+                });
+
+                newObj = {
+                    id    : index,
+                    name  : locDict[0].title,
+                    depth : locDict[0].depth,
+                    rank  : locDict[0].rank,
+                    parent: locDict[0].parent,
+                    count : element
+                };
+                counts.locationsAvgAvg.push(newObj);
+            });
+
+            // Activities Sum
+            counts.activitiesSum = [];
+            _.each(response.activitiesSum, function (element, index) {
+                var actDict,
+                    newObj;
+
+                actDict = _.filter(activities, function (act, i) {
+                    return act.id === parseInt(index, 10) && act.type === 'activity';
+                });
+
+                if (actDict.length > 0) {
+                    newObj = {
+                        id    : index,
+                        name  : actDict[0].title,
+                        depth : actDict[0].depth,
+                        rank  : actDict[0].rank,
+                        activityGroup: actDict[0].activityGroup,
+                        count : element,
+                        percent: (element / response.total * 100).toFixed(2)
+                    };
+                } else {
+                    newObj = {
+                        id    : index,
+                        name  : 'No Activity',
+                        depth : undefined,
+                        rank  : undefined,
+                        activityGroup: undefined,
+                        count : element,
+                        percent: (element / response.totall * 100).toFixed(2)
+                    };
+                }
+
+                counts.activitiesSum.push(newObj);
+            });
+
+            // Activities Avg Sum
+            counts.activitiesAvgSum = [];
+            _.each(response.activitiesAvgSum, function (element, index) {
+                var actDict,
+                    newObj;
+
+                actDict = _.filter(activities, function (act, i) {
+                    return act.id === parseInt(index, 10) && act.type === 'activity';
+                });
+
+                if (actDict.length > 0) {
+                    newObj = {
+                        id    : index,
+                        name  : actDict[0].title,
+                        depth : actDict[0].depth,
+                        rank  : actDict[0].rank,
+                        activityGroup: actDict[0].activityGroup,
+                        count : element
+                    };
+                } else {
+                    newObj = {
+                        id    : index,
+                        name  : 'No Activity',
+                        depth : undefined,
+                        rank  : undefined,
+                        activityGroup: undefined,
+                        count : element
+                    };
+                }
+                counts.activitiesAvgSum.push(newObj);
+            });
+
+            // Activities Avg Avg
+            counts.activitiesAvgAvg = [];
+            delete response.activitiesAvgAvg.averages;
+            delete response.activitiesAvgAvg.days;
+
+            _.each(response.activitiesAvgAvg, function (element, index) {
+                var actDict,
+                    newObj;
+
+                actDict = _.filter(activities, function (act, i) {
+                    return act.id === parseInt(index, 10) && act.type === 'activity';
+                });
+
+                if (actDict.length > 0) {
+                    newObj = {
+                        id    : index,
+                        name  : actDict[0].title,
+                        depth : actDict[0].depth,
+                        rank  : actDict[0].rank,
+                        activityGroup: actDict[0].activityGroup,
+                        count : element
+                    };
+                } else {
+                    newObj = {
+                        id    : index,
+                        name  : 'No Activity',
+                        depth : undefined,
+                        rank  : undefined,
+                        activityGroup: undefined,
+                        count : element
+                    };
+                }
+                counts.activitiesAvgAvg.push(newObj);
+            });
+
+            // Period Sum
+            counts.periodSum = [];
+            _.each(response.periodSum, function (element, index) {
+                var newObj = {
+                    date: index,
+                    count: element.count
+                };
+
+                counts.periodSum.push(newObj);
+            });
+
+            // Period Avg
+            counts.periodAvg = [];
             _.each(response.periodAvg, function (element, index) {
                 var newObj = {
                     date: index,
-                    count: element.avg ? element.avg.toFixed(2) : 0
+                    count: element.count
                 };
 
-                // Create array for d3.js
-                counts.push(newObj);
+                counts.periodAvg.push(newObj);
+            });
+
+            // Day of Week Summary
+            counts.dayOfWeekSummary = [];
+            _.each(response.dayOfWeekSummary, function (element, index) {
+                var newObj = {
+                    day: index,
+                    count: element
+                };
+
+                counts.dayOfWeekSummary.push(newObj);
+            });
+
+            // Month Summary
+            counts.monthSummary = [];
+            _.each(response.monthSummary, function (element, index) {
+                var newObj = {
+                    day: index,
+                    count: element
+                };
+
+                counts.monthSummary.push(newObj);
+            });
+
+            // Year Summary
+            counts.yearSummary = [];
+            _.each(response.yearSummary, function (element, index) {
+                var newObj = {
+                    year: index,
+                    count: element
+                };
+
+                counts.yearSummary.push(newObj);
             });
 
             // Check if counts is large enough to display meaningfully
-            testLength = _.unique(_.pluck(_.values(counts), 'count'));
+            testLength = _.unique(_.pluck(_.values(counts.periodSum), 'count'));
 
             if (testLength.length === 1) {
                 return false;
             }
 
-            // Sort by date
-            counts.sort(self.sortData);
+            // Sort period arrays by date
+            counts.periodSum.sort(self.sortData);
+            counts.periodAvg.sort(self.sortData);
 
+            //console.log('counts', counts);
             return counts;
         },
         /**
@@ -174,13 +460,126 @@
          * @param  {array} counts
          */
         drawChart: function (counts) {
-            if (!this.chart) {
-                this.chart = new TimeSeries();
+            var self = this,
+                mainState,
+                locState,
+                avgState;
+
+            if (!this.mainChart) {
+                this.mainChart = new TimeSeries();
             }
 
+            if (!this.suppChart) {
+                this.suppChart = new BarChart();
+            }
+
+            mainState = $('#main-chart-avgsum > .active')[0].value;
+            locState = $('#supp-chart-locact > .active')[0].value;
+            avgState = $('#supp-chart-avgsum > .active')[0].value;
+
+            self.updateMainChart(counts, mainState, locState, avgState);
+
+        },
+        /**
+         * Update primary chart
+         * @param  {array} counts
+         * @param  {string} mainState
+         * @param  {string} locState
+         * @param  {string} avgState
+         */
+        updateMainChart: function (counts, mainState, locState, avgState) {
+            var self = this,
+                data;
+
+            // Select Data Source
+            if (mainState === 'sum') {
+                data = counts.periodSum;
+            } else {
+                data = counts.periodAvg;
+            }
+
+            // Update Main Chairt
+            $('#chart > svg').remove();
             d3.select("#chart")
-                .datum(counts)
-                .call(this.chart);
+                .datum(data)
+                .call(this.mainChart);
+
+            // Update Supplemental Chart
+            self.updateSuppChart(counts, mainState, locState, avgState);
+        },
+        /**
+         * Update secondary chart
+         * @param  {array} counts
+         * @param  {string} mainState
+         * @param  {string} locState
+         * @param  {string} avgState
+         */
+        updateSuppChart: function (counts, mainState, locState, avgState) {
+            var data,
+                locSum,
+                locAvg,
+                actSum,
+                actAvg;
+
+            locSum = counts.locationsSum;
+            actSum = counts.activitiesSum;
+
+            if (mainState === 'sum') {
+                locAvg = counts.locationsAvgSum;
+                actAvg = counts.activitiesAvgSum;
+            } else {
+                locAvg = counts.locationsAvgAvg;
+                actAvg = counts.activitiesAvgAvg;
+            }
+
+            if ((locState === 'locations') && (avgState === 'sum')) {
+                data = locSum;
+            } else if ((locState === 'locations') && (avgState === 'avg')) {
+                data = locAvg;
+            } else if ((locState === 'activities') && (avgState === 'sum')) {
+                data = actSum;
+            } else if ((locState === 'activities') && (avgState === 'avg')) {
+                data = actAvg;
+            }
+
+            d3.select("#chart2")
+                .datum(data)
+                .call(this.suppChart);
+        },
+        drawTable: function (counts) {
+            //console.log('testing', counts);
+
+            this.buildTemplate(counts.total, '#total-sum-table', '#total-data');
+            this.buildTemplate(counts.locationsSum, '#locations-sum-table', '#locations-data');
+            this.buildTemplate(counts.activitiesSum, '#activities-sum-table', '#activities-data');
+        },
+        buildTemplate: function (items, templateId, elementId) {
+            var html,
+                json,
+                template;
+
+            // Insert list into object for template iteration
+            json = {items: items};
+
+            // Retrieve template from index.php (in script tag)
+            html = $(templateId).html();
+
+            // Compile template
+            template = Handlebars.compile(html);
+
+            // Template helper to convert depth to emdash
+            // Handlebars.registerHelper('indent', function (depth) {
+            //     var indent = '';
+            //     while (depth > 0) {
+            //         depth -= 1;
+            //         indent += '&mdash;';
+            //     }
+            //     return indent;
+            // });
+
+            // Populate template with data and insert into DOM
+            $(elementId).empty();
+            $(elementId).append(template(json));
         }
     };
 
@@ -188,4 +587,4 @@
     $(document).ready(function () {
         App.init();
     });
-}(ReportFilters, TimeSeries));
+}(ReportFilters, TimeSeries, BarChart));

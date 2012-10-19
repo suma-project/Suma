@@ -1,7 +1,5 @@
 <?php
 
-require_once '../../lib/php/ChromePhp.php';
-require_once '../../lib/php/underscore.php';
 require_once '../../lib/php/ServerIO.php';
 require_once '../../lib/php/Gump.php';
 require_once '../../lib/php/SumaGump.php';
@@ -56,6 +54,31 @@ class TimeSeriesData
      */
     private $actList = array();
     /**
+     * Basic pluck method
+     * @param  array $input
+     * @param  string $key
+     * @return array
+     */
+    private function pluck($input, $key)
+    {
+        if (is_array($key) || !is_array($input))
+        {
+            return array();
+        }
+
+        $array = array();
+
+        foreach ($input as $v)
+        {
+            if (array_key_exists($key, $v))
+            {
+                $array[] = $v[$key];
+            }
+        }
+
+        return $array;
+    }
+    /**
      * Error Message
      *
      * @access  public
@@ -85,7 +108,6 @@ class TimeSeriesData
 
         // Define filters
         $filters = array(
-            'avgsum'     => 'trim',
             'daygroup'   => 'trim',
             'id'         => 'trim',
             'sdate'      => 'trim|sanitize_numbers|rmhyphen',
@@ -96,7 +118,6 @@ class TimeSeriesData
 
         // Define validation rules
         $rules = array(
-            'avgsum'     => 'alpha',
             'daygroup'   => 'alpha',
             'id'         => 'required|numeric'
         );
@@ -112,7 +133,6 @@ class TimeSeriesData
         {
             $params = array(
                     'activities' => $input['activities'],
-                    'avgsum'     => $input['avgsum'],
                     'daygroup'   => $input['daygroup'],
                     'id'         => $input['id'],
                     'locations'  => $input['locations'],
@@ -124,9 +144,17 @@ class TimeSeriesData
 
             // Manipulate activities field, maybe not the best place for this
             // but this is where the main params array is being built
-            $actSplit = explode("-", $params['activities']);
-            $actType  = $actSplit[0];
-            $actId    = $actSplit[1];
+            if ($params['activities'] !== 'all')
+            {
+                $actSplit = explode("-", $params['activities']);
+                $actType  = $actSplit[0];
+                $actId    = $actSplit[1];
+            }
+            else
+            {
+                $actType = NULL;
+                $actId   = 'all';
+            }
 
             $params['actType'] = $actType;
             $params['actId']   = $actId;
@@ -164,7 +192,7 @@ class TimeSeriesData
             'sdate'  => $params['sdate'],
             'edate'  => $params['edate'],
             'stime'  => $params['stime'],
-            'etime'  => $params['etime'],
+            'etime'  => $params['etime']
         );
 
         // Remove any empty parameters
@@ -232,7 +260,7 @@ class TimeSeriesData
             {
                 $locArray[] = $loc;
             }
-            elseif ($locID === $loc['fk_parent'])
+            elseif ($locID === $loc['parent'])
             {
                 $newLocID = $loc['id'];
                 $locArray[] = $loc;
@@ -293,7 +321,7 @@ class TimeSeriesData
             if ($locID !== 'all')
             {
                 $locList    = $this->populateLocations($locDict, $locID);
-                $this->locListIds = __::pluck($locList, 'id');
+                $this->locListIds = $this->pluck($locList, 'id');
             }
         }
         // Populate activity list for filters
@@ -304,6 +332,7 @@ class TimeSeriesData
             }
         }
 
+        $sessions = $response['initiative']['sessions'];
         if (isset($response['initiative']['sessions']))
         {
             $sessions = $response['initiative']['sessions'];
@@ -328,10 +357,10 @@ class TimeSeriesData
                             foreach ($counts as $count)
                             {
                                 // Grab activities associated with count
-                                $countActs = __::pluck($count['activities'], 'id');
+                                $countActs = $this->pluck($count['activities'], 'id');
 
                                 // Test for intersection between input and count activities
-                                $intersect = __::intersection($countActs, $this->actList);
+                                $intersect = array_unique(array_intersect($countActs, $this->actList));
 
                                 if ($params['activities'] === 'all' || $intersect)
                                 {
@@ -340,7 +369,14 @@ class TimeSeriesData
                                     $month = date('F', strtotime($day));
 
                                     // Increment Total property
-                                    $this->countHash['total'] += $count['number'];
+                                    if (!isset($this->countHash['total']))
+                                    {
+                                        $this->countHash['total'] = $count['number'];
+                                    }
+                                    else
+                                    {
+                                        $this->countHash['total'] += $count['number'];
+                                    }
 
                                     // Build Year Summary array
                                     if(!isset($this->countHash['yearSummary'][$year]))
@@ -373,13 +409,13 @@ class TimeSeriesData
                                     }
 
                                     // Build periodSum array
-                                    if (!isset($this->countHash['periodSum'][$day]['sum']))
+                                    if (!isset($this->countHash['periodSum'][$day]['count']))
                                     {
-                                        $this->countHash['periodSum'][$day]['sum'] = $count['number'];
+                                        $this->countHash['periodSum'][$day]['count'] = $count['number'];
                                     }
                                     else
                                     {
-                                        $this->countHash['periodSum'][$day]['sum'] += $count['number'];
+                                        $this->countHash['periodSum'][$day]['count'] += $count['number'];
                                     }
 
                                     // Build locationsSum array
@@ -526,12 +562,12 @@ class TimeSeriesData
         {
             $locations = $day['locations'];
 
-            $avg = __::reduce($locations, function($memo, $location) {
+            $avg = array_reduce($locations, function($memo, $location) {
                 $val = $location['count'] / $location['divisor'];
                 return $memo + $val;
-            }, 0);
+            }, $memo = 0);
 
-            $countHash['periodAvg'][$date]['avg'] = $avg;
+            $countHash['periodAvg'][$date]['count'] = $avg;
         }
 
         // locationsAvgAvg
@@ -630,15 +666,15 @@ class TimeSeriesData
         // using min/max values of data from server
         if (empty($sdate))
         {
-            $keys  = __::keys($data);
-            $sdate = __::min($keys);
+            $keys  = array_keys($data['periodSum']);
+            $sdate = min($keys);
             $sdate = str_replace("-", "", $sdate);
         }
 
         if (empty($edate))
         {
-            $keys  = __::keys($data);
-            $edate = __::max($keys);
+            $keys  = array_keys($data['periodSum']);
+            $edate = max($keys);
             $edate = str_replace("-", "", $edate);
 
         }
@@ -655,7 +691,7 @@ class TimeSeriesData
                 // This check is to avoid padding days we don't want
                 if (in_array($weekday, $params['days']))
                 {
-                    $data['periodSum'][$date]['dayCount'] = 0;
+                    $data['periodSum'][$date]['count'] = 0;
                 }
             }
 
@@ -666,7 +702,7 @@ class TimeSeriesData
                 // This check is to avoid padding days we don't want
                 if (in_array($weekday, $params['days']))
                 {
-                    $data['periodAvg'][$date]['dayCount'] = 0;
+                    $data['periodAvg'][$date]['count'] = 0;
                 }
             }
         }

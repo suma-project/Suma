@@ -63,6 +63,8 @@ var ReportFilters = function (p_options) {
                     $(options.filterForm).fadeOut();
                 }
             });
+
+            $('.suma-popover').popover();
         },
         /**
          * Processes data and populates templates for filters
@@ -74,6 +76,10 @@ var ReportFilters = function (p_options) {
             // Process locations and activities
             var locations = this.processLocations(data.locations, data.rootLocation),
                 activities = this.processActivities(data.activities, data.activityGroups);
+
+            // Set properties to access elsewhere
+            this.locations = locations;
+            this.activities = activities;
 
             // Populate templates
             this.buildTemplate(locations, options.locationsTemplate, options.locationsSelect);
@@ -246,7 +252,6 @@ var ReportFilters = function (p_options) {
 
             // For each activity group, build a list of activities
             _.each(activityGroups, function (activityGroup) {
-
                 // Activity group metadata
                 var listItem = {
                     'id'   : activityGroup.id,
@@ -275,8 +280,6 @@ var ReportFilters = function (p_options) {
                         // Add activities to activityList array behind proper activityGroup
                         activityList.push(listItem);
 
-                        // Remove matching activity from list to reduce later iteration
-                        activities.splice(index, 1);
                     }
                 });
             });

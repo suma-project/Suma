@@ -1,9 +1,11 @@
-<?php 
+<?php
 
-require_once '../../lib/Server_IO.php';
+require_once '../../lib/php/ServerIO.php';
 
-try {
-    $initiatives = Server_IO::getInitiatives();
+try
+{
+    $io = new ServerIO();
+    $initiatives = $io->getInitiatives();
 }
 catch (Exception $e)
 {
@@ -12,11 +14,14 @@ catch (Exception $e)
     echo '<p>Unable to fetch Initiatives from Query Server.</p>';
     die;
 }
+
 $initDropDown = '<select name="id" id="initiatives">';
+$initDropDown .= '<option value="' . 'default' . '">' . 'Select an Initiative' . '</option>' . "\n";
 foreach($initiatives as $init)
 {
-    $initDropDown .= '<option value="'.$init['id'].'">'.$init['title'].'</option>';
+    $initDropDown .= '<option value="' . $init['id'] . '">' . $init['title'] . '</option>' . "\n";
 }
+
 $initDropDown .= '</select>';
 ?>
 
@@ -31,15 +36,14 @@ $initDropDown .= '</select>';
 
         <link href="../../lib/css/bootstrap.css" rel="stylesheet">
         <link href="../../lib/css/datepicker.css" rel="stylesheet">
-        <link href="css/colorbrewer.css" rel="stylesheet" />
+        <link href="../../lib/css/colorbrewer.css" rel="stylesheet" />
         <link href="css/style.css" rel="stylesheet"  />
         <style>
           body {
             padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
           }
         </style>
-        <link href="../../lib/css/bootstrap-responsive.css" rel="stylesheet">
-    
+
         <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
         <!--[if lt IE 9]>
           <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -60,7 +64,8 @@ $initDropDown .= '</select>';
                     <a class="brand" href="..">Suma Reports</a>
                     <div class="nav-collapse">
                         <ul class="nav">
-                            <li class="active"><a href="..">Home</a></li>
+                            <li><a href="..">Home</a></li>
+                            <li><a href="about.html">About</a></li>
                         </ul>
                     </div>
                 </div>
@@ -75,7 +80,7 @@ $initDropDown .= '</select>';
                         <td><input type="submit" id="submit" value="Submit" /></td>
                     </tr>
                 </table>
-        
+
             </form>
             <div id="chart">
                 <div id="loading"><img src="images/spinner.gif"></div>

@@ -29,7 +29,7 @@ $initDropDown .= '</select>';
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>Line Chart with d3.js</title>
+        <title>Suma Reports | Time Series</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="">
         <meta name="author" content="">
@@ -42,7 +42,6 @@ $initDropDown .= '</select>';
             padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
           }
         </style>
-        <link href="../../lib/css/bootstrap-responsive.min.css" rel="stylesheet">
 
         <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
         <!--[if lt IE 9]>
@@ -56,15 +55,12 @@ $initDropDown .= '</select>';
         <div class="navbar navbar-fixed-top navbar-inverse">
             <div class="navbar-inner">
                 <div class="container">
-                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </a>
                     <a class="brand" href="..">Suma Reports</a>
                     <div class="nav-collapse">
                         <ul class="nav">
-                            <li class="active"><a href="..">Home</a></li>
+                            <li><a href="..">Home</a></li>
+                            <li><a href="about.html">About</a></li>
+                            <li><a href="contact.html">Contact</a></li>
                         </ul>
                     </div>
                 </div>
@@ -72,10 +68,10 @@ $initDropDown .= '</select>';
         </div>
 
         <div class="container">
-            <div class="row">
-                <div class="btn-group span4 offset8" data-toggle="buttons-radio">
-                    <button type="button" class="btn">Avg</button>
-                    <button type="button" class="btn">Sum</button>
+            <div id="main-chart-header" class="row">
+                <div id="main-chart-avgsum" class="btn-group span3 offset9" data-toggle="buttons-radio">
+                    <button type="button" class="btn" value="avg">Daily Avg</button>
+                    <button type="button" class="btn active" value="sum">Daily Sum</button>
                 </div>
             </div>
             <div class="row">
@@ -98,16 +94,21 @@ $initDropDown .= '</select>';
             </div>
 
             <div class="row">
+                <div class="span6">
+                <div class="row">
                 <form id="chartFilters">
                 <fieldset>
-                <div class="span4">
+                <div class="span3">
+                    <h3>Modify Chart</h3>
                     <div class="control-group">
-                        <label class="control-label" for="initiatives">Initiative</label>
+                        <h5 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Choose Initiative" data-content="Choose an initiative to reveal additional filters.">Choose Initiative</h5>
+                        <label class="control-label" for="initiatives"></label>
                         <div class="controls">
                             <?php echo $initDropDown; ?>
                         </div>
                     </div>
                     <div class="control-group">
+                        <h5 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Choose Date Range" data-content="Choose a start and end date for your analysis. Defaults to 6 months from current day. Clear fields to retrieve the complete data set.">Choose Date Range</h5>
                         <label class="control-label" for="sdate">Start Date</label>
                         <div class="controls">
                             <input type="text" id="sdate" name="sdate" />
@@ -120,6 +121,7 @@ $initDropDown .= '</select>';
                         </div>
                     </div>
                     <div class="control-group">
+                        <h5 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Choose subset of daily data" data-content="Include only data gathered during a certain time of day in your analysis, e.g. 8pm-12am.">Choose subset of daily data</h5>
                         <label class="control-label" for="stime">Start Time</label>
                         <div class="controls">
                             <input type="text" id="stime" name="stime" placeholder="00:00" />
@@ -134,10 +136,12 @@ $initDropDown .= '</select>';
                         </div>
                     </div>
                 </div>
-                <div id="secondary-loading" class="span4"><img src="../../lib/img/spinner.gif"></div>
-                <div id="secondary-filters" class="span4">
+                <div id="secondary-loading" class="span3"><img id="secondary-spinner" src="../../lib/img/spinner.gif"></div>
+                <div id="secondary-filters" class="span3">
+                    <h3>Initiative Filters</h3>
                       <div class="control-group">
-                        <label class="control-label" for="daygroup">Days</label>
+                        <h5 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Limit days of the week" data-content="Filter days by weekday or weekend.">Limit days of the week</h5>
+                        <label class="control-label" for="daygroup"></label>
                         <div class="controls">
                             <select name="daygroup" id="daygroup">
                                 <option value="all">All</option>
@@ -147,14 +151,16 @@ $initDropDown .= '</select>';
                         </div>
                     </div>
                     <div class="control-group">
-                        <label class="control-label" for="locations">Locations</label>
+                        <h5 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Limit Locations" data-content="Select which locations to include in your analysis. Selecting a location with children will include all children in the data set.">Limit locations</h5>
+                        <label class="control-label" for="locations"></label>
                         <div class="controls">
                             <select name="locations" id="locations">
                             </select>
                         </div>
                     </div>
                     <div class="control-group">
-                        <label class="control-label" for="activities">Activities</label>
+                        <h5 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Limit Activities" data-content="Select which activities to include in your analysis. Activity Groups will include all member activities.">Limit activities</h5>
+                        <label class="control-label" for="activities"></label>
                         <div class="controls">
                             <select name="activities" id="activities">
                             </select>
@@ -166,6 +172,36 @@ $initDropDown .= '</select>';
                 </div>
                 </fieldset>
                 </form>
+            </div>
+            </div>
+                <div id="supplemental-charts" class="span6">
+                    <div class="row">
+                        <div class="span6">
+                            <h3>Locations and Activities</h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div id="supp-chart-locact" class="btn-group span3" data-toggle="buttons-radio">
+                            <button type="button" class="btn active" value="locations">Locations</button>
+                            <button type="button" class="btn" value="activities">Activities</button>
+                        </div>
+                        <div id="supp-chart-avgsum" class="btn-group span2" data-toggle="buttons-radio">
+                            <button type="button" class="btn" value="avg">Avg</button>
+                            <button type="button" class="btn active" value="sum">Sum</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="span6">
+                            <div id="chart2"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="summary-data" class="row span6">
+                <div class="row"><h3>Summary Data</h3></div>
+                <div id="total-data" class="row"></div>
+                <div id="locations-data" class="row"></div>
+                <div id="activities-data" class="row"></div>
             </div>
         </div>
 
@@ -182,6 +218,54 @@ $initDropDown .= '</select>';
                 <option value="{{type}}-{{id}}">{{indent depth}}{{title}}</option>
             {{/each}}
         </script>
+        <script id="total-sum-table" type="text/x-handlebars-template">
+            <h4>Total Sum</h4>
+            {{#each items}}
+                <p>{{total}}</p>
+            {{/each}}
+        </script>
+        <script id="locations-sum-table" type="text/x-handlebars-template">
+            <h4>Totals by Location</h4>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Location</th>
+                        <th>Total</th>
+                        <th>Percentage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each items}}
+                        <tr>
+                            <td>{{name}}</td>
+                            <td>{{count}}</td>
+                            <td>{{percent}}</td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </script>
+        <script id="activities-sum-table" type="text/x-handlebars-template">
+            <h4>Totals by Activity</h4>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Activity</th>
+                        <th>Total</th>
+                        <th>Percentage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each items}}
+                        <tr>
+                            <td>{{name}}</td>
+                            <td>{{count}}</td>
+                            <td>{{percent}}</td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </script>
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
         <script src="../../lib/js/handlebars.js"></script>
@@ -192,6 +276,7 @@ $initDropDown .= '</select>';
         <script src="../../lib/js/moment.js"></script>
         <script src="../../lib/js/ReportFilters.js"></script>
         <script src="../../lib/js/TimeSeries.js"></script>
+        <script src="../../lib/js/BarChart.js"></script>
         <script src="js/app.js"></script>
 
     </body>

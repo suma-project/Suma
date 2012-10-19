@@ -48,14 +48,14 @@ var TimeSeries = function () {
         // Create primary area path
         area = d3.svg.area()
             .interpolate("linear")
-            .x(function (d) {return x(d.date); })
+            .x(function (d) {return x(d.fDate); })
             .y0(height)
             .y1(function (d) {return y(d.count); });
 
-        // Create scroll/zoom path 
+        // Create scroll/zoom path
         area2 = d3.svg.area()
             .interpolate("linear")
-            .x(function (d) {return x2(d.date); })
+            .x(function (d) {return x2(d.fDate); })
             .y0(height2)
             .y1(function (d) {return y2(d.count); });
 
@@ -66,7 +66,6 @@ var TimeSeries = function () {
         daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
         selection.each(function (data) {
-
             var brush,          // Brush, or selector, object for controlling scroll/zoom chart
                 context,        // SVG container for scroll/zoom chart
                 dateMap,        // Array of sorted date values, used during interaction.on()
@@ -99,25 +98,25 @@ var TimeSeries = function () {
                 focus.select("path").attr("d", area);
                 focus.select(".x.axis").call(xAxis);
                 focus.selectAll(".dot")
-                    .attr("cx", function (d) {return x(d.date); })
+                    .attr("cx", function (d) {return x(d.fDate); })
                     .attr("cy", function (d) {return y(d.count); });
             }
 
             data.forEach(function (d) {
                 d.title = d.date;
-                d.date  = formatDate.parse(d.date);
-                d.day   = daysOfWeek[d.date.getDay()];
+                d.fDate  = formatDate.parse(d.date);
+                d.day   = daysOfWeek[d.fDate.getDay()];
                 d.count = +d.count;
             });
 
             // Set domains and ranges
-            x.domain(d3.extent(data.map(function (d) {return d.date; })));
+            x.domain(d3.extent(data.map(function (d) {return d.fDate; })));
             y.domain([0, d3.max(data.map(function (d) {return d.count; }))]);
             x2.domain(x.domain());
             y2.domain(y.domain());
 
             // Create array of date objects using dates in dataset (used during interaction.on())
-            dateMap = data.map(function (d) {return d.date; });
+            dateMap = data.map(function (d) {return d.fDate; });
 
             brush = d3.svg.brush()
                 .x(x2)
@@ -165,7 +164,7 @@ var TimeSeries = function () {
                 .enter().append("circle")
                 .attr("clip-path", "url(#dotClip)")
                 .attr("class", "dot")
-                .attr("cx", function (d) {return x(d.date); })
+                .attr("cx", function (d) {return x(d.fDate); })
                 .attr("cy", function (d) {return y(d.count); })
                 .attr("r", 5)
                 .attr("opacity", 0)
@@ -185,8 +184,8 @@ var TimeSeries = function () {
                         xInvert     = x.invert(xCoord),                 // Convert xCoord to date value using x scale
                         cut         = d3.bisectLeft(dateMap, xInvert),  // Return index to right of xInvert
                         cut2        = (cut > 0) ? cut - 1 : 0,          // Return index to left of xInvert
-                        leftPoint   = data[cut2].date,                  // Convert cut2 to date (milliseconds from Epoch)
-                        rightPoint  = data[cut].date,                   // Convert cut to date (milliseconds from Epoch)
+                        leftPoint   = data[cut2].fDate,                  // Convert cut2 to date (milliseconds from Epoch)
+                        rightPoint  = data[cut].fDate,                   // Convert cut to date (milliseconds from Epoch)
                         midpoint    = (leftPoint.getTime() + rightPoint.getTime()) / 2; // Calculate midpoint
 
                     // Is current postion less than the midpoint?
@@ -197,7 +196,7 @@ var TimeSeries = function () {
                     // Display closest dot
                     d3.selectAll('.dot')
                         .attr("opacity", 0)
-                        .filter(function (d) {return d.date === data[cut].date; })
+                        .filter(function (d) {return d.fDate === data[cut].fDate; })
                         .attr("opacity", 1);
 
                     // Display legend
