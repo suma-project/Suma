@@ -355,7 +355,6 @@
                     pctObj;
 
                 locDict = _.filter(locations, function (ele) {
-                    //console.log('test', element, index, parent, locations)
                     return ele.id === parseInt(index, 10);
                 });
 
@@ -588,10 +587,7 @@
             // Month Summary
             counts.monthSummary = [];
             _.each(response.monthSummary, function (months, year) {
-                console.log('month summary', months, year);
                 _.each(months, function (count, month) {
-                    console.log('inner', count, month, months, year)
-
                     var newObj = {
                         date: month + ' ' + '1' + ', ' + year,
                         name: month + ' ' + year,
@@ -743,7 +739,6 @@
                 .call(this.suppChart);
         },
         drawTable: function (counts) {
-            //console.log('testing', counts);
 
             this.buildTemplate(counts.total, '#total-sum-table', '#total-data');
             this.buildTemplate(counts.locationsSum, '#locations-sum-table', '#locations-data');

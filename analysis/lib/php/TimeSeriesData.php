@@ -32,7 +32,7 @@ class TimeSeriesData
      * @var array
      * @access  public
      */
-    public $all      = array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday');
+    public $all = array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday');
     /**
      * Main hash to store data as it is retrieved from the server
      *
@@ -46,14 +46,89 @@ class TimeSeriesData
      * @var NULL
      * @access  private
      */
-    private $locListIds = NULL;
+    private $locListIds = array();
     /**
      * Stores activity ids for filtering
      *
      * @var array
      * @access  private
      */
-    private $actList = array();
+    private $actListIds = array();
+    /**
+     * Stores scaffold array for csvArray
+     * @var array
+     * @access private
+     */
+    private $actHash = array();
+    private $locHash = array();
+    private $csvScaffold = NULL;
+    /**
+     * Method to populate $csvScaffold
+     * @param  array $locListIds
+     * @param  array $actListIds
+     * @return array
+     */
+    private function buildCSVScaffold ($actDict, $locDict)
+    {
+        ChromePhp::log('buildCSVScaffold called');
+
+        $scaffoldArray = array(
+                'date' => NULL,
+                'total' => NULL,
+                'locations' => array(),
+                'activities' => array()
+            );
+
+        if(empty($this->actHash))
+        {
+            foreach($actDict as $act)
+            {
+                $this->actHash[$act['id']] = $act['title'];
+            }
+        }
+
+        if(empty($this->locHash))
+        {
+            foreach($locDict as $loc)
+            {
+                $this->locHash[$loc['id']] = $loc['title'];
+            }
+        }
+
+        if (empty($this->actListIds))
+        {
+            foreach($actDict as $act)
+            {
+                $scaffoldArray['activities'][$act['title']] = NULL;
+            }
+        }
+        else
+        {
+            foreach($this->actListIds as $act)
+            {
+                $name = $this->actHash[$act];
+                $scaffoldArray['activities'][$name] = NULL;
+            }
+        }
+
+        if(empty($this->locListIds))
+        {
+            foreach($locDict as $loc)
+            {
+                $scaffoldArray['locations'][$loc['title']] = NULL;
+            }
+        }
+        else
+        {
+            foreach($this->locListIds as $loc)
+            {
+                $name = $this->locHash[$loc];
+                $scaffoldArray['locations'][$name] = NULL;
+            }
+        }
+
+        return $scaffoldArray;
+    }
     /**
      * Basic pluck method
      * @param  array $input
@@ -317,7 +392,7 @@ class TimeSeriesData
         $locDict = $response['initiative']['dictionary']['locations'];
 
         // Populate location list for filters
-        if (!isset($this->locListIds))
+        if (empty($this->locListIds))
         {
             if ($locID !== 'all')
             {
@@ -326,11 +401,16 @@ class TimeSeriesData
             }
         }
         // Populate activity list for filters
-        if (empty($this->actList))
+        if (empty($this->actListIds))
         {
             if ($actID !== 'all'){
-                $this->actList = $this->populateActivities($actDict, $actID, $actType);
+                $this->actListIds = $this->populateActivities($actDict, $actID, $actType);
             }
+        }
+        // Populate $csvScaffold for csv array
+        if (!isset($this->csvScaffold))
+        {
+            $this->csvScaffold = $this->buildCSVScaffold($actDict, $locDict);
         }
 
         if (isset($response['initiative']['sessions']))
@@ -360,7 +440,7 @@ class TimeSeriesData
                                 $countActs = $this->pluck($count['activities'], 'id');
 
                                 // Test for intersection between input and count activities
-                                $intersect = array_unique(array_intersect($countActs, $this->actList));
+                                $intersect = array_unique(array_intersect($countActs, $this->actListIds));
 
                                 if ($params['activities'] === 'all' || $intersect)
                                 {
@@ -368,6 +448,19 @@ class TimeSeriesData
                                     $year = date('Y', strtotime($day));
                                     $month = date('F', strtotime($day));
 
+                                    // Build CSV Array (Activities done later in activitiesSum array)
+                                    if(!isset($this->countHash['csv'][$day]))
+                                    {
+                                        $this->countHash['csv'][$day] = $this->csvScaffold;
+                                        $this->countHash['csv'][$day]['date'] = $day;
+                                        $this->countHash['csv'][$day]['total'] = $count['number'];
+                                        $this->countHash['csv'][$day]['locations'][$this->locHash[$loc['id']]] = $count['number'];
+                                    }
+                                    else
+                                    {
+                                        $this->countHash['csv'][$day]['total'] += $count['number'];
+                                        $this->countHash['csv'][$day]['locations'][$this->locHash[$loc['id']]] += $count['number'];
+                                    }
                                     // Increment Total property
                                     if (!isset($this->countHash['total']))
                                     {
@@ -428,11 +521,12 @@ class TimeSeriesData
                                         $this->countHash['locationsSum'][$loc['id']] += $count['number'];
                                     }
 
-                                    // Build activitiesSum array
+                                    // Build/Finish activitiesSum, activitiesAvgAvg, and CSV array
                                     if ($intersect)
                                     {
                                         foreach ($intersect as $x)
                                         {
+                                            // activitiesSum
                                             if (!isset($this->countHash['activitiesSum'][$x]))
                                             {
                                                 $this->countHash['activitiesSum'][$x] = $count['number'];
@@ -441,12 +535,34 @@ class TimeSeriesData
                                             {
                                                 $this->countHash['activitiesSum'][$x] += $count['number'];
                                             }
+
+                                            //activitiesAvgAvg
+                                            if (!isset($this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sess['id']][$x]))
+                                            {
+                                                $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sess['id']][$x] = $count['number'];
+                                            }
+                                            else
+                                            {
+                                                $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sess['id']][$x] += $count['number'];
+                                            }
+
+                                            // Completion of CSV data
+                                            if(!isset($this->countHash['csv'][$day]))
+                                            {
+
+                                                $this->countHash['csv'][$day]['activities'][$this->actHash[$x]] = $count['number'];
+                                            }
+                                            else
+                                            {
+                                                $this->countHash['csv'][$day]['activities'][$this->actHash[$x]] += $count['number'];
+                                            }
                                         }
                                     }
                                     else
                                     {
                                         foreach ($countActs as $countAct)
                                         {
+                                            // activitiesSum
                                             if (!isset($this->countHash['activitiesSum'][$countAct]))
                                             {
                                                 $this->countHash['activitiesSum'][$countAct] = $count['number'];
@@ -454,6 +570,28 @@ class TimeSeriesData
                                             else
                                             {
                                                 $this->countHash['activitiesSum'][$countAct] += $count['number'];
+                                            }
+
+                                            // activitiesAvgAvg
+                                            if (!isset($this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sess['id']][$countAct]))
+                                            {
+                                                $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sess['id']][$countAct] = $count['number'];
+                                            }
+                                            else
+                                            {
+                                                $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sess['id']][$countAct] += $count['number'];
+                                            }
+
+
+                                            // Completion of CSV data
+                                            if(!isset($this->countHash['csv'][$day]))
+                                            {
+
+                                                $this->countHash['csv'][$day]['activities'][$this->actHash[$countAct]] = $count['number'];
+                                            }
+                                            else
+                                            {
+                                                $this->countHash['csv'][$day]['activities'][$this->actHash[$countAct]] += $count['number'];
                                             }
                                         }
                                     }
@@ -466,36 +604,6 @@ class TimeSeriesData
                                     else
                                     {
                                         $this->countHash['periodAvg'][$day]['sessions'][$sess['id']][$loc['id']] += $count['number'];
-                                    }
-
-                                    // Build activitiesAvgAvg array
-                                    if ($intersect)
-                                    {
-                                        foreach ($intersect as $value)
-                                        {
-                                            if (!isset($this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sess['id']][$value]))
-                                            {
-                                                $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sess['id']][$value] = $count['number'];
-                                            }
-                                            else
-                                            {
-                                                $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sess['id']][$value] += $count['number'];
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        foreach ($countActs as $countAct)
-                                        {
-                                            if (!isset($this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sess['id']][$countAct]))
-                                            {
-                                                $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sess['id']][$countAct] = $count['number'];
-                                            }
-                                            else
-                                            {
-                                                $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sess['id']][$countAct] += $count['number'];
-                                            }
-                                        }
                                     }
                                 }
                             }
