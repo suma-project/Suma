@@ -69,9 +69,20 @@ $initDropDown .= '</select>';
 
         <div class="container">
             <div id="main-chart-header" class="row">
-                <div id="main-chart-avgsum" class="btn-group span3 offset9" data-toggle="buttons-radio">
-                    <button type="button" class="btn" value="avg">Daily Avg</button>
-                    <button type="button" class="btn active" value="sum">Daily Sum</button>
+                <div id="main-annotation" class="span7">
+
+                </div>
+                <div class="btn-toolbar pull-right">
+                    <div id="main-chart-avgsum" class="btn-group" data-toggle="buttons-radio">
+                        <button type="button" class="btn btn-small" value="avg">Daily Avg</button>
+                        <button type="button" class="btn btn-small active" value="sum">Daily Sum</button>
+                    </div>
+                    <div class="btn-group">
+                        <a class="btn btn-small" href="#summary-data">Summary Data</a>
+                    </div>
+                    <div id="main-chart-download" class="btn-group">
+                        <a id="main-download" data-chart-div="chart1" class="btn btn-small" target="_blank">Save Chart</a>
+                    </div>
                 </div>
             </div>
             <div class="row">
@@ -90,6 +101,7 @@ $initDropDown .= '</select>';
                         <h4>Welcome!</h4>
                             Please select an initiative from the select menu below. Once you have chosen an initiative, additional filter options will appear. You can also limit your search by date or time.
                     </div>
+                    <div id="chart1"></div>
                 </div>
             </div>
 
@@ -173,6 +185,13 @@ $initDropDown .= '</select>';
                 </fieldset>
                 </form>
             </div>
+            <div id="summary-data" class="row span6">
+                <a name="summary-data"></a>
+                <div class="row"><h3>Summary Data</h3></div>
+                <div id="total-data" class="row"></div>
+                <div id="locations-data" class="row"></div>
+                <div id="activities-data" class="row"></div>
+            </div>
             </div>
                 <div id="supplemental-charts" class="span6">
                     <div class="row">
@@ -181,13 +200,19 @@ $initDropDown .= '</select>';
                         </div>
                     </div>
                     <div class="row">
-                        <div id="supp-chart-locact" class="btn-group span3" data-toggle="buttons-radio">
-                            <button type="button" class="btn active" value="locations">Locations</button>
-                            <button type="button" class="btn" value="activities">Activities</button>
-                        </div>
-                        <div id="supp-chart-avgsum" class="btn-group span2" data-toggle="buttons-radio">
-                            <button type="button" class="btn" value="avg">Avg</button>
-                            <button type="button" class="btn active" value="sum">Sum</button>
+                        <div class="btn-toolbar pull-right">
+                            <div id="supp-chart-locact" class="btn-group" data-toggle="buttons-radio">
+                                <button type="button" class="btn btn-small active" value="locations">Locations</button>
+                                <button type="button" class="btn btn-small" value="activities">Activities</button>
+                            </div>
+                            <div id="supp-chart-avgsum" class="btn-group" data-toggle="buttons-radio">
+                                <button type="button" class="btn btn-small" value="avg">Avg</button>
+                                <button type="button" class="btn btn-small active" value="sum">Sum</button>
+                                <button type="button" class="btn btn-small" value="pct">Pct</button>
+                            </div>
+                            <div id="supp-chart-download" class="btn-group">
+                                <a id="supp-download" data-chart-div="chart2" class="btn btn-small" target="_blank">Save Chart</a>
+                            </div>
                         </div>
                     </div>
                     <div class="row">
@@ -197,15 +222,17 @@ $initDropDown .= '</select>';
                     </div>
                 </div>
             </div>
-            <div id="summary-data" class="row span6">
-                <div class="row"><h3>Summary Data</h3></div>
-                <div id="total-data" class="row"></div>
-                <div id="locations-data" class="row"></div>
-                <div id="activities-data" class="row"></div>
-            </div>
         </div>
 
         <!-- TEMPLATES -->
+        <script id="main-annotation-template" type="text/x-handlebars-template">
+            <p class="muted"><strong>Initiative:</strong> {{id}}
+                            <strong>Dates:</strong> {{sdate}} - {{edate}} <br/>
+                            <strong>Subset:</strong> {{stime}} - {{etime}}
+                            <strong>Days:</strong> {{daygroup}} <br/>
+                            <strong>Locations:</strong> {{locations}}
+                            <strong>Activities:</strong> {{activities}}</p>
+        </script>
         <script id="locations-template" type="text/x-handlebars-template">
             <option value="all">All</option>
             {{#each items}}
@@ -274,6 +301,9 @@ $initDropDown .= '</select>';
         <script src="../../lib/js/d3.v2.min.js"></script>
         <script src="../../lib/js/underscore.js"></script>
         <script src="../../lib/js/moment.js"></script>
+        <script src="../../lib/js/string.min.js"></script>
+        <script src="../../lib/js/base64.js"></script>
+        <script src="../../lib/js/canvg.js"></script>
         <script src="../../lib/js/ReportFilters.js"></script>
         <script src="../../lib/js/TimeSeries.js"></script>
         <script src="../../lib/js/BarChart.js"></script>

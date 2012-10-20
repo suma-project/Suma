@@ -1,5 +1,6 @@
 <?php
 
+require_once '../../lib/php/ChromePhp.php';
 require_once '../../lib/php/ServerIO.php';
 require_once '../../lib/php/Gump.php';
 require_once '../../lib/php/SumaGump.php';
@@ -332,7 +333,6 @@ class TimeSeriesData
             }
         }
 
-        $sessions = $response['initiative']['sessions'];
         if (isset($response['initiative']['sessions']))
         {
             $sessions = $response['initiative']['sessions'];
@@ -349,7 +349,7 @@ class TimeSeriesData
                 {
                     $sessLocations = $sess['locations'];
                     foreach ($sessLocations as $loc)
-                    {
+                    {   //ChromePhp::log('location', $loc);
                         // Test if location is in locations array
                         if ($params['locations'] === 'all' || in_array($loc['id'], $this->locListIds))
                         {

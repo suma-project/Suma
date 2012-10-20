@@ -13,6 +13,7 @@
         suppChart: undefined,
         updateListeners: undefined,
         counts: undefined,
+        params: undefined,
         /**
          * Initializes app
          *
@@ -75,6 +76,8 @@
             // Event handler to initialize AJAX call
             $('body').on('submit', '#chartFilters', function (e) {
                 var input = $(this).serializeArray();
+                // Save params for annotation later
+                self.params = input;
 
                 $.when(self.getData(input))
                     .then(function (data) {
@@ -130,6 +133,87 @@
 
                 self.updateSuppChart(self.counts, mainState, locState, avgState);
             });
+
+            // Image Download
+            $("#main-download, #supp-download").on("click", function (e) {
+                var linkId = "#" + this.id,
+                    chartId = "#" + $(this).attr('data-chart-div');
+
+                self.downloadPNG(linkId, chartId);
+            });
+        },
+        annotateUI: function () {
+            var actId,
+                activities = {},
+                context,
+                data       = {},
+                html,
+                initName   = $("#initiatives option:selected").text(),
+                locations  = {},
+                source,
+                template;
+
+            _.each(this.params, function (element, index) {
+                data[element.name] = element.value;
+            });
+
+            _.each(this.filters.activities, function (element, index) {
+                activities[element.id] = element.title;
+            });
+
+            _.each(this.filters.locations, function (element, index) {
+                locations[element.id] = element.title;
+            });
+
+            data.id = initName;
+
+            if (data.locations !== 'all') {
+                data.locations = locations[data.locations];
+            }
+
+            if (data.activities !== 'all') {
+                actId = data.activities.split('-');
+                actId = actId[1];
+                data.activities = activities[actId];
+            }
+
+
+            source   = $('#main-annotation-template').html();
+            template = Handlebars.compile(source);
+            context  = data;
+            html     = template(context);
+
+            $('#main-annotation').empty();
+            $('#main-annotation').append(html);
+
+        },
+        /**
+         * Method to convert SVG to downloadable PNG
+         * @param  string linkId  CSS ID of the link clicked to call method
+         * @param  string chartId Contents of data-property with CSS ID of source SVG wrapper div
+         */
+        downloadPNG: function (linkId, chartId) {
+            var canvas,
+                img,
+                svg;
+
+            // Get svg markup from chart
+            svg = $(chartId).html();
+
+            // Insert invisible canvas
+            $('body').append('<canvas id="canvas" style="display:none"></canvas>');
+
+            // Insert chart into invisible canvas
+            canvg(document.getElementById('canvas'), svg);
+
+            // Retrieve contents of invisible canvas
+            canvas = document.getElementById('canvas');
+
+            // Convert canvas to data
+            img = canvas.toDataURL("image/png");
+
+            // Update href to use data:image
+            $(linkId).attr('href', img);
         },
         /**
          * AJAX call to retrieve data
@@ -217,15 +301,17 @@
 
             // Locations Sum
             counts.locationsSum = [];
+            counts.locationsPct = [];
             _.each(response.locationsSum, function (element, index) {
                 var locDict,
-                    newObj;
+                    newObj,
+                    pctObj;
 
-                locDict = _.filter(locations, function (parent) {
-                    //console.log('test', element, index, parent)
-                    return parent.id === parseInt(index, 10);
+                locDict = _.filter(locations, function (ele) {
+                    //console.log('test', element, index, parent, locations)
+                    return ele.id === parseInt(index, 10);
                 });
-                //console.log('locations', locations)
+
                 newObj = {
                     id    : index,
                     name  : locDict[0].title,
@@ -233,9 +319,20 @@
                     rank  : locDict[0].rank,
                     parent: locDict[0].parent,
                     count : element,
-                    percent: (element / response.total * 100).toFixed(2)
+                    percent: parseInt((element / response.total * 100).toFixed(2), 10)
                 };
+
+                pctObj = {
+                    id    : index,
+                    name  : locDict[0].title,
+                    depth : locDict[0].depth,
+                    rank  : locDict[0].rank,
+                    parent: locDict[0].parent,
+                    count : newObj.percent
+                };
+
                 counts.locationsSum.push(newObj);
+                counts.locationsPct.push(pctObj);
             });
 
             // Locations Avg Sum
@@ -285,9 +382,11 @@
 
             // Activities Sum
             counts.activitiesSum = [];
+            counts.activitiesPct = [];
             _.each(response.activitiesSum, function (element, index) {
                 var actDict,
-                    newObj;
+                    newObj,
+                    pctObj;
 
                 actDict = _.filter(activities, function (act, i) {
                     return act.id === parseInt(index, 10) && act.type === 'activity';
@@ -301,7 +400,16 @@
                         rank  : actDict[0].rank,
                         activityGroup: actDict[0].activityGroup,
                         count : element,
-                        percent: (element / response.total * 100).toFixed(2)
+                        percent: parseInt((element / response.total * 100).toFixed(2), 10)
+                    };
+
+                    pctObj = {
+                        id    : index,
+                        name  : actDict[0].title,
+                        depth : actDict[0].depth,
+                        rank  : actDict[0].rank,
+                        activityGroup: actDict[0].activityGroup,
+                        count : newObj.percent
                     };
                 } else {
                     newObj = {
@@ -311,11 +419,21 @@
                         rank  : undefined,
                         activityGroup: undefined,
                         count : element,
-                        percent: (element / response.totall * 100).toFixed(2)
+                        percent: parseInt((element / response.total * 100).toFixed(2), 10)
+                    };
+
+                    pctObj = {
+                        id    : index,
+                        name  : 'No Activity',
+                        depth : undefined,
+                        rank  : undefined,
+                        activityGroup: undefined,
+                        count : newObj.percent
                     };
                 }
 
                 counts.activitiesSum.push(newObj);
+                counts.activitiesPct.push(pctObj);
             });
 
             // Activities Avg Sum
@@ -451,7 +569,7 @@
             counts.periodSum.sort(self.sortData);
             counts.periodAvg.sort(self.sortData);
 
-            //console.log('counts', counts);
+            console.log('counts', counts);
             return counts;
         },
         /**
@@ -461,9 +579,9 @@
          */
         drawChart: function (counts) {
             var self = this,
-                mainState,
+                avgState,
                 locState,
-                avgState;
+                mainState;
 
             if (!this.mainChart) {
                 this.mainChart = new TimeSeries();
@@ -473,6 +591,7 @@
                 this.suppChart = new BarChart();
             }
 
+            // Get states from DOM
             mainState = $('#main-chart-avgsum > .active')[0].value;
             locState = $('#supp-chart-locact > .active')[0].value;
             avgState = $('#supp-chart-avgsum > .active')[0].value;
@@ -499,13 +618,16 @@
             }
 
             // Update Main Chairt
-            $('#chart > svg').remove();
-            d3.select("#chart")
+            $('#chart1 > svg').remove();
+            d3.select("#chart1")
                 .datum(data)
                 .call(this.mainChart);
 
             // Update Supplemental Chart
             self.updateSuppChart(counts, mainState, locState, avgState);
+
+            // Update annotation on UI
+            self.annotateUI();
         },
         /**
          * Update secondary chart
@@ -516,14 +638,22 @@
          */
         updateSuppChart: function (counts, mainState, locState, avgState) {
             var data,
-                locSum,
-                locAvg,
+                actAvg,
+                actPct,
                 actSum,
-                actAvg;
+                locAvg,
+                locPct,
+                locSum;
 
+            // Set sum data
             locSum = counts.locationsSum;
             actSum = counts.activitiesSum;
 
+            // Set pct data
+            locPct = counts.locationsPct;
+            actPct = counts.activitiesPct;
+
+            // Set avg data
             if (mainState === 'sum') {
                 locAvg = counts.locationsAvgSum;
                 actAvg = counts.activitiesAvgSum;
@@ -532,14 +662,19 @@
                 actAvg = counts.activitiesAvgAvg;
             }
 
+            // Set data to send to chart based on state of main and supplement charts
             if ((locState === 'locations') && (avgState === 'sum')) {
                 data = locSum;
             } else if ((locState === 'locations') && (avgState === 'avg')) {
                 data = locAvg;
+            } else if ((locState === 'locations') && (avgState === 'pct')) {
+                data = locPct;
             } else if ((locState === 'activities') && (avgState === 'sum')) {
                 data = actSum;
             } else if ((locState === 'activities') && (avgState === 'avg')) {
                 data = actAvg;
+            } else if ((locState === 'activities') && (avgState === 'pct')) {
+                data = actPct;
             }
 
             d3.select("#chart2")
