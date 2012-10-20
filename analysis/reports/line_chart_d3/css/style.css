@@ -82,8 +82,3 @@ svg {
 #secondary-filters {
     display:none;
 }
-
-/* Invisible canvas for image download */
-#canvas {
-    display:none;
-}

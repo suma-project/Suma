@@ -191,6 +191,9 @@ $initDropDown .= '</select>';
                 <div id="total-data" class="row"></div>
                 <div id="locations-data" class="row"></div>
                 <div id="activities-data" class="row"></div>
+                <div id="year-data" class="row"></div>
+                <div id="month-data" class="row"></div>
+                <div id="weekday-data" class="row"></div>
             </div>
             </div>
                 <div id="supplemental-charts" class="span6">
@@ -253,7 +256,7 @@ $initDropDown .= '</select>';
         </script>
         <script id="locations-sum-table" type="text/x-handlebars-template">
             <h4>Totals by Location</h4>
-            <table class="table table-hover">
+            <table class="table table-hover table-condensed">
                 <thead>
                     <tr>
                         <th>Location</th>
@@ -266,7 +269,7 @@ $initDropDown .= '</select>';
                         <tr>
                             <td>{{name}}</td>
                             <td>{{count}}</td>
-                            <td>{{percent}}</td>
+                            <td>{{percent}}%</td>
                         </tr>
                     {{/each}}
                 </tbody>
@@ -274,7 +277,7 @@ $initDropDown .= '</select>';
         </script>
         <script id="activities-sum-table" type="text/x-handlebars-template">
             <h4>Totals by Activity</h4>
-            <table class="table table-hover">
+            <table class="table table-hover table-condensed">
                 <thead>
                     <tr>
                         <th>Activity</th>
@@ -287,7 +290,70 @@ $initDropDown .= '</select>';
                         <tr>
                             <td>{{name}}</td>
                             <td>{{count}}</td>
-                            <td>{{percent}}</td>
+                            <td>{{percent}}%</td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </script>
+        <script id="year-table" type="text/x-handlebars-template">
+            <h4>Totals by Year</h4>
+            <table class="table table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th>Year</th>
+                        <th>Total</th>
+                        <th>Percentage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each items}}
+                        <tr>
+                            <td>{{name}}</td>
+                            <td>{{count}}</td>
+                            <td>{{percent}}%</td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </script>
+        <script id="month-table" type="text/x-handlebars-template">
+            <h4>Totals by Month</h4>
+            <table class="table table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>Total</th>
+                        <th>Percentage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each items}}
+                        <tr>
+                            <td>{{name}}</td>
+                            <td>{{count}}</td>
+                            <td>{{percent}}%</td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </script>
+        <script id="weekday-table" type="text/x-handlebars-template">
+            <h4>Totals by Weekday</h4>
+            <table class="table table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th>Weekday</th>
+                        <th>Total</th>
+                        <th>Percentage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each items}}
+                        <tr>
+                            <td>{{name}}</td>
+                            <td>{{count}}</td>
+                            <td>{{percent}}%</td>
                         </tr>
                     {{/each}}
                 </tbody>
@@ -302,7 +368,6 @@ $initDropDown .= '</select>';
         <script src="../../lib/js/underscore.js"></script>
         <script src="../../lib/js/moment.js"></script>
         <script src="../../lib/js/string.min.js"></script>
-        <script src="../../lib/js/base64.js"></script>
         <script src="../../lib/js/canvg.js"></script>
         <script src="../../lib/js/ReportFilters.js"></script>
         <script src="../../lib/js/TimeSeries.js"></script>

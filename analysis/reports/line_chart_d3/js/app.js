@@ -14,6 +14,15 @@
         updateListeners: undefined,
         counts: undefined,
         params: undefined,
+        weekdays: {
+            Sunday: 0,
+            Monday: 1,
+            Tuesday: 2,
+            Wednesday: 3,
+            Thursday: 4,
+            Friday: 5,
+            Saturday: 6
+        },
         /**
          * Initializes app
          *
@@ -135,12 +144,72 @@
             });
 
             // Image Download
-            $("#main-download, #supp-download").on("click", function (e) {
+            $('#main-download').on('click', function (e) {
+                var linkId = "#" + this.id,
+                    tempChart;
+
+                // Add inline styling to main chart
+                $('.mainGraph path').attr('fill', 'steelblue');
+                $('.subGraph path').attr('fill', 'steelblue');
+                $('.y .tick').attr('fill', 'none').attr('stroke', '#000').attr('shape-rendering', 'crispEdges');
+                $('.y path').attr('fill', 'none').attr('stroke', '#000').attr('shape-rendering', 'crispEdges');
+                $('.x .tick').attr('fill', 'none').attr('stroke', '#000').attr('shape-rendering', 'crispEdges');
+                $('.x path').attr('fill', 'none').attr('stroke', '#000').attr('shape-rendering', 'crispEdges');
+
+                // Grab main chart code
+                tempChart = $('#chart1').html();
+
+                // Append chart code into invisible div for additional processing
+                $('body').append('<div id="temp-chart" style="display:none">' + tempChart + '</div>');
+
+                // Remove brush component
+                $('#temp-chart .subGraph').remove();
+
+                // Send dummy chart to conversion method
+                self.downloadPNG(linkId, '#temp-chart');
+
+                // Remove temp div
+                $('#temp-chart').remove();
+            });
+
+            $('#supp-download').on('click', function (e) {
                 var linkId = "#" + this.id,
                     chartId = "#" + $(this).attr('data-chart-div');
 
                 self.downloadPNG(linkId, chartId);
             });
+
+        },
+         /**
+         * Method to convert SVG to downloadable PNG
+         * @param  string linkId  CSS ID of the link clicked to call method
+         * @param  string chartId Contents of data-property with CSS ID of source SVG wrapper div
+         */
+        downloadPNG: function (linkId, chartId) {
+            var canvas,
+                img,
+                svg;
+
+            // Get svg markup from chart
+            svg = $(chartId).html();
+
+            // Insert invisible canvas
+            $('body').append('<canvas id="canvas" style="display:none"></canvas>');
+
+            // Insert chart into invisible canvas
+            canvg(document.getElementById('canvas'), svg);
+
+            // Retrieve contents of invisible canvas
+            canvas = document.getElementById('canvas');
+
+            // Convert canvas to data
+            img = canvas.toDataURL("image/png");
+
+            // Update href to use data:image
+            $(linkId).attr('href', img);
+
+            // Remove Canvas
+            $('#canvas').remove();
         },
         annotateUI: function () {
             var actId,
@@ -188,34 +257,6 @@
 
         },
         /**
-         * Method to convert SVG to downloadable PNG
-         * @param  string linkId  CSS ID of the link clicked to call method
-         * @param  string chartId Contents of data-property with CSS ID of source SVG wrapper div
-         */
-        downloadPNG: function (linkId, chartId) {
-            var canvas,
-                img,
-                svg;
-
-            // Get svg markup from chart
-            svg = $(chartId).html();
-
-            // Insert invisible canvas
-            $('body').append('<canvas id="canvas" style="display:none"></canvas>');
-
-            // Insert chart into invisible canvas
-            canvg(document.getElementById('canvas'), svg);
-
-            // Retrieve contents of invisible canvas
-            canvas = document.getElementById('canvas');
-
-            // Convert canvas to data
-            img = canvas.toDataURL("image/png");
-
-            // Update href to use data:image
-            $(linkId).attr('href', img);
-        },
-        /**
          * AJAX call to retrieve data
          *
          * @param  {array} input
@@ -259,6 +300,9 @@
          */
         sortData: function (a, b) {
             return new Date(a.date).getTime() - new Date(b.date).getTime();
+        },
+        sortDays: function (a, b) {
+            return a.value - b.value;
         },
         /**
          * Display error message
@@ -529,8 +573,10 @@
             counts.dayOfWeekSummary = [];
             _.each(response.dayOfWeekSummary, function (element, index) {
                 var newObj = {
-                    day: index,
-                    count: element
+                    value: self.weekdays[index],
+                    name: index,
+                    count: element,
+                    percent: parseInt((element / response.total * 100).toFixed(2), 10)
                 };
 
                 counts.dayOfWeekSummary.push(newObj);
@@ -538,21 +584,30 @@
 
             // Month Summary
             counts.monthSummary = [];
-            _.each(response.monthSummary, function (element, index) {
-                var newObj = {
-                    day: index,
-                    count: element
-                };
+            _.each(response.monthSummary, function (months, year) {
+                console.log('month summary', months, year);
+                _.each(months, function (count, month) {
+                    console.log('inner', count, month, months, year)
 
-                counts.monthSummary.push(newObj);
+                    var newObj = {
+                        date: month + ' ' + '1' + ', ' + year,
+                        name: month + ' ' + year,
+                        count: count,
+                        percent: parseInt((count / response.total * 100).toFixed(2), 10)
+                    };
+
+                    counts.monthSummary.push(newObj);
+                });
             });
 
             // Year Summary
             counts.yearSummary = [];
             _.each(response.yearSummary, function (element, index) {
                 var newObj = {
-                    year: index,
-                    count: element
+                    date: index + '-01-01',
+                    name: index,
+                    count: element,
+                    percent: parseInt((element / response.total * 100).toFixed(2), 10)
                 };
 
                 counts.yearSummary.push(newObj);
@@ -568,6 +623,9 @@
             // Sort period arrays by date
             counts.periodSum.sort(self.sortData);
             counts.periodAvg.sort(self.sortData);
+            counts.yearSummary.sort(self.sortData);
+            counts.monthSummary.sort(self.sortData);
+            counts.dayOfWeekSummary.sort(self.sortDays);
 
             console.log('counts', counts);
             return counts;
@@ -687,6 +745,10 @@
             this.buildTemplate(counts.total, '#total-sum-table', '#total-data');
             this.buildTemplate(counts.locationsSum, '#locations-sum-table', '#locations-data');
             this.buildTemplate(counts.activitiesSum, '#activities-sum-table', '#activities-data');
+            this.buildTemplate(counts.yearSummary, '#year-table', '#year-data');
+            this.buildTemplate(counts.monthSummary, '#month-table', '#month-data');
+            this.buildTemplate(counts.dayOfWeekSummary, '#weekday-table', '#weekday-data');
+
         },
         buildTemplate: function (items, templateId, elementId) {
             var html,
