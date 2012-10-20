@@ -143,7 +143,7 @@
                 self.updateSuppChart(self.counts, mainState, locState, avgState);
             });
 
-            // Image Download
+            // Image Download (These need to be optimized)
             $('#main-download').on('click', function (e) {
                 var linkId = "#" + this.id,
                     tempChart;
@@ -211,7 +211,10 @@
             // Remove Canvas
             $('#canvas').remove();
         },
-        annotateUI: function () {
+        /**
+         * Build chart metadata from params
+         */
+        buildChartMetadata: function () {
             var actId,
                 activities = {},
                 context,
@@ -684,8 +687,8 @@
             // Update Supplemental Chart
             self.updateSuppChart(counts, mainState, locState, avgState);
 
-            // Update annotation on UI
-            self.annotateUI();
+            // Update metadata on UI
+            self.buildChartMetadata();
         },
         /**
          * Update secondary chart
