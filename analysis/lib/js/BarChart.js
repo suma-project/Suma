@@ -1,6 +1,6 @@
 var BarChart = function () {
     var width = 550,
-        height = 700;
+        height = 600;
 
     function chart(selection) {
         selection.each(function (data) {

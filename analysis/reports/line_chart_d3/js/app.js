@@ -96,6 +96,8 @@
                             self.drawChart(counts);
                             self.counts = counts;
                             self.drawTable(counts);
+                            self.buildCSV(data.csv);
+                            $('.post-load-popover').popover();
                         } else {
                             self.noData();
                         }
@@ -249,7 +251,6 @@
                 data.activities = activities[actId];
             }
 
-
             source   = $('#main-annotation-template').html();
             template = Handlebars.compile(source);
             context  = data;
@@ -278,10 +279,12 @@
                     $('svg').remove();
                     $('.alert').hide();
                     $('#loading').show();
+                    $('#summary-data').hide();
                     $('#supplemental-charts').hide();
                     $('#main-chart-header').css('visibility', 'hidden');
                 },
                 success: function () {
+                    $('#summary-data').show();
                     $('#supplemental-charts').show();
                     $('#main-chart-header').css('visibility', 'visible');
                 },
@@ -613,11 +616,11 @@
             });
 
             // Check if counts is large enough to display meaningfully
-            testLength = _.unique(_.pluck(_.values(counts.periodSum), 'count'));
+            // testLength = _.unique(_.pluck(_.values(counts.periodSum), 'count'));
 
-            if (testLength.length === 1) {
-                return false;
-            }
+            // if (testLength.length === 1) {
+            //     return false;
+            // }
 
             // Sort period arrays by date
             counts.periodSum.sort(self.sortData);
@@ -746,6 +749,109 @@
             this.buildTemplate(counts.yearSummary, '#year-table', '#year-data');
             this.buildTemplate(counts.monthSummary, '#month-table', '#month-data');
             this.buildTemplate(counts.dayOfWeekSummary, '#weekday-table', '#weekday-data');
+
+        },
+        locHeader: null,
+        actHeader: null,
+        sortCSV: function (a, b) {
+            return a.name - b.name;
+        },
+        sortCSVItems: function (items) {
+            var self = this,
+                arr;
+
+            arr = [];
+            _.each(items, function (count, name) {
+                if (name) {
+                    var obj = {
+                        name: name,
+                        count: count || 'none'
+                    };
+                    arr.push(obj);
+                }
+            });
+
+            arr.sort(self.sortCSV);
+            return arr;
+        },
+        buildCSV: function (csv) {
+            var self = this,
+                base,
+                content,
+                csvLines,
+                finalContent,
+                header,
+                href,
+                lines;
+
+            lines = [];
+            csvLines = [];
+            header = ['Date', 'Total'];
+
+            self.locHeader = null;
+            self.actHeader = null;
+
+            _.each(csv, function (day, date) {
+                var actHeader,
+                    activities,
+                    line,
+                    locations,
+                    locHeader;
+
+                line = [];
+                line.push(day.date);
+                line.push(day.total);
+
+                // Build Header on first pass
+                if (!self.locHeader) {
+                    locHeader = self.sortCSVItems(day.locations);
+                    locHeader = _.pluck(locHeader, 'name');
+                    self.locHeader = locHeader;
+                }
+
+                if (!self.actHeader) {
+                    actHeader = self.sortCSVItems(day.activities);
+                    actHeader = _.pluck(actHeader, 'name');
+                    self.actHeader = actHeader;
+                }
+
+                // Convert locations to array and sort, add to line
+                locations = self.sortCSVItems(day.locations);
+                _.each(locations, function (loc, locName) {
+                    line.push(loc.count);
+                });
+
+                // Convert activities to array and sort, add to line
+                activities = self.sortCSVItems(day.activities);
+                _.each(activities, function (act, actName) {
+                    line.push(act.count);
+                });
+                lines.push(line);
+            });
+
+            // Add location names to header
+            _.each(self.locHeader, function (locName) {
+                header.push(locName);
+            });
+
+            // Add activity names to header
+            _.each(self.actHeader, function (actname) {
+                header.push(actname);
+            });
+
+
+            content = _.each(lines, function (element, index) {
+                var line = new S(element).toCSV().s;
+                csvLines.push(line);
+            });
+
+            header = header + '\n';
+            content = csvLines.join("\n");
+            finalContent = header + content;
+            base = 'data:application/csv;charset=utf-8,';
+            href = encodeURI(base + finalContent);
+
+            $('#csv').attr('href', href);
 
         },
         buildTemplate: function (items, templateId, elementId) {

@@ -27,7 +27,8 @@
 
 #chart{
     width:940px;
-    height: 400px;
+    min-height: 150px;
+    /*height: 400px;*/
     /* margin:10px 10px 25px 10px;*/
     margin-bottom:25px;
 }
@@ -80,5 +81,9 @@ svg {
 }
 
 #secondary-filters {
+    display:none;
+}
+
+#summary-data {
     display:none;
 }

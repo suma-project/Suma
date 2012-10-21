@@ -80,6 +80,9 @@ $initDropDown .= '</select>';
                     <div class="btn-group">
                         <a class="btn btn-small" href="#summary-data">Summary Data</a>
                     </div>
+                    <div class="btn-group">
+                        <a class="btn btn-small" href="#csv-export">Export</a>
+                    </div>
                     <div id="main-chart-download" class="btn-group">
                         <a id="main-download" data-chart-div="chart1" class="btn btn-small" target="_blank">Save Chart</a>
                     </div>
@@ -94,8 +97,7 @@ $initDropDown .= '</select>';
                     </div>
                     <div id="ajax-error" class="alert alert-error alert-block">
                         <h4>Warning!</h4>
-                            There was a problem retrieving data from the server. Please try again or contact your system
-                            administrator.
+                            There was a problem retrieving data from the server. It is possible no data exists for that combination of filters.Please try again or contact your system administrator.
                     </div>
                     <div id ="welcome" class="alert alert-info alert-block">
                         <h4>Welcome!</h4>
@@ -185,7 +187,7 @@ $initDropDown .= '</select>';
                 </fieldset>
                 </form>
             </div>
-            <div id="summary-data" class="row span6">
+            <div id="summary-data" class="row span5">
                 <a name="summary-data"></a>
                 <div class="row"><h3>Summary Data</h3></div>
                 <div id="total-data" class="row"></div>
@@ -221,6 +223,15 @@ $initDropDown .= '</select>';
                     <div class="row">
                         <div class="span6">
                             <div id="chart2"></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="span6">
+                            <div>
+                                <a name="csv-export"></a>
+                                <h3>CSV Download</h3>
+                                <a id="csv" download="export.csv" class="btn btn-small post-load-popover" href="" rel="popover" data-trigger="hover" data-delay="300" data-title="Export Raw Data" data-content="Export the raw data for the filters submitted to create this report.">Export Raw Data</a>
+                            </div>
                         </div>
                     </div>
                 </div>
