@@ -150,19 +150,19 @@
                 var linkId = "#" + this.id,
                     tempChart;
 
-                // Add inline styling to main chart
-                $('.mainGraph path').attr('fill', 'steelblue');
-                $('.subGraph path').attr('fill', 'steelblue');
-                $('.y .tick').attr('fill', 'none').attr('stroke', '#000').attr('shape-rendering', 'crispEdges');
-                $('.y path').attr('fill', 'none').attr('stroke', '#000').attr('shape-rendering', 'crispEdges');
-                $('.x .tick').attr('fill', 'none').attr('stroke', '#000').attr('shape-rendering', 'crispEdges');
-                $('.x path').attr('fill', 'none').attr('stroke', '#000').attr('shape-rendering', 'crispEdges');
-
                 // Grab main chart code
                 tempChart = $('#chart1').html();
 
                 // Append chart code into invisible div for additional processing
                 $('body').append('<div id="temp-chart" style="display:none">' + tempChart + '</div>');
+
+                // Add inline styling to chart in temp div
+                $('#temp-chart .mainGraph path').attr('fill', 'steelblue');
+                $('#temp-chart .subGraph path').attr('fill', 'steelblue');
+                $('#temp-chart .y .tick').attr('fill', 'none').attr('stroke', '#000').attr('shape-rendering', 'crispEdges');
+                $('#temp-chart .y path').attr('fill', 'none').attr('stroke', '#000').attr('shape-rendering', 'crispEdges');
+                $('#temp-chart .x .tick').attr('fill', 'none').attr('stroke', '#000').attr('shape-rendering', 'crispEdges');
+                $('#temp-chart .x path').attr('fill', 'none').attr('stroke', '#000').attr('shape-rendering', 'crispEdges');
 
                 // Remove brush component
                 $('#temp-chart .subGraph').remove();
@@ -346,7 +346,7 @@
 
             // Total Sum
             counts.total = [{
-                total : response.total
+                count : response.total
             }];
 
             // Locations Sum
@@ -765,7 +765,7 @@
                 if (name) {
                     var obj = {
                         name: name,
-                        count: count || 'none'
+                        count: count || '' // empty string for null counts
                     };
                     arr.push(obj);
                 }
@@ -877,6 +877,12 @@
             //     }
             //     return indent;
             // });
+            //
+            Handlebars.registerHelper('countFormat', function (count) {
+                var formatCount = d3.format(',')
+                var formattedCount = formatCount(count);
+                return formattedCount;
+            });
 
             // Populate template with data and insert into DOM
             $(elementId).empty();

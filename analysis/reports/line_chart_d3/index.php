@@ -84,7 +84,7 @@ $initDropDown .= '</select>';
                         <a class="btn btn-small" href="#csv-export">Export</a>
                     </div>
                     <div id="main-chart-download" class="btn-group">
-                        <a id="main-download" data-chart-div="chart1" class="btn btn-small" target="_blank">Save Chart</a>
+                        <a id="main-download" download="suma_main_chart.png" data-chart-div="chart1" class="btn btn-small" target="_blank">Save Chart</a>
                     </div>
                 </div>
             </div>
@@ -189,7 +189,7 @@ $initDropDown .= '</select>';
             </div>
             <div id="summary-data" class="row span5">
                 <a name="summary-data"></a>
-                <div class="row"><h3>Summary Data</h3></div>
+                <div id="summary-data-header" class="row"><h3>Summary Data</h3></div>
                 <div id="total-data" class="row"></div>
                 <div id="locations-data" class="row"></div>
                 <div id="activities-data" class="row"></div>
@@ -216,7 +216,7 @@ $initDropDown .= '</select>';
                                 <button type="button" class="btn btn-small" value="pct">Pct</button>
                             </div>
                             <div id="supp-chart-download" class="btn-group">
-                                <a id="supp-download" data-chart-div="chart2" class="btn btn-small" target="_blank">Save Chart</a>
+                                <a id="supp-download" download="suma_secondary_chart.png" data-chart-div="chart2" class="btn btn-small" target="_blank">Save Chart</a>
                             </div>
                         </div>
                     </div>
@@ -230,7 +230,7 @@ $initDropDown .= '</select>';
                             <div>
                                 <a name="csv-export"></a>
                                 <h3>CSV Download</h3>
-                                <a id="csv" download="export.csv" class="btn btn-small post-load-popover" href="" rel="popover" data-trigger="hover" data-delay="300" data-title="Export Raw Data" data-content="Export the raw data for the filters submitted to create this report.">Export Raw Data</a>
+                                <a id="csv" download="suma_data_export.csv" class="btn btn-small post-load-popover" href="" rel="popover" data-trigger="hover" data-delay="300" data-title="Export Raw Data" data-content="Export the raw data for the filters submitted to create this report.">Export Raw Data</a>
                             </div>
                         </div>
                     </div>
@@ -262,7 +262,7 @@ $initDropDown .= '</select>';
         <script id="total-sum-table" type="text/x-handlebars-template">
             <h4>Total Sum</h4>
             {{#each items}}
-                <p>{{total}}</p>
+                <p>{{countFormat count}}</p>
             {{/each}}
         </script>
         <script id="locations-sum-table" type="text/x-handlebars-template">
@@ -279,7 +279,7 @@ $initDropDown .= '</select>';
                     {{#each items}}
                         <tr>
                             <td>{{name}}</td>
-                            <td>{{count}}</td>
+                            <td>{{countFormat count}}</td>
                             <td>{{percent}}%</td>
                         </tr>
                     {{/each}}
@@ -300,7 +300,7 @@ $initDropDown .= '</select>';
                     {{#each items}}
                         <tr>
                             <td>{{name}}</td>
-                            <td>{{count}}</td>
+                            <td>{{countFormat count}}</td>
                             <td>{{percent}}%</td>
                         </tr>
                     {{/each}}
@@ -321,7 +321,7 @@ $initDropDown .= '</select>';
                     {{#each items}}
                         <tr>
                             <td>{{name}}</td>
-                            <td>{{count}}</td>
+                            <td>{{countFormat count}}</td>
                             <td>{{percent}}%</td>
                         </tr>
                     {{/each}}
@@ -342,7 +342,7 @@ $initDropDown .= '</select>';
                     {{#each items}}
                         <tr>
                             <td>{{name}}</td>
-                            <td>{{count}}</td>
+                            <td>{{countFormat count}}</td>
                             <td>{{percent}}%</td>
                         </tr>
                     {{/each}}
@@ -363,7 +363,7 @@ $initDropDown .= '</select>';
                     {{#each items}}
                         <tr>
                             <td>{{name}}</td>
-                            <td>{{count}}</td>
+                            <td>{{countFormat count}}</td>
                             <td>{{percent}}%</td>
                         </tr>
                     {{/each}}

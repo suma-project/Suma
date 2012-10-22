@@ -35,7 +35,7 @@ var BarChart = function () {
                    .attr('transform', 'translate(150,15)');
 
             // Append line labels
-            rule = g.selectAll('.rule').data(x.ticks(4));
+            rule = g.selectAll('.rule').data(x.ticks(6));
 
             rule.enter().append('text')
                 .attr('class', 'rule')
@@ -59,7 +59,7 @@ var BarChart = function () {
             //rLine = g.selectAll('line').remove();
 
              // Append lines for scale
-            line = g.selectAll('line').data(x.ticks(4));
+            line = g.selectAll('line').data(x.ticks(6));
 
             line.enter()
                 .append('line')
