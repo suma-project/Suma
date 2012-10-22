@@ -225,6 +225,11 @@ $initDropDown .= '</select>';
                             <div id="chart2"></div>
                         </div>
                     </div>
+                    <div id="supp-chart-note" class="row">
+                        <div class="span6">
+                            <p class="muted"><strong>Note:</strong> When "Avg" is selected on both charts, the supplemental chart displays the average of observations, rather than the average of days.</p>
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="span6">
                             <div>

@@ -87,3 +87,7 @@ svg {
 #summary-data {
     display:none;
 }
+
+#supp-chart-note {
+    visibility: hidden;
+}

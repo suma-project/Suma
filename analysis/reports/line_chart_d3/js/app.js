@@ -142,6 +142,12 @@
                 locState = $('#supp-chart-locact > .active')[0].value;
                 avgState = e.target.value;
 
+                if (avgState === 'avg') {
+                    $('#supp-chart-note').css('visibility', 'visible');
+                } else {
+                    $('#supp-chart-note').css('visibility', 'hidden');
+                }
+
                 self.updateSuppChart(self.counts, mainState, locState, avgState);
             });
 
@@ -368,7 +374,7 @@
                     rank  : locDict[0].rank,
                     parent: locDict[0].parent,
                     count : element,
-                    percent: parseInt((element / response.total * 100).toFixed(2), 10)
+                    percent: (element / response.total * 100).toFixed(2)
                 };
 
                 pctObj = {
@@ -449,7 +455,7 @@
                         rank  : actDict[0].rank,
                         activityGroup: actDict[0].activityGroup,
                         count : element,
-                        percent: parseInt((element / response.total * 100).toFixed(2), 10)
+                        percent: (element / response.total * 100).toFixed(2)
                     };
 
                     pctObj = {
@@ -468,7 +474,7 @@
                         rank  : undefined,
                         activityGroup: undefined,
                         count : element,
-                        percent: parseInt((element / response.total * 100).toFixed(2), 10)
+                        percent: (element / response.total * 100).toFixed(2)
                     };
 
                     pctObj = {
@@ -581,7 +587,7 @@
                     value: self.weekdays[index],
                     name: index,
                     count: element,
-                    percent: parseInt((element / response.total * 100).toFixed(2), 10)
+                    percent: (element / response.total * 100).toFixed(2)
                 };
 
                 counts.dayOfWeekSummary.push(newObj);
@@ -595,7 +601,7 @@
                         date: month + ' ' + '1' + ', ' + year,
                         name: month + ' ' + year,
                         count: count,
-                        percent: parseInt((count / response.total * 100).toFixed(2), 10)
+                        percent: (count / response.total * 100).toFixed(2)
                     };
 
                     counts.monthSummary.push(newObj);
@@ -609,7 +615,7 @@
                     date: index + '-01-01',
                     name: index,
                     count: element,
-                    percent: parseInt((element / response.total * 100).toFixed(2), 10)
+                    percent: (element / response.total * 100).toFixed(2)
                 };
 
                 counts.yearSummary.push(newObj);
@@ -868,19 +874,10 @@
             // Compile template
             template = Handlebars.compile(html);
 
-            // Template helper to convert depth to emdash
-            // Handlebars.registerHelper('indent', function (depth) {
-            //     var indent = '';
-            //     while (depth > 0) {
-            //         depth -= 1;
-            //         indent += '&mdash;';
-            //     }
-            //     return indent;
-            // });
-            //
             Handlebars.registerHelper('countFormat', function (count) {
-                var formatCount = d3.format(',')
-                var formattedCount = formatCount(count);
+                var formatCount = d3.format(','),
+                    formattedCount = formatCount(count);
+
                 return formattedCount;
             });
 

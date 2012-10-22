@@ -1,6 +1,6 @@
 var BarChart = function () {
     var width = 550,
-        height = 600;
+        height;
 
     function chart(selection) {
         selection.each(function (data) {
@@ -14,6 +14,8 @@ var BarChart = function () {
                 svg,
                 text,
                 x;
+
+            height = 20 + (25 * data.length);
 
             // Define scales
             x = d3.scale.linear()
