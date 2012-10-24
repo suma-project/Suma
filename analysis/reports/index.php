@@ -29,10 +29,10 @@
 
   <body>
 
-    <div class="navbar navbar-fixed-top navbar-inverse">
+    <div class="navbar navbar-fixed-top">
         <div class="navbar-inner">
             <div class="container">
-                <a class="brand" href="#">Suma Reports</a>
+                <a class="brand" href="#"><img src="../lib/img/logo.png"></a>
                 <div class="nav-collapse">
                     <ul class="nav">
                         <li class="active"><a href="#">Home</a></li>
