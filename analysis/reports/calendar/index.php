@@ -48,7 +48,6 @@ $initDropDown .= '</select>';
         <!--[if lt IE 9]>
           <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->
-
     </head>
 
     <body>
@@ -56,16 +55,12 @@ $initDropDown .= '</select>';
         <div class="navbar navbar-fixed-top">
             <div class="navbar-inner">
                 <div class="container">
-                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </a>
-                    <a class="brand" href="..">Suma Reports</a>
+                    <a class="brand" href=".."><img src="../../lib/img/logo.png"></a>
                     <div class="nav-collapse">
                         <ul class="nav">
                             <li><a href="..">Home</a></li>
-                            <li><a href="about.html">About</a></li>
+                            <li><a href="../about.html">About</a></li>
+                            <li><a href="../contact.html">Contact</a></li>
                         </ul>
                     </div>
                 </div>
@@ -74,16 +69,19 @@ $initDropDown .= '</select>';
 
         <div class="container">
             <form>
-                <table>
-                    <tr>
-                        <td>Initiative</td><td><?php echo $initDropDown; ?></td>
-                        <td><input type="submit" id="submit" value="Submit" /></td>
-                    </tr>
-                </table>
-
+                <div class="control-group">
+                    <h5 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Choose Initiative" data-content="Choose an initiative to reveal additional filters.">Choose Initiative</h5>
+                        <label class="control-label" for="initiatives"></label>
+                        <div class="controls">
+                            <?php echo $initDropDown; ?>
+                        </div>
+                </div>
+                <div>
+                    <input type="submit" id="submit" class="btn btn-success" data-default-text ="Submit" data-loading-text="Loading..." value="Submit" />
+                </div>
             </form>
             <div id="chart">
-                <div id="loading"><img src="images/spinner.gif"></div>
+                <div id="loading"><img src="../../lib/img/spinner.gif"></div>
             </div>
         </div>
 
@@ -91,7 +89,7 @@ $initDropDown .= '</select>';
         <script src="../../lib/js/bootstrap.min.js"></script>
         <script src="../../lib/js/bootstrap-datepicker.js"></script>
         <script src="../../lib/js/d3.v2.min.js"></script>
-        <script src="../../lib/js/underscore.js"></script>
+        <script src="../../lib/js/lodash.min.js"></script>
         <script src="../../lib/js/moment.js"></script>
         <script src="js/calendar.js"></script>
 

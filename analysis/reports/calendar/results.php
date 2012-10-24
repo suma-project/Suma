@@ -1,7 +1,8 @@
-<?php 
+<?php
+header('Content-type: application/json');
 
-require_once '../../lib/Server_IO.php';
-include '../../lib/ChromePhp.php';
+require_once '../../lib/php/ServerIO.php';
+
 $hash = array();
 
 function populateHash($response, $params)
@@ -13,14 +14,14 @@ function populateHash($response, $params)
     if ($sessions)
     {
         foreach($sessions as $sess)
-        {  
+        {
             $locations = $sess['locations'];
             $total = 0;
             foreach($locations as $loc)
             {
                 $total += $loc['counts'];
             }
-            
+
             $day = substr($sess['start'], 0, -9);
 
             if (isset($hash[$day])) {
@@ -28,7 +29,7 @@ function populateHash($response, $params)
             } else {
                     $hash[$day] = $total;
             }
-            
+
         }
     }
 }
@@ -50,9 +51,9 @@ $params = array('id'     =>   $_GET['id'],
                 'limit'  =>  160000);
 
 
-try 
+try
 {
-    $io = new Server_IO();
+    $io = new ServerIO();
     populateHash($io->getData($params, 'sessions'), $params);
 }
 catch (Exception $e)
@@ -72,5 +73,4 @@ while($io->hasMore())
     }
 }
 
-//print_r($hash);
 echo json_encode($hash);
