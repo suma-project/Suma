@@ -59,8 +59,8 @@ $initDropDown .= '</select>';
                     <div class="nav-collapse">
                         <ul class="nav">
                             <li><a href="..">Home</a></li>
-                            <li><a href="about.html">About</a></li>
-                            <li><a href="contact.html">Contact</a></li>
+                            <li><a href="../about.html">About</a></li>
+                            <li><a href="../contact.html">Contact</a></li>
                         </ul>
                     </div>
                 </div>
