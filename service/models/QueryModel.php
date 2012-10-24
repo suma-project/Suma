@@ -207,11 +207,13 @@ class QueryModel
                 {
                     $this->_sessSql .= ' ((TIME(s.start) >= TIME(\''.$start.'\') OR TIME(s.start) <= TIME(\''.$end.'\')) ';
                     $this->_sessSql .= ' OR (TIME(s.end) >= TIME(\''.$start.'\') OR TIME(s.end) <= TIME(\''.$end.'\')) ';
+                    $this->_sessSql .= ' OR (TIME(s.start) < TIME(\''.$start.'\') AND TIME(s.end) > TIME(\''.$end.'\')) ';
                 }
                 else
                 {
                     $this->_sessSql .= ' ((TIME(s.start) BETWEEN TIME(\''.$start.'\') AND TIME(\''.$end.'\') ';
                     $this->_sessSql .= ' OR TIME(s.end) BETWEEN TIME(\''.$start.'\') AND TIME(\''.$end.'\')) ';
+                    $this->_sessSql .= ' OR (TIME(s.start) < TIME(\''.$start.'\') AND TIME(s.end) > TIME(\''.$end.'\')) ';
                 }
                 
             }
@@ -268,6 +270,8 @@ class QueryModel
                 $sessIds .= $row['id'].', '; 
             }
             $this->_countsSql .= substr($sessIds, 0, -2) . ') ';
+
+            // FIXME: This is expensive, can we use just one or two queries?
             $this->_rowCount = $this->_db->fetchOne($this->_countsSql);
             
             if ($this->_rowCount > ($params['offset'] + $params['limit']))
@@ -359,6 +363,7 @@ class QueryModel
             $this->_countsSql .= ' AND (TIME(c.occurrence) <= TIME(\''.$end.'\')) ';
         }        
         
+        // FIXME: This query is expensive...can we do all of this with a single query?
         $this->_rowCount = $this->_db->fetchOne($countSelect.$this->_countsSql);
 
         if ($this->_rowCount > ($params['offset'] + $params['limit']))
