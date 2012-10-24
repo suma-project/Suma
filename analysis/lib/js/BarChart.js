@@ -19,7 +19,7 @@ var BarChart = function () {
 
             // Define scales
             x = d3.scale.linear()
-                        .domain([0, d3.max(data.map(function (d) {return d.count; }))])
+                        .domain([0, d3.max(data.map(function (d) { return +d.count; }))])
                         .range([0, 380]);
 
             // Select svg container and join data
