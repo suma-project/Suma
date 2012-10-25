@@ -451,7 +451,7 @@ class TimeSeriesData
                                     {
                                         if ($cTime < $sTime || $cTime > $eTime)
                                         {
-                                            break;
+                                            continue;
                                         }
                                     }
                                     // Unordered time range
@@ -459,7 +459,7 @@ class TimeSeriesData
                                     {
                                         if ($cTime < $sTime && $cTime > $eTime)
                                         {
-                                            break;
+                                            continue;
                                         }
                                     }
                                 }
@@ -468,7 +468,7 @@ class TimeSeriesData
                                 {
                                     if ($cTime < $sTime)
                                     {
-                                        break;
+                                        continue;
                                     }
                                 }
                                 // eTime is present
@@ -476,7 +476,7 @@ class TimeSeriesData
                                 {
                                     if ($cTime > $eTime)
                                     {
-                                        break;
+                                        continue;
                                     }
                                 }
 
