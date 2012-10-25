@@ -101,3 +101,13 @@ CREATE TABLE IF NOT EXISTS `note` (
     FOREIGN KEY (fk_session) REFERENCES session (id),
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB ;
+
+CREATE INDEX transStart ON transaction(start);
+CREATE INDEX transEnd ON transaction(end);
+CREATE INDEX sessionStart ON session(start);
+CREATE INDEX sessionEnd ON session(end);
+CREATE INDEX countOccur ON `count`(occurrence);
+CREATE INDEX noteOccur ON note(occurrence);
+
+
+

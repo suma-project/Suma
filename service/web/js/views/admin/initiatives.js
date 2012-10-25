@@ -238,7 +238,7 @@ $(document).ready(function(){
             bgiframe: true,
             title: "Edit Activity",
             autoOpen: true,
-            height: 350,
+            height: 425,
             width: 325,
             modal: true,
             closeOnEscape: false,
