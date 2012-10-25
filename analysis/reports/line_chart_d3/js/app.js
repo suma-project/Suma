@@ -191,11 +191,6 @@
                 self.downloadPNG(linkId, chartId);
             });
 
-            // Back Button Event
-            $(window).on('hashchange', function (e) {
-                console.log('changed');
-            });
-
         },
          /**
          * Method to convert SVG to downloadable PNG
@@ -290,7 +285,6 @@
                 data.etime = '24:00';
             }
 
-            console.log(data);
             source   = $('#main-annotation-template').html();
             template = Handlebars.compile(source);
             context  = data;
@@ -441,7 +435,7 @@
                     depth : locDict[0].depth,
                     rank  : locDict[0].rank,
                     parent: locDict[0].parent,
-                    count : element
+                    count : element.toFixed(2)
                 };
                 counts.locationsAvgSum.push(newObj);
             });
@@ -465,7 +459,7 @@
                     depth : locDict[0].depth,
                     rank  : locDict[0].rank,
                     parent: locDict[0].parent,
-                    count : element
+                    count : element.toFixed(2)
                 };
                 counts.locationsAvgAvg.push(newObj);
             });
@@ -543,7 +537,7 @@
                         depth : actDict[0].depth,
                         rank  : actDict[0].rank,
                         activityGroup: actDict[0].activityGroup,
-                        count : element
+                        count : element.toFixed(2)
                     };
                 } else {
                     newObj = {
@@ -552,7 +546,7 @@
                         depth : undefined,
                         rank  : undefined,
                         activityGroup: undefined,
-                        count : element
+                        count : element.toFixed(2)
                     };
                 }
                 counts.activitiesAvgSum.push(newObj);
@@ -578,7 +572,7 @@
                         depth : actDict[0].depth,
                         rank  : actDict[0].rank,
                         activityGroup: actDict[0].activityGroup,
-                        count : element
+                        count : element.toFixed(2)
                     };
                 } else {
                     newObj = {
@@ -587,7 +581,7 @@
                         depth : undefined,
                         rank  : undefined,
                         activityGroup: undefined,
-                        count : element
+                        count : element.toFixed(2)
                     };
                 }
                 counts.activitiesAvgAvg.push(newObj);
