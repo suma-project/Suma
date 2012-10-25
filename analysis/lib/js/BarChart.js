@@ -1,5 +1,5 @@
 var BarChart = function () {
-    var width = 900,
+    var width = 550,
         height;
 
     function chart(selection) {
