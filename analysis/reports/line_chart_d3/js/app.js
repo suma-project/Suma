@@ -249,14 +249,39 @@
 
             if (data.locations !== 'all') {
                 data.locations = locations[data.locations];
+            } else {
+                data.locations = S(data.locations).capitalize().s;
             }
 
             if (data.activities !== 'all') {
                 actId = data.activities.split('-');
                 actId = actId[1];
                 data.activities = activities[actId];
+            } else {
+                data.activities = S(data.activities).capitalize().s;
             }
 
+            if (data.daygroup === 'all') {
+                data.daygroup = S(data.daygroup).capitalize().s;
+            }
+
+            if (data.sdate === '') {
+                data.sdate = 'Beginning of Time';
+            }
+
+            if (data.edate === '') {
+                data.edate = 'Current';
+            }
+
+            if (data.stime === '') {
+                data.stime = '00:00';
+            }
+
+            if (data.etime === '') {
+                data.etime = '24:00';
+            }
+
+            console.log(data);
             source   = $('#main-annotation-template').html();
             template = Handlebars.compile(source);
             context  = data;
