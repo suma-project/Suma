@@ -438,6 +438,48 @@ class TimeSeriesData
                             $counts = $loc['counts'];
                             foreach ($counts as $count)
                             {
+                                // Honor time filters using count time and input params
+                                $cTime = str_replace(':', '', substr($count['time'], -8, 5));
+                                $sTime = $params['stime'];
+                                $eTime = $params['etime'];
+
+                                // Both stime and etime filters are present
+                                if (!empty($sTime) && !empty($eTime))
+                                {
+                                    // Ordered time range
+                                    if ($sTime < $eTime)
+                                    {
+                                        if ($cTime < $sTime || $cTime > $eTime)
+                                        {
+                                            break;
+                                        }
+                                    }
+                                    // Unordered time range
+                                    else
+                                    {
+                                        if ($cTime < $sTime && $cTime > $eTime)
+                                        {
+                                            break;
+                                        }
+                                    }
+                                }
+                                // sTime is present
+                                elseif (!empty($sTime))
+                                {
+                                    if ($cTime < $sTime)
+                                    {
+                                        break;
+                                    }
+                                }
+                                // eTime is present
+                                elseif (!empty($eTime))
+                                {
+                                    if ($cTime > $eTime)
+                                    {
+                                        break;
+                                    }
+                                }
+
                                 // Grab activities associated with count
                                 $countActs = $this->pluck($count['activities'], 'id');
 
@@ -640,6 +682,11 @@ class TimeSeriesData
      */
     public function calculateAvg($countHash)
     {
+        if (empty($countHash))
+        {
+            return;
+        }
+
         $divisor = count($countHash['periodSum']);
 
         // Build locationsAvgSum array
