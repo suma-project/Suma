@@ -29,11 +29,15 @@
          * @this {App}
          */
         init: function () {
+
             // Insert default dates
             this.insertDefaultDates();
 
             // Insert filter select boxes
             this.insertFilters();
+
+            // Set initiative filter to default (for back button)
+            $('#initiatives').val('default');
 
             // Bind events (AJAX Call)
             this.bindEvents();
@@ -185,6 +189,11 @@
                     chartId = "#" + $(this).attr('data-chart-div');
 
                 self.downloadPNG(linkId, chartId);
+            });
+
+            // Back Button Event
+            $(window).on('hashchange', function (e) {
+                console.log('changed');
             });
 
         },
@@ -346,6 +355,7 @@
          */
         noData: function () {
             $('#no-data').show();
+            $('#summary-data').hide();
             $('#submit').removeAttr('disabled');
             $('#supplemental-charts').hide();
             $('#main-chart-header').css('visibility', 'hidden');
@@ -362,12 +372,12 @@
                 locations,
                 activities,
                 testLength;
-
+            console.log('from app.js', response);
             if (!response.locationsSum) {
                 return false;
             }
 
-            console.log('from app.js', response);
+
             // Convert response into arrays of objects
             counts = {};
 
@@ -805,6 +815,14 @@
             arr.sort(self.sortCSV);
             return arr;
         },
+        sortCSVLines: function (a, b) {
+            return S(a[0]).stripPunctuation().s - S(b[0]).stripPunctuation().s;
+        },
+        /**
+         * Method to convert preformed CSV object to CSV download
+         * @param  array csv
+         * @return
+         */
         buildCSV: function (csv) {
             var self = this,
                 base,
@@ -870,7 +888,10 @@
                 header.push(actname);
             });
 
+            // Sort lines by date
+            lines.sort(self.sortCSVLines);
 
+            // Parse into CSV
             content = _.each(lines, function (element, index) {
                 var line = new S(element).toCSV().s;
                 csvLines.push(line);
@@ -885,6 +906,12 @@
             $('#csv').attr('href', href);
 
         },
+        /**
+         * Generic Method to add template to DOM
+         * @param  array items
+         * @param  string templateId
+         * @param  string elementId
+         */
         buildTemplate: function (items, templateId, elementId) {
             var html,
                 json,
