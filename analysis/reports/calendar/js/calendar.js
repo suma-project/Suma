@@ -144,7 +144,10 @@
 
             rect.filter(function (d) { return d in data; })
                 .attr("class", function (d) { return "day q" + color(data[d]) + "-9"; })
-                .attr('title', function (d) {return d + " : " + data[d]; })
+                .attr('title', function (d) {
+                    var day = moment(d, 'YYYY-MM-DD').format('ddd');
+                    return day + " : " + d + " : " + data[d];
+                })
                 .attr('rel', 'tooltip');
 
             // Initialize Tooltips
