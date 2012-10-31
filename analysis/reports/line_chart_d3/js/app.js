@@ -254,7 +254,8 @@
             if (data.locations !== 'all') {
                 data.locations = locations[data.locations];
             } else {
-                data.locations = S(data.locations).capitalize().s;
+                data.locations = data.locations.substr(0, 1).toUpperCase() +
+                                 data.locations.substr(1).toLowerCase();
             }
 
             if (data.activities !== 'all') {
@@ -262,11 +263,13 @@
                 actId = actId[1];
                 data.activities = activities[actId];
             } else {
-                data.activities = S(data.activities).capitalize().s;
+                data.activities = data.activities.substr(0, 1).toUpperCase() +
+                                 data.activities.substr(1).toLowerCase();
             }
 
             if (data.daygroup === 'all') {
-                data.daygroup = S(data.daygroup).capitalize().s;
+                data.daygroup = data.daygroup.substr(0, 1).toUpperCase() +
+                                 data.daygroup.substr(1).toLowerCase();
             }
 
             if (data.sdate === '') {
@@ -810,7 +813,8 @@
             return arr;
         },
         sortCSVLines: function (a, b) {
-            return S(a[0]).stripPunctuation().s - S(b[0]).stripPunctuation().s;
+            // Strip dashes from dates
+            return a[0].replace(/-/g, "") - b[0].replace(/-/g, "");
         },
         /**
          * Method to convert preformed CSV object to CSV download
@@ -823,6 +827,7 @@
                 content,
                 csvLines,
                 finalContent,
+                formattedLines,
                 header,
                 href,
                 lines;
@@ -885,15 +890,14 @@
             // Sort lines by date
             lines.sort(self.sortCSVLines);
 
-            // Parse into CSV
-            content = _.each(lines, function (element, index) {
-                var line = new S(element).toCSV().s;
-                csvLines.push(line);
-            });
+            // Format arrays into strings
+            formattedLines = d3.csv.format(lines);
 
+            // Merge header and lines
             header = header + '\n';
-            content = csvLines.join("\n");
-            finalContent = header + content;
+            finalContent = header + formattedLines;
+
+            // Build download URL
             base = 'data:application/csv;charset=utf-8,';
             href = encodeURI(base + finalContent);
 
