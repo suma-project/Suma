@@ -21,9 +21,9 @@ Zend Framework Installation
 -----------------------------
 
 Download link: http://framework.zend.com/download/latest
- 
+
 Installation instructions url: http://framework.zend.com/manual/1.11/en/introduction.installation.html
- 
+
 Or do the following:
 
 1. Expand download in chosen server location
@@ -65,7 +65,7 @@ For Suma Server Installation:
 Suma Software Installation (symbolic links)
 ----------------------------------------
 
-If your Apache configuration has the `FollowSymLinks` directive enabled, there is a simpler way to deploy Suma that also improves the update process. 
+If your Apache configuration has the `FollowSymLinks` directive enabled, there is a simpler way to deploy Suma that also improves the update process.
 
 * Clone the GitHub repository to a directory outside of your web space (e.g. `/var/www/app/suma`)
 * Create the following symbolic links from your web space to the local suma repository (these instructions assume `/var/www/app` and `/var/www/htdocs` as base directories--please change as appropriate):
@@ -84,9 +84,9 @@ Apache Configuration
 You can configure your apache web server two ways using apache's configuration rewrite engine or using a .htaccess file
 
 Apache rewrite
-If using Apache's rewrite module add these lines in your web server (likely httpd.conf) configuration file 
+If using Apache's rewrite module add these lines in your web server (likely httpd.conf) configuration file
 
-    <Directory "/YOUR_WEB_DIR/sumaserver">  
+    <Directory "/YOUR_WEB_DIR/sumaserver">
     RewriteEngine On
     RewriteCond %{REQUEST_FILENAME} -s [OR]
     RewriteCond %{REQUEST_FILENAME} -l [OR]
@@ -94,21 +94,21 @@ If using Apache's rewrite module add these lines in your web server (likely http
     RewriteRule ^.*$ - [NC,L]
     RewriteRule ^.*$ index.php [NC,L]
     </Directory>
-                
+
 **Don't forget to change YOUR_WEB_DIR to the directory in your web space that contains the `service/web/` content**
 Restart apache after adding these lines for configuration to apply
 
 .htaccess
 If using a .htaccess place the file in the `/YOUR_WEB_DIR/sumaserver` directory and add these lines
- 
+
     RewriteEngine on
     RewriteCond %{REQUEST_FILENAME} -s [OR]
     RewriteCond %{REQUEST_FILENAME} -l [OR]
     RewriteCond %{REQUEST_FILENAME} -d
     RewriteRule ^.*$ - [NC,L]
     RewriteRule ^.*$ index.php [NC,L]
-    
-    
+
+
 Database Setup
 ---------------
 
@@ -117,11 +117,11 @@ It is recommended you create two databases for Suma.  One for production and one
 Create database in MySQL using whatever tool you have available.
 Create suma account with permissions to `SELECT`, `INSERT`, `CREATE`, `DELETE`, `UPDATE`, `INDEX`, and `ALTER` permissions.
 
-Now you have to run a database initialization script included in the suma download. 
+Now you have to run a database initialization script included in the suma download.
 
 1. Find the file schema.sql in `/SUMA_DOWNLOAD_LOCATION/service/config`.
 2. Run that script to initialize database, create suma tables, and establish foreign key constraints.
-    
+
     To run it you can use the command line MySQL tools, phpmyadmin, or any other database management tool you like
 
 > *Optional, but recommended:* If you wish to initialize the database with preloaded sample data so you can play around with Suma more quickly, then run the schema_w_sample.sql script instead of schema.sql.
@@ -149,12 +149,12 @@ Suma Server Software Configuration
         sumaserver.db.port      = mysql port number
         sumaserver.log.path = path to log directory.  You must make sure this directory is writable by Apache.
 
-* Be sure that the log directory specified in sumaserver.log.path both exists and is writable. 
+* Be sure that the log directory specified in sumaserver.log.path both exists and is writable.
 
 Suma Analysis Tools Configuration
 ----------------------------------
 
-* In `YOUR_WEB_DIR/suma/analysis/lib/Server_IO.php` change `<host>` to your hostname (e.g. lib.abc.edu).
+* In `YOUR_WEB_DIR/suma/analysis/lib/php/Server_IO.php` change `<sumaserver/query>` to your hostname (e.g. lib.abc.edu).
 * You can view the Suma analysis tools by visting `http://YOUR_SERVER/suma/analysis/reports`.
 
 Other Things You Can Configure
@@ -191,7 +191,7 @@ Overview of administrative tools
 To view the admin tools, visit the page at `http://YOUR_SERVER/sumaserver/admin/`. The username and password for these tools is set in config.ini.
 
 * Location editor
-    
+
     The location editor allows you to create location trees, create and arrange the location hierarchy and update titles and descriptions.
 
 * Initiative editor
@@ -199,9 +199,9 @@ To view the admin tools, visit the page at `http://YOUR_SERVER/sumaserver/admin/
     The initiative editor allows you to create initiatives and activities, change titles and descriptions, and modify the order in which activities are displayed.
 
 * Sessions list
-    
+
     The sessions list is a human-readable session log.
 
 * Direct JSON import
-    
+
     This direct JSON import tool will allow you to paste JSON data into a web form and import it into Suma. Useful for recovery from log data.
