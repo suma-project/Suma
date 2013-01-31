@@ -1,6 +1,7 @@
 <?php
 
 require_once "../../lib/php/guzzle.phar";
+
 /**
  * ServerIO - Class that facilitates retrieval of data from Suma server.
  *
@@ -22,7 +23,7 @@ class ServerIO
      * @var string
      * @access  private
      */
-    private $_baseUrl = '<sumaserver/query>';
+    private $_baseUrl = 'http://YOUR_SERVER/sumaserver/query';
     /**
      * Parameters to append to $_baseUrl
      *

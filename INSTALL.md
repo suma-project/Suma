@@ -154,7 +154,12 @@ Suma Server Software Configuration
 Suma Analysis Tools Configuration
 ----------------------------------
 
-* In `YOUR_WEB_DIR/suma/analysis/lib/php/Server_IO.php` change `<sumaserver/query>` to your hostname (e.g. lib.abc.edu).
+* In `YOUR_WEB_DIR/suma/analysis/lib/php/ServerIO.php` change:
+
+        private $_baseUrl = 'http://YOUR_SERVER/sumaserver/query';
+
+to the URL for your Suma Query Server. If used a directory other than `sumaserver` in the "Suma Software Installation" section above, that should be reflected in this URL.
+
 * You can view the Suma analysis tools by visting `http://YOUR_SERVER/suma/analysis/reports`.
 
 Other Things You Can Configure
