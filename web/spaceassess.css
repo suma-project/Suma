@@ -131,8 +131,8 @@ li.selected_loc a {
 }
 
 ul.loc_list {
-    margin-left: 1em;
-    padding-left: 0;
+    padding-left: 1em;
+    margin-left: 0;
     padding-right: 1em;
     margin-right: 0;
     margin-bottom: 1.4em;
@@ -229,3 +229,49 @@ li.loc_item a {
     background:#3BAAE3;
 }
 
+
+@media only screen and (max-device-width: 480px) {
+        /* Rules to begin supporting smaller devices */
+    input#goesup {
+        width: 165px;
+        height: 120px;
+        font-size: 3em;
+    }
+
+    select#init_selector {
+        width: 100px;
+    }
+
+    h3 {
+        font-size: 1.5em;
+    }
+
+    ul.loc_list {
+        padding-left: 5px;
+        margin-left: 0px;
+    }
+
+    ul.loc_list li {
+        padding-left: 0px;
+        margin-left: 0px;
+    }
+
+    ul.loc_list li a {
+        padding:5px 0px;
+        margin:0px;
+        font-size: 1.35em;
+    }
+
+    div.activityContainer {
+        text-align:left;
+        float:none;
+    }
+
+    #abandon_heading, #goesdown_heading, #save_session_heading {
+        float:none;
+    }
+
+    #abandon_session {
+        margin-left:0.15em;
+    }
+}
