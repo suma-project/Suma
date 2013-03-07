@@ -559,8 +559,8 @@ $(function() {
         bgiframe: true,
         title: "Space Usage Census Tool",
         autoOpen: false,
-        height: 325,
-        width: 350,
+        height: 'auto',
+        width: 'auto',
         modal: true,
         closeOnEscape: false,
         resizable: false,
@@ -594,8 +594,8 @@ $(function() {
         title: "Abandon Session",
         closeOnEscape: false,
         draggable: false,
-        width: 350,
-        minHeight: 300,
+        width: 'auto',
+        minHeight: 'auto',
         modal: true,
         open: function() {
             $(".ui-dialog").css({overflow: 'visible'});
