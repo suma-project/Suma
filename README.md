@@ -27,7 +27,7 @@ Documentation
 
 How to contribute?
 ===================
-You want to contribute some code? Maybe some data reports, bug fixes, new clients, or even new core features? Awesome! Just contact us or branch the code on GitHub and create a pull request.
+You want to contribute some code? Maybe some data reports, bug fixes, new clients, or even new core features? Awesome! Just contact us or fork the code on GitHub and create a pull request.
 
 Project URLs
 ============
@@ -43,9 +43,9 @@ If you would like to be invited to a google group for the Suma users community, 
 Credits and contacts
 =====================
 
-* Jason Casden (jmcasden AT ncsu DOT edu) – Project and technical lead, front-end developer. 
+* Jason Casden (jmcasden AT ncsu DOT edu) – Project lead. 
 * Joyce Chapman (chapmajc AT email DOT unc DOT edu) – Community development and data analysis specialist. 
+* Bret Davidson - Technical lead.
 * Rob Rucker – Project team member and our first stakeholder. Research Information Services department head responsible for NCSU D. H. Hill Libraries head counts and reference desk transactions. 
 * Eric McEachern – Backend developer, responsible for much of the development of the server-side components. 
 * Rusty Earl – Backend developer and technical consultant. 
-* Bret Davidson - Data analysis tool developer.
