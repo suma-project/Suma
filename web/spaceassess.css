@@ -230,8 +230,8 @@ li.loc_item a {
 }
 
 
-@media only screen and (max-device-width: 480px) {
-        /* Rules to begin supporting smaller devices */
+@media all and (max-width: 480px) {
+/* Rules to begin supporting smaller devices */
     input#goesup {
         width: 165px;
         height: 120px;
