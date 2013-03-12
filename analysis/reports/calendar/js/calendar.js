@@ -105,7 +105,7 @@
             }
 
             svg = d3.select("#chart").selectAll("svg")
-                .data(d3.range(2011, 2013).reverse())
+                .data(d3.range(2011, parseInt(moment().format("YYYY"), 10) + 1).reverse())
                 .enter().append("svg")
                 .attr("width", width + margin.right + margin.left)
                 .attr("height", height + margin.top + margin.bottom)
