@@ -13,13 +13,14 @@
     <script src="persistencejs/lib/persistence.js"></script>
     <script src="persistencejs/lib/persistence.store.sql.js"></script>
     <script src="persistencejs/lib/persistence.store.websql.js"></script>
+    <script src="persistencejs/lib/persistence.migrations.js"></script>
     <script src="spaceassessDB.js"></script>
     <script src="spaceassess.js"></script>
   </head>
   <body>
-    <div id="loadingScreen" style="display:hidden">Please wait...</div>
-    <div id="abandonContent" style="display:hidden">Are you sure you want to delete the data you've just collected? The data you've collected since hitting "start" will be deleted permanently.</div>
-    <div id="spaceAssessDialog" style="display:hidden">
+    <div id="loadingScreen" style="display:none;">Please wait...</div>
+    <div id="abandonContent" style="display:none;">Are you sure you want to delete the data you've just collected? The data you've collected since hitting "start" will be deleted permanently.</div>
+    <div id="spaceAssessDialog" style="display:none;">
       <p>Just hit the button to start collecting.</p>
       <p>Don't worry if you didn't mean to end your session; the last session has been saved, and any new data will be stored in another session.</p>
     </div>
