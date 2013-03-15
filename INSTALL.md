@@ -9,7 +9,7 @@ These requirements as based on our local testing. Earlier versions may also work
 * MySQL recommended version 5.1
 * Apache recommended version 2.2
 * PHP recommended version 5.3.3 (although 5.2.3 may also work)
-* Zend Framework 1.11 - required for Suma server
+* Zend Framework 1.12 - required for Suma server, included with Suma Code
 * Various Javascript Libraries - all included with Suma code
 
 Additional Client Requirements:
@@ -17,8 +17,10 @@ Additional Client Requirements:
 * Device or computer with WebKit browser (e.g. iOS and Android browsers, Safari, Google Chrome) needed to use Suma client
 
 
-Zend Framework Installation
+Zend Framework Installation (optional)
 -----------------------------
+
+Zend is now bundled with Suma and requires no additional action. If you would prefer to use your own version of Zend, follow the instructions below.
 
 Download link: http://framework.zend.com/download/latest
 
@@ -132,11 +134,11 @@ Suma Server Software Configuration
 
 * index.php
 
-    You must set some path variables in the index.php file for the suma server to function correctly.
+    You must set some path variables in the index.php file for the suma server to function correctly. These are located at the top of the file under CONFIG.
 
-    `SUMA_SERVER_PATH` muse be set to location `SUMA_SERVER_INSTALL_DIR` from earlier in these instructions.
+    $SUMA_SERVER_PATH muse be set to location `SUMA_SERVER_INSTALL_DIR` from earlier in these instructions.
 
-    `SUMA_CONTROLLER_PATH` most be set to `SUMA_SERVER_INSTALL_DIR/controllers`.
+    $SUMA_CONTROLLER_PATH most be set to `SUMA_SERVER_INSTALL_DIR/controllers`.
 
 * config.ini
 
