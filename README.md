@@ -37,14 +37,14 @@ Project URLs
 Suma Community
 ==============
 
-If you would like to be invited to a google group for the Suma users community, please email Joyce Chapman at chapmajc AT email DOT unc DOT edu 
+If you would like to be invited to a google group for the Suma users community, please email Joyce Chapman at joyce DOT chapman AT gmail DOT com
 
 
 Credits and contacts
 =====================
 
 * Jason Casden (jmcasden AT ncsu DOT edu) – Project lead. 
-* Joyce Chapman (chapmajc AT email DOT unc DOT edu) – Community development and data analysis specialist. 
+* Joyce Chapman (joyce DOT chapman AT gmail DOT com) – Community development and data analysis specialist. 
 * Bret Davidson - Technical lead.
 * Rob Rucker – Project team member and our first stakeholder. Research Information Services department head responsible for NCSU D. H. Hill Libraries head counts and reference desk transactions. 
 * Eric McEachern – Backend developer, responsible for much of the development of the server-side components. 
