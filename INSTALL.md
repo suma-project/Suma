@@ -117,14 +117,18 @@ Database Setup
 It is recommended you create two databases for Suma.  One for production and one for testing.  The database instructions are the same for both except for changing the database name.
 
 Create database in MySQL using whatever tool you have available.
-Create suma account with permissions to `SELECT`, `INSERT`, `CREATE`, `DELETE`, `UPDATE`, `INDEX`, and `ALTER` permissions.
+
+Create two Suma accounts:
+
+# One administrative account with `SELECT`, `INSERT`, `CREATE`, `DROP`, `DELETE`, `UPDATE`, `INDEX`, and `ALTER` permissions. **This account is for initializing and modifying the database. Do not include this account in your Suma configuration.**
+# One application account with `SELECT`, `INSERT`, `UPDATE`, and `INDEX` permissions.
 
 Now you have to run a database initialization script included in the suma download.
 
 1. Find the file schema.sql in `/SUMA_DOWNLOAD_LOCATION/service/config`.
 2. Run that script to initialize database, create suma tables, and establish foreign key constraints.
 
-    To run it you can use the command line MySQL tools, phpmyadmin, or any other database management tool you like
+    To run it you can use the command line MySQL tools, phpmyadmin, or any other database management tool you like. **This should be imported using the Suma administration MySQL account.**
 
 > *Optional, but recommended:* If you wish to initialize the database with preloaded sample data so you can play around with Suma more quickly, then run the `schema_w_sample.sql` script instead of `schema.sql`.
 
@@ -146,8 +150,8 @@ Suma Server Software Configuration
 
         sumaserver.db.host      = host location of your mysql database
         sumaserver.db.dbname    = suma mysql database name
-        sumaserver.db.user      = suma mysql account name
-        sumaserver.db.pword     = suma mysql account password
+        sumaserver.db.user      = suma mysql **application** account name
+        sumaserver.db.pword     = suma mysql **application** account password
         sumaserver.db.port      = mysql port number
         sumaserver.log.path = path to log directory.
     * Be sure that the log directory specified in `sumaserver.log.path` both exists and is writable.
