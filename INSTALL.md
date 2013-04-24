@@ -64,6 +64,7 @@ For Suma Server Installation:
 >
 > Also, change the server URLs at the top of `YOUR_WEB_DIR/suma/web/spaceassess.js`.
 
+
 Suma Software Installation (symbolic links)
 ----------------------------------------
 
@@ -79,6 +80,7 @@ If your Apache configuration has the `FollowSymLinks` directive enabled, there i
 
 
 Now all of your code is in one place, allowing you to update Suma by running `git pull --rebase origin master`. There is a chance this could result in merge conflicts with your local changes, so please allow for time to resolve these before updating.
+
 
 Apache Configuration
 ---------------------
@@ -144,6 +146,10 @@ Suma Server Software Configuration
 
     `$SUMA_CONTROLLER_PATH` must be set to `SUMA_SERVER_INSTALL_DIR/controllers` (e.g. `/var/www/app/sumaserver/controllers`).
 
+    `$SUMA_BASE_URL` must be set to the URL path for the Suma server. For example, if the URL is `http://YOUR_HOST/sumaserver`, set this to `/sumaserver`.
+
+    `$SUMA_DEBUG` can be set to `true` if you would like to see more verbose error messages. This should generally be set to `false`.
+
 * config.ini
 
     In the `SUMA_SERVER_INSTALL_DIR/config/config.ini` file you must modify the following:
@@ -154,7 +160,14 @@ Suma Server Software Configuration
         sumaserver.db.pword     = suma mysql **application** account password
         sumaserver.db.port      = mysql port number
         sumaserver.log.path = path to log directory.
-    * Be sure that the log directory specified in `sumaserver.log.path` both exists and is writable.
+    * Be sure that the log directory specified in `sumaserver.log.path` both exists and is **writable by the web server**.
+
+
+Suma Client Configuration
+--------------------------
+
+If the Suma server URL is anything other than `http://YOUR_HOST/sumaserver`, you will need to change the paths at the top of `YOUR_WEB_DIR/suma/web/spaceassess.js`.
+
 
 Suma Analysis Tools Configuration
 ----------------------------------
@@ -166,6 +179,7 @@ Suma Analysis Tools Configuration
 to the URL for your Suma Query Server. If used a directory other than `sumaserver` in the "Suma Software Installation" section above, that should be reflected in this URL.
 
 * You can view the Suma analysis tools by visting `http://YOUR_SERVER/suma/analysis/reports`.
+
 
 Other Things You Can Configure
 -------------------------------
@@ -185,6 +199,7 @@ you must change 'production' to 'development'.
         ->throwExceptions(false); change "false" to "true"
 
     **Be sure to change these lines back before you use Suma in production**
+
 
 How to create your first initiative
 ------------------------------------
