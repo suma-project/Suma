@@ -58,24 +58,18 @@ For Suma Server Installation:
 
 * Copy contents of `/SUMA_DOWNLOAD_DIR/service/web` to `/YOUR_WEB_DIR/sumaserver`
 
-> If you need to copy it to a directory other than 'sumaserver', you must change a line in `YOUR_WEB_DIR/sumaserver/index.php`:
->
-> Change `'sumaserver'` the line `->setBaseUrl('/sumaserver')` to the     name of the directory where you installed the Suma server index.php.
->
-> Also, change the server URLs at the top of `YOUR_WEB_DIR/suma/web/spaceassess.js`.
 
-
-Suma Software Installation (symbolic links)
+Suma Software Installation (symbolic links, **RECOMMENDED**)
 ----------------------------------------
 
 If your Apache configuration has the `FollowSymLinks` directive enabled, there is a simpler way to deploy Suma that also improves the update process.
 
 * Clone the GitHub repository to a directory outside of your web space (e.g. `/var/www/app/suma`)
-* Create the following symbolic links from your web space to the local suma repository (these instructions assume `/var/www/app` and `/var/www/htdocs` as base directories--please change as appropriate):
+* Create the following symbolic links from your web space to the local suma repository (these instructions make several assumptions about paths and directory names--please change as needed, noting the configuration directions later in this document):
 
 
         /var/www/htdocs/sumaserver/      =>  /var/www/app/suma/service/web/
-        /var/www/htdocs/suma/web/        =>  /var/www/app/suma/web/
+        /var/www/htdocs/suma/client/        =>  /var/www/app/suma/web/
         /var/www/htdocs/suma/analysis/   =>  /var/www/app/suma/analysis/
 
 
@@ -122,8 +116,8 @@ Create database in MySQL using whatever tool you have available.
 
 Create two Suma accounts:
 
-# One administrative account with `SELECT`, `INSERT`, `CREATE`, `DROP`, `DELETE`, `UPDATE`, `INDEX`, and `ALTER` permissions. **This account is for initializing and modifying the database. Do not include this account in your Suma configuration.**
-# One application account with `SELECT`, `INSERT`, `UPDATE`, and `INDEX` permissions.
+1. One administrative account with `SELECT`, `INSERT`, `CREATE`, `DROP`, `DELETE`, `UPDATE`, `INDEX`, and `ALTER` permissions. **This account is for initializing and modifying the database. Do not include this account in your Suma configuration.**
+2. One application account with `SELECT`, `INSERT`, `UPDATE`, and `INDEX` permissions.
 
 Now you have to run a database initialization script included in the suma download.
 
