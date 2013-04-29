@@ -67,7 +67,7 @@ class SessionModel
         $db = Globals::getDBConn();
         $select = $db->select()
             ->from('session')
-            ->order('id DESC');
+            ->order('start DESC');
             if ($unFiltered == false)
             {
                 $select->where('deleted != true');
@@ -90,7 +90,9 @@ class SessionModel
     {
         $select = $this->_db->select()
             ->from('count')
-            ->where('fk_session = '.$this->_metadata['id']);
+            ->where('fk_session = '.$this->_metadata['id'])
+            ->order('occurrence ASC');
+
         return $select->query()->fetchAll();
     }
     
@@ -109,7 +111,9 @@ class SessionModel
         {
             $select = $this->_db->select()
                 ->from('count')
-                ->where('fk_session = '.$this->_metadata['id'].' AND fk_location = '.$locId);
+                ->where('fk_session = '.$this->_metadata['id'].' AND fk_location = '.$locId)
+                ->order('occurrence ASC');
+
             return $select->query()->fetchAll();
         }
     }
@@ -133,6 +137,7 @@ class SessionModel
             $select = $this->_db->select()
                 ->from('count_activity_join')
                 ->where('fk_count = '.$cntId);
+
             return $select->query()->fetchAll();
         }
     }
@@ -143,7 +148,8 @@ class SessionModel
         {
             $select = $this->_db->select()
                 ->from('transaction')
-                ->where('id = '.$transId);            
+                ->where('id = '.$transId);
+
             return $select->query()->fetch();
         }
     }    

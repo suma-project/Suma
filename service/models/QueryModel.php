@@ -14,13 +14,13 @@ class QueryModel
     private $_initActGroups = array();
     private $_initId;
     private $_initMetadata = array();
-    private $_formats = array('alc' => ' caj.fk_activity ASC, c.fk_location ASC, c.id ASC ', 
-                              'lac' => ' c.fk_location ASC, caj.fk_activity ASC, c.id ASC ',
-                              'lca' => ' c.fk_location ASC, c.id ASC, caj.fk_activity ASC ', 
-                              'cal' => ' c.id ASC, caj.fk_activity ASC, c.fk_location ASC ', 
-                              'cla' => ' c.id ASC, c.fk_location ASC, caj.fk_activity ASC ', 
-                              'ac'  => ' caj.fk_activity ASC, c.id ASC ', 
-                              'lc'  => ' c.fk_location ASC, c.id ASC ');
+    private $_formats = array('alc' => ' caj.fk_activity ASC, c.fk_location ASC, c.occurrence ASC, c.id ASC ',
+                              'lac' => ' c.fk_location ASC, caj.fk_activity ASC, c.occurrence ASC, c.id ASC ',
+                              'lca' => ' c.fk_location ASC, c.occurrence ASC, c.id ASC, caj.fk_activity ASC ',
+                              'cal' => ' c.occurrence ASC, c.id ASC, caj.fk_activity ASC, c.fk_location ASC ',
+                              'cla' => ' c.occurrence ASC, c.id ASC, c.fk_location ASC, caj.fk_activity ASC ',
+                              'ac'  => ' caj.fk_activity ASC, c.occurrence, c.id ASC ',
+                              'lc'  => ' c.fk_location ASC, c.occurrence, c.id ASC ');
     
     public function __construct($initId)
     {   
@@ -249,7 +249,7 @@ class QueryModel
             $this->_sessSql .= ' OR (DATE(s.start) < DATE(\''.$params['sDate'].'\') AND DATE(s.end) > DATE(\''.$params['eDate'].'\')) ';
         }
 
-        $this->_sessSql .= ' ORDER BY s.id ASC ';
+        $this->_sessSql .= ' ORDER BY s.start ASC, s.id ASC ';
         
         $sessQueryStmt = $this->_db->query($this->_sessSql);
 
