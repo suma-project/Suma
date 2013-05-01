@@ -122,6 +122,17 @@ $initDropDown .= '</select>';
                         </div>
                     </div>
                     <div class="control-group">
+                        <h5 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Choose Date Binning" data-content="Choose the date to use for display. Count shows the actual date of the count, while Session Start and Session End use respective date on the session of each count.">Choose Sessions</h5>
+                        <label class="control-label" for="session"></label>
+                        <div class="controls">
+                             <select name="session" id="session">
+                                <option value="count">Count Date</option>
+                                <option value="start">Session Start</option>
+                                <option value="end">Session End</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="control-group">
                         <h5 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Choose Date Range" data-content="Choose a start and end date for your analysis. Defaults to 6 months from current day. Clear fields to retrieve the complete data set.">Choose Date Range</h5>
                         <label class="control-label" for="sdate">Start Date</label>
                         <div class="controls">

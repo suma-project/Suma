@@ -191,7 +191,8 @@ class TimeSeriesData
             'sdate'      => 'trim|sanitize_numbers|rmhyphen',
             'edate'      => 'trim|sanitize_numbers|rmhyphen',
             'stime'      => 'trim|sanitize_numbers',
-            'etime'      => 'trim|sanitize_numbers'
+            'etime'      => 'trim|sanitize_numbers',
+            'session'    => 'trim'
         );
 
         // Define validation rules
@@ -217,7 +218,8 @@ class TimeSeriesData
                     'sdate'      => $input['sdate'],
                     'edate'      => $input['edate'],
                     'stime'      => $input['stime'],
-                    'etime'      => $input['etime']
+                    'etime'      => $input['etime'],
+                    'session'    => $input['session']
             );
 
             // Manipulate activities field, maybe not the best place for this
@@ -392,6 +394,7 @@ class TimeSeriesData
         $locID   = $params['locations'];
         $actDict = $response['initiative']['dictionary']['activities'];
         $locDict = $response['initiative']['dictionary']['locations'];
+        $bin     = $params['session'];
 
         // Populate location list for filters
         if (empty($this->locListIds))
@@ -420,23 +423,32 @@ class TimeSeriesData
             $sessions = $response['initiative']['sessions'];
             foreach ($sessions as $sess)
             {
-                // Get date of session
-                $day = substr($sess['start'], 0, -9);
-
-                // Convert date to day of the week
-                $weekday = date('l', strtotime($day));
-
-                // Test if weekday is in days array (filter)
-                if (in_array($weekday, $params['days']))
+                $sessLocations = $sess['locations'];
+                foreach ($sessLocations as $loc)
                 {
-                    $sessLocations = $sess['locations'];
-                    foreach ($sessLocations as $loc)
+                    // Test if location is in locations array
+                    if ($params['locations'] === 'all' || in_array($loc['id'], $this->locListIds))
                     {
-                        // Test if location is in locations array
-                        if ($params['locations'] === 'all' || in_array($loc['id'], $this->locListIds))
+                        $counts = $loc['counts'];
+                        foreach ($counts as $count)
                         {
-                            $counts = $loc['counts'];
-                            foreach ($counts as $count)
+                            // Get date based on count or session
+                            if ($bin === 'count')
+                            {
+                                $day = substr($count['time'], 0, -9);
+                            }
+                            elseif ($bin === 'start') {
+                                $day = substr($sess['start'], 0, -9);
+                            }
+                            elseif ($bin === 'end')
+                            {
+                                $day = substr($sess['end'], 0, -9);
+                            }
+
+                            // Convert date to day of the week
+                            $weekday = date('l', strtotime($day));
+
+                            if (in_array($weekday, $params['days']))
                             {
                                 // Honor time filters using count time and input params
                                 $cTime = str_replace(':', '', substr($count['time'], -8, 5));
