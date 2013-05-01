@@ -122,7 +122,7 @@ $initDropDown .= '</select>';
                         </div>
                     </div>
                     <div class="control-group">
-                        <h5 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Choose Date Binning" data-content="Choose the date to use for display. Count shows the actual date of the count, while Session Start and Session End use respective date on the session of each count.">Choose Sessions</h5>
+                        <h5 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Classify Counts By" data-content="Choose the date to use for display. Count will use the actual date of the count, while Session Start and Session End will use the respective date of the session of each count.">Classify Counts By</h5>
                         <label class="control-label" for="session"></label>
                         <div class="controls">
                              <select name="session" id="session">
