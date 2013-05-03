@@ -13,9 +13,9 @@
 
             var metadata = $(this).children("div").children("span").each(function(index) {
                 if ($(this).hasClass("locTitle")) {
-                    locArr.title = $(this).text();
+                    locArr.title = _.escape($(this).text());
                 } else if ($(this).hasClass("locDesc")) {
-                    locArr.description = $(this).text();
+                    locArr.description = _.escape($(this).text());
                 } else if ($(this).hasClass("locID")) {
                     locArr.id = $(this).text();
                 }
@@ -59,8 +59,8 @@
                         $(this).dialog("close");
                     },
                     'Save': function() {
-                        var newTreeTitle = $.trim(treeTitleInput.val());
-                        var newTreeDesc = $.trim(treeDescInput.val());
+                        var newTreeTitle = _.escape($.trim(treeTitleInput.val()));
+                        var newTreeDesc = _.escape($.trim(treeDescInput.val()));
                         var myThis = this;
 
                         if (newTreeTitle.length > 0) {
@@ -91,8 +91,8 @@
 
         $("a#saveLocs").live("click", function(){
             var locTree = {id:$("div#treeID").text(),
-                        title:$("span#treeTitle").text(),
-                        description:$("span#treeDesc").text(),
+                        title:_.escape($("span#treeTitle").text()),
+                        description:_.escape($("span#treeDesc").text()),
                         enabled: true};
             locTree.children = objectifyChildLocs($("ol#locations")[0]);
 

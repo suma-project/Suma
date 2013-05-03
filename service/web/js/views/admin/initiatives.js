@@ -83,8 +83,8 @@ $(document).ready(function(){
                     $(this).dialog("close");
                 },
                 'Save': function() {
-                    var newInitTitle = $.trim(initTitleInput.val());
-                    var newInitDesc = $.trim(initDescInput.val());
+                    var newInitTitle = _.escape($.trim(initTitleInput.val()));
+                    var newInitDesc = _.escape($.trim(initDescInput.val()));
                     var newLocTree = $(locRootSel).val();
                     var boundThis = this;
 
@@ -149,8 +149,8 @@ $(document).ready(function(){
                 },
                 'Save': function() {
                     var newInitTitle, newInitDesc, boundThis;
-                    newInitTitle = $.trim(initTitleInput.val());
-                    newInitDesc = $.trim(initDescInput.val());
+                    newInitTitle = _.escape($.trim(initTitleInput.val()));
+                    newInitDesc = _.escape($.trim(initDescInput.val()));
                     boundThis = this;
 
                     if (newInitTitle.length > 0) {
@@ -162,8 +162,8 @@ $(document).ready(function(){
                                    desc: newInitDesc},
                             async: false
                         }).success(function() {
-                            initTitleSpan.text(newInitTitle);
-                            initDescSpan.text(newInitDesc);
+                            initTitleSpan.text(_.unescape(newInitTitle));
+                            initDescSpan.text(_.unescape(newInitDesc));
 
                             initTitleInput.val('');
                             initDescInput.val('');
@@ -359,8 +359,8 @@ $(document).ready(function(){
 
             serActGroup = {
                 id: $(this).find("span.actGroupID").text(),
-                title: $(this).find("span.actGroupTitle").text(),
-                desc: $(this).find("span.actGroupDesc").text(),
+                title: _.escape($(this).find("span.actGroupTitle").text()),
+                desc: _.escape($(this).find("span.actGroupDesc").text()),
                 required: $(this).hasClass("required-act-group"),
                 allowMulti: $(this).hasClass("allowMulti-act-group"),
                 activities: []
@@ -369,8 +369,8 @@ $(document).ready(function(){
             $(this).find('li.activity').each(function() {
                 serActGroup.activities.push({
                     id: $(this).find("span.actID").text(),
-                    title: $(this).find("span.actTitle").text(),
-                    desc: $(this).find("span.actDesc").text(),
+                    title: _.escape($(this).find("span.actTitle").text()),
+                    desc: _.escape($(this).find("span.actDesc").text()),
                     enabled: $(this).hasClass("enabled-act")
                 });
             });
