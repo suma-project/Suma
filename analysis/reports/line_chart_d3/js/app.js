@@ -126,7 +126,7 @@
                             self.drawChart(counts);
                             self.counts = counts;
                             self.drawTable(counts);
-                            self.buildCSV(data.csv);
+                            self.buildCSV(data.csv, counts);
                             $('.post-load-popover').popover();
                         } else {
                             self.noData();
@@ -818,7 +818,6 @@
                 .call(this.suppChart);
         },
         drawTable: function (counts) {
-
             this.buildTemplate(counts.total, '#total-sum-table', '#total-data');
             this.buildTemplate(counts.locationsSum, '#locations-sum-table', '#locations-data');
             this.buildTemplate(counts.activitiesSum, '#activities-sum-table', '#activities-data');
@@ -826,8 +825,6 @@
             this.buildTemplate(counts.monthSummary, '#month-table', '#month-data');
             this.buildTemplate(counts.dayOfWeekSummary, '#weekday-table', '#weekday-data');
             this.buildTemplate(counts.hourSummary, '#hour-table', '#hour-data');
-
-
         },
         locHeader: null,
         actHeader: null,
@@ -861,7 +858,7 @@
          * @param  array csv
          * @return
          */
-        buildCSV: function (csv) {
+        buildCSV: function (csv, counts) {
             var self = this,
                 base,
                 content,
@@ -870,7 +867,8 @@
                 formattedLines,
                 header,
                 href,
-                lines;
+                lines,
+                summaryHash;
 
             lines = [];
             csvLines = [];
@@ -930,6 +928,37 @@
             // Sort lines by date
             lines.sort(self.sortCSVLines);
 
+            // Build hash of summary data
+            summaryHash = {
+                locations: counts.locationsSum,
+                activities: counts.activitiesSum,
+                hourly: counts.hourSummary,
+                daily: counts.dayOfWeekSummary,
+                monthly: counts.monthSummary,
+                yearly: counts.yearSummary
+            };
+
+            // Add summary data to csv lines array
+            _.each(summaryHash, function (e, i) {
+                var header = [
+                    i,
+                    'count',
+                    'percent'
+                ];
+
+                lines.push(header);
+
+                _.each(e, function (l) {
+                    var line = [];
+
+                    line.push(l.name);
+                    line.push(l.count);
+                    line.push(l.percent);
+
+                    lines.push(line);
+                });
+            });
+
             // Format arrays into strings
             formattedLines = d3.csv.format(lines);
 
@@ -942,7 +971,6 @@
             href = encodeURI(base + finalContent);
 
             $('#csv').attr('href', href);
-
         },
         /**
          * Generic Method to add template to DOM
