@@ -97,7 +97,7 @@ $initDropDown .= '</select>';
                     </div>
                     <div id="ajax-error" class="alert alert-error alert-block">
                         <h4>Warning!</h4>
-                            There was a problem retrieving data from the server. It is possible no data exists for that combination of filters.Please try again or contact your system administrator.
+                            There was a problem retrieving data from the server. It is possible no data exists for that combination of filters. Please try again or contact your system administrator.
                     </div>
                     <div id ="welcome" class="alert alert-info alert-block">
                         <h4>Welcome!</h4>
