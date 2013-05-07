@@ -8,12 +8,12 @@
  */
 (function (ReportFilters, TimeSeries, BarChart) {
     var App = {
-        filters: undefined,
-        mainChart: undefined,
-        suppChart: undefined,
-        updateListeners: undefined,
-        counts: undefined,
-        params: undefined,
+        filters: null,
+        mainChart: null,
+        suppChart: null,
+        updateListeners: null,
+        counts: null,
+        params: null,
         weekdays: {
             Sunday: 0,
             Monday: 1,
@@ -96,7 +96,7 @@
             };
 
             // Initialize filters
-            if (this.filters === undefined) {
+            if (this.filters === null) {
                 this.filters = new ReportFilters(filterOptions);
             }
 
@@ -528,9 +528,9 @@
                     newObj = {
                         id    : index,
                         name  : 'No Activity',
-                        depth : undefined,
-                        rank  : undefined,
-                        activityGroup: undefined,
+                        depth : null,
+                        rank  : null,
+                        activityGroup: null,
                         count : element,
                         percent: (element / response.total * 100).toFixed(2)
                     };
@@ -538,9 +538,9 @@
                     pctObj = {
                         id    : index,
                         name  : 'No Activity',
-                        depth : undefined,
-                        rank  : undefined,
-                        activityGroup: undefined,
+                        depth : null,
+                        rank  : null,
+                        activityGroup: null,
                         count : newObj.percent
                     };
                 }
@@ -572,9 +572,9 @@
                     newObj = {
                         id    : index,
                         name  : 'No Activity',
-                        depth : undefined,
-                        rank  : undefined,
-                        activityGroup: undefined,
+                        depth : null,
+                        rank  : null,
+                        activityGroup: null,
                         count : element.toFixed(2)
                     };
                 }
@@ -607,9 +607,9 @@
                     newObj = {
                         id    : index,
                         name  : 'No Activity',
-                        depth : undefined,
-                        rank  : undefined,
-                        activityGroup: undefined,
+                        depth : null,
+                        rank  : null,
+                        activityGroup: null,
                         count : element.toFixed(2)
                     };
                 }
