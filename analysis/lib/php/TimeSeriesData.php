@@ -62,6 +62,7 @@ class TimeSeriesData
     private $actHash = array();
     private $locHash = array();
     private $csvScaffold = NULL;
+    private $hourSumScaffold = NULL;
     /**
      * Method to populate $csvScaffold, used for csv count collection
      * @param  array $locListIds
@@ -130,6 +131,17 @@ class TimeSeriesData
         $scaffoldArray['activities']['_No Activity'] = NULL;
 
         return $scaffoldArray;
+    }
+    private function buildHourSummaryScaffold()
+    {
+        $array = array();
+
+        for ($i = 1; $i <= 23; $i++)
+        {
+            $array[$i] = 0;
+        }
+
+        return $array;
     }
     /**
      * Basic pluck method
@@ -418,6 +430,12 @@ class TimeSeriesData
             $this->csvScaffold = $this->buildCSVScaffold($actDict, $locDict);
         }
 
+        // Populate hour summary scaffold
+        if (!isset($this->countHash['hourSummary']))
+        {
+            $this->countHash['hourSummary'] = $this->buildHourSummaryScaffold();
+        }
+
         if (isset($response['initiative']['sessions']))
         {
             $sessions = $response['initiative']['sessions'];
@@ -447,6 +465,9 @@ class TimeSeriesData
 
                             // Convert date to day of the week
                             $weekday = date('l', strtotime($day));
+
+                            // Convert date to hour of day
+                            $hour = date('G', strtotime($count['time']));
 
                             if (in_array($weekday, $params['days']))
                             {
@@ -510,7 +531,7 @@ class TimeSeriesData
                                         // Scaffold countHash for day
                                         $this->countHash['csv'][$day] = $this->csvScaffold;
 
-                                        // Insert Base information for day, totla and locations
+                                        // Insert Base information for day, total and locations
                                         $this->countHash['csv'][$day]['date'] = $day;
                                         $this->countHash['csv'][$day]['total'] = $count['number'];
                                         $this->countHash['csv'][$day]['locations'][$this->locHash[$loc['id']]] = $count['number'];
@@ -590,6 +611,16 @@ class TimeSeriesData
                                     else
                                     {
                                         $this->countHash['dayOfWeekSummary'][$weekday] += $count['number'];
+                                    }
+
+                                    // Build Hourly Summary array
+                                    if(!isset($this->countHash['hourSummary'][$hour]))
+                                    {
+                                        $this->countHash['hourSummary'][$hour] = $count['number'];
+                                    }
+                                    else
+                                    {
+                                        $this->countHash['hourSummary'][$hour] += $count['number'];
                                     }
 
                                     // Build periodSum array

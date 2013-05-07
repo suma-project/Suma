@@ -23,6 +23,32 @@
             Friday: 5,
             Saturday: 6
         },
+        hours: {
+            0: '12:00 AM',
+            1: '01:00 AM',
+            2: '02:00 AM',
+            3: '03:00 AM',
+            4: '04:00 AM',
+            5: '05:00 AM',
+            6: '06:00 AM',
+            7: '07:00 AM',
+            8: '08:00 AM',
+            9: '09:00 AM',
+            10: '10:00 AM',
+            11: '11:00 AM',
+            12: '12:00 PM',
+            13: '01:00 PM',
+            14: '02:00 PM',
+            15: '03:00 PM',
+            16: '04:00 PM',
+            17: '05:00 PM',
+            18: '06:00 PM',
+            19: '07:00 PM',
+            20: '08:00 PM',
+            21: '09:00 PM',
+            22: '10:00 PM',
+            23: '11:00 PM'
+        },
         /**
          * Initializes app
          *
@@ -612,6 +638,18 @@
                 counts.periodAvg.push(newObj);
             });
 
+            // Hourly Summary
+            counts.hourSummary = [];
+            _.each(response.hourSummary, function (element, index) {
+                var newObj = {
+                    name: index,
+                    count: element,
+                    percent: (element / response.total * 100).toFixed(2)
+                };
+
+                counts.hourSummary.push(newObj);
+            });
+
             // Day of Week Summary
             counts.dayOfWeekSummary = [];
             _.each(response.dayOfWeekSummary, function (element, index) {
@@ -787,6 +825,8 @@
             this.buildTemplate(counts.yearSummary, '#year-table', '#year-data');
             this.buildTemplate(counts.monthSummary, '#month-table', '#month-data');
             this.buildTemplate(counts.dayOfWeekSummary, '#weekday-table', '#weekday-data');
+            this.buildTemplate(counts.hourSummary, '#hour-table', '#hour-data');
+
 
         },
         locHeader: null,
@@ -913,6 +953,7 @@
         buildTemplate: function (items, templateId, elementId) {
             var html,
                 json,
+                self = this,
                 template;
 
             // Insert list into object for template iteration
@@ -929,6 +970,10 @@
                     formattedCount = formatCount(count);
 
                 return formattedCount;
+            });
+
+            Handlebars.registerHelper('hourFormat', function (hour) {
+                return self.hours[hour];
             });
 
             // Populate template with data and insert into DOM

@@ -207,6 +207,7 @@ $initDropDown .= '</select>';
                 <div id="year-data" class="row"></div>
                 <div id="month-data" class="row"></div>
                 <div id="weekday-data" class="row"></div>
+                <div id="hour-data" class="row"></div>
             </div>
             </div>
                 <div id="supplemental-charts" class="span6">
@@ -379,6 +380,27 @@ $initDropDown .= '</select>';
                     {{#each items}}
                         <tr>
                             <td>{{name}}</td>
+                            <td>{{countFormat count}}</td>
+                            <td>{{percent}}%</td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </script>
+        <script id="hour-table" type="text/x-handlebars-template">
+            <h4>Totals by Hour</h4>
+            <table class="table table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th>Hour</th>
+                        <th>Total</th>
+                        <th>Percentage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each items}}
+                        <tr>
+                            <td>{{hourFormat name}}</td>
                             <td>{{countFormat count}}</td>
                             <td>{{percent}}%</td>
                         </tr>
