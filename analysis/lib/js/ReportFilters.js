@@ -121,99 +121,36 @@ var ReportFilters = function (p_options) {
             return a.rank - b.rank;
         },
         /**
-         * Sort locations by rank, meant to be used with native
-         * arr.sort() method. Used by sortLocations.
+         * Calculate depth of location in adjacency list
          *
-         * @param  {object} a
-         * @param  {object} b
+         * @param  {object}  item
+         * @param  {array}   list
+         * @param  {integer} root
          * @return {integer}
          */
-        propertySort: function (a, b) {
-            return a.rank > b.rank ? 1 : (a.rank < b.rank ? -1 : 0);
-        },
-        /**
-         * Sort nested array of locations
-         *
-         * @param  {arr} arr
-         * @this {ReportFilters}
-         */
-        sortLocations: function (arr) {
-            var len = arr.length;
+        calculateDepth: function (item, list, root) {
+            var depth = 0;
 
-            while (len > 0) {
-                len -= 1;
-                if (arr[len].children) {
-                    this.sortLocations(arr[len].children);
-                }
+            if (item.parent === root) {
+                return depth;
             }
 
-            arr.sort(this.propertySort);
-        },
-        /**
-         * Flatten nested location array
-         *
-         * @param  {arr} nestedList
-         * @param  {arr} flatArray
-         * @return {arr}
-         */
-        buildLocList: function (nestedList, flatArray) {
-            var self = this;
-
-            flatArray = flatArray || [];
-
-            _.each(nestedList, function (obj) {
-                flatArray.push(obj);
-                if (obj.children) {
-                    self.buildLocList(obj.children, flatArray);
-                }
-            });
-
-            return flatArray;
-        },
-        /**
-         * Build location tree
-         *
-         * @param  {arr} locations
-         * @param  {arr} rootLocation
-         * @return {arr}
-         */
-        buildLocTree: function (locations, rootLocation) {
-            var memo = {};
-
-            // Build memo object using location ids as keys
-            _.each(locations, function (obj, index) {
-                memo[obj.id] = obj;
-            });
-
-            function locMemo(locations, parentId, depth) {
-                var locTree = [];
-
-                // Set default depth
-                depth    = depth    || 0;
-
-                // Loop over locations
-                _.each(locations, function (obj, index) {
-
-                    // Start at top of tree
-                    if (obj.parent === parentId) {
-                        delete memo[obj.id];
-
-                        // Build object and recursively build children
-                        locTree.push({
-                            'id'       : obj.id,
-                            'title'    : obj.title,
-                            'rank'     : obj.rank,
-                            'parent'   : obj.parent,
-                            'depth'    : depth,
-                            'children' : locMemo(_.clone(memo), obj.id, depth + 1)
-                        });
-                    }
+            function calcDepth(item, list, root) {
+                var parent = _.find(list, function (e) {
+                    return e.id === item.parent;
                 });
 
-                return locTree;
-            }
+                depth += 1;
 
-            return locMemo(locations, rootLocation);
+                if (parent.parent === root) {
+                    return depth;
+                }
+
+                calcDepth(parent, list, root);
+            }
+            calcDepth(item, list, root);
+
+            return depth;
         },
         /**
          * Build a sorted list of locations
@@ -223,17 +160,20 @@ var ReportFilters = function (p_options) {
          * @return {arr}
          */
         processLocations: function (locations, rootLocation) {
-            var locTree,
-                locList;
+            var locList,
+                self = this;
 
-            // Build location tree from adjacency list
-            locTree = this.buildLocTree(locations, rootLocation);
+            locList = d3.nest()
+                .sortKeys(function (d) { return d.parent; })
+                .sortKeys(function (d) { return d.rank; })
+                .rollup(function (values) {
+                    _.each(values, function (e, i, c) {
+                        e.depth = self.calculateDepth(e, c, rootLocation);
+                    });
+                    return values;
+                })
+                .entries(locations);
 
-            // Sort locations based on rank at each level of depth
-            this.sortLocations(locTree);
-
-            // Flatten tree to sorted array
-            locList = this.buildLocList(locTree);
             return locList;
         },
         /**
