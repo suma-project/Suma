@@ -13,15 +13,15 @@ class NightlyData
     /**
      * Placeholder for returned data.
      * @var array
-     * @access  public
+     * @access  private
      */
-    public $countHash = array();
+    private $countHash = array();
     /**
      * Hash for human-readable display of hours
      * @var array
      * @access  public
      */
-    public $hourHash = array(
+    public $hourDisplay = array(
         "0" => "12:00 AM",
         "1" => "01:00 AM",
         "2" => "02:00 AM",

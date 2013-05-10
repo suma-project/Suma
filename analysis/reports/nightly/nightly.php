@@ -13,6 +13,6 @@ foreach ($nightlyData as $key => $init)
     print "\n" . $key . "\n";
     foreach ($init as $key => $count)
     {
-        print " " . $data->hourHash[$key] . ': ' . $count . "\n";
+        print " " . $data->hourDisplay[$key] . ': ' . $count . "\n";
     }
 }
