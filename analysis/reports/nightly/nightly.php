@@ -4,15 +4,23 @@ require_once '../../lib/php/NightlyData.php';
 require_once 'nightly_config.php';
 
 // Initialize class and retrieve data
-$data = new NightlyData();
-$nightlyData = $data->getData($DAY_PROCESS);
-
-// Print Output
-foreach ($nightlyData as $key => $init)
+try
 {
-    print "\n" . $key . "\n";
-    foreach ($init as $key => $count)
+    $data = new NightlyData();
+    $nightlyData = $data->getData($DAY_PROCESS);
+
+    // Print Output
+    foreach ($nightlyData as $key => $init)
     {
-        print " " . $data->hourDisplay[$key] . ': ' . $count . "\n";
+        print "\n" . $key . "\n";
+        foreach ($init as $key => $count)
+        {
+            print " " . $data->hourDisplay[$key] . ': ' . $count . "\n";
+        }
     }
 }
+catch (Exception $e)
+{
+    print "Error: " . $e;
+}
+
