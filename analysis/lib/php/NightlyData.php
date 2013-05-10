@@ -97,7 +97,7 @@ class NightlyData
                 foreach ($loc['counts'] as $count)
                 {
                     $hour = date('G', strtotime($count['time']));
-                    if ($this->countHash[$title][$hour] === "n/a")
+                    if (!is_int($this->countHash[$title][$hour]))
                     {
                         $this->countHash[$title][$hour] = $count['number'];
                     }
