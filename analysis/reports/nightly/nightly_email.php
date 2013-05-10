@@ -15,4 +15,3 @@ else
     $message = $GREETING . "\n" . $data;
     mail($RECIPIENTS, $SUBJECT, $message);
 }
-

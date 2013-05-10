@@ -23,4 +23,3 @@ catch (Exception $e)
 {
     print "Error: " . $e;
 }
-
