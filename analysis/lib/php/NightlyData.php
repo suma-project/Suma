@@ -68,9 +68,8 @@ class NightlyData
      * @access  private
      */
     private function populateHash($response) {
-        // Get init title and locations/counts
+        // Get init title
         $title = $response['initiative']['title'];
-        $locations = $response['initiative']['locations'];
 
         // Add init to COUNTHASH
         if (!isset($this->countHash[$title]))
@@ -79,8 +78,9 @@ class NightlyData
         }
 
         // Process counts
-        if ($locations)
+        if ($response['initiative']['locations'])
         {
+            $locations = $response['initiative']['locations'];
             foreach ($locations as $loc)
             {
                 foreach ($loc['counts'] as $count)
