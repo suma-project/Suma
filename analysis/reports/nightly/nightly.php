@@ -5,11 +5,10 @@ require_once 'nightly_config.php';
 
 // Initialize class and retrieve data
 $data = new NightlyData();
-$data->processData($DAY_PROCESS);
-$hash = $data->countHash;
+$nightlyData = $data->getData($DAY_PROCESS);
 
 // Print Output
-foreach ($hash as $key => $init)
+foreach ($nightlyData as $key => $init)
 {
     print "\n" . $key . "\n";
     foreach ($init as $key => $count)

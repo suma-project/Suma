@@ -48,17 +48,6 @@ class NightlyData
         "23" => "11:00 PM",
     );
     /**
-     * Generic error handler
-     * @param  objct $e
-     * @return string
-     * @access  private
-     */
-    private function echo500($e)
-    {
-        print "An error occurred on the server which prevented your request from being completed: " . $e->getMessage() . "\n";
-        die;
-    }
-    /**
      * Builds 24 hour scaffold array for counts
      * @return array
      * @access  private
@@ -111,9 +100,10 @@ class NightlyData
     }
     /**
      * Method for processing nightly data
-     * @access public
+     * @param string $day YYYYMMDD string for date
+     * @access private
      */
-    public function processData($day)
+    private function processData($day)
     {
         // QueryServer config
         $queryType = "counts";
@@ -151,8 +141,22 @@ class NightlyData
             }
             catch (Exception $e)
             {
-                echo500($e);
+                throw $e;
             }
         }
+
+    }
+    /**
+     * Get data from server
+     *
+     * @param  string $day YYYYMMDD string for date
+     * @return array
+     * @access  public
+     */
+    public function getData($day)
+    {
+        $this->processData($day);
+
+        return $this->countHash;
     }
 }
