@@ -78,7 +78,7 @@ class NightlyData
         }
 
         // Process counts
-        if ($response['initiative']['locations'])
+        if (isset($response['initiative']['locations']))
         {
             $locations = $response['initiative']['locations'];
             foreach ($locations as $loc)
