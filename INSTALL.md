@@ -174,6 +174,15 @@ to the URL for your Suma Query Server. If used a directory other than `sumaserve
 
 * You can view the Suma analysis tools by visting `http://YOUR_SERVER/suma/analysis/reports`.
 
+* To enable the nightly summary report:
+
+    Copy the contents of `YOUR_WEB_DIR/suma/analysis/reports/nightly_config_example.php` to a new file named `YOUR_WEB_DIR/suma/analysis/reports/nightly_config.php`.
+
+    Edit the timezone, recipients, error_recipients, etc. variables in `YOUR_WEB_DIR/suma/analysis/reports/nightly_config.php` as appropriate.
+
+    Using cron, or some other scheduler, schedule a task to run the `YOUR_WEB_DIR/suma/analysis/reports/nightly_email.php` script as desired.
+
+    Alternatively, `YOUR_WEB_DIR/suma/analysis/reports/nightly.php` may be run from the command line for quick reporting through stdout.
 
 Other Things You Can Configure
 -------------------------------
