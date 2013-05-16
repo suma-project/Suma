@@ -142,7 +142,7 @@ var BarChart = function () {
                 .attr('y', function (d, i) {return 25 * i + 30; })
                 .attr('dy', -3)
                 //.attr('text-anchor', 'left')
-                .text(function (d, i) {return S(d.name).truncate(20); })
+                .text(function (d, i) {return S(d.name).unescapeHTML().truncate(20); })
                 .transition().delay(750).duration(1000)
                 .style('opacity', 1);
 
