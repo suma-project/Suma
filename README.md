@@ -19,11 +19,11 @@ As a safeguard, all JSON input from the client is logged. This will lead to larg
 
 Documentation
 ==============
-* LICENSE.md
-* README.md
-* INSTALL.md
-* LOGS.md
-* QUERYSERVER.md
+* [Installation guide](INSTALL.md)
+* [Understanding Suma log messages](LOGS.md)
+* [Suma Query Server overview](QUERYSERVER.md)
+* [This overview](README.md)
+* [Suma license](LICENSE.md)
 
 How to contribute?
 ===================
