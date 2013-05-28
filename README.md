@@ -23,7 +23,7 @@ Documentation
 * [Understanding Suma log messages](LOGS.md)
 * [Suma Query Server overview](QUERYSERVER.md)
 * [This overview](README.md)
-* [Suma license](LICENSE.md)
+* [Suma license](LICENSE)
 
 How to contribute?
 ===================
