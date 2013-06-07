@@ -136,7 +136,7 @@ class TimeSeriesData
     {
         $array = array();
 
-        for ($i = 1; $i <= 23; $i++)
+        for ($i = 0; $i <= 23; $i++)
         {
             $array[$i] = 0;
         }
