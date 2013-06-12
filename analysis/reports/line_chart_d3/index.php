@@ -133,6 +133,16 @@ $initDropDown .= '</select>';
                         </div>
                     </div>
                     <div class="control-group">
+                        <h5 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Always Include Whole Session" data-content='Select yes if you would like to include counts inside of sessions that may fall outside of your other filters.'>Always Include Whole Session</h5>
+                        <label class="control-label" for="session_filter"></label>
+                        <div class="controls">
+                             <select name="session_filter" id="session_filter">
+                                <option value="false">No</option>
+                                <option value="true">Yes</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="control-group">
                         <h5 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Choose Date Range" data-content="Choose a start and end date for your analysis. Defaults to 6 months from current day. Clear fields to retrieve the complete data set.">Choose Date Range</h5>
                         <label class="control-label" for="sdate">Start Date</label>
                         <div class="controls">
