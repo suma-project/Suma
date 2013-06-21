@@ -42,8 +42,8 @@ html {
 }
 
 input#goesup {
-    width: 410px;
-    height: 320px;
+    width: 90%;
+    height: 320px; 
     font-size: 5em;
 }
 
@@ -55,7 +55,6 @@ input#goesup {
 }
 
 input#countInput {
-    display: none;
     width: 80px;
     height: 50px;
     font-size: 2em;
@@ -229,11 +228,13 @@ li.loc_item a {
     background:#3BAAE3;
 }
 
+.retroMode {
+    display: none;
+}
 
 @media all and (max-width: 480px) {
 /* Rules to begin supporting smaller devices */
     input#goesup {
-        width: 165px;
         height: 120px;
         font-size: 3em;
     }
