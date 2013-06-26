@@ -128,29 +128,20 @@ var ReportFilters = function (p_options) {
          * @param  {integer} root
          * @return {integer}
          */
-        calculateDepth: function (item, list, root) {
-            var depth = 0;
+        calculateDepth: function (item, list, root, depth) {
+            var parent;
+
+            depth = depth || 0;
 
             if (item.parent === root) {
                 return depth;
             }
 
-            function calcDepth(item, list, root) {
-                var parent = _.find(list, function (e) {
-                    return e.id === item.parent;
-                });
+            depth += 1;
 
-                depth += 1;
+            parent = _.find(list, {'id': item.parent});
 
-                if (parent.parent === root) {
-                    return depth;
-                }
-
-                calcDepth(parent, list, root);
-            }
-            calcDepth(item, list, root);
-
-            return depth;
+            return this.calculateDepth(parent, list, root, depth);
         },
         /**
          * Build a sorted list of locations
@@ -167,8 +158,8 @@ var ReportFilters = function (p_options) {
                 .sortKeys(function (d) { return d.parent; })
                 .sortKeys(function (d) { return d.rank; })
                 .rollup(function (values) {
-                    _.each(values, function (e, i, c) {
-                        e.depth = self.calculateDepth(e, c, rootLocation);
+                    _.each(values, function (item, i, list) {
+                        item.depth = self.calculateDepth(item, list, rootLocation);
                     });
                     return values;
                 })

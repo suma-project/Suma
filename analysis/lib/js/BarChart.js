@@ -142,7 +142,7 @@ var BarChart = function () {
                 .attr('y', function (d, i) {return 25 * i + 30; })
                 .attr('dy', -3)
                 //.attr('text-anchor', 'left')
-                .text(function (d, i) {return S(d.name).truncate(20); })
+                .text(function (d, i) {return S(d.name).unescapeHTML().truncate(20); })
                 .transition().delay(750).duration(1000)
                 .style('opacity', 1);
 
@@ -181,15 +181,14 @@ var BarChart = function () {
                     }
                     return 'start';
                 })
-                .attr('y', function (d, i) {return 25 * i + 12; })
-                .text(function (d, i) {return d.count; })
+                .attr('y', function (d, i) {
+                    return 25 * i + 12;
+                })
+                .text(function (d, i) {
+                    return d.count;
+                })
                 .transition().delay(750).duration(1000)
-                .style('opacity', function (d) {
-                    if (x(d.count) > '0') {
-                        return '1';
-                    }
-                    return '0';
-                });
+                .style('opacity', '1');
 
             // EXIT
             ann.exit()

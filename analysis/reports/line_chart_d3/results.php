@@ -60,8 +60,8 @@ function lineChartData()
     // Calculate averages for appropriate sub-arrays of countHash
     $returnData = $data->calculateAvg($data->countHash);
 
-    // Cull data, removing or padding days as necessary
-    $returnData = $data->cullData($returnData, $params);
+    // Pad days as necessary
+    $returnData = $data->padData($returnData, $params);
 
     return $returnData;
 }

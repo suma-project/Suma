@@ -136,7 +136,7 @@ class TimeSeriesData
     {
         $array = array();
 
-        for ($i = 1; $i <= 23; $i++)
+        for ($i = 0; $i <= 23; $i++)
         {
             $array[$i] = 0;
         }
@@ -231,7 +231,8 @@ class TimeSeriesData
                     'edate'      => $input['edate'],
                     'stime'      => $input['stime'],
                     'etime'      => $input['etime'],
-                    'session'    => $input['session']
+                    'session'    => $input['session'],
+                    'session_filter' => $input['session_filter']
             );
 
             // Manipulate activities field, maybe not the best place for this
@@ -407,6 +408,7 @@ class TimeSeriesData
         $actDict = $response['initiative']['dictionary']['activities'];
         $locDict = $response['initiative']['dictionary']['locations'];
         $bin     = $params['session'];
+        $include_sessions = $params['session_filter'];
 
         // Populate location list for filters
         if (empty($this->locListIds))
@@ -471,45 +473,65 @@ class TimeSeriesData
 
                             if (in_array($weekday, $params['days']))
                             {
-                                // Honor time filters using count time and input params
-                                $cTime = str_replace(':', '', substr($count['time'], -8, 5));
-                                $sTime = $params['stime'];
-                                $eTime = $params['etime'];
+                                if ($include_sessions === 'false')
+                                {
+                                    // Honor date filters and remove extra days pulled in by session
+                                    $sDate = $params['sdate'];
+                                    $eDate = $params['edate'];
+                                    $tDate = str_replace('-', '', $day);
 
-                                // Both stime and etime filters are present
-                                if (!empty($sTime) && !empty($eTime))
-                                {
-                                    // Ordered time range
-                                    if ($sTime < $eTime)
+                                    // Enforce start date filter
+                                    if (!empty($sDate) && $tDate < $sDate)
                                     {
-                                        if ($cTime < $sTime || $cTime > $eTime)
+                                        continue;
+                                    }
+
+                                    // Enforce end date filter
+                                    if (!empty($eDate) && $tDate > $eDate)
+                                    {
+                                        continue;
+                                    }
+
+                                    // Honor time filters using count time and input params
+                                    $cTime = str_replace(':', '', substr($count['time'], -8, 5));
+                                    $sTime = $params['stime'];
+                                    $eTime = $params['etime'];
+
+                                    // Both stime and etime filters are present
+                                    if (!empty($sTime) && !empty($eTime))
+                                    {
+                                        // Ordered time range
+                                        if ($sTime < $eTime)
+                                        {
+                                            if ($cTime < $sTime || $cTime > $eTime)
+                                            {
+                                                continue;
+                                            }
+                                        }
+                                        // Unordered time range
+                                        else
+                                        {
+                                            if ($cTime < $sTime && $cTime > $eTime)
+                                            {
+                                                continue;
+                                            }
+                                        }
+                                    }
+                                    // sTime is present
+                                    elseif (!empty($sTime))
+                                    {
+                                        if ($cTime < $sTime)
                                         {
                                             continue;
                                         }
                                     }
-                                    // Unordered time range
-                                    else
+                                    // eTime is present
+                                    elseif (!empty($eTime))
                                     {
-                                        if ($cTime < $sTime && $cTime > $eTime)
+                                        if ($cTime > $eTime)
                                         {
                                             continue;
                                         }
-                                    }
-                                }
-                                // sTime is present
-                                elseif (!empty($sTime))
-                                {
-                                    if ($cTime < $sTime)
-                                    {
-                                        continue;
-                                    }
-                                }
-                                // eTime is present
-                                elseif (!empty($eTime))
-                                {
-                                    if ($cTime > $eTime)
-                                    {
-                                        continue;
                                     }
                                 }
 
@@ -869,7 +891,7 @@ class TimeSeriesData
      * @param  array $params
      * @return array
      */
-    public function cullData($data, $params)
+    public function padData($data, $params)
     {
         $sdate = $params['sdate'];
         $edate = $params['edate'];
@@ -916,28 +938,6 @@ class TimeSeriesData
                 {
                     $data['periodAvg'][$date]['count'] = 0;
                 }
-            }
-        }
-
-        // Remove any days outside of query range (Sessions will sometimes pull in extra days)
-        $sdate = strtotime($sdate);
-        $sdate = date('Y-m-d', $sdate);
-        $edate = strtotime($edate);
-        $edate = date('Y-m-d', $edate);
-
-        foreach($data['periodSum'] as $key => $val)
-        {
-            if (($key < $sdate) || ($key > $edate))
-            {
-                unset($data['periodSum'][$key]);
-            }
-        }
-
-        foreach($data['periodAvg'] as $key => $val)
-        {
-            if (($key < $sdate) || ($key > $edate))
-            {
-                unset($data['periodAvg'][$key]);
             }
         }
 

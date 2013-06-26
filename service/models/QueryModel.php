@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 class QueryModel
 {
@@ -21,16 +21,16 @@ class QueryModel
                               'cla' => ' c.occurrence ASC, c.id ASC, c.fk_location ASC, caj.fk_activity ASC ',
                               'ac'  => ' caj.fk_activity ASC, c.occurrence, c.id ASC ',
                               'lc'  => ' c.fk_location ASC, c.occurrence, c.id ASC ');
-    
+
     public function __construct($initId)
-    {   
+    {
         $this->_db = Globals::getDBConn();
         $this->_initId = $initId;
         $select = $this->_db->select()
             ->from('initiative', array('id', 'title', 'fk_root_location as rootLocation', 'description'))
             ->where('id = '.$this->_initId);
         $metadata = $select->query()->fetch();
-        
+
         if (! empty($metadata))
         {
             $this->_initMetadata = $metadata;
@@ -46,27 +46,27 @@ class QueryModel
     {
         return $this->_hasMore;
     }
-    
+
     public function getSessSql()
     {
         return $this->_sessSql;
     }
-    
+
     public function getCountsSql()
     {
         return $this->_countsSql;
     }
-    
+
     public function getSessCount()
     {
         return $this->_sessCount;
     }
-    
+
     public function getRowCount()
     {
         return $this->_rowCount;
     }
-    
+
     public function getNextRow()
     {
         if ($this->_queryStmt)
@@ -74,12 +74,12 @@ class QueryModel
             return $this->_queryStmt->fetch();
         }
     }
-    
+
     public function getInitMetadata()
     {
-        return $this->_initMetadata;      
+        return $this->_initMetadata;
     }
-    
+
     public function getInitLocs()
     {
         if (empty($this->_initLocs))
@@ -88,7 +88,7 @@ class QueryModel
         }
         return $this->_initLocs;
     }
-    
+
     public function getInitActs()
     {
         if (empty($this->_initActs))
@@ -114,7 +114,7 @@ class QueryModel
                 $this->_initActs[] = $act;
             }
         }
-        
+
         return $this->_initActs;
     }
 
@@ -130,7 +130,7 @@ class QueryModel
                              'a.fk_activity_group = ag.id', array())
                 ->where('ag.fk_initiative = ' . $this->_initId);
             $groups = $select->query()->fetchAll();
-            
+
             // Cast numerical string(s) into type int
             foreach($groups as $grp)
             {
@@ -147,28 +147,28 @@ class QueryModel
                 $this->_initActGroups[] = $grp;
             }
         }
-        
+
         return $this->_initActGroups;
     }
-    
+
     public function bySessions($params)
     {
         // SQL to pull valid sessions
         $this->_sessSql = 'SELECT s.id FROM session s WHERE s.fk_initiative = ' . $this->_initId . ' AND s.deleted = false ';
-        
+
         // Test if AND clause is needed
         if (isset($params['sDate']) || isset($params['eDate']))
         {
             $this->_sessSql .= ' AND ';
         }
-        
+
         // Date filtration
         if (isset($params['sDate']))
         {
             if (isset($params['eDate']))
             {
                 $this->_sessSql .= ' (DATE(s.start) BETWEEN DATE(\''.$params['sDate'].'\') AND DATE(\''.$params['eDate'].'\') '
-                    . ' OR DATE(s.end) BETWEEN DATE(\''.$params['sDate'].'\') AND DATE(\''.$params['eDate'].'\')) ';              
+                    . ' OR DATE(s.end) BETWEEN DATE(\''.$params['sDate'].'\') AND DATE(\''.$params['eDate'].'\')) ';
             }
             else
             {
@@ -182,32 +182,40 @@ class QueryModel
             $this->_sessSql .= ' (DATE(s.start) <= DATE(\''.$params['eDate'].'\')) ';
         }
 
-        
         // Test if AND clause is needed
         if (isset($params['sTimeH']) || isset($params['eTimeH']))
         {
             $this->_sessSql .= ' AND ';
         }
-        
+
         // Time filtration
         if (isset($params['sTimeH']) || isset($params['eTimeH']))
         {
-            
+
             if (isset($params['sTimeH']) && isset($params['eTimeH']))
             {
                 $start = $params['sTimeH'].':'.$params['sTimeM'].':00';
                 $end = $params['eTimeH'].':'.$params['eTimeM'].':59';
-                
+
                 $sTime = new Zend_Date();
                 $sTime->set($start, Zend_Date::TIMES);
                 $eTime = new Zend_Date();
                 $eTime->set($end, Zend_Date::TIMES);
-                
+
+                // "Midnight" sessions
                 if ($sTime->isLater($eTime))
                 {
+                    // Assume input of 22:00-02:00
+                    // Match sessions with START time that is >= to start time input OR <= end time input
+                    // Matches [22:30-23:30, 22:30-01:30, 22:30-03:00] OR [00:30-01:30, 00:30-3:00]
                     $this->_sessSql .= ' ((TIME(s.start) >= TIME(\''.$start.'\') OR TIME(s.start) <= TIME(\''.$end.'\')) ';
+                    // Match sessions with END time >= start time input or <= end time input
+                    // Matches [20:00-23:30] OR [20:00-01:30]
                     $this->_sessSql .= ' OR (TIME(s.end) >= TIME(\''.$start.'\') OR TIME(s.end) <= TIME(\''.$end.'\')) ';
-                    $this->_sessSql .= ' OR (TIME(s.start) < TIME(\''.$start.'\') AND TIME(s.end) > TIME(\''.$end.'\')) ';
+                    // Match sessions with START time < start time input AND END time > end time input, ONLY when the session spans different days
+                    // Matches 20:00-03:00
+                    // NOTE: Sessions that are longer than 24 hours are accounted for later in this script
+                    $this->_sessSql .= ' OR (DATE(s.start) != DATE(s.end) AND TIME(s.start) < TIME(\''.$start.'\') AND TIME(s.end) > TIME(\''.$end.'\')) ';
                 }
                 else
                 {
@@ -215,7 +223,7 @@ class QueryModel
                     $this->_sessSql .= ' OR TIME(s.end) BETWEEN TIME(\''.$start.'\') AND TIME(\''.$end.'\')) ';
                     $this->_sessSql .= ' OR (TIME(s.start) < TIME(\''.$start.'\') AND TIME(s.end) > TIME(\''.$end.'\')) ';
                 }
-                
+
             }
             else if (isset($params['sTimeH']))
             {
@@ -227,17 +235,17 @@ class QueryModel
             {
                 $end = $params['eTimeH'].':'.$params['eTimeM'].':59';
                 $this->_sessSql .= ' (TIME(s.start) <= TIME(\''.$end.'\') ';
-                
+
                 if (isset($params['eDate']))
                 {
                     $this->_sessSql .= ' OR (TIME(s.end) <= TIME(\''.$end.'\') AND DATE(s.end) <= DATE(\''.$params['eDate'].'\')) ';
                 }
-                else 
+                else
                 {
                     $this->_sessSql .= ' OR TIME(s.end) <= TIME(\''.$end.'\') ';
                 }
             }
-            
+
             // If a session spans >= 24hr period then it qualifies for any time constraint
             $this->_sessSql .= ' OR (TIMEDIFF(s.end, s.start) >= TIME(\'24:00:00\'))) ';
         }
@@ -250,30 +258,30 @@ class QueryModel
         }
 
         $this->_sessSql .= ' ORDER BY s.start ASC, s.id ASC ';
-        
+
         $sessQueryStmt = $this->_db->query($this->_sessSql);
 
         if ($sessQueryStmt->rowCount() > 0)
         {
             $this->_sessCount = $sessQueryStmt->rowCount();
-            
+
             // Get total number of counts
-            $this->_countsSql = 'SELECT COUNT(c.id) 
-                    FROM session s, 
-                    count c LEFT JOIN count_activity_join caj ON c.id = caj.fk_count 
+            $this->_countsSql = 'SELECT COUNT(c.id)
+                    FROM session s,
+                    count c LEFT JOIN count_activity_join caj ON c.id = caj.fk_count
                     WHERE s.deleted = false AND c.fk_session = s.id AND s.fk_initiative = '.$this->_initId.' AND '
                     .' s.id IN (';
-                    
+
             $sessIds = '';
             while($row = $sessQueryStmt->fetch())
             {
-                $sessIds .= $row['id'].', '; 
+                $sessIds .= $row['id'].', ';
             }
             $this->_countsSql .= substr($sessIds, 0, -2) . ') ';
 
             // FIXME: This is expensive, can we use just one or two queries?
             $this->_rowCount = $this->_db->fetchOne($this->_countsSql);
-            
+
             if ($this->_rowCount > ($params['offset'] + $params['limit']))
             {
                 $this->_hasMore = true;
@@ -282,18 +290,18 @@ class QueryModel
             {
                 $this->_hasMore = false;
             }
-            
-            // SQL to pull counts of returned session IDs 
-            $this->_countsSql = 'SELECT s.id as sid, s.start, s.end, c.id as cid, c.number as cnum, caj.fk_activity as act, c.fk_location as loc, c.occurrence as oc 
-                    FROM session s, 
-                    count c LEFT JOIN count_activity_join caj ON c.id = caj.fk_count 
+
+            // SQL to pull counts of returned session IDs
+            $this->_countsSql = 'SELECT s.id as sid, s.start, s.end, c.id as cid, c.number as cnum, caj.fk_activity as act, c.fk_location as loc, c.occurrence as oc
+                    FROM session s,
+                    count c LEFT JOIN count_activity_join caj ON c.id = caj.fk_count
                     WHERE s.deleted = false AND c.fk_session = s.id AND s.fk_initiative = '.$this->_initId.' AND '
                     .' s.id IN (';
-            
-            $this->_countsSql .= substr($sessIds, 0, -2) . ') '; 
+
+            $this->_countsSql .= substr($sessIds, 0, -2) . ') ';
             $this->_countsSql .= ' ORDER BY '.$this->_formats[$params['format']];
             $this->_countsSql .= ' LIMIT '.$params['offset'].', '.$params['limit'].' ';
-            
+
             $this->_queryStmt = $this->_db->query($this->_countsSql);
         }
         else
@@ -301,17 +309,17 @@ class QueryModel
             $this->_rowCount = 0;
         }
     }
-    
-    
+
+
     public function byCounts($params)
     {
         $countSelect = 'SELECT COUNT(c.id) ';
         $dataSelect = 'SELECT s.id as sid, s.start, s.end, c.id as cid, c.number as cnum, caj.fk_activity as act, c.fk_location as loc, c.occurrence as oc ';
-        
-        $this->_countsSql = ' FROM session s, 
-                count c LEFT JOIN count_activity_join caj ON c.id = caj.fk_count 
+
+        $this->_countsSql = ' FROM session s,
+                count c LEFT JOIN count_activity_join caj ON c.id = caj.fk_count
                 WHERE s.deleted = false AND c.fk_session = s.id AND s.fk_initiative = '.$this->_initId.' ';
-        
+
         // Date filtration
         if (isset($params['sDate']))
         {
@@ -329,7 +337,7 @@ class QueryModel
         {
             $this->_countsSql .= ' AND (DATE(c.occurrence) < DATE(\''.$params['eDate'].'\')) ';
         }
-        
+
         // Time filtration
         if (isset($params['sTimeH']))
         {
@@ -337,12 +345,12 @@ class QueryModel
             if (isset($params['eTimeH']))
             {
                 $end = $params['eTimeH'].':'.$params['eTimeM'].':59';
-                
+
                 $sTime = new Zend_Date();
                 $sTime->set($start, Zend_Date::TIMES);
                 $eTime = new Zend_Date();
-                $eTime->set($end, Zend_Date::TIMES);                
-                
+                $eTime->set($end, Zend_Date::TIMES);
+
                 if ($sTime->isLater($eTime))
                 {
                     $this->_countsSql .= ' AND (TIME(c.occurrence) >= TIME(\''.$start.'\') OR TIME(c.occurrence) <= TIME(\''.$end.'\')) ';
@@ -361,8 +369,8 @@ class QueryModel
         {
             $end = $params['eTimeH'].':'.$params['eTimeM'].':59';
             $this->_countsSql .= ' AND (TIME(c.occurrence) <= TIME(\''.$end.'\')) ';
-        }        
-        
+        }
+
         // FIXME: This query is expensive...can we do all of this with a single query?
         $this->_rowCount = $this->_db->fetchOne($countSelect.$this->_countsSql);
 
@@ -373,18 +381,18 @@ class QueryModel
         else
         {
             $this->_hasMore = false;
-        }        
-        
+        }
+
         $this->_countsSql = $dataSelect.$this->_countsSql;
         $this->_countsSql .= ' ORDER BY '.$this->_formats[$params['format']];
         $this->_countsSql .= ' LIMIT '.$params['offset'].', '.$params['limit'].' ';
-        
+
         $this->_queryStmt = $this->_db->query($this->_countsSql);
     }
-    
-    
+
+
     // ------ PRIVATE FUNCTIONS ------
-    
+
     private function walkLocTree($parentId)
     {
         $select = $this->_db->select()
@@ -392,7 +400,7 @@ class QueryModel
             ->where('enabled = true AND fk_parent = ' . $parentId)
             ->order('rank ASC');
         $nodes = $select->query()->fetchAll();
-        
+
         foreach($nodes as $node)
         {
             // Cast numerical string(s) into type int
@@ -403,16 +411,16 @@ class QueryModel
                     $node[$key] = (int)$val;
                 }
             }
-            
+
             $this->_initLocs[] = $node;
             $this->walkLocTree($node['id']);
         }
     }
-    
-    
-    
+
+
+
     // ------ STATIC FUNCTIONS ------
-        
+
     static function getInitiatives()
     {
         $db = Globals::getDBConn();
@@ -425,7 +433,7 @@ class QueryModel
             ->group('i.id')
             ->order(array('i.title ASC'));
         $initiatives = $select->query()->fetchAll();
-        
+
         // This block is to cast string id into an int
         $parentArray = array();
         foreach ($initiatives as $init)
@@ -437,8 +445,8 @@ class QueryModel
             }
             $parentArray[] = $array;
         }
-        
+
         return $parentArray;
     }
-    
+
 }
