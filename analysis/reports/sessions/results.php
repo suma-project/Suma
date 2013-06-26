@@ -1,10 +1,10 @@
 <?php
 
 require_once '../../lib/php/ChromePhp.php';
-require_once '../../lib/php/Sessions.php';
+require_once '../../lib/php/SessionsData.php';
 
 // Initialize class and retrieve data
-$data = new Sessions();
+$data = new SessionsData();
 $sessionData = $data->getData($_GET);
 
 // Return JSON to requester

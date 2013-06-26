@@ -11,7 +11,7 @@ require_once '../../lib/php/SumaGump.php';
  *
  * @author  Bret Davidson <bret_davidson@ncsu.edu>
  */
-class Sessions
+class SessionsData
 {
     /**
      * Placeholder for returned data.
