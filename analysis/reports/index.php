@@ -47,7 +47,7 @@
         <div class="row">
             <div class="span6">
                 <div class="row">
-                    <div class="span5"><h3><a href="line_chart_d3">Time Series</a></h3></div>
+                    <div class="span5"><h3><a href="time-series">Time Series</a></h3></div>
                     <div class="span1"><img class="head-icon" src="../lib/img/stats.png" /></div>
                 </div>
                 <p>Explore your data with an interactive set of tools, including a graph of usage over time, a chart comparing activities and location usage, and tabular summaries of important data points. Export raw data or summary statistics to spreadsheets and export images for use in presentations or documents. This tool allows the user to make detailed choices about what data to analyze by choosing a date range and allowing the user to limit data to a certain part of the day, view weekday versus weekend trends, and select the exact locations or activities that they are interested in viewing. The Time Series is Suma's main data exploration tool.</p>
