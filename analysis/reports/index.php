@@ -28,7 +28,6 @@
   </head>
 
   <body>
-
     <div class="navbar navbar-fixed-top">
         <div class="navbar-inner">
             <div class="container">
@@ -45,7 +44,6 @@
     </div>
 
     <div class="container">
-
         <div class="row">
             <div class="span6">
                 <div class="row">
@@ -59,10 +57,18 @@
                     <div class="span5"><h3><a href="calendar">Calendar Heat Map</a></h3></div>
                     <div class="span1"><img class="head-icon" src="../lib/img/pie_chart.png" /></div>
                 </div>
-                <p>This chart shows a heat map of usage data over time. Instead of surface area representing physical space as it typically does in a heat map, this visualization maps the days of the month and months of the year in a set of small multiples to help you quickly pull out patterns of high and low usage over the course of the year or semester. Choose a date range, limit data to a certain part of the day, view weekday versus weekend trends, and select the exact locations or activities that they are interested in viewing. Export visualization as an image for presentations or reports.</p>
+                <p>This chart shows a heat map of usage data over time. Instead of surface area representing physical space as it typically does in a heat map, this visualization maps the days of the month and months of the year in a set of small multiples to help you quickly pull out patterns of high and low usage over the course of the year or semester. Choose a date range, limit data to a certain part of the day, view weekday versus weekend trends, and select the exact locations or activities that they are interested in viewing.</p>
             </div>
         </div>
-
+        <div class="row">
+            <div class="span6">
+                <div class="row">
+                    <div class="span5"><h3><a href="sessions">Sessions Summary</a></h3></div>
+                    <div class="span1"><img class="head-icon" src="../lib/img/notes.png" /></div>
+                </div>
+                <p>A report for quickly examining sessions, the Sessions Summary displays a table of sessions based on initiative, date and time filters.</p>
+            </div>
+        </div>
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
