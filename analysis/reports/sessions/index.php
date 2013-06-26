@@ -64,8 +64,6 @@ $initDropDown .= '</select>';
             </div>
         </div>
 
-        <div id="loadingWidget"></div>
-
         <div class="container">
             <div class="row">
                 <div id="no-data" class="alert alert-error alert-block">
@@ -130,6 +128,7 @@ $initDropDown .= '</select>';
                 </fieldset>
                 </form>
             </div>
+            <div id="loadingWidget" class="row"></div>
             <div id="sessions-data" class="row"></div>
         </div>
 
