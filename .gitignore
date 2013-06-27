@@ -8,4 +8,5 @@ tmp/**/*
 
 # Configuration Files
 service/config/config.ini
+analysis/lib/php/ServerIOConfig.php
 analysis/reports/nightly/nightly_config.php
