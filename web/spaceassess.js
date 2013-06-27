@@ -1,9 +1,9 @@
 var deviceName = 'iPad';
 var appVersion = '0.7.5';
 
-var baseInitUrl = "/sumaserver/clientinit/";
-var initiativeUrl = "/sumaserver/clientinit/load/initiative/";
-var syncUrl = "/sumaserver/sync";
+// var baseInitUrl = "/sumaserver/clientinit/";
+// var initiativeUrl = "/sumaserver/clientinit/load/initiative/";
+// var syncUrl = "/sumaserver/sync";
 
 var startDialogVisible = true;
 var currentlySyncing = 0;
@@ -681,7 +681,7 @@ $(function() {
                             childSel.append('<li class="loc_item"><a id="loc' + loc.id + '" href="' + loc.id + '">' + loc.name + '    <span class="locCount"></span></a></li>');
                             annotateLoc(loc);
                         });
-                
+
                         countIndicator.val('Count');
                         $("#loadingScreen").dialog('close');
                     } else {
