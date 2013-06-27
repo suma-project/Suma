@@ -7,4 +7,5 @@ tmp/**/*
 ._*
 
 # Configuration Files
+service/config/config.ini
 analysis/reports/nightly/nightly_config.php
