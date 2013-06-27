@@ -23,7 +23,7 @@ class ServerIO
      * @var string
      * @access  private
      */
-    private $_baseUrl = 'http://YOUR_SERVER/sumaserver/query';
+    private $_baseUrl;
     /**
      * Parameters to append to $_baseUrl
      *
@@ -45,6 +45,13 @@ class ServerIO
      * @access  private
      */
     private $_offset = NULL;
+    /**
+     * Constructor to set url configuration
+     */
+    function __construct() {
+        require_once "../../lib/php/ServerIOConfig.php";
+        $this->_baseUrl = $ServerIOBaseUrl;
+    }
     /**
      * Builds full URL and returns result of sendRequest
      *
