@@ -5,3 +5,6 @@
 tmp/**/*
 .DS_Store
 ._*
+
+# Configuration Files
+analysis/reports/nightly/nightly_config.php
