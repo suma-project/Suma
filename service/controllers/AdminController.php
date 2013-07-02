@@ -79,13 +79,13 @@ class AdminController extends BaseController
             } catch (Exception $e){
                 $this->view->error = $e->getMessage();
                 Globals::getLog()->err('ADMIN load initiative error: '.$this->view->error);
-                $this->render('error');
+                $this->render('error-xhr');
                 return false;
             }
         } else {
             $this->view->error = 'Invalid initiative ID';
             Globals::getLog()->err('ADMIN load initiative error: '.$this->view->error);
-            $this->render('error');
+            $this->render('error-xhr');
             return false;
         }
     }
@@ -116,13 +116,13 @@ class AdminController extends BaseController
             } catch (Exception $e){
                 $this->view->error = $e->getMessage();
                 Globals::getLog()->err('ADMIN create initiative error: '.$this->view->error);
-                $this->render('error');
+                $this->render('error-xhr');
                 return false;
             }
         } else {
             $this->view->error = 'Title must not be empty and location root ID must be numeric';
             Globals::getLog()->err('ADMIN create initiative error: '.$this->view->error);
-            $this->render('error');
+            $this->render('error-xhr');
             return false;
         }
     }
@@ -144,7 +144,7 @@ class AdminController extends BaseController
             } catch (Exception $e) {
                 $this->view->error = $e->getMessage();
                 Globals::getLog()->err('ADMIN update initiative error: '.$this->view->error);
-                $this->render('error');
+                $this->render('error-xhr');
             }
         }
     }
@@ -161,7 +161,7 @@ class AdminController extends BaseController
             } catch (Exception $e) {
                 $this->view->error = $e->getMessage();
                 Globals::getLog()->err('ADMIN enable initiative error: '.$this->view->error);
-                $this->render('error');
+                $this->render('error-xhr');
             }
         }
     }
@@ -178,7 +178,7 @@ class AdminController extends BaseController
             } catch (Exception $e) {
                 $this->view->error = $e->getMessage();
                 Globals::getLog()->err('ADMIN disable initiative error: '.$this->view->error);
-                $this->render('error');
+                $this->render('error-xhr');
             }
         }
     }
@@ -196,7 +196,7 @@ class AdminController extends BaseController
             } catch (Exception $e) {
                 $this->view->error = $e->getMessage();
                 Globals::getLog()->err('ADMIN set initiative location tree error: '.$this->view->error);
-                $this->render('error');
+                $this->render('error-xhr');
             }
         }
     }
@@ -210,7 +210,7 @@ class AdminController extends BaseController
         {
             $this->view->error = 'Problem with activities or init ID';
             Globals::getLog()->err('ADMIN update activities error: '.$this->view->error);
-            $this->render('error');
+            $this->render('error-xhr');
             return false;
         }
 
@@ -219,7 +219,7 @@ class AdminController extends BaseController
         } catch (Exception $e) {
             $this->view->error = 'Error updating activities: ' . $e->getMessage();
             Globals::getLog()->err('ADMIN update activities error: '.$this->view->error);
-            $this->render('error');
+            $this->render('error-xhr');
             return false;
         }
         return true;
@@ -237,12 +237,12 @@ class AdminController extends BaseController
             } catch (Exception $e) {
                 $this->view->error = $e->getMessage();
                 Globals::getLog()->err('ADMIN enable activity error: '.$this->view->error);
-                $this->render('error');
+                $this->render('error-xhr');
             }
         } else {
             $this->view->error = 'Invalid activity ID';
             Globals::getLog()->err('ADMIN enable activity error: '.$this->view->error);
-            $this->render('error');
+            $this->render('error-xhr');
             return false;
         }    }
 
@@ -258,12 +258,12 @@ class AdminController extends BaseController
             } catch (Exception $e) {
                 $this->view->error = $e->getMessage();
                 Globals::getLog()->err('ADMIN disable activity error: '.$this->view->error);
-                $this->render('error');
+                $this->render('error-xhr');
             }
         } else {
             $this->view->error = 'Invalid activity ID';
             Globals::getLog()->err('ADMIN disable activity error: '.$this->view->error);
-            $this->render('error');
+            $this->render('error-xhr');
             return false;
         }    }
 
@@ -283,12 +283,12 @@ class AdminController extends BaseController
             } catch (Exception $e) {
                 $this->view->error = $e->getMessage();
                 Globals::getLog()->err('ADMIN load location view error: '.$this->view->error);
-                $this->render('error');
+                $this->render('error-xhr');
             }
         } else {
             $this->view->error = 'Invalid location ID';
             Globals::getLog()->err('ADMIN load location error: '.$this->view->error);
-            $this->render('error');
+            $this->render('error-xhr');
             return false;
         }    }
 
@@ -312,7 +312,7 @@ class AdminController extends BaseController
             } catch (Exception $e) {
                 $this->view->error = $e->getMessage();
                 Globals::getLog()->err('ADMIN create location tree error: '.$this->view->error);
-                $this->render('error');
+                $this->render('error-xhr');
                 return false;
             }
             // TODO: see if this fails...
@@ -320,7 +320,7 @@ class AdminController extends BaseController
         } else {
             $this->view->error = 'Title must not be empty';
             Globals::getLog()->err('ADMIN create location tree error: '.$this->view->error);
-            $this->render('error');
+            $this->render('error-xhr');
             return false;
         }
     }
@@ -333,7 +333,7 @@ class AdminController extends BaseController
         {
             $this->view->error = 'Problem parsing tree';
             Globals::getLog()->err('ADMIN update location tree error: '.$this->view->error);
-            $this->render('error');
+            $this->render('error-xhr');
             return false;
         }
 
@@ -342,7 +342,7 @@ class AdminController extends BaseController
         } catch (Exception $e) {
             $this->view->error = $e->getMessage();
             Globals::getLog()->err('ADMIN update location tree error: '.$this->view->error);
-            $this->render('error');
+            $this->render('error-xhr');
             return false;
         }
 
