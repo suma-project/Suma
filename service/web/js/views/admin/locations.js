@@ -128,7 +128,8 @@ function loadLoc(locID) {
             revert: 250,
             tabSize: 25,
             tolerance: 'pointer',
-            toleranceElement: '> div'
+            toleranceElement: '> div',
+            doNotClear: true
         });
     });
 }
