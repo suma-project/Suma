@@ -11,10 +11,10 @@
                 target;
 
             opts = {
-                lines: 13, // The number of lines to draw
-                length: 20, // The length of each line
-                width: 10, // The line thickness
-                radius: 30, // The radius of the inner circle
+                lines: 11, // The number of lines to draw
+                length: 15, // The length of each line
+                width: 6, // The line thickness
+                radius: 12, // The radius of the inner circle
                 corners: 1, // Corner roundness (0..1)
                 rotate: 0, // The rotation offset
                 direction: 1, // 1: clockwise, -1: counterclockwise
@@ -84,15 +84,13 @@
                 data: input,
                 dataType: 'json',
                 beforeSend: function () {
-                    $('#loadingWidget').show();
+                    $('#loadingWidget').fadeIn(200);
                     $('#sessions-data').hide();
                     $('.alert').hide();
                 },
-                success: function () {
-                    $('#sessions-data').show();
-                },
                 complete: function () {
-                    $('#loadingWidget').hide();
+                    $('#loadingWidget').fadeOut(400);
+                    $('#sessions-data').show();
                 }
             });
         },
