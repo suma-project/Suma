@@ -152,85 +152,92 @@ class ActivityModel
             throw new Exception('Invalid data structure');
         }
 
-        // TODO: Fail more gracefully?
-        foreach($activities as $actGroupKey => $activityGroup) {
+        try {
+            $db = Globals::getDBConn();
+            $db->beginTransaction();
+            foreach($activities as $actGroupKey => $activityGroup) {
 
-            if (!empty($activityGroup['title']) && !empty($activityGroup['id'])
-                && isset($activityGroup['desc'])  && (isset($activityGroup['required']) && is_bool($activityGroup['required']))
-                     && (isset($activityGroup['allowMulti']) && is_bool($activityGroup['allowMulti'])))
-            {
-                $actGroupData = Array(
-                    'title'    => $activityGroup['title'],
-                    'desc'     => $activityGroup['desc'],
-                    'rank'     => $actGroupKey,
-                    'required' => $activityGroup['required'],
-                    'allowMulti' => $activityGroup['allowMulti']
-                    );
-
-                if (is_numeric($activityGroup['id']))
+                if (!empty($activityGroup['title']) && !empty($activityGroup['id'])
+                    && isset($activityGroup['desc'])  && (isset($activityGroup['required']) && is_bool($activityGroup['required']))
+                    && (isset($activityGroup['allowMulti']) && is_bool($activityGroup['allowMulti'])))
                 {
-                    $activityGroupObj = new ActivityGroupModel($activityGroup['id']);
+                    $actGroupData = Array(
+                        'title'    => $activityGroup['title'],
+                        'desc'     => $activityGroup['desc'],
+                        'rank'     => $actGroupKey,
+                        'required' => $activityGroup['required'],
+                        'allowMulti' => $activityGroup['allowMulti']
+                        );
 
-                    if (!$activityGroupObj) {
-                        throw new Exception('Failed to retrieve activity group');
-                    }
-
-                    $activityGroupObj->update($actGroupData);
-                    $activityGroupID = $activityGroupObj->getMetadata('id');
-                } else if ('new-act-group' === $activityGroup['id'])
-                {
-                    $actGroupData['init'] = $initID;
-                    $activityGroupID = ActivityGroupModel::create($actGroupData);
-
-                    if (false === $activityGroupID) {
-                        throw new Exception('Failed to create activity group');
-                    }
-                } else {
-                    throw new Exception('Invalid activity group ID');
-                }
-
-                foreach($activityGroup[activities] as $actKey => $activity)
-                {
-                    if (!empty($activity['title']) && !empty($activity['id'])
-                        && isset($activity['desc'])
-                        && (isset($activity['enabled']) && is_bool($activity['enabled'])))
+                    if (is_numeric($activityGroup['id']))
                     {
-                        $actData = Array(
-                            'title'   => $activity['title'],
-                            'desc'    => $activity['desc'],
-                            'enabled' => $activity['enabled'],
-                            'group'   => $activityGroupID,
-                            'rank'    => $actKey
-                            );
+                        $activityGroupObj = new ActivityGroupModel($activityGroup['id']);
 
+                        if (!$activityGroupObj) {
+                            throw new Exception('Failed to retrieve activity group');
+                        }
 
-                        if (is_numeric($activity['id']))
-                        {
-                            $activityObj = new ActivityModel($activity['id']);
+                        $activityGroupObj->update($actGroupData);
+                        $activityGroupID = $activityGroupObj->getMetadata('id');
+                    } else if ('new-act-group' === $activityGroup['id'])
+                    {
+                        $actGroupData['init'] = $initID;
+                        $activityGroupID = ActivityGroupModel::create($actGroupData);
 
-                            if (!$activityObj) {
-                                throw new Exception('Failed to retrieve activity');
-                            }
-
-                            $activityObj->update($actData);
-                        } else if ('new-act' === $activity['id'])
-                        {
-                            //$actData['init'] = $initID;
-                            $activityID = self::create($actData);
-
-                            if (false === $activityID) {
-                                throw new Exception('Failed to create activity');
-                            }
-                        } else {
-                            throw new Exception('Invalid activity ID');
+                        if (false === $activityGroupID) {
+                            throw new Exception('Failed to create activity group');
                         }
                     } else {
-                        throw new Exception('Missing required activity  fields (title, ID, enabled, or desc)');
+                        throw new Exception('Invalid activity group ID');
                     }
+
+                    foreach($activityGroup['activities'] as $actKey => $activity)
+                    {
+                        if (!empty($activity['title']) && !empty($activity['id'])
+                            && isset($activity['desc'])
+                            && (isset($activity['enabled']) && is_bool($activity['enabled'])))
+                        {
+                            $actData = Array(
+                                'title'   => $activity['title'],
+                                'desc'    => $activity['desc'],
+                                'enabled' => $activity['enabled'],
+                                'group'   => $activityGroupID,
+                                'rank'    => $actKey
+                                );
+
+
+                            if (is_numeric($activity['id']))
+                            {
+                                $activityObj = new ActivityModel($activity['id']);
+
+                                if (!$activityObj) {
+                                    throw new Exception('Failed to retrieve activity');
+                                }
+
+                                $activityObj->update($actData);
+                            } else if ('new-act' === $activity['id'])
+                            {
+                            //$actData['init'] = $initID;
+                                $activityID = self::create($actData);
+
+                                if (false === $activityID) {
+                                    throw new Exception('Failed to create activity');
+                                }
+                            } else {
+                                throw new Exception('Invalid activity ID');
+                            }
+                        } else {
+                            throw new Exception('Missing required activity fields (title, ID, enabled, or desc)');
+                        }
+                    }
+                } else {
+                    throw new Exception('Missing required activity group fields (title, ID, required, allowMulti, or desc)');
                 }
-            } else {
-                throw new Exception('Missing required activity group fields (title, ID, required, allowMulti, or desc)');
             }
+            $db->commit();
+        } catch (Exception $e) {
+            $db->rollBack();
+            throw $e;
         }
         return true;
     }

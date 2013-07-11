@@ -340,10 +340,13 @@ class AdminController extends BaseController
             $this->render('error-xhr');
             return false;
         }
-
         try {
+            $db = Globals::getDBConn();
+            $db->beginTransaction();
             LocationModel::updateLocTree($locTree);
+            $db->commit();
         } catch (Exception $e) {
+            $db->rollBack();
             $this->view->error = $e->getMessage();
             Globals::getLog()->err('ADMIN update location tree error: '.$this->view->error);
             $this->render('error-xhr');
