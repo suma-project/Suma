@@ -269,7 +269,11 @@ class AdminController extends BaseController
 
     public function locationsAction()
     {
-        $this->view->roots = LocationModel::getLocTreeRoots();
+        try {
+            $this->view->roots = LocationModel::getLocTreeRoots();
+        } catch (Exception $e) {
+            $this->render('error');
+        }
     }
 
     public function locationloadAction()

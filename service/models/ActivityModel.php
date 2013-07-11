@@ -138,10 +138,14 @@ class ActivityModel
                 return $actId;
             }
             else {
-                Globals::getLog()->warn('DUPLICATE ACTIVITY CREATION DENIED - title: '.$data['title'].', group: '.$data['group']);
+                $errStr = 'DUPLICATE ACTIVITY CREATION DENIED - title: '.$data['title'].', group: '.$data['group'];
+                Globals::getLog()->warn($errStr);
+                throw new Exception($errStr);
             }
         } else {
-                Globals::getLog()->warn('MINIMUM METADATA FOR NEW ACTIVITY (ACTIVITY GROUP AND TITLE) not provided');
+            $errStr = 'MINIMUM METADATA FOR NEW ACTIVITY (ACTIVITY GROUP AND TITLE) not provided';
+            Globals::getLog()->warn($errStr);
+            throw new Exception($errStr);
         }
 
         return FALSE;
