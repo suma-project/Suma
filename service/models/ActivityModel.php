@@ -69,16 +69,11 @@ class ActivityModel
 
     public function update($data)
     {
-        $hash = array('title'             =>  isset($data['enabled']) ? $data['title'] : $this->getMetadata('title'),
-                      'enabled'           =>  isset($data['enabled']) ? $data['enabled'] : $this->getMetadata('enabled'),
+        $hash = array('title'             =>  isset($data['title']) ? $data['title'] : $this->getMetadata('title'),
+                      'enabled'           =>  (isset($data['enabled']) && is_bool($data['enabled'])) ? $data['enabled'] : $this->getMetadata('enabled'),
                       'fk_activity_group' =>  isset($data['group']) ? $data['group'] : $this->getMetadata('fk_activity_group'),
                       'description'       =>  isset($data['desc']) ? $data['desc'] : $this->getMetadata('desc'),
                       'rank'              =>  isset($data['rank']) ? $data['rank'] : $this->getMetadata('rank'));
-
-        if (isset($data['enabled']) && is_bool($data['enabled']))
-        {
-            $hash['enabled'] = $data['enabled'];
-        }
 
         $this->_db->update('activity', $hash, 'id = '.$this->_id);
         $this->jettisonMetadata();

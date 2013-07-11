@@ -115,7 +115,7 @@ class ActivityGroupModel
     {
         $hash = array('title'        =>  $data['title'],
                       'rank'         =>  $data['rank'],
-                      'description'  =>  $data['descr'],
+                      'description'  =>  $data['desc'],
                       'required'     =>  $data['required'],
                       'allowMulti'   =>  $data['allowMulti']);
 
