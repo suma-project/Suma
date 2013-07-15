@@ -11,4 +11,4 @@ service/config/config.ini
 service/web/config/indexConfig.php
 web/spaceassessConfig.js
 analysis/config/ServerIOConfig.php
-analysis/config/nightly_config.php
+analysis/config/nightlyConfig.php

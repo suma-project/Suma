@@ -1,7 +1,7 @@
 <?php
 
 require_once '../../lib/php/NightlyData.php';
-require_once '../../config/nightly_config.php';
+require_once '../../config/nightlyConfig.php';
 
 // Initialize class and retrieve data
 try
