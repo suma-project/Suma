@@ -49,7 +49,7 @@ class ServerIO
      * Constructor to set url configuration
      */
     function __construct() {
-        require_once "../../lib/php/ServerIOConfig.php";
+        require_once "../../config/ServerIOConfig.php";
         $this->_baseUrl = $ServerIOBaseUrl;
     }
     /**

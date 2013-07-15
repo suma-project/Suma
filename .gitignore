@@ -10,5 +10,5 @@ tmp/**/*
 service/config/config.ini
 service/web/config/indexConfig.php
 web/spaceassessConfig.js
-analysis/lib/php/ServerIOConfig.php
+analysis/config/ServerIOConfig.php
 analysis/reports/nightly/nightly_config.php
