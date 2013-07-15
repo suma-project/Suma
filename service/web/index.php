@@ -1,7 +1,7 @@
 <?php
 
 // Config
-require_once "../config/indexConfig.php";
+require_once "indexConfig.php";
 
 // Zend Framework CLass Loader
 require_once "Zend/Loader.php";

@@ -8,7 +8,7 @@ tmp/**/*
 
 # Configuration Files
 service/config/config.ini
-service/config/indexConfig.php
+service/web/indexConfig.php
 web/spaceassessConfig.js
 analysis/lib/php/ServerIOConfig.php
 analysis/reports/nightly/nightly_config.php
