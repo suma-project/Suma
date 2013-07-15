@@ -22,7 +22,7 @@ API options
 
 * To use the analysis helper library, just add this to the start of your report code:
 
-    `require_once('.../../lib/Server_IO.php')`
+    `require_once('../../lib/Server_IO.php')`
 
 * The following methods are provided by Server_IO:
   * `Server_IO::getData($params, $queryType)`
