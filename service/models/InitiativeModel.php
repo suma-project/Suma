@@ -334,7 +334,7 @@ class InitiativeModel
             ->from('initiative');
             if ($filterDisabled)
             {
-                $select->where('enabled = true');
+                $select->where('enabled = true')->order('title ASC');
             }
             
         $rows = $select->query()->fetchAll();
