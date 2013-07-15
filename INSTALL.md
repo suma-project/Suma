@@ -106,6 +106,7 @@ If using a .htaccess place the file in the `/YOUR_WEB_DIR/sumaserver` directory 
     RewriteRule ^.*$ - [NC,L]
     RewriteRule ^.*$ index.php [NC,L]
 
+An example .htaccess file named can be found at `/YOUR_WEB_DIR/sumaserver/htaccess_example`. To use, copy the contents of this file to a new file named `/YOUR_WEB_DIR/sumarserver/.htaccess`.
 
 Database Setup
 ---------------
@@ -132,9 +133,9 @@ Now you have to run a database initialization script included in the suma downlo
 Suma Server Software Configuration
 -----------------------------------
 
-* index.php
+* indexConfig.php
 
-    You must set some path variables in the index.php file for the Suma server to function correctly. These are located at the top of the file in the `Config` section.
+    In the `/SUMA_SERVER_INSTALL_DIR/web/config/` directory, copy `indexConfig_example.php` to a new file `indexConfig.php`. You must set some path variables in the indexConfig.php file for the Suma server to function correctly.
 
     `$SUMA_SERVER_PATH` must be set to the `SUMA_SERVER_INSTALL_DIR` where the Suma server was installed earlier in these instructions (e.g. `/var/www/app/sumaserver`).
 
@@ -146,7 +147,7 @@ Suma Server Software Configuration
 
 * config.ini
 
-    In the `SUMA_SERVER_INSTALL_DIR/config/config.ini` file you must modify the following:
+    In the `SUMA_SERVER_INSTALL_DIR/config/` directory, copy `config_example.ini` to a new file `config.ini`. You must modify the following:
 
         sumaserver.db.host      = host location of your mysql database
         sumaserver.db.dbname    = suma mysql database name
@@ -160,29 +161,30 @@ Suma Server Software Configuration
 Suma Client Configuration
 --------------------------
 
-If the Suma server URL is anything other than `http://YOUR_HOST/sumaserver`, you will need to change the paths at the top of `YOUR_WEB_DIR/suma/web/spaceassess.js`.
+* spaceassessConfig.js
+
+    In the `YOUR_WEB_DIR/suma/web/config/` directory, copy `spaceassessConfig_example.js` to a new file `spaceassessConfig.js`. If the Suma server URL is anything other than `http://YOUR_HOST/sumaserver`, you will need to change the paths at the top of `YOUR_WEB_DIR/suma/web/config/spaceassessConfig.js`.
 
 
 Suma Analysis Tools Configuration
 ----------------------------------
 
-* In `YOUR_WEB_DIR/suma/analysis/lib/php/ServerIO.php` change:
+* ServerIOConfig.php
 
-        private $_baseUrl = 'http://YOUR_SERVER/sumaserver/query';
-
-to the URL for your Suma Query Server. If used a directory other than `sumaserver` in the "Suma Software Installation" section above, that should be reflected in this URL.
+    In the `YOUR_WEB_DIR/suma/analysis/config/` directory, copy `ServerIOConfig_example.php` to a new file `YOUR_WEB_DIR/suma/analysis/config/ServerIOConfig.php`.
+    Change `$ServerIOBaseUrl = 'http://YOUR_SERVER/sumaserver/query';` to the URL for your Suma Query Server. If you used a directory other than `sumaserver` in the "Suma Software Installation" section above, that should be reflected in this URL.
 
 * You can view the Suma analysis tools by visting `http://YOUR_SERVER/suma/analysis/reports`.
 
 * To enable the nightly summary report:
 
-    Copy the contents of `YOUR_WEB_DIR/suma/analysis/reports/nightly_config_example.php` to a new file named `YOUR_WEB_DIR/suma/analysis/reports/nightly_config.php`.
+    In the `YOUR_WEB_DIR/suma/analysis/config/` directory, copy the contents of `nightlyConfig_example.php` to a new file named `nightlyConfig.php`.
 
-    Edit the timezone, recipients, error_recipients, etc. variables in `YOUR_WEB_DIR/suma/analysis/reports/nightly_config.php` as appropriate.
+    Edit the timezone, recipients, error_recipients, etc. variables in `YOUR_WEB_DIR/suma/analysis/config/nightlyConfig.php` as needed.
 
-    Using cron, or some other scheduler, schedule a task to run the `YOUR_WEB_DIR/suma/analysis/reports/nightly_email.php` script as desired.
+    Using cron, or some other scheduler, schedule a task to run the `YOUR_WEB_DIR/suma/analysis/reports/nightly/nightlyEmail.php` script as desired.
 
-    Alternatively, `YOUR_WEB_DIR/suma/analysis/reports/nightly.php` may be run from the command line for quick reporting through stdout.
+    Alternatively, `YOUR_WEB_DIR/suma/analysis/reports/nightly/nightly.php` may be run from the command line for quick reporting through stdout.
 
 Other Things You Can Configure
 -------------------------------
