@@ -1,5 +1,10 @@
 <?php
 
+/*
+    Copy the contents of this file to a new file named `nightlyConfig.php`. In the new file, edit
+    the timezone, recipients, error_recipients, etc. as needed.
+ */
+
 // Default Timezone. See: http://us3.php.net/manual/en/timezones.php
 $DEFAULT_TIMEZONE = "America/New_York";
 date_default_timezone_set($DEFAULT_TIMEZONE);
