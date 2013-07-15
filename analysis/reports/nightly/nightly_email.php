@@ -1,6 +1,6 @@
 <?php
 
-require_once 'nightly_config.php';
+require_once '../../config/nightly_config.php';
 
 $data = `php nightly.php`;
 $errorCheck = explode(" ", $data);
