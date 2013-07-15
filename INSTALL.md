@@ -106,7 +106,7 @@ If using a .htaccess place the file in the `/YOUR_WEB_DIR/sumaserver` directory 
     RewriteRule ^.*$ - [NC,L]
     RewriteRule ^.*$ index.php [NC,L]
 
-An example .htaccess file named can be found at `/YOUR_WEB_DIR/sumaserver/htaccess_example`. To use, copy the contents of this file to a new file named `/YOUR_WEB_DIR/sumarserver/.htaccess`.
+An example .htaccess file named can be found at `/YOUR_WEB_DIR/sumaserver/htaccess_example`. To use, copy the contents of this file to a new file named `/YOUR_WEB_DIR/sumaserver/.htaccess`.
 
 Database Setup
 ---------------
