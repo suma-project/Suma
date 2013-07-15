@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 Zend_Loader::loadClass('Zend_Db');
 Zend_Loader::loadClass('Zend_Config_Ini');
@@ -12,9 +12,9 @@ class Globals
     private static $_log;
     private static $_db;
     private static $_qsDbLimit;
-    
+
     static function getDBConn()
-    {    
+    {
         if (self::$_db != null)
         {
             return self::$_db;
@@ -30,11 +30,11 @@ class Globals
             ));
             self::$_db->query('SET NAMES utf8');
             self::$_db->setFetchMode(Zend_Db::FETCH_ASSOC);
-            
+
             return self::$_db;
         }
     }
-    
+
     static public function getLog()
     {
         if (self::$_log != null)
@@ -45,7 +45,7 @@ class Globals
         {
             $path = self::getConfig()->sumaserver->log->path;
             $name = self::getConfig()->sumaserver->log->name;
-            
+
             if (is_writable($path . $name) || (!file_exists($path . $name) && is_writable($path)))
             {
                 $writer = new Zend_Log_Writer_Stream($path . $name);
@@ -62,30 +62,30 @@ class Globals
             }
         }
     }
-    
+
     static function getQsDbLimit()
     {
         if (self::$_qsDbLimit == null)
         {
             self::$_qsDbLimit = self::getConfig()->queryserver->db->limit;
         }
-        
+
         return self::$_qsDbLimit;
     }
-    
+
     static function getConfig()
     {
         if (self::$_config != null)
         {
             return self::$_config;
         }
-        else 
+        else
         {
             $file = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'config.ini';
             self::$_config = new Zend_Config_Ini($file, 'production');
             return self::$_config;
         }
     }
-    
-    
+
+
 }
