@@ -1,7 +1,17 @@
 <?php
 
 // Config
-require_once "config/indexConfig.php";
+require_once "lib/spyc/Spyc.php";
+
+$config = Spyc::YAMLLoad('config/config.yaml');
+
+// Path Configuration
+$SUMA_SERVER_PATH = $config['SUMA_SERVER_PATH'];
+$SUMA_CONTROLLER_PATH = $config['SUMA_CONTROLLER_PATH'];
+$SUMA_BASE_URL = $config['SUMA_BASE_URL'];
+
+// Debug mode
+$SUMA_DEBUG = $config['SUMA_DEBUG'];
 
 // Debug Mode Setup
 if ($SUMA_DEBUG == false)

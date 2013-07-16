@@ -9,7 +9,7 @@ tmp/**/*
 # Configuration Files
 service/config/config.ini
 service/config/config.yaml
-service/web/config/indexConfig.php
+service/web/config/config.yaml
 web/config/spaceassessConfig.js
 analysis/config/ServerIOConfig.php
 analysis/config/nightlyConfig.php
