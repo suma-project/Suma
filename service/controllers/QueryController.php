@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 require_once 'BaseController.php';
 require_once 'models/QueryModel.php';
@@ -9,7 +9,7 @@ Zend_Loader::loadClass('Zend_Date');
 
 class QueryController extends BaseController
 {
-    
+
     private $_formats = array('alc', 'lac', 'lca', 'cal', 'cla', 'ac', 'lc');
     private $_transformers = array('cal' => 'CalTransformer',
                                    'cla' => 'CalTransformer',
@@ -18,58 +18,58 @@ class QueryController extends BaseController
                                    'lca' => 'LcaTransformer',
                                    'ac'  => 'AcTransformer',
                                    'lc'  => 'LcTransformer');
-    
+
     public function indexAction()
     {
     }
-    
+
     public function initiativesAction()
     {
         $this->view->initiatives = QueryModel::getInitiatives();
     }
-    
+
     public function debugsessionsAction()
     {
         $this->_setParam('service', 'debugsessions');
         $this->_forward('process');
     }
-    
+
     public function debugcountsAction()
     {
         $this->_setParam('service', 'debugcounts');
         $this->_forward('process');
     }
-    
+
     public function sessionsAction()
     {
         $initId = Zend_Filter::filterStatic($this->getRequest()->getParam('id'), 'StripTags');
-        
+
         if ($initId)
         {
             $this->_setParam('service', 'sessions');
-            $this->_forward('process');           
+            $this->_forward('process');
         }
         else
         {
             $this->view->inits = QueryModel::getInitiatives();
         }
     }
-    
+
     public function countsAction()
     {
         $initId = Zend_Filter::filterStatic($this->getRequest()->getParam('id'), 'StripTags');
-        
+
         if ($initId)
         {
             $this->_setParam('service', 'counts');
-            $this->_forward('process');           
+            $this->_forward('process');
         }
         else
         {
             $this->view->inits = QueryModel::getInitiatives();
-        }  
+        }
     }
-    
+
     public function processAction()
     {
         $initId = Zend_Filter::filterStatic($this->getRequest()->getParam('id'), 'StripTags');
@@ -81,9 +81,9 @@ class QueryController extends BaseController
         $format = Zend_Filter::filterStatic($this->getRequest()->getParam('format'), 'StripTags');
         $offset = Zend_Filter::filterStatic($this->getRequest()->getParam('offset'), 'StripTags');
         $limit = Zend_Filter::filterStatic($this->getRequest()->getParam('limit'), 'StripTags');
-        
+
         $params = array();
-        
+
         if (isset($initId) && is_numeric($initId))
         {
             if (empty($format) || ! in_array($format, $this->_formats))
@@ -94,28 +94,28 @@ class QueryController extends BaseController
             $params['format'] = $format;
             $params['offset'] = (! empty($offset) && is_numeric($offset)) ? (int)$offset : 0;
             $params['limit'] = (! empty($limit) && is_numeric($limit)) ? (int)$limit : Globals::getQsDbLimit();
-            
-            if (! empty($sDate)) 
+
+            if (! empty($sDate))
             {
                 $sDate = explode("T", strtoupper($sDate));
                 $yr = substr($sDate[0], 0, 4);
                 $month = substr($sDate[0], 4, 2);
-                $day = substr($sDate[0], 6, 2);                
-                
+                $day = substr($sDate[0], 6, 2);
+
                 if (is_numeric($yr) && is_numeric($month) && is_numeric($day))
                 {
                     $sDate = new Zend_Date(array('year' => $yr, 'month' => $month, 'day' => $day));
                     $params['sDate'] = $sDate->get(Zend_Date::ISO_8601);
                 }
             }
-            
-            if (! empty($eDate)) 
+
+            if (! empty($eDate))
             {
                 $eDate = explode("T", strtoupper($eDate));
                 $yr = substr($eDate[0], 0, 4);
                 $month = substr($eDate[0], 4, 2);
-                $day = substr($eDate[0], 6, 2);                
-                
+                $day = substr($eDate[0], 6, 2);
+
                 if (is_numeric($yr) && is_numeric($month) && is_numeric($day))
                 {
                     $eDate = new Zend_Date(array('year' => $yr, 'month' => $month, 'day' => $day));
@@ -130,9 +130,9 @@ class QueryController extends BaseController
                     }
                 }
             }
-            
-            if (! empty($sTime)) 
-            { 
+
+            if (! empty($sTime))
+            {
                 $hr = substr($sTime, 0, 2);
                 $min = substr($sTime, 2, 2);
 
@@ -142,8 +142,8 @@ class QueryController extends BaseController
                     $params['sTimeM'] = $min;
                 }
             }
-            
-            if (! empty($eTime)) 
+
+            if (! empty($eTime))
             {
                 $hr = substr($eTime, 0, 2);
                 $min = substr($eTime, 2, 2);
@@ -154,12 +154,12 @@ class QueryController extends BaseController
                     $params['eTimeM'] = $min;
                 }
             }
-            
-            
-            try 
+
+
+            try
             {
                 $qModel = new QueryModel($initId);
-                
+
                 if ($this->_getParam('service') == 'debugsessions')
                 {
                     $qModel->bySessions($params);
@@ -180,10 +180,10 @@ class QueryController extends BaseController
                     $this->view->id = $initId;
                     $this->render('debugcounts');
                 }
-                else 
-                {   
+                else
+                {
                     $sum = (strtolower($sum) === 'true') ? true : false;
-    
+
                     if ($this->_getParam('service') == 'sessions')
                     {
                         $qModel->bySessions($params);
@@ -194,17 +194,17 @@ class QueryController extends BaseController
                         $qModel->byCounts($params);
                         $trans = TransformerFactory::factory($this->_transformers[$format], true, $sum);
                     }
-                    
+
                     $trans->setInitMetadata($qModel->getInitMetadata());
                     $trans->setInitLocs($qModel->getInitLocs());
                     $trans->setInitActs($qModel->getInitActs());
                     $trans->setInitActGroups($qModel->getInitActGroups());
-                    
+
                     while($row = $qModel->getNextRow())
                     {
                         $trans->addRow($row);
                     }
-                    
+
                     if ($qModel->hasMore())
                     {
                         $trans->setHasMore(true, ($params['offset']+$params['limit']));
@@ -226,11 +226,11 @@ class QueryController extends BaseController
             Globals::getLog()->err('INVALID INITIATIVE ID - QueryController id: '.$initId);
             $this->_forward("error");
         }
-        
+
     }
-    
+
     public function errorAction()
-    {   
+    {
     }
-    
+
 }
