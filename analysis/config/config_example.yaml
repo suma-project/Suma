@@ -1,0 +1,2 @@
+serverIO:
+    baseUrl: http://localhost:8888/sumaserver/query

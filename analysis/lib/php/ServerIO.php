@@ -1,7 +1,7 @@
 <?php
 
 require_once "../../lib/php/guzzle.phar";
-require_once "../../config/ServerIOConfig.php";
+require_once "spyc/Spyc.php";
 
 /**
  * ServerIO - Class that facilitates retrieval of data from Suma server.
@@ -50,9 +50,8 @@ class ServerIO
      * Constructor to set url configuration
      */
     function __construct() {
-        // $config = new ServerIOConfig();
-        global $ServerIOBaseUrl;
-        $this->_baseUrl = $ServerIOBaseUrl;
+        $config = Spyc::YAMLLoad('../../config/config.yaml');
+        $this->_baseUrl = $config['serverIO']['baseUrl'];
     }
     /**
      * Builds full URL and returns result of sendRequest
