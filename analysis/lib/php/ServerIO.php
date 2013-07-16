@@ -1,6 +1,7 @@
 <?php
 
 require_once "../../lib/php/guzzle.phar";
+require_once "../../config/ServerIOConfig.php";
 
 /**
  * ServerIO - Class that facilitates retrieval of data from Suma server.
@@ -49,7 +50,8 @@ class ServerIO
      * Constructor to set url configuration
      */
     function __construct() {
-        require_once "../../config/ServerIOConfig.php";
+        // $config = new ServerIOConfig();
+        global $ServerIOBaseUrl;
         $this->_baseUrl = $ServerIOBaseUrl;
     }
     /**
@@ -131,8 +133,13 @@ class ServerIO
             $this->_client = new Guzzle\Service\Client($this->_baseUrl);
         }
 
-        $request  = $this->_client->get($url);
-        $response = $request->send();
+        try
+        {
+            $request  = $this->_client->get($url);
+            $response = $request->send();
+        } catch (Exception $e) {
+            throw new Exception("Please verify that the ServerIOBaseUrl in ServerIOConfig is a valid URL. Please verify that the configuration file (config.yaml) in service/config exists and is readable.");
+        }
 
         try
         {
@@ -157,12 +164,10 @@ class ServerIO
             }
             else
             {
-                throw new Exception('JSON Parse Error');
+                throw new Exception("JSON Parse Error in ServerIO.php.");
             }
-        }
-        catch (Guzzle\Http\Exception\BadResponseException $e)
-        {
-            throw new Exception($e->getMessage());
+        } catch (Exception $e) {
+            throw new Exception($e);
         }
     }
 }

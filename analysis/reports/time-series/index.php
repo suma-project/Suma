@@ -12,6 +12,7 @@ catch (Exception $e)
     header("HTTP/1.1 500 Internal Server Error");
     echo "<h1>500 Internal Server Error</h1>";
     echo '<p>Unable to fetch Initiatives from Query Server.</p>';
+    echo $e->getMessage();
     die;
 }
 

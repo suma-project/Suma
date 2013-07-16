@@ -2,6 +2,7 @@
 
 Zend_Loader::loadClass('Zend_Db');
 Zend_Loader::loadClass('Zend_Config_Ini');
+Zend_Loader::loadClass('Zend_Config_Yaml');
 Zend_Loader::loadClass('Zend_Log_Writer_Stream');
 Zend_Loader::loadClass('Zend_Log');
 Zend_Loader::loadClass('Zend_Registry');
@@ -79,13 +80,27 @@ class Globals
         {
             return self::$_config;
         }
-        else
+
+        $yamlFile = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'config.yaml';
+        $iniFile = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'config.ini';
+
+        if (is_readable($yamlFile))
         {
-            $file = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'config.ini';
-            self::$_config = new Zend_Config_Ini($file, 'production');
+            self::$_config = new Zend_Config_Yaml($yamlFile, 'production');
             return self::$_config;
         }
+        elseif (is_readable($iniFile))
+        {
+            self::$_config = new Zend_Config_Ini($iniFile, 'production');
+            return self::$_config;
+        }
+        else
+        {
+            header("HTTP/1.1 500 Internal Server Error");
+            echo "<h1>500 Internal Server Error</h1>";
+            echo "<p>An error occurred on the server which prevented your request from being completed.</p>";
+            echo "<p><strong>Configuration file (config.yaml) does not exist or is not readable.</strong></p>";
+            die;
+        }
     }
-
-
 }
