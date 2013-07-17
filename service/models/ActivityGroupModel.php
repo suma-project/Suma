@@ -115,7 +115,7 @@ class ActivityGroupModel
     {
         $hash = array('title'        =>  $data['title'],
                       'rank'         =>  $data['rank'],
-                      'description'  =>  $data['descr'],
+                      'description'  =>  $data['desc'],
                       'required'     =>  $data['required'],
                       'allowMulti'   =>  $data['allowMulti']);
 
@@ -148,11 +148,22 @@ class ActivityGroupModel
                       'allowMulti'     =>  isset($data['allowMulti']) ? $data['allowMulti'] : true,
                       'fk_initiative'  =>  $data['init']);
 
-        $db->insert('activity_group', $hash);
-        $actGrpId = $db->lastInsertId();
-        Globals::getLog()->info('ACTIVITY GROUP CREATED - id: '.$actGrpId.', title: '.$data['title'].', init: '.$data['init']);
-        
+        $select = $db->select()
+            ->from('activity_group')
+            ->where('fk_initiative = '.$hash['fk_initiative'].' AND LOWER(title) = '.$db->quote(strtolower($hash['title'])));
+        $existingActivityGroup = $select->query()->fetch();
+
+        if (empty($existingActivityGroup)) {
+            $db->insert('activity_group', $hash);
+            $actGrpId = $db->lastInsertId();
+            Globals::getLog()->info('ACTIVITY GROUP CREATED - id: '.$actGrpId.', title: '.$data['title'].', init: '.$data['init']);
+        } else {
+            $errStr = 'DUPLICATE ACTIVITY GROUP CREATION DENIED - title: '.$data['title'];
+            Globals::getLog()->warn($errStr);
+            throw new Exception($errStr);
+        }
+
         return $actGrpId;
     }
-    
+
 }

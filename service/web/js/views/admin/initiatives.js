@@ -50,7 +50,8 @@ $(document).ready(function(){
                 revert: 250,
                 tabSize: 25,
                 tolerance: 'pointer',
-                toleranceElement: '> div'
+                toleranceElement: '> div',
+                doNotClear: true
             });
         });
     }
@@ -103,8 +104,8 @@ $(document).ready(function(){
                             $(boundThis).dialog("close");
                             alert("Created initiative...reloading.");
                             location.reload();
-                        }).error(function() {
-                            alert("Error when creating initiative, make sure title is unique");
+                        }).error(function(jqXHR) {
+                            alert("Error: " + jqXHR.responseText);
                         });
                     } else {
                         alert("Initiative title cannot be empty and location tree must be selected");
@@ -168,8 +169,8 @@ $(document).ready(function(){
                             initTitleInput.val('');
                             initDescInput.val('');
                             $(boundThis).dialog("close");
-                        }).error(function() {
-                            alert("Unknown error when updating initiative");
+                        }).error(function(jqXHR) {
+                            alert("Error: " + jqXHR.responseText);
                         });
                     } else {
                         alert("Initiative title cannot be empty");
@@ -316,8 +317,8 @@ $(document).ready(function(){
                 async: false
             }).success(function() {
                 $(boundThis).removeClass('disableInit').addClass('enableInit').text("Enable Initiative");
-            }).error(function() {
-                alert("Unknown error when disabling initiative");
+            }).error(function(jqXHR) {
+                alert("Error: " + jqXHR.responseText);
             });
         } else if ($(this).hasClass('enableInit')) {
             $.ajax({
@@ -327,8 +328,8 @@ $(document).ready(function(){
                 async: false
             }).success(function() {
                 $(boundThis).removeClass('enableInit').addClass('disableInit').text("Disable Initiative");
-            }).error(function() {
-                alert("Unknown error when enabling initiative");
+            }).error(function(jqXHR) {
+                alert("Error: " + jqXHR.responseText);
             });
         }
 
@@ -336,10 +337,11 @@ $(document).ready(function(){
     });
 
     $("body").on("click", "#addActivityGroup", function() {
-        $('#activities').prepend('<li class="activityGroup allowMulti-act-group"><div><span class="actGroupTitle">New Activity Group</span>' +
+        $('<li class="activityGroup allowMulti-act-group"><div><span class="actGroupTitle">New Activity Group</span>' +
             '<span class="actGroupDesc"></span><span class="actGroupID">new-act-group</span><span class=\"activityControls\">' +
-            '<a href=\"#\" class=\"addActivity\">Add Activity</a><a href="#" class="editActGroup">Edit</a></span></div><ol></ol></li>');
+            '<a href=\"#\" class=\"addActivity\">Add Activity</a><a href="#" class="editActGroup">Edit</a></span></div><ol></ol></li>').prependTo('#activities').find('a.addActivity').click();
         $('#activities').nestedSortable('refresh');
+
         return false;
     });
 
@@ -378,8 +380,7 @@ $(document).ready(function(){
             serActs.push(serActGroup);
         });
 
-// TODO: Use base URL
-        console.log(serActs);
+
         $.ajax({
             type: 'POST',
             url: basePath + '/admin/updateactivities',
@@ -392,8 +393,8 @@ $(document).ready(function(){
             if (currentState.data.initID) {
                 loadInit(currentState.data.initID);
             }
-        }).error(function() {
-            alert("Unknown error when updating activities");
+        }).error(function(jqXHR) {
+            alert("Error: " + jqXHR.responseText);
         });
 
 
