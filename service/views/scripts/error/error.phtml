@@ -1,5 +1,8 @@
 <?php
 
-header("HTTP/1.1 500 Internal Server Error");
-echo "<h1>500 Internal Server Error</h1>";
-echo "<p>An error occurred on the server which prevented your request from being completed.</p>";
+echo "<h1>$this->message</h1>";
+
+if (true === $this->displayExceptions) {
+    echo "<pre>$this->exception->getMessage()</pre>";
+    echo "<pre>$this->exception->getTraceAsString()</pre>";
+}

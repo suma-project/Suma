@@ -42,8 +42,9 @@ Zend_Loader::loadClass('Zend_Controller_Front');
 // Configure for Zone
 $front = Zend_Controller_Front::getInstance();
 $front->setControllerDirectory($SUMA_CONTROLLER_PATH)
-      ->setBaseUrl($SUMA_BASE_URL)
-      ->throwExceptions($SUMA_THROW_EXCEPTIONS);
+      ->setBaseUrl($SUMA_BASE_URL);
+
+Zend_Registry::set('sumaDisplayExceptions', $SUMA_THROW_EXCEPTIONS);
 
 // Go
 $front->dispatch();
