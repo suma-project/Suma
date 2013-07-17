@@ -116,7 +116,12 @@ $("a#saveLocs").live("click", function(){
 });
 
 function loadLoc(locID) {
-    $('#locArea').load(basePath + '/admin/locationload/id/' + locID, function() {
+    $('#locArea').load(basePath + '/admin/locationload/id/' + locID, function(response, status, jqXHR) {
+        if (status == "error") {
+            alert("Error: " + jqXHR.responseText);
+            return;
+        }
+
         $('ol.sortable').nestedSortable({
             disableNesting: 'no-nest',
             forcePlaceholderSize: true,

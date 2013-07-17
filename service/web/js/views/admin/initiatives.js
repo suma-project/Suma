@@ -36,7 +36,12 @@ $(document).ready(function(){
         $("a#createInitLink").hide();
         $('#initSelect').val(initID);
         // TODO use base path
-        $('#metadata').load(basePath + '/admin/initiativeload/id/' + initID, function() {
+        $('#metadata').load(basePath + '/admin/initiativeload/id/' + initID, function(response, status, jqXHR) {
+            if (status == "error") {
+                alert("Error: " + jqXHR.responseText);
+                return;
+            }
+
             $('ol.sortable').nestedSortable({
                 disableNesting: 'no-nest',
                 forcePlaceholderSize: true,

@@ -1,9 +1,13 @@
+/*
+    In the `YOUR_WEB_DIR/suma/web/config/` directory, copy
+    `spaceassessConfig_example.js` to a new file `spaceassessConfig.js`.
+    If the Suma server URL is anything other than `http://YOUR_HOST/sumaserver`,
+    you will need to change the paths at the top of
+    `YOUR_WEB_DIR/suma/web/config/spaceassessConfig.js`.
+ */
+
 var deviceName = 'iPad';
 var appVersion = '0.7.5';
-
-var baseInitUrl = "/sumaserver/clientinit/";
-var initiativeUrl = "/sumaserver/clientinit/load/initiative/";
-var syncUrl = "/sumaserver/sync";
 
 var startDialogVisible = true;
 var currentlySyncing = 0;
@@ -681,7 +685,7 @@ $(function() {
                             childSel.append('<li class="loc_item"><a id="loc' + loc.id + '" href="' + loc.id + '">' + loc.name + '    <span class="locCount"></span></a></li>');
                             annotateLoc(loc);
                         });
-                
+
                         countIndicator.val('Count');
                         $("#loadingScreen").dialog('close');
                     } else {

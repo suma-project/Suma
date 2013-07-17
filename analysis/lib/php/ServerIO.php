@@ -1,6 +1,7 @@
 <?php
 
 require_once "../../lib/php/guzzle.phar";
+require_once "spyc/Spyc.php";
 
 /**
  * ServerIO - Class that facilitates retrieval of data from Suma server.
@@ -23,7 +24,7 @@ class ServerIO
      * @var string
      * @access  private
      */
-    private $_baseUrl = 'http://YOUR_SERVER/sumaserver/query';
+    private $_baseUrl;
     /**
      * Parameters to append to $_baseUrl
      *
@@ -45,6 +46,13 @@ class ServerIO
      * @access  private
      */
     private $_offset = NULL;
+    /**
+     * Constructor to set url configuration
+     */
+    function __construct() {
+        $config = Spyc::YAMLLoad('../../config/config.yaml');
+        $this->_baseUrl = $config['serverIO']['baseUrl'];
+    }
     /**
      * Builds full URL and returns result of sendRequest
      *
@@ -124,8 +132,13 @@ class ServerIO
             $this->_client = new Guzzle\Service\Client($this->_baseUrl);
         }
 
-        $request  = $this->_client->get($url);
-        $response = $request->send();
+        try
+        {
+            $request  = $this->_client->get($url);
+            $response = $request->send();
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
 
         try
         {
@@ -150,12 +163,10 @@ class ServerIO
             }
             else
             {
-                throw new Exception('JSON Parse Error');
+                throw new Exception("JSON Parse Error in ServerIO.php.");
             }
-        }
-        catch (Guzzle\Http\Exception\BadResponseException $e)
-        {
-            throw new Exception($e->getMessage());
+        } catch (Exception $e) {
+            throw new Exception($e);
         }
     }
 }

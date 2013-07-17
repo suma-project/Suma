@@ -1,0 +1,18 @@
+# Copy this file to a new file `config.yaml`
+
+# Change baseUrl to the URL for your Suma Query Server. If you
+# used a directory other than `sumaserver` in the "Suma Software Installation"
+# section in `INSTALL.md`, that should be reflected in this URL.
+serverIO:
+    baseUrl: http://YOUR_SERVER/sumaserver/query
+
+# Configuration for nightly report
+nightly:
+    # Default Timezone. See: http://us3.php.net/manual/en/timezones.php
+    timezone: America/New_York
+    # Date display format. See: http://php.net/manual/en/function.date.php
+    displayFormat: m-d-Y
+    # Recipient e-mail addresses separated by commas
+    recipients: you@example.com, your_friend@example.com
+    # Error recipient e-mail addresses separated by commas
+    errorRecipients: you@example.com

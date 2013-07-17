@@ -5,3 +5,11 @@
 tmp/**/*
 .DS_Store
 ._*
+.htaccess
+
+# Configuration Files
+service/config/config.ini
+service/config/config.yaml
+service/web/config/config.yaml
+web/config/spaceassessConfig.js
+analysis/config/config.yaml
