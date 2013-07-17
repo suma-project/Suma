@@ -6,6 +6,7 @@ tmp/**/*
 .DS_Store
 ._*
 .htaccess
+.htpasswd
 
 # Configuration Files
 service/config/config.ini
