@@ -7,12 +7,12 @@ serverIO:
     baseUrl: http://YOUR_SERVER/sumaserver/query
 
 # Configuration for nightly report
+# Default Timezone. See: http://us3.php.net/manual/en/timezones.php
+# Date display format. See: http://php.net/manual/en/function.date.php
+# Recipient e-mail addresses separated by commas
+# Error recipient e-mail addresses separated by commas
 nightly:
-    # Default Timezone. See: http://us3.php.net/manual/en/timezones.php
     timezone: America/New_York
-    # Date display format. See: http://php.net/manual/en/function.date.php
     displayFormat: m-d-Y
-    # Recipient e-mail addresses separated by commas
     recipients: you@example.com, your_friend@example.com
-    # Error recipient e-mail addresses separated by commas
     errorRecipients: you@example.com

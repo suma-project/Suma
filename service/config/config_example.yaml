@@ -19,7 +19,6 @@
 
 production:
     sumaserver:
-        # Database Connection
         db:
             host: localhost
             platform: Pdo_Mysql
@@ -27,16 +26,12 @@ production:
             user: DB_USERNAME
             pword: DB_PASSWORD
             port: 3306
-        # Log
-        # e.g. sumaserver.log.path = /var/www/app/sumaserver/service/logs/
         log:
             path:
             name: sumaserver.log
-        # Admin Login
         admin:
             user: admin
             pass: admin
-    # Query Server
     queryserver:
         db:
             limit: 10000
@@ -44,10 +39,7 @@ production:
 development:
     _extends: production
     sumaserver:
-        # Database Connection
         db:
             dbname: sumadev
-        # Log
-        # e.g. sumaserver.log.path = /var/www/app/sumaserver/service/logs/
         log:
             path:
