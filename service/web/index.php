@@ -3,6 +3,16 @@
 // Config
 require_once "lib/spyc/Spyc.php";
 
+// Check that config exists
+if (!is_readable('config/config.yaml'))
+{
+   header("HTTP/1.1 500 Internal Server Error");
+    echo "<h1>500 Internal Server Error</h1>";
+    echo "<p><strong>service/web/config/config.yaml</strong> does not exist or is not readable.</p>";
+    die;
+}
+
+// Read config file
 $config = Spyc::YAMLLoad('config/config.yaml');
 
 // Path Configuration
