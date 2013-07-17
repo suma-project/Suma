@@ -137,7 +137,7 @@ class ServerIO
             $request  = $this->_client->get($url);
             $response = $request->send();
         } catch (Exception $e) {
-            throw new Exception("Please verify that the ServerIOBaseUrl in ServerIOConfig is a valid URL. Please verify that the configuration file (config.yaml) in service/config exists and is readable.");
+            throw new Exception($e);
         }
 
         try

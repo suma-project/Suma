@@ -10,21 +10,18 @@ $SUMA_SERVER_PATH = $config['SUMA_SERVER_PATH'];
 $SUMA_CONTROLLER_PATH = $config['SUMA_CONTROLLER_PATH'];
 $SUMA_BASE_URL = $config['SUMA_BASE_URL'];
 
-// Debug mode
-$SUMA_DEBUG = $config['SUMA_DEBUG'];
-
 // Debug Mode Setup
-if ($SUMA_DEBUG == false)
-{
-    $SUMA_ERROR_REPORTING  = 0;
-    $SUMA_DISPLAY_ERRORS   = 'off';
-    $SUMA_THROW_EXCEPTIONS =  false;
-}
-else
+if ($config['SUMA_DEBUG'] == true)
 {
     $SUMA_ERROR_REPORTING  = E_ERROR | E_WARNING | E_PARSE | E_NOTICE;
     $SUMA_DISPLAY_ERRORS   = 'on';
     $SUMA_THROW_EXCEPTIONS =  true;
+}
+else
+{
+    $SUMA_ERROR_REPORTING  = 0;
+    $SUMA_DISPLAY_ERRORS   = 'off';
+    $SUMA_THROW_EXCEPTIONS =  false;
 }
 
 // Error Reporting
