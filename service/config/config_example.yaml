@@ -1,3 +1,22 @@
+# Copy this file to a new file `config.yaml`.
+#
+# You must modify the following:
+#
+#    production:
+#        sumaserver:
+#            db:
+#                host: host location of your mysql database
+#                dbname: suma mysql database name
+#                user: suma mysql **application** account name
+#                pword: suma mysql **application** account password
+#                port: mysql port number
+#            log:
+#                path: path to log directory
+#                name: sumaserver.log
+#
+#  * Be sure that the log directory specified in `sumaserver:log:path`
+#  both exists and is **writable by the web server**.
+
 production:
     sumaserver:
         # Database Connection

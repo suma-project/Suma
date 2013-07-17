@@ -1,6 +1,12 @@
+# Copy this file to a new file `config.yaml`
+
+# Change baseUrl to the URL for your Suma Query Server. If you
+# used a directory other than `sumaserver` in the "Suma Software Installation"
+# section in `INSTALL.md`, that should be reflected in this URL.
 serverIO:
     baseUrl: http://YOUR_SERVER/sumaserver/query
 
+# Configuration for nightly report
 nightly:
     # Default Timezone. See: http://us3.php.net/manual/en/timezones.php
     timezone: America/New_York

@@ -94,7 +94,7 @@ If using Apache's rewrite module add these lines in your web server (likely http
     </Directory>
 
 **Don't forget to change `YOUR_WEB_DIR` to the directory in your web space that contains the `service/web/` content**
-Restart apache after adding these lines for configuration to apply
+Restart apache after adding these lines for configuration to apply.
 
 .htaccess
 If using a .htaccess place the file in the `/YOUR_WEB_DIR/sumaserver` directory and add these lines
@@ -111,7 +111,7 @@ An example .htaccess file named can be found at `/YOUR_WEB_DIR/sumaserver/htacce
 Database Setup
 ---------------
 
-It is recommended you create two databases for Suma.  One for production and one for testing.  The database instructions are the same for both except for changing the database name.
+It is recommended you create two databases for Suma. One for production and one for testing. The database instructions are the same for both except for changing the database name.
 
 Create database in MySQL using whatever tool you have available.
 
@@ -133,29 +133,35 @@ Now you have to run a database initialization script included in the suma downlo
 Suma Server Software Configuration
 -----------------------------------
 
-* indexConfig.php
+* web/config.yaml
 
-    In the `/SUMA_SERVER_INSTALL_DIR/web/config/` directory, copy `indexConfig_example.php` to a new file `indexConfig.php`. You must set some path variables in the indexConfig.php file for the Suma server to function correctly.
+    In the `/SUMA_SERVER_INSTALL_DIR/web/config/` directory, copy `config_example.yaml` to a new file `config.yaml`. You must set some path variables in the `config.yaml file` for the Suma server to function correctly.
 
-    `$SUMA_SERVER_PATH` must be set to the `SUMA_SERVER_INSTALL_DIR` where the Suma server was installed earlier in these instructions (e.g. `/var/www/app/sumaserver`).
+    `SUMA_SERVER_PATH` must be set to the `SUMA_SERVER_INSTALL_DIR` where the Suma server was installed earlier in these instructions (e.g. `/var/www/app/sumaserver`).
 
-    `$SUMA_CONTROLLER_PATH` must be set to `SUMA_SERVER_INSTALL_DIR/controllers` (e.g. `/var/www/app/sumaserver/controllers`).
+    `SUMA_CONTROLLER_PATH` must be set to `SUMA_SERVER_INSTALL_DIR/controllers` (e.g. `/var/www/app/sumaserver/controllers`).
 
-    `$SUMA_BASE_URL` must be set to the URL path for the Suma server. For example, if the URL is `http://YOUR_HOST/sumaserver`, set this to `/sumaserver`.
+    `SUMA_BASE_URL` must be set to the URL path for the Suma server. For example, if the URL is `http://YOUR_HOST/sumaserver`, set this to `/sumaserver`.
 
-    `$SUMA_DEBUG` can be set to `true` if you would like to see more verbose error messages. This should generally be set to `false`.
+    `SUMA_DEBUG` can be set to `true` if you would like to see more verbose error messages. This should generally be set to `false`.
 
-* config.ini
+* config.yaml
 
-    In the `SUMA_SERVER_INSTALL_DIR/config/` directory, copy `config_example.ini` to a new file `config.ini`. You must modify the following:
+    In the `SUMA_SERVER_INSTALL_DIR/config/` directory, copy `config_example.yaml` to a new file `config.yaml`. You must modify the following:
 
-        sumaserver.db.host      = host location of your mysql database
-        sumaserver.db.dbname    = suma mysql database name
-        sumaserver.db.user      = suma mysql **application** account name
-        sumaserver.db.pword     = suma mysql **application** account password
-        sumaserver.db.port      = mysql port number
-        sumaserver.log.path = path to log directory.
-    * Be sure that the log directory specified in `sumaserver.log.path` both exists and is **writable by the web server**.
+        production:
+            sumaserver:
+                db:
+                    host:   host location of your mysql database
+                    dbname: suma mysql database name
+                    user:   suma mysql **application** account name
+                    pword:  suma mysql **application** account password
+                    port:   mysql port number
+                log:
+                    path: path to log directory
+                    name: sumaserver.log
+
+    * Be sure that the log directory specified in `sumaserver:log:path` both exists and is **writable by the web server**.
 
 
 Suma Client Configuration
@@ -171,16 +177,13 @@ Suma Analysis Tools Configuration
 
 * ServerIOConfig.php
 
-    In the `YOUR_WEB_DIR/suma/analysis/config/` directory, copy `ServerIOConfig_example.php` to a new file `YOUR_WEB_DIR/suma/analysis/config/ServerIOConfig.php`.
-    Change `$ServerIOBaseUrl = 'http://YOUR_SERVER/sumaserver/query';` to the URL for your Suma Query Server. If you used a directory other than `sumaserver` in the "Suma Software Installation" section above, that should be reflected in this URL.
+    In the `YOUR_WEB_DIR/suma/analysis/config/` directory, copy `config_example.yaml` to a new file `config.yaml`. Change `baseUrl` to the URL for your Suma Query Server. If you used a directory other than `sumaserver` in the "Suma Software Installation" section above, that should be reflected in this URL.
 
 * You can view the Suma analysis tools by visting `http://YOUR_SERVER/suma/analysis/reports`.
 
-* To enable the nightly summary report:
+* To configure the nightly summary report:
 
-    In the `YOUR_WEB_DIR/suma/analysis/config/` directory, copy the contents of `nightlyConfig_example.php` to a new file named `nightlyConfig.php`.
-
-    Edit the timezone, recipients, error_recipients, etc. variables in `YOUR_WEB_DIR/suma/analysis/config/nightlyConfig.php` as needed.
+    In the `YOUR_WEB_DIR/suma/analysis/config/config.yaml` file, edit the timezone, displayFormat, recipients, and errorRecipients as needed.
 
     Using cron, or some other scheduler, schedule a task to run the `YOUR_WEB_DIR/suma/analysis/reports/nightly/nightlyEmail.php` script as desired.
 
@@ -195,15 +198,9 @@ Other Things You Can Configure
 
 you must change 'production' to 'development'.
 
-* If you're getting generic error messages from the suma server you can change two settings in the `/YOUR_WEB_DIR/sumaserver/index.php` to generate more descriptive error messages.
+* If you're getting generic error messages from the suma server you can change the `SUMA_DEBUG` setting in  `/YOUR_WEB_DIR/sumaserver/config/config.yaml` to `true` to generate more descriptive error messages.
 
-    Change the following lines in index.php:
-
-        error_reporting(0); to error_reporting(E_ERROR | E_WARNING | E_PARSE);
-        ini_set('display_errors', 'off'); change 'off' to 'on'
-        ->throwExceptions(false); change "false" to "true"
-
-    **Be sure to change these lines back before you use Suma in production**
+    **Be sure to change this setting back before you use Suma in production**
 
 
 How to create your first initiative
