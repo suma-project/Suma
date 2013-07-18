@@ -175,7 +175,7 @@ Suma Client Configuration
 Suma Analysis Tools Configuration
 ----------------------------------
 
-* ServerIOConfig.php
+* analysis/config/config.yaml
 
     In the `YOUR_WEB_DIR/suma/analysis/config/` directory, copy `config_example.yaml` to a new file `config.yaml`. Change `baseUrl` to the URL for your Suma Query Server. If you used a directory other than `sumaserver` in the "Suma Software Installation" section above, that should be reflected in this URL.
 
