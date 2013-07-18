@@ -47,6 +47,8 @@ class Globals
             $path = self::getConfig()->sumaserver->log->path;
             $name = self::getConfig()->sumaserver->log->name;
 
+            $path = rtrim($path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+
             if (is_writable($path . $name) || (!file_exists($path . $name) && is_writable($path)))
             {
                 $writer = new Zend_Log_Writer_Stream($path . $name);
