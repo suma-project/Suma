@@ -95,7 +95,10 @@
             });
         },
         processData: function (data) {
-            this.buildTemplate(data.reverse(), '#sessions-table', '#sessions-data');
+            var sortedData = _.sortBy(data, function (obj) {
+                return obj.start;
+            });
+            this.buildTemplate(sortedData.reverse(), '#sessions-table', '#sessions-data');
         },
         buildTemplate: function (items, templateId, elementId) {
             var html,
