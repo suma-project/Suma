@@ -126,9 +126,10 @@ $initDropDown .= '</select>';
                 </fieldset>
                 </form>
             </div>
-            <div id="loadingWidget" class="row"></div>
             <div id="sessions-data" class="row"></div>
         </div>
+
+        <div id="loadingWidget"></div>
 
         <script id="sessions-table" type="text/x-handlebars-template">
             <h4>Totals by Session</h4>
