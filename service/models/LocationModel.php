@@ -225,7 +225,7 @@ class LocationModel
             $select->where('fk_parent IS NULL');
         }
 
-        $rows = $select->query()->fetchAll();
+        $rows = $select->order('title ASC')->query()->fetchAll();
 
         $roots = array();
         foreach($rows as $row)

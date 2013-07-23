@@ -334,10 +334,10 @@ class InitiativeModel
             ->from('initiative');
             if ($filterDisabled)
             {
-                $select->where('enabled = true')->order('title ASC');
+                $select->where('enabled = true');
             }
             
-        $rows = $select->query()->fetchAll();
+        $rows = $select->order('title ASC')->query()->fetchAll();
         
         $inits = array();
         foreach($rows as $row)
