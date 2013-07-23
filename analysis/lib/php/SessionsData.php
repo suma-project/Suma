@@ -90,19 +90,34 @@ class SessionsData
 
         foreach ($sessions as $sess)
         {
-            $sess_array = array(
-                "id" => $sess["id"],
-                "start" => $sess["start"],
-                "end"   => $sess["end"],
-                "total" => 0
-            );
 
-            foreach ($sess['locations'] as $loc)
+            if (isset($this->countHash[$sess['id']]))
             {
-                $sess_array['total'] += $loc['counts'];
-            }
+                $total = 0;
 
-            array_push($this->countHash, $sess_array);
+                foreach ($sess['locations'] as $loc)
+                {
+                    $total += $loc['counts'];
+                }
+
+                $this->countHash[$sess['id']]['total'] += $total;
+            }
+            else
+            {
+                $sess_array = array(
+                    "id" => $sess["id"],
+                    "start" => $sess["start"],
+                    "end"   => $sess["end"],
+                    "total" => 0
+                );
+
+                foreach ($sess['locations'] as $loc)
+                {
+                    $sess_array['total'] += $loc['counts'];
+                }
+
+                $this->countHash[$sess['id']] = $sess_array;
+            }
         }
     }
     /**
@@ -145,6 +160,22 @@ class SessionsData
 
     }
     /**
+     * Convert hash to array of objects
+     * @param  array $data
+     * @return array
+     */
+    private function formatData($data)
+    {
+        $array = array();
+
+        foreach ($data as $d)
+        {
+            array_push($array, $d);
+        }
+
+        return $array;
+    }
+    /**
      * Get data from server
      *
      * @param  string $day YYYYMMDD string for date
@@ -156,6 +187,7 @@ class SessionsData
         $params = $this->validateInput($input);
         $this->processData($params);
 
-        return $this->countHash;
+        $data = $this->formatData($this->countHash);
+        return $data;
     }
 }

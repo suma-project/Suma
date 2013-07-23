@@ -98,6 +98,7 @@
             var sortedData = _.sortBy(data, function (obj) {
                 return obj.start;
             });
+
             this.buildTemplate(sortedData.reverse(), '#sessions-table', '#sessions-data');
         },
         buildTemplate: function (items, templateId, elementId) {
