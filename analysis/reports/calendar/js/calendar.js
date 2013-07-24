@@ -5,12 +5,13 @@
             var input;
 
             // Handle the display of loading.gif
-            $('#loading').ajaxStart(function () {
-                $(this).show();
+            $(document).ajaxStart(function () {
+                console.log('start')
+                $('#loading').show();
                 $('svg').remove();
 
             }).ajaxStop(function () {
-                $(this).hide();
+                $('#loading').hide();
             });
 
             // Event handler to initiate application
