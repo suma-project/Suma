@@ -21,11 +21,11 @@ Backup
 
 You will need to reference the settings in your current installation. Backup these five files from your existing installation:
 
-* config.ini
-* index.php
-* ServerIO.php
-* nightly_config.php
-* spaceassess.js
+* service/config/config.ini
+* service/web/index.php
+* analysis/lib/php/ServerIO.php
+* analysis/reports/nightly/nightly_config.php
+* web/spaceassess.js
 
 Upgrade
 -------
@@ -37,7 +37,7 @@ Configuration Options to Update
 
 The various configuration settings are listed below as `PREVIOUS_FILE` => `NEW_CONFIG_FILE`. Please refer to your current installation paths and the install docs to retrieve paths like `SUMA_SERVER_INSTALL_DIR`.
 
-* config.ini => service/config/config.yaml
+* service/config/config.ini => service/config/config.yaml
 
     Most of the old settings will need to be moved into `config.yaml`. **Please note the new format.**
     Refer to the instructions below for creating `config.yaml`. Alternatively, you can also copy the config.ini back to the service/config directory, but the config.ini format is deprecated in Suma and support for it may be removed in the future.
@@ -58,13 +58,13 @@ The various configuration settings are listed below as `PREVIOUS_FILE` => `NEW_C
                     path: path to log directory
                     name: sumaserver.log
 
-* index.php => service/web/config.yaml
+* service/web/index.php => service/web/config.yaml
 
     Copy the `SUMA_SERVER_PATH`, `SUMA_CONTROLLER_PATH`, `SUMA_BASE_URL`, and `SUMA_DEBUG` configuration settings into the appropriate fields of service/web/config.yaml. Refer to the instructions below for creating `config.yaml`.
 
     From the installation docs:
 
-    In the `/SUMA_SERVER_INSTALL_DIR/web/config/` directory, copy `config_example.yaml` to a new file `config.yaml`. You must set some path variables in the `config.yaml file` for the Suma server to function correctly.
+    In the `/SUMA_SERVER_INSTALL_DIR/web/config/` directory, copy `config_example.yaml` to a new file `config.yaml`. You must set some path variables in the `config.yaml` file for the Suma server to function correctly.
 
     `SUMA_SERVER_PATH` must be set to the `SUMA_SERVER_INSTALL_DIR` where the Suma server was installed earlier in these instructions (e.g. `/var/www/app/sumaserver`).
 
@@ -74,7 +74,7 @@ The various configuration settings are listed below as `PREVIOUS_FILE` => `NEW_C
 
     `SUMA_DEBUG` can be set to `true` if you would like to see more verbose error messages. This should generally be set to `false`.
 
-* ServerIO.php => analysis/config/config.yaml
+* analysis/lib/php/ServerIO.php => analysis/config/config.yaml
 
     Copy the `private $_baseUrl` configuration settings into the the `baseUrl` field of `analysis/config/config.yaml`. Refer to the instructions below for creating `config.yaml`.
 
@@ -82,7 +82,7 @@ The various configuration settings are listed below as `PREVIOUS_FILE` => `NEW_C
 
     In the `YOUR_WEB_DIR/suma/analysis/config/` directory, copy `config_example.yaml` to a new file `config.yaml`. Change `baseUrl` to the URL for your Suma Query Server. If you used a directory other than `sumaserver` in the "Suma Software Installation" section above, that should be reflected in this URL.
 
-* nightly_config.php => analysis/config/config.yaml
+* analysis/reports/nightly/nightly_config.php => analysis/config/config.yaml
 
     In the same `config.yaml` file created in the previous step, copy your settings from `nightly_config.php` as such:
 
@@ -95,13 +95,13 @@ The various configuration settings are listed below as `PREVIOUS_FILE` => `NEW_C
 
     * To configure the nightly summary report:
 
-        In the `YOUR_WEB_DIR/suma/analysis/config/config.yaml` file, edit the timezone, displayFormat, recipients, and errorRecipients as needed.
+        In the `YOUR_WEB_DIR/suma/analysis/config/config.yaml` file, edit the timezone, displayFormat, recipients, and errorRecipients as needed. See http://php.net/manual/en/timezones.php for information on timezone formats.
 
         Using cron, or some other scheduler, schedule a task to run the `YOUR_WEB_DIR/suma/analysis/reports/nightly/nightlyEmail.php` script as desired.
 
         Alternatively, `YOUR_WEB_DIR/suma/analysis/reports/nightly/nightly.php` may be run from the command line for quick reporting through stdout.
 
-* spaceassess.js => web/config/spaceassessConfig.js
+* web/spaceassess.js => web/config/spaceassessConfig.js
 
     Copy the paths `baseInitUrl`, `initiativeUrl`, and `syncUrl` from spaceassess.js to the appropriate paths in `web/config/spaceassessConfig.js`. Refer to the instructions below for creating `spaceassessConfig.js`.
 
