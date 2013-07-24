@@ -83,7 +83,7 @@ $initDropDown .= '</select>';
             </div>
         </div>
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+        <script src="../../lib/js/jquery.min.js"></script>
         <script src="../../lib/js/bootstrap.min.js"></script>
         <script src="../../lib/js/bootstrap-datepicker.js"></script>
         <script src="../../lib/js/d3.v3.min.js"></script>
