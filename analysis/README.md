@@ -33,3 +33,15 @@ API options
     * Returns array representation of all initiatives that can be queried
       * Keys include: 'id', 'title', 'description'
 
+Report Configuration Settings
+-----------------------------
+
+Any new report that has external configuration settings should utilize the `config.yaml` file at `analysis/config/config.yaml`. Each report should be namespaced as follows:
+
+    nightly:
+        timezone: America/New_York
+        displayFormat: m-d-Y
+        recipients: bddavids@ncsu.edu
+        errorRecipients: bddavids@ncsu.edu
+
+See the nightly report or view the docs on the [spyc library](https://github.com/tekimaki/spyc) for importing YAML configs into PHP.
