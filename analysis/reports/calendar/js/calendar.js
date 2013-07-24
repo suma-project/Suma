@@ -6,7 +6,6 @@
 
             // Handle the display of loading.gif
             $(document).ajaxStart(function () {
-                console.log('start')
                 $('#loading').show();
                 $('svg').remove();
 
