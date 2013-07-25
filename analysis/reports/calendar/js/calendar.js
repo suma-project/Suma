@@ -7,10 +7,12 @@
             // Handle the display of loading.gif
             $(document).ajaxStart(function () {
                 $('#loading').show();
+                $("#legend").hide();
                 $('svg').remove();
 
             }).ajaxStop(function () {
                 $('#loading').hide();
+                $('#legend').show();
             });
 
             // Event handler to initiate application

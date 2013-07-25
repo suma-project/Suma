@@ -81,6 +81,17 @@ $initDropDown .= '</select>';
             <div id="chart">
                 <div id="loading"><img src="../../lib/img/spinner.gif"></div>
             </div>
+            <div id="legend">
+                <span>Less</span>
+                <ul class="legend-list">
+                    <li style="background-color: #eee"></li>
+                    <li style="background-color: #d6e685"></li>
+                    <li style="background-color: #8cc665"></li>
+                    <li style="background-color: #44a340"></li>
+                    <li style="background-color: #1e6823"></li>
+                </ul>
+                <span>More</span>
+            </div>
         </div>
 
         <script src="../../lib/js/jquery.min.js"></script>
