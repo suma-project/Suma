@@ -79,7 +79,6 @@ var Calendar = function () {
 
 
         selection.each(function (counts) {
-            console.log(counts)
             data = d3.nest()
                 .key(function (d) { return d.date; })
                 .rollup(function (d) { return d[0].count; })
