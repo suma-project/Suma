@@ -39,32 +39,28 @@
             $("#legend").hide();
             console.log("error: ", e);
         },
-        // Sort data according to date
-        sortData: function (a, b) {
-            return new Date(a.date).getTime() - new Date(b.date).getTime();
+        sortData: function (response) {
+            return _.sortBy(
+                _.map(response, function (count, date) {
+                    return {
+                        date: date,
+                        count: count
+                    };
+                }),
+                function (obj) {
+                    return obj.date;
+                }
+            );
         },
         processData: function (response) {
-            var dfd = $.Deferred(),
-                count,
-                counts = [],
-                self = this;
+            var dfd = $.Deferred();
 
             // Does response have enough vlues to draw meaningful graph?
             if (Object.keys(response).length < 2) {
-                dfd.reject('Not enough data.')
+                dfd.reject('Not enough data.');
             }
 
-            for (count in response) {
-                if (response.hasOwnProperty(count)) {
-                    counts.push({
-                        date: count,
-                        count: response[count]
-                    });
-                }
-            }
-
-            counts.sort(self.sortData);
-            dfd.resolve(counts);
+            dfd.resolve(this.sortData(response));
 
             return dfd.promise();
         },
@@ -72,9 +68,9 @@
             var chart;
             chart = Calendar();
 
-                d3.select('#chart')
-                    .datum(counts)
-                    .call(chart);
+            d3.select('#chart')
+                .datum(counts)
+                .call(chart);
         }
     };
 
