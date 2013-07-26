@@ -46,8 +46,7 @@
         },
         // Process and prepare data for display, accepts response from getData
         processData: function (response) {
-            var first,
-                last,
+            var chart,
                 count,
                 counts = [],
                 self = this;
@@ -67,7 +66,7 @@
                 }
 
                 counts.sort(self.sortData);
-                var chart = Calendar();
+                chart = Calendar();
 
                 d3.select('#chart')
                     .datum(counts)
