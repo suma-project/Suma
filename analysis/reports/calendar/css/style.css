@@ -13,10 +13,6 @@
     shape-rendering: crispEdges;
 }
 
-.day {
-    fill: #eee;
-}
-
 .month {
     fill: none;
     stroke: none;
