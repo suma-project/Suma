@@ -8,15 +8,11 @@ var Calendar = function () {
             cellSize = 12,
             day = d3.time.format("%w"),
             week = d3.time.format("%U"),
-            percent = d3.format(".1%"),
             format = d3.time.format("%Y-%m-%d"),
             month_name = d3.time.format("%b"),
-            day_name = d3.time.format("%w"),
             days = ['S', 'M', 'T', 'W', 'Th', 'F', 'S'],
             data,
-            color,
-            svg,
-            rect;
+            color;
 
         function setDayVisibility(i) {
             var vis;
@@ -65,6 +61,9 @@ var Calendar = function () {
 
 
         selection.each(function (counts) {
+            var svg,
+                rect;
+
             data = d3.nest()
                 .key(function (d) { return d.date; })
                 .rollup(function (d) { return d[0].count; })
