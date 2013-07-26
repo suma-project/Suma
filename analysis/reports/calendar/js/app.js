@@ -1,77 +1,80 @@
 (function (Calendar) {
     var App = {
-        // Initializes application
         init: function () {
             this.bindEvents();
-
-            // Handle the display of loading.gif
-            $(document).ajaxStart(function () {
-                $('#loading').show();
-                $("#legend").hide();
-                $('svg').remove();
-
-            }).ajaxStop(function () {
-                $('#loading').hide();
-                $('#legend').show();
-            });
         },
         bindEvents: function () {
             var self = this;
 
             $('body').on('submit', 'form', function (e) {
                 var input = $(this).serializeArray();
-                self.getData(input);
+
+                $.when(self.getData(input))
+                    .then(self.processData.bind(self))
+                    .then(self.drawChart, self.error);
+
                 e.preventDefault();
             });
         },
-        // AJAX call to query server, accepts form input as parameter
         getData: function (input) {
             var self = this;
 
-            $.ajax({
+            return $.ajax({
                 url: 'results.php',
                 data: input,
-                success: self.processData.bind(self),
-                error: self.error,
-                dataType: 'json'
+                beforeSend: function () {
+                    $('#loading').show();
+                    $("#legend").hide();
+                    $('svg').remove();
+                },
+                success: function () {
+                    $("#legend").show();
+                },
+                complete: function () {
+                    $('#loading').hide();
+                }
             });
+        },
+        error: function (e) {
+            $("#legend").hide();
+            console.log("error: ", e);
         },
         // Sort data according to date
         sortData: function (a, b) {
             return new Date(a.date).getTime() - new Date(b.date).getTime();
         },
-        // No data
-        noData: function () {
-            alert('no data found');
-        },
-        // Process and prepare data for display, accepts response from getData
         processData: function (response) {
-            var chart,
+            var dfd = $.Deferred(),
                 count,
                 counts = [],
                 self = this;
 
             // Does response have enough vlues to draw meaningful graph?
             if (Object.keys(response).length < 2) {
-                self.noData();
-            } else {
-                for (count in response) {
-                    if (response.hasOwnProperty(count)) {
-                        // Create array that can be used by d3.js
-                        counts.push({
-                            date: count,
-                            count: response[count]
-                        });
-                    }
-                }
+                dfd.reject('Not enough data.')
+            }
 
-                counts.sort(self.sortData);
-                chart = Calendar();
+            for (count in response) {
+                if (response.hasOwnProperty(count)) {
+                    counts.push({
+                        date: count,
+                        count: response[count]
+                    });
+                }
+            }
+
+            counts.sort(self.sortData);
+            dfd.resolve(counts);
+
+            return dfd.promise();
+        },
+        drawChart: function (counts) {
+            var chart;
+            chart = Calendar();
 
                 d3.select('#chart')
                     .datum(counts)
                     .call(chart);
-            }
         }
     };
 
