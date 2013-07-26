@@ -48,7 +48,7 @@ function echo500($e)
 $params = array('id'     =>   $_GET['id'],
                 'format' =>  'lc',
                 'sum'    =>  'true',
-                'limit'  =>  160000);
+                'limit'  =>  60000);
 
 
 try
