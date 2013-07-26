@@ -18,21 +18,6 @@ var Calendar = function () {
             svg,
             rect;
 
-        function monthPath(t0) {
-            var t1 = new Date(t0.getFullYear(), t0.getMonth() + 1, 0),
-                d0 = +day(t0),
-                w0 = +week(t0),
-                d1 = +day(t1),
-                w1 = +week(t1),
-                placeholder = 0; // placeholder value to stop lint complaints
-
-            return "M" + (w0 + 1) * newCellSize + "," + d0 * newCellSize
-                + "H" + w0 * newCellSize + "V" + 7 * newCellSize
-                + "H" + w1 * newCellSize + "V" + (d1 + 1) * newCellSize
-                + "H" + (w1 + 1) * newCellSize + "V" + placeholder
-                + "H" + (w0 + 1) * newCellSize + "Z";
-        }
-
         function setDayVisibility(i) {
             var vis;
 
@@ -115,12 +100,6 @@ var Calendar = function () {
                 .attr("x", function (d) { return week(d) * (cellSize + 2); })
                 .attr("y", function (d) { return day(d) * (cellSize + 2); })
                 .datum(format);
-
-            // svg.selectAll(".month")
-            //     .data(function (d) { return d3.time.months(new Date(d, 0, 1), new Date(d + 1, 0, 1)); })
-            //     .enter().append("path")
-            //     .attr("class", "month")
-            //     .attr("d", monthPath);
 
             // Day of the Week Label
             svg.selectAll('dayOfWeek')
