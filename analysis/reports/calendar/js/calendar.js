@@ -103,6 +103,51 @@
                     + "H" + (w0 + 1) * newCellSize + "Z";
             }
 
+            function setDayVisibility(i) {
+                var vis;
+
+                if (i === 0 || i === 2 || i === 4 || i === 6) {
+                    vis = 'hidden';
+                } else {
+                    vis = 'visible';
+                }
+
+                return vis;
+            }
+
+            function setMonthLabelPos(d) {
+                if (d.getDay() !== 0 && monthCount > 0) {
+                    return (week(d)  * (cellSize + 2)) + 12;
+                }
+
+                monthCount += 1;
+
+                return week(d) * (cellSize + 2);
+            }
+
+            function setColor(d) {
+                var c;
+
+                if (data[d] === undefined) {
+                    c = '#eee';
+                } else {
+                    c = color(data[d]);
+                }
+                return c;
+            }
+
+            function setTitle(d) {
+                var count,
+                    day = moment(d, 'YYYY-MM-DD').format('ddd');
+
+                if (data[d] === undefined) {
+                    count = "No Data Found";
+                } else {
+                    count = data[d];
+                }
+                return day + ": " + d + ": " + count;
+            }
+
             data = d3.nest()
                 .key(function (d) { return d.date; })
                 .rollup(function (d) { return d[0].count; })
@@ -150,17 +195,7 @@
                 .data(days)
                 .enter().append('text')
                 .attr("x", -20)
-                .style('visibility', function (d, i) {
-                    var vis;
-
-                    if (i === 0 || i === 2 || i === 4 || i === 6) {
-                        vis = 'hidden';
-                    } else {
-                        vis = 'visible';
-                    }
-
-                    return vis;
-                })
+                .style('visibility', function (d, i) { return setDayVisibility(i); })
                 .attr("y", function (d, i) { return (newCellSize * i) + 10; })
                 .text(function (d) { return d; });
 
@@ -168,23 +203,14 @@
             svg.selectAll("monthName")
                 .data(function (d) { return d3.time.months(new Date(d, 0, 1), new Date(d + 1, 0, 1)); })
                 .enter().append("text")
-                .attr("x", function (d) {
-                    if (d.getDay() !== 0 && monthCount > 0) {
-                        return (week(d)  * (cellSize + 2)) + 12;
-                    }
-                    monthCount += 1;
-                    return week(d) * (cellSize + 2);
-                })
+                .attr("x", function (d) { return setMonthLabelPos(d); })
                 .attr("y", -10)
                 .text(month_name);
 
-            // Color Days
-            rect.filter(function (d) { return d in data; })
-                .style('fill', function (d) { return color(data[d]); })
-                .attr("title", function (d) {
-                    var day = moment(d, 'YYYY-MM-DD').format('ddd');
-                    return day + ": " + d + ": " + data[d];
-                })
+            // Color days and set tooltip text
+            rect.filter(function (d) { return d; })
+                .style('fill', function (d) { return setColor(d); })
+                .attr("title", function (d) { return setTitle(d); })
                 .attr('rel', 'tooltip');
 
             // Initialize Tooltips
