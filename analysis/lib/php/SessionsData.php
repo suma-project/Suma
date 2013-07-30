@@ -4,6 +4,10 @@ require_once '../../lib/php/ServerIO.php';
 require_once '../../lib/php/Gump.php';
 require_once '../../lib/php/SumaGump.php';
 
+// Suppress Error Reporting
+error_reporting(0);
+ini_set('display_errors', 0);
+
 /**
  * Class to create an hourly report on previous
  * day's counts for all initiatives.
