@@ -1,7 +1,6 @@
 <?php
 
 require_once '../../lib/php/ServerIO.php';
-require_once '../../lib/php/ChromePhp.php';
 require_once '../../lib/php/Gump.php';
 require_once '../../lib/php/SumaGump.php';
 
