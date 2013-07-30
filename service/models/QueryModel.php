@@ -97,7 +97,7 @@ class QueryModel
                 ->from(array('a' => 'activity'), array('id', 'title', 'rank', 'description', 'fk_activity_group as activityGroup'))
                 ->join(array('ag' => 'activity_group'),
                              'a.fk_activity_group = ag.id', array())
-                ->where('a.enabled = true AND ag.fk_initiative = ' . $this->_initId)
+                ->where('ag.fk_initiative = ' . $this->_initId)
                 ->order('a.rank ASC');
             $acts = $select->query()->fetchAll();
 
@@ -397,7 +397,7 @@ class QueryModel
     {
         $select = $this->_db->select()
             ->from('location', array('id', 'title', 'fk_parent as parent', 'description', 'rank'))
-            ->where('enabled = true AND fk_parent = ' . $parentId)
+            ->where('fk_parent = ' . $parentId)
             ->order('rank ASC');
         $nodes = $select->query()->fetchAll();
 
