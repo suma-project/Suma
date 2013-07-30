@@ -64,7 +64,7 @@ var ReportFilters = function (p_options) {
                 }
             });
 
-            $('.suma-popover').popover();
+            $('.suma-popover').popover({placement: 'bottom'});
         },
         /**
          * Processes data and populates templates for filters
