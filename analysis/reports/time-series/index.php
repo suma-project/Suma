@@ -89,14 +89,6 @@ $initDropDown .= '</select>';
             <div class="row">
                 <div id="chart" class="span12">
                     <div id="loading"><img src="../../lib/img/spinner.gif"></div>
-                    <div id="no-data" class="alert alert-error alert-block">
-                        <h4>Warning!</h4>
-                            There was insufficient data for display based on your search parameters. Please try a different combination of filters.
-                    </div>
-                    <div id="ajax-error" class="alert alert-error alert-block">
-                        <h4>Warning!</h4>
-                            There was a problem retrieving data from the server. It is possible no data exists for that combination of filters. Please try again or contact your system administrator.
-                    </div>
                     <div id ="welcome" class="alert alert-info alert-block">
                         <h4>Welcome!</h4>
                             Please select an initiative from the select menu below. Once you have chosen an initiative, additional filter options will appear. You can also limit your search by date or time.
@@ -255,7 +247,7 @@ $initDropDown .= '</select>';
                             <div>
                                 <a name="csv-export"></a>
                                 <h3>CSV Download</h3>
-                                <a id="csv" download="suma_data_export.csv" class="btn btn-small post-load-popover" href="" rel="popover" data-trigger="hover" data-delay="300" data-title="Export Raw Data" data-content="Export the raw data for the filters submitted to create this report.">Export Raw Data</a>
+                                <a id="csv" download="suma_data_export.csv" class="btn btn-small suma-popover" href="" rel="popover" data-trigger="hover" data-delay="300" data-title="Export Raw Data" data-content="Export the raw data for the filters submitted to create this report.">Export Raw Data</a>
                             </div>
                         </div>
                     </div>
@@ -416,6 +408,15 @@ $initDropDown .= '</select>';
                 </tbody>
             </table>
         </script>
+        <script id="error" type="text/x-handlebars-template">
+            <div class="alert alert-error alert-block">
+                <h4>Warning!</h4>
+                <p>There was a problem retrieving data from the server. Please try again or contact your system administrator.</p>
+                {{#each items}}
+                    <p>Error Message: {{msg}}</p>
+                {{/each}}
+            </div>
+        </script>
 
         <script src="../../lib/js/jquery.min.js"></script>
         <script src="../../lib/js/handlebars.js"></script>
@@ -426,6 +427,7 @@ $initDropDown .= '</select>';
         <script src="../../lib/js/moment.js"></script>
         <script src="../../lib/js/string.min.js"></script>
         <script src="../../lib/js/canvg.js"></script>
+        <script src="../../lib/js/Errors.js"></script>
         <script src="../../lib/js/ReportFilters.js"></script>
         <script src="../../lib/js/TimeSeries.js"></script>
         <script src="../../lib/js/BarChart.js"></script>

@@ -6,8 +6,12 @@
  * @property {object} filters Instantiated filter module
  * @property {object} chart Instantiated time series chart
  */
-(function (ReportFilters, TimeSeries, BarChart) {
+(function (ReportFilters, Errors, TimeSeries, BarChart) {
     var App = {
+        cfg: {
+            errorTarget:   '#chart',
+            errorTemplate: '#error'
+        },
         filters: null,
         mainChart: null,
         suppChart: null,
@@ -93,14 +97,20 @@
                 activitiesTemplate: '#activities-template',
                 locationsSelect: '#locations',
                 activitiesSelect: '#activities'
-            };
+            },
+                filters,
+                self = this;
 
             // Initialize filters
             if (this.filters === null) {
                 this.filters = new ReportFilters(filterOptions);
             }
 
-            this.filters.init();
+            filters = this.filters.init();
+
+            filters.fail(function (e) {
+                self.error(e);
+            });
         },
         /**
          * Binds events for datepicker and data AJAX call.
@@ -122,20 +132,14 @@
                 self.params = input;
 
                 $.when(self.getData(input))
-                    .then(function (data) {
-                        var counts = self.processData(data);
-
-                        if (counts) {
-                            self.drawChart(counts);
-                            self.counts = counts;
-                            self.drawTable(counts);
-                            self.buildCSV(data.csv, counts);
-                            $('.post-load-popover').popover();
-                        } else {
-                            self.noData();
-                        }
+                    .then(self.processData.bind(self))
+                    .then(function (counts) {
+                        self.drawChart(counts);
+                        self.counts = counts;
+                        self.drawTable(counts);
+                        self.buildCSV(counts);
                     }, function (e) {
-                        $('#ajax-error').show();
+                        self.error(e);
                     });
 
                 e.preventDefault();
@@ -185,7 +189,7 @@
             });
 
             // Image Download (These need to be optimized)
-            $('#main-download').on('click', function (e) {
+            $('#main-download').on('click', function () {
                 var linkId = "#" + this.id,
                     tempChart;
 
@@ -213,7 +217,7 @@
                 $('#temp-chart').remove();
             });
 
-            $('#supp-download').on('click', function (e) {
+            $('#supp-download').on('click', function () {
                 var linkId = "#" + this.id,
                     chartId = "#" + $(this).attr('data-chart-div');
 
@@ -266,15 +270,15 @@
                 source,
                 template;
 
-            _.each(this.params, function (element, index) {
+            _.each(this.params, function (element) {
                 data[element.name] = element.value;
             });
 
-            _.each(this.filters.activities, function (element, index) {
+            _.each(this.filters.activities, function (element) {
                 activities[element.id] = element.title;
             });
 
-            _.each(this.filters.locations, function (element, index) {
+            _.each(this.filters.locations, function (element) {
                 locations[element.id] = element.title;
             });
 
@@ -324,7 +328,6 @@
 
             $('#main-annotation').empty();
             $('#main-annotation').append(html);
-
         },
         /**
          * AJAX call to retrieve data
@@ -377,32 +380,23 @@
             return a.value - b.value;
         },
         /**
-         * Display error message
-         */
-        noData: function () {
-            $('#no-data').show();
-            $('#summary-data').hide();
-            $('#submit').removeAttr('disabled');
-            $('#supplemental-charts').hide();
-            $('#main-chart-header').css('visibility', 'hidden');
-        },
-        /**
          * Process response from AJAX call
          *
          * @param  {object} response
          * @return {array}
          */
         processData: function (response) {
-            var self = this,
+            var dataTest,
+                dfd = $.Deferred(),
+                self = this,
                 counts,
                 locations,
-                activities,
-                testLength;
-            console.log('from app.js', response);
-            if (!response.locationsSum) {
-                return false;
-            }
+                activities;
 
+            // Reject if no locations
+            if (!response.locationsSum) {
+                dfd.reject({statusText: 'no data'});
+            }
 
             // Convert response into arrays of objects
             counts = {};
@@ -410,6 +404,9 @@
             // Get location/activity data from filters object
             locations = this.filters.locations;
             activities = this.filters.activities;
+
+            // CSV
+            counts.csv = response.csv;
 
             // Total Sum
             counts.total = [{
@@ -504,7 +501,7 @@
                     newObj,
                     pctObj;
 
-                actDict = _.filter(activities, function (act, i) {
+                actDict = _.filter(activities, function (act) {
                     return act.id === parseInt(index, 10) && act.type === 'activity';
                 });
 
@@ -558,7 +555,7 @@
                 var actDict,
                     newObj;
 
-                actDict = _.filter(activities, function (act, i) {
+                actDict = _.filter(activities, function (act) {
                     return act.id === parseInt(index, 10) && act.type === 'activity';
                 });
 
@@ -593,7 +590,7 @@
                 var actDict,
                     newObj;
 
-                actDict = _.filter(activities, function (act, i) {
+                actDict = _.filter(activities, function (act) {
                     return act.id === parseInt(index, 10) && act.type === 'activity';
                 });
 
@@ -694,12 +691,14 @@
                 counts.yearSummary.push(newObj);
             });
 
-            // Check if counts is large enough to display meaningfully
-            // testLength = _.unique(_.pluck(_.values(counts.periodSum), 'count'));
+            // Check data for display
+            dataTest = _.reduce(_.pluck(counts.periodSum, 'count'), function (sum, num) {
+                return sum + num;
+            });
 
-            // if (testLength.length === 1) {
-            //     return false;
-            // }
+            if (dataTest === 0) {
+                dfd.reject({statusText: 'no data'});
+            }
 
             // Sort period arrays by date
             counts.periodSum.sort(self.sortData);
@@ -708,8 +707,9 @@
             counts.monthSummary.sort(self.sortData);
             counts.dayOfWeekSummary.sort(self.sortDays);
 
-            console.log('counts', counts);
-            return counts;
+            dfd.resolve(counts);
+
+            return dfd.promise();
         },
         /**
          * Draw chart
@@ -861,11 +861,9 @@
          * @param  array csv
          * @return
          */
-        buildCSV: function (csv, counts) {
+        buildCSV: function (counts) {
             var self = this,
                 base,
-                content,
-                csvLines,
                 finalContent,
                 formattedLines,
                 header,
@@ -874,13 +872,12 @@
                 summaryHash;
 
             lines = [];
-            csvLines = [];
             header = ['Date', 'Total'];
 
             self.locHeader = null;
             self.actHeader = null;
 
-            _.each(csv, function (day, date) {
+            _.each(counts.csv, function (day) {
                 var actHeader,
                     activities,
                     line,
@@ -906,13 +903,13 @@
 
                 // Convert locations to array and sort, add to line
                 locations = self.sortCSVItems(day.locations);
-                _.each(locations, function (loc, locName) {
+                _.each(locations, function (loc) {
                     line.push(loc.count);
                 });
 
                 // Convert activities to array and sort, add to line
                 activities = self.sortCSVItems(day.activities);
-                _.each(activities, function (act, actName) {
+                _.each(activities, function (act) {
                     line.push(act.count);
                 });
                 lines.push(line);
@@ -943,13 +940,13 @@
 
             // Add summary data to csv lines array
             _.each(summaryHash, function (e, i) {
-                var header = [
+                var sumHeader = [
                     i,
                     'count',
                     'percent'
                 ];
 
-                lines.push(header);
+                lines.push(sumHeader);
 
                 _.each(e, function (l) {
                     var line = [];
@@ -1010,6 +1007,35 @@
             // Populate template with data and insert into DOM
             $(elementId).empty();
             $(elementId).append(template(json));
+        },
+        error: function (e) {
+            $('#summary-data').hide();
+            $('#submit').removeAttr('disabled');
+            $('#supplemental-charts').hide();
+            $('#main-chart-header').css('visibility', 'hidden');
+
+            // Log errors for debugging
+            console.log('error statusText', e.statusText);
+            console.log('error object', e);
+
+            this.buildErrorTemplate([{msg: Errors.getMsg(e.statusText)}], this.cfg.errorTemplate, this.cfg.errorTarget);
+        },
+        buildErrorTemplate: function (items, templateId, targetId) {
+            var html,
+                json,
+                template;
+
+            // Insert list into object for template iteration
+            json = {items: items};
+
+            // Retrieve template from index.php (in script tag)
+            html = $(templateId).html();
+
+            // Compile template
+            template = Handlebars.compile(html);
+
+            // Populate template with data and insert into DOM
+            $(targetId).prepend(template(json));
         }
     };
 
@@ -1017,4 +1043,4 @@
     $(document).ready(function () {
         App.init();
     });
-}(ReportFilters, TimeSeries, BarChart));
+}(ReportFilters, Errors, TimeSeries, BarChart));

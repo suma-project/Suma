@@ -32,12 +32,15 @@
     /* margin:10px 10px 25px 10px;*/
     margin-bottom:25px;
 }
+
 #chart2 {
     margin-top: 10px;
 }
+
 #main-chart-header {
     visibility:hidden;
 }
+
 svg {
     font: 10px sans-serif;
 }
@@ -76,10 +79,6 @@ svg {
 }
 
 /* Additional Interface Rules */
-.alert-error {
-    display:none;
-}
-
 #secondary-filters {
     display:none;
 }
