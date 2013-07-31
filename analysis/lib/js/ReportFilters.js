@@ -23,6 +23,8 @@ var ReportFilters = function (p_options) {
          * @this {ReportFilters}
          */
         init: function () {
+            var dfd = $.Deferred();
+
             // Check passed options. Copied from http://www.engfers.com/code/javascript-module-pattern/
             if (p_options !== null && p_options !== undefined && p_options !== 'undefined') {
                 _.each(options, function (element, index) {
@@ -33,27 +35,40 @@ var ReportFilters = function (p_options) {
             }
 
             // Bind event listeners
-            this.bindEvents();
+            $.when(this.bindEvents())
+                .then(function () {
+                    dfd.resolve();
+                }, function (e) {
+                    dfd.reject(e);
+                });
+
+            return dfd.promise();
         },
         /**
          * Binds event listener for AJAX call for dictionary
          * and filter display
          */
         bindEvents: function () {
-            var self = this;
+            var dfd = $.Deferred(),
+                self = this;
 
             // Listen for change of initiative
             $(options.triggerForm).on('change', function (e) {
                 if (this.value !== 'default') {
                     $(options.filterForm).hide();
-                    $.when(self.getDictionary(this.value))
+                        $.when(self.getDictionary(this.value))
                         .then(function (data) {
                             self.buildInterfaceElements(data);
+                            dfd.resolve();
+                        }, function (e) {
+                            dfd.reject(e);
                         });
                 } else {
                     $(options.filterForm).fadeOut();
                 }
             });
+
+            return dfd.promise();
         },
         /**
          * Processes data and populates templates for filters
@@ -98,7 +113,8 @@ var ReportFilters = function (p_options) {
                 complete: function () {
                     $(options.triggerForm).removeAttr('disabled', 'true');
                     $('#secondary-loading').hide();
-                }
+                },
+                timeout: 60000 // 1 minute
             });
         },
         /**

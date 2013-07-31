@@ -1,4 +1,4 @@
-(function (Calendar) {
+(function (ReportFilters, Errors, Calendar) {
     var App = {
         cfg: {
             sdate:         '#sdate',
@@ -50,11 +50,18 @@
          * Initializes and inserts secondary filters
          */
         insertFilters: function () {
+            var filters,
+                self = this;
+
             if (this.filters === null) {
                 this.filters = new ReportFilters(this.cfg.filterOptions);
             }
 
-            this.filters.init();
+            filters = this.filters.init();
+
+            filters.fail(function (e) {
+                self.error(e);
+            });
         },
         bindEvents: function () {
             var self = this;
@@ -100,19 +107,15 @@
             });
         },
         error: function (e) {
-            var msg;
-
             $(this.cfg.legend).hide();
+            $(this.cfg.welcome).hide();
 
-            if (e.statusText === 'timeout') {
-                msg = 'The server was taking too long to respond. Please narrow your results and try again.';
-            } else if (e.statusText === 'Not Found') {
-                msg = 'The requested data URL was not found.';
-            } else {
-                msg = e.statusText;
-            }
+            // Log errors for debugging
+            console.log('test', Errors.getMsg(e.statusText));
+            console.log('error statusText', e.statusText);
+            console.log('error object', e);
 
-            this.buildTemplate([{msg: msg}], this.errorTemplate, this.errorTarget);
+            this.buildTemplate([{msg: Errors.getMsg(e.statusText)}], this.cfg.errorTemplate, this.cfg.errorTarget);
         },
         sortData: function (response) {
             return _.sortBy(
@@ -132,7 +135,7 @@
 
             // Does response have enough values to draw meaningful graph?
             if (Object.keys(response.periodSum).length < 1) {
-                dfd.reject({statusText: 'Not enough data found to show graph.'});
+                dfd.reject({statusText: 'no data'});
             }
 
             dfd.resolve(this.sortData(response.periodSum));
@@ -149,7 +152,7 @@
                 .datum(counts)
                 .call(chart);
         },
-        buildTemplate: function (items, templateId, elementId) {
+        buildTemplate: function (items, templateId, targetId) {
             var html,
                 json,
                 template;
@@ -164,7 +167,7 @@
             template = Handlebars.compile(html);
 
             // Populate template with data and insert into DOM
-            $(elementId).prepend(template(json));
+            $(targetId).prepend(template(json));
         }
     };
 
@@ -172,4 +175,4 @@
     $(document).ready(function () {
         App.init();
     });
-}(Calendar));
+}(ReportFilters, Errors, Calendar));

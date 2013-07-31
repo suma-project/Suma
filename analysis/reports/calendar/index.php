@@ -241,6 +241,7 @@ $initDropDown .= '</select>';
         <script src="../../lib/js/d3.v3.min.js"></script>
         <script src="../../lib/js/lodash.min.js"></script>
         <script src="../../lib/js/moment.js"></script>
+        <script src="../../lib/js/Errors.js"></script>
         <script src="../../lib/js/ReportFilters.js"></script>
         <script src="../../lib/js/Calendar.js"></script>
         <script src="js/app.js"></script>
