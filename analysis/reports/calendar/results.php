@@ -2,75 +2,70 @@
 header('Content-type: application/json');
 
 require_once '../../lib/php/ServerIO.php';
-
-$hash = array();
-
-function populateHash($response, $params)
+require_once '../../lib/php/Gump.php';
+require_once '../../lib/php/SumaGump.php';
+require_once '../../lib/php/TimeSeriesData.php';
+/**
+ * Function invoked when results.php receives an AJAX call
+ * from the client. Handles the assembly and processing of data
+ * to return to the client.
+ *
+ * @return array
+ */
+function lineChartData()
 {
-    global $hash;
-    $init = $response['initiative'];
-    $sessions = $init['sessions'];
+    // Instantiate TimeSeriesData class
+    $data = new TimeSeriesData();
 
-    if ($sessions)
+    // Validate form input
+    $params = $data->validateInput($_GET);
+
+    // Set query type and format
+    $params['format'] = 'lca';
+    $queryType        = 'sessions';
+
+    // Determine which array to use as filter for daygroup
+    if ($params['daygroup'] === 'weekdays')
     {
-        foreach($sessions as $sess)
-        {
-            $locations = $sess['locations'];
-            $total = 0;
-            foreach($locations as $loc)
-            {
-                $total += $loc['counts'];
-            }
-
-            $day = substr($sess['start'], 0, -9);
-
-            if (isset($hash[$day])) {
-                    $hash[$day] = $hash[$day] + $total;
-            } else {
-                    $hash[$day] = $total;
-            }
-
-        }
+        $params['days'] = $data->weekdays;
     }
-}
+    elseif ($params['daygroup'] === 'weekends')
+    {
+        $params['days'] = $data->weekends;
+    }
+    else
+    {
+        $params['days'] = $data->all;
+    }
 
-function echo500($e)
-{
-    header("HTTP/1.1 500 Internal Server Error");
-    echo "<h1>500 Internal Server Error</h1>";
-    echo '<p>An error occurred on the server which prevented your request from being completed: <strong>'.$e->getMessage().'</strong></p>';
-    die;
-}
+    // Create params array for Suma server
+    $sumaParams = $data->populateSumaParams($params);
 
-// --- END FUNCTIONS ---
-
-
-$params = array('id'     =>   $_GET['id'],
-                'format' =>  'lc',
-                'sum'    =>  'true',
-                'limit'  =>  60000);
-
-
-try
-{
-    $io = new ServerIO();
-    populateHash($io->getData($params, 'sessions'), $params);
-}
-catch (Exception $e)
-{
-    echo500($e);
-}
-
-while($io->hasMore())
-{
+    // Instantiate ServerIO class, begin retrieval of data from Suma Server,
+    // and continue retrieval until the hasMore property is false
     try
     {
-        populateHash($io->next(), $params);
+        $io = new ServerIO();
+        $data->populateHash($io->getData($sumaParams, $queryType), $params);
+        while ($io->hasMore())
+        {
+            $data->populateHash($io->next(), $params);
+        }
     }
     catch (Exception $e)
     {
-        echo500($e);
+        $data->echo500($e);
     }
+
+    // Calculate averages for appropriate sub-arrays of countHash
+    $returnData = $data->calculateAvg($data->countHash);
+
+    // Pad days as necessary
+    // $returnData = $data->padData($returnData, $params);
+
+    return $returnData;
 }
 
-echo json_encode($hash);
+$chartData = lineChartData();
+
+echo json_encode($chartData);

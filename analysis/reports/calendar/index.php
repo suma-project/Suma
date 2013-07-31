@@ -65,35 +65,8 @@ $initDropDown .= '</select>';
             </div>
         </div>
 
-        <div class="container">
-            <!-- <div id="main-chart-header" class="row">
-                <div id="main-annotation" class="span7">
-
-                </div>
-                <div class="btn-toolbar pull-right">
-                    <div id="main-chart-avgsum" class="btn-group" data-toggle="buttons-radio">
-                        <button type="button" class="btn btn-small" value="avg">Daily Avg</button>
-                        <button type="button" class="btn btn-small active" value="sum">Daily Sum</button>
-                    </div>
-                    <div class="btn-group">
-                        <a class="btn btn-small" href="#summary-data">Summary Data</a>
-                    </div>
-                    <div class="btn-group">
-                        <a class="btn btn-small" href="#csv-export">Export</a>
-                    </div>
-                    <div id="main-chart-download" class="btn-group">
-                        <a id="main-download" download="suma_main_chart.png" data-chart-div="chart1" class="btn btn-small" target="_blank">Save Chart</a>
-                    </div>
-                </div>
-            </div> -->
-            <div id="no-data" class="alert alert-error alert-block">
-                <h4>Warning!</h4>
-                    There was insufficient data for display based on your search parameters. Please try a different combination of filters.
-            </div>
-            <div id="ajax-error" class="alert alert-error alert-block">
-                <h4>Warning!</h4>
-                    There was a problem retrieving data from the server. It is possible no data exists for that combination of filters. Please try again or contact your system administrator.
-            </div>
+        <div id="main" class="container">
+            <div id="error-container"></div>
             <div id ="welcome" class="alert alert-info alert-block">
                 <h4>Welcome!</h4>
                     Please select an initiative from the select menu below. Once you have chosen an initiative, additional filter options will appear. You can also limit your search by date or time.
@@ -250,6 +223,15 @@ $initDropDown .= '</select>';
             {{#each items}}
                 <option value="{{type}}-{{id}}">{{indent depth}}{{title}}</option>
             {{/each}}
+        </script>
+        <script id="error" type="text/x-handlebars-template">
+            <div class="alert alert-error alert-block">
+                <h4>Warning!</h4>
+                <p>There was a problem retrieving data from the server. Please try again or contact your system administrator.</p>
+                {{#each items}}
+                    <p>Error Message: {{msg}}</p>
+                {{/each}}
+            </div>
         </script>
 
         <script src="../../lib/js/jquery.min.js"></script>

@@ -1,5 +1,25 @@
 (function (Calendar) {
     var App = {
+        cfg: {
+            sdate:         '#sdate',
+            edate:         '#edate',
+            legend:        '#legend',
+            welcome:       '#welcome',
+            loading:       '#loading',
+            errorTarget:   '#error-container',
+            errorTemplate: '#error',
+            chart:         '#chart',
+            filter:        '#initiatives',
+            filterOptions: {
+                url:                '../../lib/php/reportFilters.php',
+                triggerForm:        '#initiatives',
+                filterForm:         '#secondary-filters',
+                locationsTemplate:  '#locations-template',
+                activitiesTemplate: '#activities-template',
+                locationsSelect:    '#locations',
+                activitiesSelect:   '#activities'
+            }
+        },
         filters: null,
         init: function () {
             // Insert default dates
@@ -9,7 +29,7 @@
             this.insertFilters();
 
             // Set initiative filter to default (for back button)
-            $('#initiatives').val('default');
+            $(this.cfg.filter).val('default');
 
             // Bind Events
             this.bindEvents();
@@ -23,27 +43,15 @@
                 then = moment().subtract('months', 6).format('YYYY-MM-DD');
 
             // Insert default dates into DOM
-            $('#sdate').val(then);
-            $('#edate').val(now);
+            $(this.cfg.sdate).val(then);
+            $(this.cfg.edate).val(now);
         },
         /**
          * Initializes and inserts secondary filters
          */
         insertFilters: function () {
-            // Create options object for filters
-            var filterOptions = {
-                url: '../../lib/php/reportFilters.php',
-                triggerForm: '#initiatives',
-                filterForm: '#secondary-filters',
-                locationsTemplate: '#locations-template',
-                activitiesTemplate: '#activities-template',
-                locationsSelect: '#locations',
-                activitiesSelect: '#activities'
-            };
-
-            // Initialize filters
             if (this.filters === null) {
-                this.filters = new ReportFilters(filterOptions);
+                this.filters = new ReportFilters(this.cfg.filterOptions);
             }
 
             this.filters.init();
@@ -52,16 +60,16 @@
             var self = this;
 
             // Initialize datepicker
-            $('#sdate').datepicker({'format': 'yyyy-mm-dd', 'autoclose': 'true'});
-            $('#edate').datepicker({'format': 'yyyy-mm-dd', 'autoclose': 'true'});
+            $(self.cfg.sdate).datepicker({'format': 'yyyy-mm-dd', 'autoclose': 'true'});
+            $(self.cfg.edate).datepicker({'format': 'yyyy-mm-dd', 'autoclose': 'true'});
 
             // Get chart data on submit
             $('body').on('submit', 'form', function (e) {
                 var input = $(this).serializeArray();
-                console.log('input', input)
+
                 $.when(self.getData(input))
                     .then(self.processData.bind(self))
-                    .then(self.drawChart, self.error);
+                    .then(self.drawChart.bind(self), self.error.bind(self));
 
                 e.preventDefault();
             });
@@ -73,29 +81,42 @@
                 url: 'results.php',
                 data: input,
                 beforeSend: function () {
-                    $('#loading').show();
-                    $("#legend").hide();
-                    $('#welcome').hide();
+                    $(self.cfg.loading).show();
+                    $(self.cfg.legend).hide();
+                    $(self.cfg.welcome).hide();
+                    $(self.cfg.errorTarget).empty();
                     $('svg').remove();
                 },
                 success: function () {
-                    $("#legend").show();
+                    $(self.cfg.legend).show();
                 },
                 complete: function () {
-                    $('#loading').hide();
-                }
+                    $(self.cfg.loading).hide();
+                },
+                timeout: 180000 // 3 mins
             });
         },
         error: function (e) {
-            $("#legend").hide();
-            console.log("error: ", e);
+            var msg;
+
+            $(this.cfg.legend).hide();
+
+            if (e.statusText === 'timeout') {
+                msg = 'The server was taking too long to respond. Please narrow your results and try again.';
+            } else if (e.statusText === 'Not Found') {
+                msg = 'The requested data URL was not found.';
+            } else {
+                msg = e.statusText;
+            }
+
+            this.buildTemplate([{msg: msg}], this.errorTemplate, this.errorTarget);
         },
         sortData: function (response) {
             return _.sortBy(
                 _.map(response, function (count, date) {
                     return {
                         date: date,
-                        count: count
+                        count: count.count
                     };
                 }),
                 function (obj) {
@@ -106,22 +127,41 @@
         processData: function (response) {
             var dfd = $.Deferred();
 
-            // Does response have enough vlues to draw meaningful graph?
-            if (Object.keys(response).length < 2) {
-                dfd.reject('Not enough data.');
+            // Does response have enough values to draw meaningful graph?
+            if (Object.keys(response.periodSum).length < 1) {
+                dfd.reject({statusText: 'Not enough data found to show graph.'});
             }
 
-            dfd.resolve(this.sortData(response));
+            dfd.resolve(this.sortData(response.periodSum));
 
             return dfd.promise();
         },
         drawChart: function (counts) {
-            var chart;
+            var chart,
+                self = this;
+
             chart = Calendar();
 
-            d3.select('#chart')
+            d3.select(self.cfg.chart)
                 .datum(counts)
                 .call(chart);
+        },
+        buildTemplate: function (items, templateId, elementId) {
+            var html,
+                json,
+                template;
+
+            // Insert list into object for template iteration
+            json = {items: items};
+
+            // Retrieve template from index.php (in script tag)
+            html = $(templateId).html();
+
+            // Compile template
+            template = Handlebars.compile(html);
+
+            // Populate template with data and insert into DOM
+            $(elementId).prepend(template(json));
         }
     };
 
