@@ -111,7 +111,6 @@
             $(this.cfg.welcome).hide();
 
             // Log errors for debugging
-            console.log('test', Errors.getMsg(e.statusText));
             console.log('error statusText', e.statusText);
             console.log('error object', e);
 
