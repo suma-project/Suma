@@ -26,7 +26,7 @@
             this.insertDefaultDates();
 
             // Set initiative filter to default (for back button)
-            $(self.cfg.filter).val('default');
+            $(this.cfg.filter).val('default');
 
             // Insert filter select boxes
             this.insertFilters();
