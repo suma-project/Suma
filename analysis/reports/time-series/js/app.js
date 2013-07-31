@@ -112,6 +112,9 @@
             $('#sdate').datepicker({'format': 'yyyy-mm-dd', 'autoclose': 'true'});
             $('#edate').datepicker({'format': 'yyyy-mm-dd', 'autoclose': 'true'});
 
+            // Initialize help popovers
+            $('.suma-popover').popover({placement: 'bottom'});
+
             // Event handler to initialize AJAX call
             $('body').on('submit', '#chartFilters', function (e) {
                 var input = $(this).serializeArray();

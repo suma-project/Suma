@@ -45,26 +45,15 @@ var ReportFilters = function (p_options) {
             // Listen for change of initiative
             $(options.triggerForm).on('change', function (e) {
                 if (this.value !== 'default') {
-                    // Hide filters
                     $(options.filterForm).hide();
-                    // Retrieve updated display data
                     $.when(self.getDictionary(this.value))
                         .then(function (data) {
-                            // Process data and populate templates
                             self.buildInterfaceElements(data);
-                            // Show new filters
-                            $(options.filterForm).fadeIn();
-                        }, function (e) {
-                            $('#welcome').hide();
-                            $('#ajax-error').show();
                         });
                 } else {
-                    // Hide new filters
                     $(options.filterForm).fadeOut();
                 }
             });
-
-            $('.suma-popover').popover({placement: 'bottom'});
         },
         /**
          * Processes data and populates templates for filters
@@ -84,6 +73,9 @@ var ReportFilters = function (p_options) {
             // Populate templates
             this.buildTemplate(locations, options.locationsTemplate, options.locationsSelect);
             this.buildTemplate(activities, options.activitiesTemplate, options.activitiesSelect);
+
+            // Show new filters
+            $(options.filterForm).fadeIn();
         },
         /**
          * AJAX call to retrieve dictionary

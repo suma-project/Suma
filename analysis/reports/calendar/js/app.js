@@ -25,11 +25,11 @@
             // Insert default dates
             this.insertDefaultDates();
 
+            // Set initiative filter to default (for back button)
+            $(self.cfg.filter).val('default');
+
             // Insert filter select boxes
             this.insertFilters();
-
-            // Set initiative filter to default (for back button)
-            $(this.cfg.filter).val('default');
 
             // Bind Events
             this.bindEvents();
@@ -73,6 +73,9 @@
 
                 e.preventDefault();
             });
+
+            // Initialize help popovers
+            $('.suma-popover').popover({placement: 'bottom'});
         },
         getData: function (input) {
             var self = this;
