@@ -1,11 +1,6 @@
-/*#loading {
-    display: none;
-    left: 50%;
-    position: relative;
-    top: 50%;
-    width: 50%;
-}*/
-
+body {
+    padding-bottom: 80px;
+}
 #loading {
     position:relative;
     width:50%;
