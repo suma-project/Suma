@@ -22,10 +22,6 @@ body {
     display:none;
 }
 
-.alert-error {
-    display:none;
-}
-
 #chart{
     font: 10px sans-serif;
     margin: 30px;
