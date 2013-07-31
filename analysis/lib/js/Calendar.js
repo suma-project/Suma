@@ -81,7 +81,6 @@ var Calendar = function () {
                 .enter().append("svg")
                 .attr("width", width)
                 .attr("height", height)
-                .attr("class", "RdYlGn")
                 .append("g")
                 .attr("transform", "translate(" + 50 + "," + (height - newCellSize * 7 - 1) + ")");
 
