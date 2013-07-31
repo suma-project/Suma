@@ -66,31 +66,35 @@ $initDropDown .= '</select>';
         </div>
 
         <div id="main" class="container">
-            <div id="error-container"></div>
-            <div id ="welcome" class="alert alert-info alert-block">
-                <h4>Welcome!</h4>
-                    Please select an initiative from the select menu below. Once you have chosen an initiative, additional filter options will appear. You can also limit your search by date or time.
+            <div id="calendar-header" class="row">
+                <div id="error-container">
+                </div>
+                <div id ="welcome" class="alert alert-info alert-block">
+                    <h4>Welcome!</h4>
+                        Please select an initiative from the select menu below. Once you have chosen an initiative, additional filter options will appear. You can also limit your search by date or time.
+                </div>
+                <div id="loading"><img src="../../lib/img/spinner.gif">
+                </div>
+                <div id="chart">
+                </div>
+                <div id="legend">
+                    <span>Less</span>
+                    <ul class="legend-list">
+                        <li style="background-color: #eee"></li>
+                        <li style="background-color: #d6e685"></li>
+                        <li style="background-color: #8cc665"></li>
+                        <li style="background-color: #44a340"></li>
+                        <li style="background-color: #1e6823"></li>
+                    </ul>
+                    <span>More</span>
+                </div>
             </div>
-            <div id="chart">
-                <div id="loading"><img src="../../lib/img/spinner.gif"></div>
-            </div>
-            <div id="legend">
-                <span>Less</span>
-                <ul class="legend-list">
-                    <li style="background-color: #eee"></li>
-                    <li style="background-color: #d6e685"></li>
-                    <li style="background-color: #8cc665"></li>
-                    <li style="background-color: #44a340"></li>
-                    <li style="background-color: #1e6823"></li>
-                </ul>
-                <span>More</span>
-            </div>
-            <div class="span12">
-                <div class="row">
-                    <form id="chartFilters">
-                        <fieldset>
-                            <div class="span9">
-                                <div class="row">
+
+            <div class="row">
+                <form id="chartFilters">
+                    <fieldset>
+                        <div class="span9">
+                            <div class="row">
                                 <div class="span9">
                                     <h3>Modify Chart</h3>
                                 </div>
@@ -156,59 +160,45 @@ $initDropDown .= '</select>';
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        <div id="secondary-loading" class="span3"><img id="secondary-spinner" src="../../lib/img/spinner.gif"></div>
+                        <div id="secondary-filters" class="span3">
+                            <h3>Initiative Filters</h3>
+                              <div class="control-group">
+                                <h5 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Limit days of the week" data-content="Filter days by weekday or weekend.">Limit days of the week</h5>
+                                <label class="control-label" for="daygroup"></label>
+                                <div class="controls">
+                                    <select name="daygroup" id="daygroup">
+                                        <option value="all">All</option>
+                                        <option value="weekdays">Weekdays Only</option>
+                                        <option value="weekends">Weekends Only</option>
+                                    </select>
                                 </div>
                             </div>
-                <div id="secondary-loading" class="span3"><img id="secondary-spinner" src="../../lib/img/spinner.gif"></div>
-                <div id="secondary-filters" class="span3">
-                    <h3>Initiative Filters</h3>
-                      <div class="control-group">
-                        <h5 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Limit days of the week" data-content="Filter days by weekday or weekend.">Limit days of the week</h5>
-                        <label class="control-label" for="daygroup"></label>
-                        <div class="controls">
-                            <select name="daygroup" id="daygroup">
-                                <option value="all">All</option>
-                                <option value="weekdays">Weekdays Only</option>
-                                <option value="weekends">Weekends Only</option>
-                            </select>
+                            <div class="control-group">
+                                <h5 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Limit Locations" data-content="Select which locations to include in your analysis. Selecting a location with children will include all children in the data set.">Limit locations</h5>
+                                <label class="control-label" for="locations"></label>
+                                <div class="controls">
+                                    <select name="locations" id="locations">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <h5 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Limit Activities" data-content="Select which activities to include in your analysis. Activity Groups will include all member activities.">Limit activities</h5>
+                                <label class="control-label" for="activities"></label>
+                                <div class="controls">
+                                    <select name="activities" id="activities">
+                                    </select>
+                                </div>
+                            </div>
+                             <div>
+                                <input type="submit" id="submit" class="btn btn-success" data-default-text ="Submit" data-loading-text="Loading..." value="Submit" />
+                            </div>
                         </div>
-                    </div>
-                    <div class="control-group">
-                        <h5 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Limit Locations" data-content="Select which locations to include in your analysis. Selecting a location with children will include all children in the data set.">Limit locations</h5>
-                        <label class="control-label" for="locations"></label>
-                        <div class="controls">
-                            <select name="locations" id="locations">
-                            </select>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <h5 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Limit Activities" data-content="Select which activities to include in your analysis. Activity Groups will include all member activities.">Limit activities</h5>
-                        <label class="control-label" for="activities"></label>
-                        <div class="controls">
-                            <select name="activities" id="activities">
-                            </select>
-                        </div>
-                    </div>
-                     <div>
-                        <input type="submit" id="submit" class="btn btn-success" data-default-text ="Submit" data-loading-text="Loading..." value="Submit" />
-                    </div>
-                </div>
-                </fieldset>
+                    </fieldset>
                 </form>
             </div>
-            </div>
-            <!-- <form>
-                <div class="control-group">
-                    <h5 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Choose Initiative" data-content="Choose an initiative to reveal additional filters.">Choose Initiative</h5>
-                        <label class="control-label" for="initiatives"></label>
-                        <div class="controls">
-                            <?php echo $initDropDown; ?>
-                        </div>
-                </div>
-                <div>
-                    <input type="submit" id="submit" class="btn btn-success" data-default-text ="Submit" data-loading-text="Loading..." value="Submit" />
-                </div>
-            </form> -->
-
         </div>
 
         <!-- Templates -->
@@ -241,6 +231,7 @@ $initDropDown .= '</select>';
         <script src="../../lib/js/d3.v3.min.js"></script>
         <script src="../../lib/js/lodash.min.js"></script>
         <script src="../../lib/js/moment.js"></script>
+        <script src="../../lib/js/canvg.js"></script>
         <script src="../../lib/js/Errors.js"></script>
         <script src="../../lib/js/ReportFilters.js"></script>
         <script src="../../lib/js/Calendar.js"></script>

@@ -53,3 +53,7 @@ ul.legend-list li {
     width: 10px;
     height: 10px;
 }
+
+#calendar-header {
+    min-height: 160px;
+}
