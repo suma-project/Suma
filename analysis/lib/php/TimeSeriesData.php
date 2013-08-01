@@ -146,6 +146,17 @@ class TimeSeriesData
 
         return $array;
     }
+    private function buildDailyHourSummaryScaffold()
+    {
+        $array = array();
+
+        for ($i = 0; $i <= 6; $i++)
+        {
+            $array[$i] = $this->buildHourSummaryScaffold();
+        }
+
+        return $array;
+    }
     /**
      * Basic pluck method
      * @param  array $input
@@ -441,6 +452,12 @@ class TimeSeriesData
             $this->countHash['hourSummary'] = $this->buildHourSummaryScaffold();
         }
 
+        // Populate daily hour summary scaffold
+        if (!isset($this->countHash['dailyHourSummary']))
+        {
+            $this->countHash['dailyHourSummary'] = $this->buildDailyHourSummaryScaffold();
+        }
+
         if (isset($response['initiative']['sessions']))
         {
             $sessions = $response['initiative']['sessions'];
@@ -470,6 +487,7 @@ class TimeSeriesData
 
                             // Convert date to day of the week
                             $weekday = date('l', strtotime($day));
+                            $weekdayInt = date('w', strtotime($day));
 
                             // Convert date to hour of day
                             $hour = date('G', strtotime($count['time']));
@@ -646,6 +664,16 @@ class TimeSeriesData
                                     else
                                     {
                                         $this->countHash['hourSummary'][$hour] += $count['number'];
+                                    }
+
+                                    // Build Daily Hourly Summary array
+                                    if(!isset($this->countHash['dailyHourSummary'][$weekdayInt][$hour]))
+                                    {
+                                        $this->countHash['dailyHourSummary'][$weekdayInt][$hour] = $count['number'];
+                                    }
+                                    else
+                                    {
+                                        $this->countHash['dailyHourSummary'][$weekdayInt][$hour] += $count['number'];
                                     }
 
                                     // Build periodSum array
