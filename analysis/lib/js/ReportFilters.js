@@ -251,7 +251,7 @@ var ReportFilters = function (p_options) {
                 var indent = '';
                 while (depth > 0) {
                     depth -= 1;
-                    indent += '&mdash;';
+                    indent += '—';
                 }
                 return indent;
             });
