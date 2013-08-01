@@ -168,6 +168,7 @@
             if (empty) {
                 $(targetId).empty();
             }
+
             $(targetId).prepend(template(json));
         }
     };
