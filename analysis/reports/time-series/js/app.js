@@ -227,6 +227,7 @@
         },
          /**
          * Method to convert SVG to downloadable PNG
+         *
          * @param  string linkId  CSS ID of the link clicked to call method
          * @param  string chartId Contents of data-property with CSS ID of source SVG wrapper div
          */
@@ -1012,6 +1013,10 @@
 
             $(targetId).append(template(json));
         },
+        /**
+         * Generic Error Handler
+         * @param  {object} e system or custom error object
+         */
         error: function (e) {
             $('#welcome').hide();
             $('#summary-data').hide();
@@ -1022,6 +1027,7 @@
             // Log errors for debugging
             console.log('error object', e);
 
+            // Insert template into DOM
             this.buildTemplate([{msg: Errors.getMsg(e.statusText)}], this.cfg.errorTemplate, this.cfg.errorTarget);
         }
     };
