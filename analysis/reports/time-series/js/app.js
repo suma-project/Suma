@@ -362,7 +362,8 @@
                     $('#submit').removeClass('disabled').val(text);
                     $('#submit').removeAttr('disabled');
                     $('#loading').hide();
-                }
+                },
+                timeout: 180000 // 3 mins
             });
         },
         /**
@@ -821,13 +822,13 @@
                 .call(this.suppChart);
         },
         drawTable: function (counts) {
-            this.buildTemplate(counts.total, '#total-sum-table', '#total-data');
-            this.buildTemplate(counts.locationsSum, '#locations-sum-table', '#locations-data');
-            this.buildTemplate(counts.activitiesSum, '#activities-sum-table', '#activities-data');
-            this.buildTemplate(counts.yearSummary, '#year-table', '#year-data');
-            this.buildTemplate(counts.monthSummary, '#month-table', '#month-data');
-            this.buildTemplate(counts.dayOfWeekSummary, '#weekday-table', '#weekday-data');
-            this.buildTemplate(counts.hourSummary, '#hour-table', '#hour-data');
+            this.buildTemplate(counts.total, '#total-sum-table', '#total-data', true);
+            this.buildTemplate(counts.locationsSum, '#locations-sum-table', '#locations-data', true);
+            this.buildTemplate(counts.activitiesSum, '#activities-sum-table', '#activities-data', true);
+            this.buildTemplate(counts.yearSummary, '#year-table', '#year-data', true);
+            this.buildTemplate(counts.monthSummary, '#month-table', '#month-data', true);
+            this.buildTemplate(counts.dayOfWeekSummary, '#weekday-table', '#weekday-data', true);
+            this.buildTemplate(counts.hourSummary, '#hour-table', '#hour-data', true);
         },
         locHeader: null,
         actHeader: null,
@@ -978,7 +979,7 @@
          * @param  string templateId
          * @param  string elementId
          */
-        buildTemplate: function (items, templateId, elementId) {
+        buildTemplate: function (items, templateId, targetId, empty) {
             var html,
                 json,
                 self = this,
@@ -1005,37 +1006,23 @@
             });
 
             // Populate template with data and insert into DOM
-            $(elementId).empty();
-            $(elementId).append(template(json));
+            if (empty) {
+                $(targetId).empty();
+            }
+
+            $(targetId).append(template(json));
         },
         error: function (e) {
+            $('#welcome').hide();
             $('#summary-data').hide();
             $('#submit').removeAttr('disabled');
             $('#supplemental-charts').hide();
             $('#main-chart-header').css('visibility', 'hidden');
 
             // Log errors for debugging
-            console.log('error statusText', e.statusText);
             console.log('error object', e);
 
-            this.buildErrorTemplate([{msg: Errors.getMsg(e.statusText)}], this.cfg.errorTemplate, this.cfg.errorTarget);
-        },
-        buildErrorTemplate: function (items, templateId, targetId) {
-            var html,
-                json,
-                template;
-
-            // Insert list into object for template iteration
-            json = {items: items};
-
-            // Retrieve template from index.php (in script tag)
-            html = $(templateId).html();
-
-            // Compile template
-            template = Handlebars.compile(html);
-
-            // Populate template with data and insert into DOM
-            $(targetId).prepend(template(json));
+            this.buildTemplate([{msg: Errors.getMsg(e.statusText)}], this.cfg.errorTemplate, this.cfg.errorTarget);
         }
     };
 
