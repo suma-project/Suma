@@ -111,7 +111,6 @@
             $(this.cfg.welcome).hide();
 
             // Log errors for debugging
-            console.log('error statusText', e.statusText);
             console.log('error object', e);
 
             this.buildTemplate([{msg: Errors.getMsg(e.statusText)}], this.cfg.errorTemplate, this.cfg.errorTarget);
@@ -151,7 +150,7 @@
                 .datum(counts)
                 .call(chart);
         },
-        buildTemplate: function (items, templateId, targetId) {
+        buildTemplate: function (items, templateId, targetId, empty) {
             var html,
                 json,
                 template;
@@ -166,6 +165,9 @@
             template = Handlebars.compile(html);
 
             // Populate template with data and insert into DOM
+            if (empty) {
+                $(targetId).empty();
+            }
             $(targetId).prepend(template(json));
         }
     };
