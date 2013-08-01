@@ -10,6 +10,6 @@ var Errors = {
             return this.codes[code];
         }
 
-        return "Unkown Error.";
+        return "Unkown Error: " + code;
     }
 };
