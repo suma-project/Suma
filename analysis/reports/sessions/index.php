@@ -64,13 +64,7 @@ $initDropDown .= '</select>';
 
         <div class="container">
             <div class="row">
-                <div id="no-data" class="alert alert-error alert-block">
-                    <h4>Warning!</h4>
-                        There was insufficient data for display based on your search parameters. Please try a different combination of filters.
-                </div>
-                <div id="ajax-error" class="alert alert-error alert-block">
-                    <h4>Warning!</h4>
-                        There was a problem retrieving data from the server. It is possible no data exists for that combination of filters. Please try again or contact your system administrator.
+                <div id="error-container">
                 </div>
                 <div id ="welcome" class="alert alert-info alert-block">
                     <h4>Welcome!</h4>
@@ -154,6 +148,15 @@ $initDropDown .= '</select>';
                 </tbody>
             </table>
         </script>
+        <script id="error" type="text/x-handlebars-template">
+            <div class="alert alert-error alert-block">
+                <h4>Warning!</h4>
+                <p>There was a problem retrieving data from the server. Please try again or contact your system administrator.</p>
+                {{#each items}}
+                    <p>Error Message: {{msg}}</p>
+                {{/each}}
+            </div>
+        </script>
 
         <script src="../../lib/js/jquery.min.js"></script>
         <script src="../../lib/js/handlebars.js"></script>
@@ -163,6 +166,7 @@ $initDropDown .= '</select>';
         <script src="../../lib/js/lodash.min.js"></script>
         <script src="../../lib/js/moment.js"></script>
         <script src="../../lib/js/spin.min.js"></script>
+        <script src="../../lib/js/Errors.js"></script>
         <script src="js/app.js"></script>
     </body>
 </html>

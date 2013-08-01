@@ -1,5 +1,12 @@
 (function () {
     var App = {
+        cfg: {
+            errorTarget:   '#error-container',
+            errorTemplate: '#error',
+            tableTarget:   '#sessions-data',
+            tableTemplate: '#sessions-table',
+            welcome:       '#welcome'
+        },
         init: function () {
             this.addSpinner();
             this.insertDefaultDates();
@@ -45,18 +52,21 @@
 
             // Form submission
             $('body').on('submit', '#chartFilters', function (e) {
-                var input = $(this).serializeArray();
+                var data,
+                    input;
 
-                $.when(self.getData(input))
-                    .then(function (data) {
-                        if (data.length > 0) {
-                            self.processData(data);
-                        } else {
-                            self.noData();
-                        }
-                    }, function (e) {
-                        self.ajaxError();
-                    });
+                input = $(this).serializeArray();
+
+                data = $.when(self.getData(input))
+                                .then(self.processData);
+
+                data.done(function (data) {
+                    self.buildTemplate(data, self.cfg.tableTemplate, self.cfg.tableTarget, true);
+                });
+
+                data.fail(function (e) {
+                    self.error(e);
+                });
 
                 e.preventDefault();
             });
@@ -69,14 +79,6 @@
             // Insert default dates into DOM
             $('#sdate').val(then);
             $('#edate').val(now);
-        },
-        ajaxError: function () {
-            $('#ajax-error').show();
-            $('#sessions-data').hide();
-        },
-        noData: function () {
-            $('#no-data').show();
-            $('#sessions-data').hide();
         },
         getData: function (input) {
             return $.ajax({
@@ -91,20 +93,29 @@
                 complete: function () {
                     $('#loadingWidget').fadeOut(400);
                     $('#sessions-data').show();
-                }
+                },
+                timeout: 30000
             });
         },
         processData: function (data) {
-            var sortedData = _.sortBy(data, function (obj) {
+            var dfd = $.Deferred(),
+                sortedData;
+
+            if (data.length < 1) {
+                dfd.reject({statusText: 'no data'});
+            }
+
+            sortedData = _.sortBy(data, function (obj) {
                 return obj.start;
             });
 
-            this.buildTemplate(sortedData.reverse(), '#sessions-table', '#sessions-data');
+            dfd.resolve(sortedData.reverse());
+
+            return dfd.promise();
         },
-        buildTemplate: function (items, templateId, elementId) {
+        buildTemplate: function (items, templateId, targetId, empty) {
             var html,
                 json,
-                self = this,
                 template;
 
             // Insert list into object for template iteration
@@ -117,8 +128,19 @@
             template = Handlebars.compile(html);
 
             // Populate template with data and insert into DOM
-            $(elementId).empty();
-            $(elementId).append(template(json));
+            if (empty) {
+                $(targetId).empty();
+            }
+
+            $(targetId).append(template(json));
+        },
+        error: function (e) {
+            $(this.cfg.welcome).hide();
+
+            // Log errors for debugging
+            console.log('error object', e);
+
+            this.buildTemplate([{msg: Errors.getMsg(e.statusText)}], this.cfg.errorTemplate, this.cfg.errorTarget);
         }
     };
     App.init();
