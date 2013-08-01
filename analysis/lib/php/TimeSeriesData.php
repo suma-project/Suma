@@ -146,13 +146,29 @@ class TimeSeriesData
 
         return $array;
     }
+    private function buildHourSummaryScaffoldAvg()
+    {
+        $array = array();
+        $subArray = array(
+                "sum" => NULL,
+                "avg" => NULL,
+                "hourCounts" => array()
+            );
+
+        for ($i = 0; $i <= 23; $i++)
+        {
+            $array[$i] = $subArray;
+        }
+
+        return $array;
+    }
     private function buildDailyHourSummaryScaffold()
     {
         $array = array();
 
         for ($i = 0; $i <= 6; $i++)
         {
-            $array[$i] = $this->buildHourSummaryScaffold();
+            $array[$i] = $this->buildHourSummaryScaffoldAvg();
         }
 
         return $array;
@@ -669,11 +685,21 @@ class TimeSeriesData
                                     // Build Daily Hourly Summary array
                                     if(!isset($this->countHash['dailyHourSummary'][$weekdayInt][$hour]))
                                     {
-                                        $this->countHash['dailyHourSummary'][$weekdayInt][$hour] = $count['number'];
+                                        $this->countHash['dailyHourSummary'][$weekdayInt][$hour]['sum'] = $count['number'];
+                                        $this->countHash['dailyHourSummary'][$weekdayInt][$hour]['hourCounts'][$day] = $count['number'];
                                     }
                                     else
                                     {
-                                        $this->countHash['dailyHourSummary'][$weekdayInt][$hour] += $count['number'];
+                                        $this->countHash['dailyHourSummary'][$weekdayInt][$hour]['sum'] += $count['number'];
+
+                                        if(!isset($this->countHash['dailyHourSummary'][$weekdayInt][$hour]['hourCounts'][$day]))
+                                        {
+                                            $this->countHash['dailyHourSummary'][$weekdayInt][$hour]['hourCounts'][$day] = $count['number'];
+                                        }
+                                        else
+                                        {
+                                            $this->countHash['dailyHourSummary'][$weekdayInt][$hour]['hourCounts'][$day] += $count['number'];
+                                        }
                                     }
 
                                     // Build periodSum array
@@ -907,6 +933,20 @@ class TimeSeriesData
             }
         }
 
+        // dailyHourSummary averages
+        foreach ($countHash['dailyHourSummary'] as $dayKey => $day)
+        {
+            foreach ($day as $hourKey => $hour)
+            {
+                $count = count($hour['hourCounts']);
+
+                if ($count !== 0)
+                {
+                    $avg = array_sum(array_values($hour['hourCounts'])) / $count;
+                    $countHash['dailyHourSummary'][$dayKey][$hourKey]['avg'] = $avg;
+                }
+            }
+        }
 
         return $countHash;
     }
