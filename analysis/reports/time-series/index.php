@@ -267,13 +267,13 @@ $initDropDown .= '</select>';
         <script id="locations-template" type="text/x-handlebars-template">
             <option value="all">All</option>
             {{#each items}}
-                <option value="{{id}}">{{indent depth}}{{title}}</option>
+                <option value="{{id}}">{{indent depth}}{{{title}}}</option>
             {{/each}}
         </script>
         <script id="activities-template" type="text/x-handlebars-template">
             <option value="all">All</option>
             {{#each items}}
-                <option value="{{type}}-{{id}}">{{indent depth}}{{title}}</option>
+                <option value="{{type}}-{{id}}">{{indent depth}}{{{title}}}</option>
             {{/each}}
         </script>
         <script id="total-sum-table" type="text/x-handlebars-template">
