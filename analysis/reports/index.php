@@ -68,6 +68,13 @@
                 </div>
                 <p>A report for quickly examining sessions, the Sessions Summary displays a table of sessions based on initiative, date and time filters.</p>
             </div>
+            <div class="span6">
+                <div class="row">
+                    <div class="span5"><h3><a href="hourly">Hours of the Week</a></h3></div>
+                    <div class="span1"><img class="head-icon" src="../lib/img/clock.png" /></div>
+                </div>
+                <p>Hourly report across the entire week.</p>
+            </div>
         </div>
     </div>
 
