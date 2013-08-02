@@ -73,7 +73,7 @@ var Calendar = function () {
                 .domain(d3.values(data))
                 .range(["#d6e685", "#8cc665", "#44a340", "#1e6823"]);
 
-            svg = d3.select("#chart").selectAll("svg")
+            svg = selection.selectAll("svg")
                 .data(d3.range(
                     parseInt(_.first(counts).date.split("-")[0], 10),
                     parseInt(_.last(counts).date.split("-")[0], 10) + 1
