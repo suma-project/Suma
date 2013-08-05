@@ -91,6 +91,9 @@
                 url: 'results.php',
                 data: input,
                 beforeSend: function () {
+                    var text = $('#submit').data('loading-text');
+                    $('#submit').addClass('disabled').val(text);
+                    $('#submit').attr('disabled', 'true');
                     $(self.cfg.loading).show();
                     $(self.cfg.legend).hide();
                     $(self.cfg.welcome).hide();
@@ -101,6 +104,9 @@
                     $(self.cfg.legend).show();
                 },
                 complete: function () {
+                    var text = $('#submit').data('default-text');
+                    $('#submit').removeClass('disabled').val(text);
+                    $('#submit').removeAttr('disabled');
                     $(self.cfg.loading).hide();
                 },
                 timeout: 180000 // 3 mins
