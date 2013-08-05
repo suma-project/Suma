@@ -81,6 +81,8 @@ $initDropDown .= '</select>';
                         <button type="button" class="btn btn-small active" value="sum">Hourly Sum</button>
                     </div>
                 </div>
+                <div id="chart2">
+                </div>
                 <div id="chart">
                 </div>
                 <div id="legend">
@@ -240,6 +242,7 @@ $initDropDown .= '</select>';
         <script src="../../lib/js/canvg.js"></script>
         <script src="../../lib/js/Errors.js"></script>
         <script src="../../lib/js/ReportFilters.js"></script>
+        <script src="../../lib/js/HourlyLine.js"></script>
         <script src="../../lib/js/HourlyCalendar.js"></script>
         <script src="js/app.js"></script>
 

@@ -1,4 +1,4 @@
-(function (ReportFilters, Errors, HourlyCalendar) {
+(function (ReportFilters, Errors, HourlyCalendar, HourlyLine) {
     var App = {
         cfg: {
             sdate:         '#sdate',
@@ -9,6 +9,7 @@
             errorTarget:   '#error-container',
             errorTemplate: '#error',
             chart:         '#chart',
+            chart2:        '#chart2',
             filter:        '#initiatives',
             buttons:       '#avg-sum',
             filterOptions: {
@@ -98,6 +99,9 @@
                 url: 'results.php',
                 data: input,
                 beforeSend: function () {
+                    var text = $('#submit').data('loading-text');
+                    $('#submit').addClass('disabled').val(text);
+                    $('#submit').attr('disabled', 'true');
                     $(self.cfg.loading).show();
                     $(self.cfg.legend).hide();
                     $(self.cfg.buttons).hide();
@@ -110,6 +114,9 @@
                     $(self.cfg.buttons).show();
                 },
                 complete: function () {
+                    var text = $('#submit').data('default-text');
+                    $('#submit').removeClass('disabled').val(text);
+                    $('#submit').removeAttr('disabled');
                     $(self.cfg.loading).hide();
                 },
                 timeout: 180000 // 3 mins
@@ -192,9 +199,17 @@
                 this.calendar = HourlyCalendar();
             }
 
+            if (!this.line) {
+                this.line = HourlyLine();
+            }
+
             d3.select(self.cfg.chart)
                 .datum(data)
                 .call(this.calendar);
+
+            d3.select(self.cfg.chart2)
+                .datum(data)
+                .call(this.line);
         },
         buildTemplate: function (items, templateId, targetId, empty) {
             var html,
@@ -223,4 +238,4 @@
     $(document).ready(function () {
         App.init();
     });
-}(ReportFilters, Errors, HourlyCalendar));
+}(ReportFilters, Errors, HourlyCalendar, HourlyLine));

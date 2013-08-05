@@ -1,6 +1,7 @@
 body {
     padding-bottom: 80px;
 }
+
 #loading {
     position:relative;
     width:50%;
@@ -22,7 +23,7 @@ body {
     display:none;
 }
 
-#chart{
+#chart {
     font: 10px sans-serif;
     width: 960px;
     shape-rendering: crispEdges;
@@ -75,4 +76,23 @@ text.axis-workweek {
 
 text.axis-worktime {
     fill: #000;
+}
+
+/* Line Chart */
+.xAxis path, .yAxis path {
+    fill: none;
+    stroke: #000;
+}
+
+.yAxis, .xAxis {
+    font: 10px sans-serif;
+    shape-rendering: crispEdges;
+}
+
+.mainGraph {
+    fill: steelblue;
+}
+
+#tsLegend {
+    font: 10px sans-serif;
 }
