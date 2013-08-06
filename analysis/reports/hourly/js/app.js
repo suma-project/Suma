@@ -101,7 +101,7 @@
                 self.downloadPNG(linkId, chartId);
             });
 
-             $('#calendar-download').on('click', function () {
+            $('#calendar-download').on('click', function () {
                 var linkId = "#" + this.id,
                     chartId = "#" + $(this).attr('data-chart-div');
 
