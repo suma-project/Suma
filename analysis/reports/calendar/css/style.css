@@ -19,15 +19,19 @@ body {
 
 /* AJAX */
 #loading {
-    position:relative;
-    width:50%;
-    top:50%;
-    left:50%;
-    display:none;
+    display: none;
+    left: 50%;
+    position: relative;
+    top: 50%;
+    width: 50%;
+}
+
+#loading img {
+    margin-top: 50px;
 }
 
 #secondary-loading {
-    display:none;
+    display: none;
 }
 
 #secondary-spinner {
@@ -36,7 +40,7 @@ body {
 }
 
 #secondary-filters {
-    display:none;
+    display: none;
 }
 
 /* Legend */
@@ -55,6 +59,6 @@ ul.legend-list {
 
 ul.legend-list li {
     display: inline-block;
-    width: 10px;
     height: 10px;
+    width: 10px;
 }

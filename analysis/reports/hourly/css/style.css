@@ -25,6 +25,10 @@ body {
     display: none;
 }
 
+#loading img {
+    margin-top: 50px;
+}
+
 #secondary-loading {
     display: none;
 }
