@@ -50,13 +50,11 @@ svg {
 }
 
 .dot {
-    fill:steelblue;
     stroke: #f7f7f7;
     stroke-width: 2px;
 }
 
 #legendCircle {
-    fill:steelblue;
     stroke: #f7f7f7;
     stroke-width: 2px;
 }

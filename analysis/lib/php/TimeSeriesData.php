@@ -996,7 +996,7 @@ class TimeSeriesData
                 // This check is to avoid padding days we don't want
                 if (in_array($weekday, $params['days']))
                 {
-                    $data['periodSum'][$date]['count'] = 0;
+                    $data['periodSum'][$date]['count'] = NULL;
                 }
             }
 
@@ -1007,7 +1007,7 @@ class TimeSeriesData
                 // This check is to avoid padding days we don't want
                 if (in_array($weekday, $params['days']))
                 {
-                    $data['periodAvg'][$date]['count'] = 0;
+                    $data['periodAvg'][$date]['count'] = NULL;
                 }
             }
         }
