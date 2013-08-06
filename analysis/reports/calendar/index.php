@@ -77,8 +77,8 @@ $initDropDown .= '</select>';
                 </div>
                 <div id="controls" class="btn-toolbar pull-right">
                     <div id="avg-sum" class="btn-group" data-toggle="buttons-radio">
-                        <button type="button" class="btn btn-small" value="avg">Hourly Avg</button>
-                        <button type="button" class="btn btn-small active" value="sum">Hourly Sum</button>
+                        <button type="button" class="btn btn-small" value="avg">Daily Avg</button>
+                        <button type="button" class="btn btn-small active" value="sum">Daily Sum</button>
                     </div>
                     <div id="calendar-chart-download" class="btn-group">
                         <a id="calendar-download" download="suma_calendar_chart.png" data-chart-div="chart" class="btn btn-small" target="_blank">Save Calendar Chart</a>
