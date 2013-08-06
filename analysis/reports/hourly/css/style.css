@@ -2,16 +2,31 @@ body {
     padding-bottom: 80px;
 }
 
+#chart {
+    font: 10px sans-serif;
+    width: 960px;
+    shape-rendering: crispEdges;
+}
+
+#controls {
+    display: none;
+}
+
+#calendar-header {
+    min-height: 160px;
+}
+
+/* AJAX */
 #loading {
-    position:relative;
-    width:50%;
-    top:50%;
-    left:50%;
-    display:none;
+    position: relative;
+    width: 50%;
+    top: 50%;
+    left: 50%;
+    display: none;
 }
 
 #secondary-loading {
-    display:none;
+    display: none;
 }
 
 #secondary-spinner {
@@ -20,24 +35,10 @@ body {
 }
 
 #secondary-filters {
-    display:none;
+    display: none;
 }
 
-#chart {
-    font: 10px sans-serif;
-    width: 960px;
-    shape-rendering: crispEdges;
-}
-
-#avg-sum {
-    display:none;
-}
-
-.month {
-    fill: none;
-    stroke: none;
-}
-
+/* Calendar legend */
 #legend {
     display: none;
     float: right;
@@ -57,40 +58,11 @@ ul.legend-list li {
     height: 16px;
 }
 
-#calendar-header {
-    min-height: 160px;
-}
-
-rect.bordered {
-    stroke: #fff;
-    stroke-width:2px;
-}
-
-hour {
-    fill: #eee;
-}
-
-text.axis-workweek {
-    fill: #000;
-}
-
-text.axis-worktime {
-    fill: #000;
-}
 
 /* Line Chart */
-.xAxis path, .yAxis path {
-    fill: none;
-    stroke: #000;
-}
-
 .yAxis, .xAxis {
     font: 10px sans-serif;
     shape-rendering: crispEdges;
-}
-
-.mainGraph {
-    fill: steelblue;
 }
 
 #tsLegend {

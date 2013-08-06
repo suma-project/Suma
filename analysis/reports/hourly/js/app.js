@@ -11,7 +11,7 @@
             chart:         '#chart',
             chart2:        '#chart2',
             filter:        '#initiatives',
-            buttons:       '#avg-sum',
+            buttons:       '#controls',
             filterOptions: {
                 url:                '../../lib/php/reportFilters.php',
                 triggerForm:        '#initiatives',
@@ -83,6 +83,7 @@
                 e.preventDefault();
             });
 
+            // Toggle between sum and avg
             $('#avg-sum').on('click', function (e) {
                 var state = e.target.value;
 
@@ -91,6 +92,47 @@
 
             // Initialize help popovers
             $('.suma-popover').popover({placement: 'bottom'});
+
+            // Chart Download
+            $('#line-download').on('click', function () {
+                var linkId = "#" + this.id,
+                    chartId = "#" + $(this).attr('data-chart-div');
+
+                self.downloadPNG(linkId, chartId);
+            });
+
+             $('#calendar-download').on('click', function () {
+                var linkId = "#" + this.id,
+                    chartId = "#" + $(this).attr('data-chart-div');
+                console.log('test', linkId, chartId)
+                self.downloadPNG(linkId, chartId);
+            });
+        },
+        downloadPNG: function (linkId, chartId) {
+            var canvas,
+                img,
+                svg;
+
+            // Get svg markup from chart
+            svg = $.trim($(chartId).html());
+
+            // Insert invisible canvas
+            $('body').append('<canvas id="canvas" style="display:none"></canvas>');
+
+            // Insert chart into invisible canvas
+            canvg(document.getElementById('canvas'), svg);
+
+            // Retrieve contents of invisible canvas
+            canvas = document.getElementById('canvas');
+
+            // Convert canvas to data
+            img = canvas.toDataURL("image/png");
+
+            // Update href to use data:image
+            $(linkId).attr('href', img);
+
+            // Remove Canvas
+            $('#canvas').remove();
         },
         getData: function (input) {
             var self = this;

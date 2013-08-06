@@ -90,6 +90,8 @@ var HourlyCalendar = function () {
                 .attr('x', function (d) { return (d.hour - 1) * gridSize; })
                 .attr('y', function (d) { return (d.day - 1) * gridSize; })
                 .attr('class', 'hour bordered')
+                .attr('stroke', '#fff')
+                .attr('stroke-width', '2px')
                 .attr('width', gridSize)
                 .attr('height', gridSize)
                 .style('fill', '#eee');
