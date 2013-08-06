@@ -76,10 +76,10 @@ $initDropDown .= '</select>';
                 <div id="loading"><img src="../../lib/img/spinner.gif">
                 </div>
                 <div id="controls" class="btn-toolbar pull-right">
-                 <!--    <div id="avg-sum" class="btn-group" data-toggle="buttons-radio">
+                    <div id="avg-sum" class="btn-group" data-toggle="buttons-radio">
                         <button type="button" class="btn btn-small" value="avg">Hourly Avg</button>
                         <button type="button" class="btn btn-small active" value="sum">Hourly Sum</button>
-                    </div> -->
+                    </div>
                     <div id="calendar-chart-download" class="btn-group">
                         <a id="calendar-download" download="suma_calendar_chart.png" data-chart-div="chart" class="btn btn-small" target="_blank">Save Calendar Chart</a>
                     </div>

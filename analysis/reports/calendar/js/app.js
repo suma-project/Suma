@@ -82,6 +82,13 @@
                 e.preventDefault();
             });
 
+            // Toggle between sum and avg
+            $('#avg-sum').on('click', function (e) {
+                var state = e.target.value;
+
+                self.drawChart(self.data, state);
+            });
+
             // Initialize help popovers
             $('.suma-popover').popover({placement: 'bottom'});
 
@@ -173,26 +180,44 @@
             );
         },
         processData: function (response) {
-            var dfd = $.Deferred();
+            var dfd = $.Deferred(),
+                data = {};
 
             // Does response have enough values to draw meaningful graph?
             if (Object.keys(response.periodSum).length < 1) {
                 dfd.reject({statusText: 'no data'});
             }
 
-            dfd.resolve(this.sortData(response.periodSum));
+            data.sum = this.sortData(response.periodSum);
+
+            data.avg = this.sortData(response.periodAvg);
+
+            this.data = data;
+
+            dfd.resolve(data);
 
             return dfd.promise();
         },
-        drawChart: function (counts) {
-            var chart,
-                self = this;
+        getState: function () {
+            return $('#avg-sum > .active')[0].value;
+        },
+        drawChart: function (counts, state) {
+            var data;
 
-            chart = Calendar();
+            if (state) {
+                data = counts[state];
+            } else {
+                state = this.getState();
+                data = counts[state];
+            }
 
-            d3.select(self.cfg.chart)
-                .datum(counts)
-                .call(chart);
+            if (!this.calendar) {
+                this.calendar = Calendar();
+            }
+
+            d3.select(this.cfg.chart)
+                .datum(data)
+                .call(this.calendar);
         },
         buildTemplate: function (items, templateId, targetId, empty) {
             var html,
