@@ -84,6 +84,32 @@
             // Initialize help popovers
             $('.suma-popover').popover({placement: 'bottom'});
         },
+        downloadPNG: function (linkId, chartId) {
+            var canvas,
+                img,
+                svg;
+
+            // Get svg markup from chart
+            svg = $.trim($(chartId).html());
+
+            // Insert invisible canvas
+            $('body').append('<canvas id="canvas" style="display:none"></canvas>');
+
+            // Insert chart into invisible canvas
+            canvg(document.getElementById('canvas'), svg);
+
+            // Retrieve contents of invisible canvas
+            canvas = document.getElementById('canvas');
+
+            // Convert canvas to data
+            img = canvas.toDataURL("image/png");
+
+            // Update href to use data:image
+            $(linkId).attr('href', img);
+
+            // Remove Canvas
+            $('#canvas').remove();
+        },
         getData: function (input) {
             var self = this;
 
