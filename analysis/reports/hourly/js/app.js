@@ -74,11 +74,25 @@
 
             // Get chart data on submit
             $('body').on('submit', 'form', function (e) {
-                var input = $(this).serializeArray();
+                var input,
+                    processData;
 
-                $.when(self.getData(input))
-                    .then(self.processData.bind(self))
-                    .then(self.drawChart.bind(self), self.error.bind(self));
+                input = $(this).serializeArray();
+
+                processData = $.when(self.getData(input))
+                                    .then(self.processData.bind(self));
+
+                processData.done(function (data) {
+                    self.drawChart(data);
+                });
+
+                processData.done(function (data) {
+                    self.buildCSV(data);
+                });
+
+                processData.fail(function (e) {
+                    self.error(e);
+                });
 
                 e.preventDefault();
             });
@@ -251,6 +265,78 @@
             d3.select(self.cfg.chart2)
                 .datum(data)
                 .call(this.line);
+        },
+        buildCSV: function (counts) {
+            var base,
+                formattedLines,
+                href,
+                lines,
+                weekdays,
+                hours;
+
+            weekdays = {
+                1: 'Sunday',
+                2: 'Monday',
+                3: 'Tuesday',
+                4: 'Wednesday',
+                5: 'Thursday',
+                6: 'Friday',
+                7: 'Saturday'
+            };
+
+            hours = {
+                1: '12:00 AM',
+                2: '1:00 AM',
+                3: '2:00 AM',
+                4: '3:00 AM',
+                5: '4:00 AM',
+                6: '5:00 AM',
+                7: '6:00 AM',
+                8: '7:00 AM',
+                9: '8:00 AM',
+                10: '9:00 AM',
+                11: '10:00 AM',
+                12: '11:00 AM',
+                13: '12:00 PM',
+                14: '1:00 PM',
+                15: '2:00 PM',
+                16: '3:00 PM',
+                17: '4:00 PM',
+                18: '5:00 PM',
+                19: '6:00 PM',
+                20: '7:00 PM',
+                21: '8:00 PM',
+                22: '9:00 PM',
+                23: '10:00 PM',
+                24: '11:00 PM'
+            };
+
+            lines = [];
+
+            _.each(counts, function (count, key) {
+                lines.push([key]);
+                lines.push(['Weekday', 'Hour', 'Count']);
+                _.each(count, function (c) {
+                    var value;
+
+                    if (c.value === undefined || c.value === null) {
+                        value = 'No Data Found';
+                    } else {
+                        value = c.value;
+                    }
+
+                    lines.push([weekdays[c.day], hours[c.hour], value]);
+                });
+            });
+
+            // Format arrays into strings
+            formattedLines = d3.csv.format(lines);
+
+            // Build download URL
+            base = 'data:application/csv;charset=utf-8,';
+            href = encodeURI(base + formattedLines);
+
+            $('#csv').attr('href', href);
         },
         buildTemplate: function (items, templateId, targetId, empty) {
             var html,

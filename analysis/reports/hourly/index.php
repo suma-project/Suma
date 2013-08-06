@@ -76,15 +76,18 @@ $initDropDown .= '</select>';
                 <div id="loading"><img src="../../lib/img/spinner.gif">
                 </div>
                 <div id="controls" class="btn-toolbar pull-right">
-                    <div id="avg-sum" class="btn-group" data-toggle="buttons-radio">
-                        <button type="button" class="btn btn-small" value="avg">Hourly Avg</button>
-                        <button type="button" class="btn btn-small active" value="sum">Hourly Sum</button>
-                    </div>
                     <div id="line-chart-download" class="btn-group">
                         <a id="line-download" download="suma_line_chart.png" data-chart-div="chart2" class="btn btn-small" target="_blank">Save Line Chart</a>
                     </div>
                     <div id="calendar-chart-download" class="btn-group">
                         <a id="calendar-download" download="suma_calendar_chart.png" data-chart-div="chart" class="btn btn-small" target="_blank">Save Calendar Chart</a>
+                    </div>
+                    <div id="csv-download" class="btn-group">
+                        <a id="csv" download="suma_data_export.csv" class="btn btn-small suma-popover" href="" rel="popover">Export Raw Data</a>
+                    </div>
+                    <div id="avg-sum" class="btn-group" data-toggle="buttons-radio">
+                        <button type="button" class="btn btn-small" value="avg">Hourly Avg</button>
+                        <button type="button" class="btn btn-small active" value="sum">Hourly Sum</button>
                     </div>
                 </div>
                 <div id="chart2">
