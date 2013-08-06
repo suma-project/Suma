@@ -10,6 +10,7 @@
             errorTemplate: '#error',
             chart:         '#chart',
             filter:        '#initiatives',
+            buttons:       '#controls',
             filterOptions: {
                 url:                '../../lib/php/reportFilters.php',
                 triggerForm:        '#initiatives',
@@ -83,6 +84,14 @@
 
             // Initialize help popovers
             $('.suma-popover').popover({placement: 'bottom'});
+
+            // Chart download
+            $('#calendar-download').on('click', function () {
+                var linkId = "#" + this.id,
+                    chartId = "#" + $(this).attr('data-chart-div');
+
+                self.downloadPNG(linkId, chartId);
+            });
         },
         downloadPNG: function (linkId, chartId) {
             var canvas,
@@ -121,12 +130,14 @@
                     $('#submit').addClass('disabled').val(text);
                     $('#submit').attr('disabled', 'true');
                     $(self.cfg.loading).show();
+                    $(self.cfg.buttons).hide();
                     $(self.cfg.legend).hide();
                     $(self.cfg.welcome).hide();
                     $(self.cfg.errorTarget).empty();
                     $('svg').remove();
                 },
                 success: function () {
+                    $(self.cfg.buttons).show();
                     $(self.cfg.legend).show();
                 },
                 complete: function () {
@@ -139,6 +150,7 @@
             });
         },
         error: function (e) {
+            $(this.cfg.buttons).hide();
             $(this.cfg.legend).hide();
             $(this.cfg.welcome).hide();
 

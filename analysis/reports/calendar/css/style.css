@@ -1,6 +1,23 @@
 body {
     padding-bottom: 80px;
 }
+
+#chart{
+    font: 10px sans-serif;
+    margin: 30px;
+    width: 960px;
+    shape-rendering: crispEdges;
+}
+
+#calendar-header {
+    min-height: 160px;
+}
+
+#controls {
+    display: none;
+}
+
+/* AJAX */
 #loading {
     position:relative;
     width:50%;
@@ -22,18 +39,7 @@ body {
     display:none;
 }
 
-#chart{
-    font: 10px sans-serif;
-    margin: 30px;
-    width: 960px;
-    shape-rendering: crispEdges;
-}
-
-.month {
-    fill: none;
-    stroke: none;
-}
-
+/* Legend */
 #legend {
     display: none;
     float: right;
@@ -52,8 +58,4 @@ ul.legend-list li {
     display: inline-block;
     width: 10px;
     height: 10px;
-}
-
-#calendar-header {
-    min-height: 160px;
 }

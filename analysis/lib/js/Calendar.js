@@ -5,7 +5,7 @@ var Calendar = function () {
     function calendarChart(selection) {
         var monthCount = 0,
             newCellSize = 14,
-            cellSize = 12,
+            cellSize = 14,
             day = d3.time.format("%w"),
             week = d3.time.format("%U"),
             format = d3.time.format("%Y-%m-%d"),
@@ -15,50 +15,43 @@ var Calendar = function () {
             color;
 
         function setDayVisibility(i) {
-            var vis;
-
             if (i === 0 || i === 2 || i === 4 || i === 6) {
-                vis = 'hidden';
-            } else {
-                vis = 'visible';
+                return 0;
             }
 
-            return vis;
+            return 1;
         }
 
         function setMonthLabelPos(d) {
             if (d.getDay() !== 0 && monthCount > 0) {
-                return (week(d)  * (cellSize + 2)) + 12;
+                return (week(d)  * cellSize) + 14;
             }
 
             monthCount += 1;
 
-            return week(d) * (cellSize + 2);
+            return week(d) * cellSize;
         }
 
         function setColor(d) {
-            var c;
-
-            if (data[d] === undefined) {
-                c = '#eee';
-            } else {
-                c = color(data[d]);
+            if (data[d] === undefined || data[d] === null) {
+                return '#eee';
             }
-            return c;
+
+            return color(data[d]);
         }
 
         function setTitle(d) {
             var count,
-                day = moment(d, 'YYYY-MM-DD').format('ddd');
+                date = moment(d, 'YYYY-MM-DD').format('ddd');
 
-            if (data[d] === undefined) {
+            if (data[d] === undefined || data[d] === null) {
                 count = "No Data Found";
             } else {
                 count = data[d];
             }
-            return day + ": " + d + ": " + count;
-        }
 
+            return date + ": " + d + ": " + count;
+        }
 
         selection.each(function (counts) {
             var svg,
@@ -82,7 +75,7 @@ var Calendar = function () {
                 .attr("width", width)
                 .attr("height", height)
                 .append("g")
-                .attr("transform", "translate(" + 50 + "," + (height - newCellSize * 7 - 1) + ")");
+                .attr("transform", "translate(" + 60 + "," + (height - newCellSize * 7 - 1) + ")");
 
             svg.append("text")
                 .attr("transform", "translate(-40," + cellSize * 3.5 + ")rotate(-90)")
@@ -95,8 +88,10 @@ var Calendar = function () {
                 .attr("class", "day")
                 .attr("width", cellSize)
                 .attr("height", cellSize)
-                .attr("x", function (d) { return week(d) * (cellSize + 2); })
-                .attr("y", function (d) { return day(d) * (cellSize + 2); })
+                .attr("x", function (d) { return week(d) * cellSize; })
+                .attr("y", function (d) { return day(d) * cellSize; })
+                .attr('stroke', '#fff')
+                .attr('stroke-width', '2px')
                 .datum(format);
 
             // Day of the Week Label
@@ -104,7 +99,7 @@ var Calendar = function () {
                 .data(days)
                 .enter().append('text')
                 .attr("x", -20)
-                .style('visibility', function (d, i) { return setDayVisibility(i); })
+                .attr('opacity', function (d, i) { return setDayVisibility(i); })
                 .attr("y", function (d, i) { return (newCellSize * i) + 10; })
                 .text(function (d) { return d; });
 
@@ -123,6 +118,7 @@ var Calendar = function () {
                 .attr('rel', 'tooltip');
 
             // Initialize Tooltips
+            $('[rel=tooltip]').tooltip('destroy');
             $('[rel=tooltip]').tooltip();
         });
     }
