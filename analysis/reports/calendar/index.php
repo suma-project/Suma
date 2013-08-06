@@ -81,7 +81,7 @@ $initDropDown .= '</select>';
                         <button type="button" class="btn btn-small active" value="sum">Daily Sum</button>
                     </div>
                     <div id="calendar-chart-download" class="btn-group">
-                        <a id="calendar-download" download="suma_calendar_chart.png" data-chart-div="chart" class="btn btn-small" target="_blank">Save Calendar Chart</a>
+                        <a id="calendar-download" download="suma_calendar_chart.png" data-chart-div="chart" class="btn btn-small" target="_blank">Save Chart</a>
                     </div>
                 </div>
                 <div id="chart">
