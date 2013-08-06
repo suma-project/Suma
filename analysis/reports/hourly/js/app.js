@@ -104,7 +104,7 @@
              $('#calendar-download').on('click', function () {
                 var linkId = "#" + this.id,
                     chartId = "#" + $(this).attr('data-chart-div');
-                console.log('test', linkId, chartId)
+
                 self.downloadPNG(linkId, chartId);
             });
         },
@@ -191,7 +191,6 @@
             );
         },
         processData: function (response) {
-            console.log('response', response);
             var dfd = $.Deferred(),
                 data = {};
 
