@@ -1,6 +1,7 @@
 var Calendar = function () {
     var width = 960,
-        height = 136;
+        height = 136,
+        totalHeight;
 
     function calendarChart(selection) {
         var monthCount = 0,
@@ -11,8 +12,7 @@ var Calendar = function () {
             month_name = d3.time.format("%b"),
             days = ['S', 'M', 'T', 'W', 'Th', 'F', 'S'],
             data,
-            color,
-            totalHeight;
+            color;
 
         function setDayVisibility(i) {
             if (i === 0 || i === 2 || i === 4 || i === 6) {
