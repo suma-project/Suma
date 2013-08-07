@@ -39,18 +39,18 @@
             suppLoc:       '#supp-chart-locact',
             suppNote:      '#supp-chart-note',
             filterOptions: {
-                activitiesSelect:   '#activities'
+                activitiesSelect:   '#activities',
                 activitiesTemplate: '#activities-template',
                 filterForm:         '#secondary-filters',
                 locationsSelect:    '#locations',
                 locationsTemplate:  '#locations-template',
                 triggerForm:        '#initiatives',
-                url:                '../../lib/php/reportFilters.php',
+                url:                '../../lib/php/reportFilters.php'
             },
             tables: {
                 actSumTgt:   '#activities-data',
                 actSumTmp:   '#activities-sum-table',
-                hourTgt:     '#hour-data'
+                hourTgt:     '#hour-data',
                 hourTmp:     '#hour-table',
                 locSumTgt:   '#locations-data',
                 locSumTmp:   '#locations-sum-table',
@@ -61,7 +61,7 @@
                 weekdayTgt:  '#weekday-data',
                 weekdayTmp:  '#weekday-table',
                 yearTgt:     '#year-data',
-                yearTmp:     '#year-table',
+                yearTmp:     '#year-table'
             }
         },
         locHeader: null,

@@ -20,13 +20,13 @@
             submit:        '#submit',
             welcome:       '#welcome',
             filterOptions: {
-                activitiesSelect:   '#activities'
+                activitiesSelect:   '#activities',
                 activitiesTemplate: '#activities-template',
                 filterForm:         '#secondary-filters',
                 locationsSelect:    '#locations',
                 locationsTemplate:  '#locations-template',
                 triggerForm:        '#initiatives',
-                url:                '../../lib/php/reportFilters.php',
+                url:                '../../lib/php/reportFilters.php'
             }
         },
         filters: null,
