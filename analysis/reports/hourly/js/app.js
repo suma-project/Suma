@@ -10,8 +10,15 @@
             errorTemplate: '#error',
             chart:         '#chart',
             chart2:        '#chart2',
+            csv:           '#csv',
             filter:        '#initiatives',
             buttons:       '#controls',
+            submit:        '#submit',
+            state:         '#avg-sum > .active',
+            avgSum:        '#avg-sum',
+            popover:       '.suma-popover',
+            lineDownload:  '#line-download',
+            calendarDownload: '#calendar-download',
             filterOptions: {
                 url:                '../../lib/php/reportFilters.php',
                 triggerForm:        '#initiatives',
@@ -98,24 +105,24 @@
             });
 
             // Toggle between sum and avg
-            $('#avg-sum').on('click', function (e) {
+            $(self.cfg.avgSum).on('click', function (e) {
                 var state = e.target.value;
 
                 self.drawChart(self.data, state);
             });
 
             // Initialize help popovers
-            $('.suma-popover').popover({placement: 'bottom'});
+            $(self.cfg.popover).popover({placement: 'bottom'});
 
             // Chart Download
-            $('#line-download').on('click', function () {
+            $(self.cfg.lineDownload).on('click', function () {
                 var linkId = "#" + this.id,
                     chartId = "#" + $(this).attr('data-chart-div');
 
                 self.downloadPNG(linkId, chartId);
             });
 
-            $('#calendar-download').on('click', function () {
+            $(self.cfg.calendarDownload).on('click', function () {
                 var linkId = "#" + this.id,
                     chartId = "#" + $(this).attr('data-chart-div');
 
@@ -148,6 +155,18 @@
             // Remove Canvas
             $('#canvas').remove();
         },
+        toggleSubmit: function (loading) {
+            var loadingText = $(this.cfg.submit).data('loading-text'),
+                defaultText = $(this.cfg.submit).data('default-text');
+
+            if (loading) {
+                $(this.cfg.submit).addClass('disabled').val(loadingText);
+                $(this.cfg.submit).attr('disabled', 'true');
+            } else {
+                $(this.cfg.submit).removeClass('disabled').val(defaultText);
+                $(this.cfg.submit).removeAttr('disabled');
+            }
+        },
         getData: function (input) {
             var self = this;
 
@@ -155,9 +174,7 @@
                 url: 'results.php',
                 data: input,
                 beforeSend: function () {
-                    var text = $('#submit').data('loading-text');
-                    $('#submit').addClass('disabled').val(text);
-                    $('#submit').attr('disabled', 'true');
+                    self.toggleSubmit(true);
                     $(self.cfg.loading).show();
                     $(self.cfg.legend).hide();
                     $(self.cfg.buttons).hide();
@@ -170,16 +187,14 @@
                     $(self.cfg.buttons).show();
                 },
                 complete: function () {
-                    var text = $('#submit').data('default-text');
-                    $('#submit').removeClass('disabled').val(text);
-                    $('#submit').removeAttr('disabled');
+                    self.toggleSubmit();
                     $(self.cfg.loading).hide();
                 },
                 timeout: 180000 // 3 mins
             });
         },
         getState: function () {
-            return $('#avg-sum > .active')[0].value;
+            return $(this.cfg.state)[0].value;
         },
         error: function (e) {
             $(this.cfg.legend).hide();
@@ -340,7 +355,7 @@
             base = 'data:application/csv;charset=utf-8,';
             href = encodeURI(base + formattedLines);
 
-            $('#csv').attr('href', href);
+            $(this.cfg.csv).attr('href', href);
         },
         buildTemplate: function (items, templateId, targetId, empty) {
             var html,
