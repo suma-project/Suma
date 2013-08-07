@@ -155,6 +155,7 @@ var TimeSeries = function () {
             focus.append("path")
                 .data([data])
                 .attr("clip-path", "url(#clip)")
+                .attr('fill', 'steelblue')
                 .attr("d", area);
 
             focus.append("g")
@@ -260,6 +261,7 @@ var TimeSeries = function () {
 
             context.append("path")
                 .data([data])
+                .attr('fill', 'steelblue')
                 .attr("d", area2);
 
             context.append("g")
@@ -277,6 +279,11 @@ var TimeSeries = function () {
             context.selectAll(".resize")
                 .append("path")
                 .attr("d", resizePath);
+
+            // Axis/Tick Stylings
+             d3.selectAll('.axis path')
+                .attr('fill', 'none')
+                .attr('stroke', '#000');
         });
     }
     // Accessor method to customize width
