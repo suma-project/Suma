@@ -96,7 +96,7 @@ var HourlyLine = function () {
 
 
             //Create SVG element
-            svg = d3.select('#chart2').selectAll('svg').data([counts]);
+            svg = d3.select(this).selectAll('svg').data([counts]);
 
             svg.enter().append('svg')
                 .append('g')
