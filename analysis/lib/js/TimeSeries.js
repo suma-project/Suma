@@ -22,12 +22,10 @@ var TimeSeries = function () {
     height2 = 400 - margin2.top - margin2.bottom;
 
     function setColor(value) {
-        console.log('value', value)
         if (value === null || value === undefined) {
-            console.log('hi')
             return 'darkred';
         }
-        console.log('miss')
+
         return 'steelblue';
     }
 
