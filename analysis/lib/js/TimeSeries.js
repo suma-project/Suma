@@ -21,6 +21,14 @@ var TimeSeries = function () {
     height  = 400 - margin.top - margin.bottom;
     height2 = 400 - margin2.top - margin2.bottom;
 
+    function setColor(value) {
+        if (value === null || value === undefined) {
+            return 'darkred';
+        }
+
+        return 'steelblue';
+    }
+
     function timeSeriesChart(selection) {
         var x,          // Scale of x-axis of primary area chart
             x2,         // Scale of x-axis of scroll/zoom chart
@@ -106,7 +114,7 @@ var TimeSeries = function () {
                 d.title = d.date;
                 d.fDate  = formatDate.parse(d.date);
                 d.day   = daysOfWeek[d.fDate.getDay()];
-                d.count = +d.count;
+                d.count = d.count;
             });
 
             // Set domains and ranges
@@ -147,6 +155,7 @@ var TimeSeries = function () {
             focus.append("path")
                 .data([data])
                 .attr("clip-path", "url(#clip)")
+                .attr('fill', 'steelblue')
                 .attr("d", area);
 
             focus.append("g")
@@ -167,6 +176,7 @@ var TimeSeries = function () {
                 .attr("cx", function (d) {return x(d.fDate); })
                 .attr("cy", function (d) {return y(d.count); })
                 .attr("r", 5)
+                .attr('fill', function (d) {return setColor(d.count); })
                 .attr("opacity", 0)
                 .attr("data-tooltip", function (d) {return d.title + " : " + d.count; });
 
@@ -206,12 +216,24 @@ var TimeSeries = function () {
                     // Update legend text
                     d3.select("#legendText")
                         .text(function (d) {
-                            return data[cut].day + " : " + data[cut].title + " : " + data[cut].count;
+                            var val;
+
+                            if (data[cut].count === null) {
+                                val = 'No Data Found';
+                            } else {
+                                val = data[cut].count;
+                            }
+
+                            return data[cut].day + " : " + data[cut].title + " : " + val;
                         });
+
+                    d3.select('#legendCircle')
+                        .attr('fill', function (d) {return setColor(data[cut].count); });
                 })
                 .on("mouseout", function (d) {
                     d3.selectAll('.dot')
                         .attr("opacity", 0);
+
                     d3.select("#legend")
                         .attr("opacity", 0);
                 });
@@ -239,6 +261,7 @@ var TimeSeries = function () {
 
             context.append("path")
                 .data([data])
+                .attr('fill', 'steelblue')
                 .attr("d", area2);
 
             context.append("g")
@@ -256,6 +279,11 @@ var TimeSeries = function () {
             context.selectAll(".resize")
                 .append("path")
                 .attr("d", resizePath);
+
+            // Axis/Tick Stylings
+             d3.selectAll('.axis path')
+                .attr('fill', 'none')
+                .attr('stroke', '#000');
         });
     }
     // Accessor method to customize width

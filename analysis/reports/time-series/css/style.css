@@ -28,8 +28,6 @@
 #chart{
     width:940px;
     min-height: 150px;
-    /*height: 400px;*/
-    /* margin:10px 10px 25px 10px;*/
     margin-bottom:25px;
 }
 
@@ -45,25 +43,17 @@ svg {
     font: 10px sans-serif;
 }
 
-.mainGraph path, .subGraph path {
-    fill:steelblue;
-}
-
 .dot {
-    fill:steelblue;
     stroke: #f7f7f7;
     stroke-width: 2px;
 }
 
 #legendCircle {
-    fill:steelblue;
     stroke: #f7f7f7;
     stroke-width: 2px;
 }
 
-.axis path, .axis line {
-    fill:none;
-    stroke: #000;
+.axis {
     shape-rendering: crispEdges;
 }
 

@@ -9,13 +9,66 @@
 (function (ReportFilters, Errors, TimeSeries, BarChart) {
     var App = {
         cfg: {
+            alert:         '.alert',
+            avgState:      '#supp-chart-avgsum > .active',
+            chart1:        '#chart1',
+            chart1svg:     '#chart1 > svg',
+            chart2:        '#chart2',
+            csv:           '#csv',
+            eDate:         '#edate',
             errorTarget:   '#chart',
-            errorTemplate: '#error'
+            errorTemplate: '#error',
+            filter:        '#initiatives',
+            form:          '#chartFilters',
+            initiatives:   '#initiatives option:selected',
+            loading:       '#loading',
+            locState:      '#supp-chart-locact > .active',
+            mainAnnotate:  '#main-annotation',
+            mainAnnotateTemplate: '#main-annotation-template',
+            mainAvgSum:    '#main-chart-avgsum',
+            mainChart:     '#main-chart-header',
+            mainDownload:  '#main-download',
+            mainState:     '#main-chart-avgsum > .active',
+            popover:       '.suma-popover',
+            sDate:         '#sdate',
+            submit:        '#submit',
+            summaryData:   '#summary-data',
+            suppAvgSum:    '#supp-chart-avgsum',
+            suppChart:     '#supplemental-charts',
+            suppDownload:  '#supp-download',
+            suppLoc:       '#supp-chart-locact',
+            suppNote:      '#supp-chart-note',
+            filterOptions: {
+                activitiesSelect:   '#activities',
+                activitiesTemplate: '#activities-template',
+                filterForm:         '#secondary-filters',
+                locationsSelect:    '#locations',
+                locationsTemplate:  '#locations-template',
+                triggerForm:        '#initiatives',
+                url:                '../../lib/php/reportFilters.php'
+            },
+            tables: {
+                actSumTgt:   '#activities-data',
+                actSumTmp:   '#activities-sum-table',
+                hourTgt:     '#hour-data',
+                hourTmp:     '#hour-table',
+                locSumTgt:   '#locations-data',
+                locSumTmp:   '#locations-sum-table',
+                monthTgt:    '#month-data',
+                monthTmp:    '#month-table',
+                totalSumTgt: '#total-data',
+                totalSumTmp: '#total-sum-table',
+                weekdayTgt:  '#weekday-data',
+                weekdayTmp:  '#weekday-table',
+                yearTgt:     '#year-data',
+                yearTmp:     '#year-table'
+            }
         },
+        locHeader: null,
+        actHeader: null,
         filters: null,
         mainChart: null,
         suppChart: null,
-        updateListeners: null,
         counts: null,
         params: null,
         weekdays: {
@@ -67,7 +120,7 @@
             this.insertFilters();
 
             // Set initiative filter to default (for back button)
-            $('#initiatives').val('default');
+            $(this.cfg.filter).val('default');
 
             // Bind events (AJAX Call)
             this.bindEvents();
@@ -81,29 +134,20 @@
                 then = moment().subtract('months', 6).format('YYYY-MM-DD');
 
             // Insert default dates into DOM
-            $('#sdate').val(then);
-            $('#edate').val(now);
+            $(this.cfg.sDate).val(then);
+            $(this.cfg.eDate).val(now);
         },
         /**
          * Initializes and inserts secondary filters
          */
         insertFilters: function () {
             // Create options object for filters
-            var filterOptions = {
-                url: '../../lib/php/reportFilters.php',
-                triggerForm: '#initiatives',
-                filterForm: '#secondary-filters',
-                locationsTemplate: '#locations-template',
-                activitiesTemplate: '#activities-template',
-                locationsSelect: '#locations',
-                activitiesSelect: '#activities'
-            },
-                filters,
+            var filters,
                 self = this;
 
             // Initialize filters
             if (this.filters === null) {
-                this.filters = new ReportFilters(filterOptions);
+                this.filters = new ReportFilters(this.cfg.filterOptions);
             }
 
             filters = this.filters.init();
@@ -119,14 +163,14 @@
             var self = this;
 
             // Initialize datepicker
-            $('#sdate').datepicker({'format': 'yyyy-mm-dd', 'autoclose': 'true'});
-            $('#edate').datepicker({'format': 'yyyy-mm-dd', 'autoclose': 'true'});
+            $(self.cfg.sDate).datepicker({'format': 'yyyy-mm-dd', 'autoclose': 'true'});
+            $(self.cfg.eDate).datepicker({'format': 'yyyy-mm-dd', 'autoclose': 'true'});
 
             // Initialize help popovers
-            $('.suma-popover').popover({placement: 'bottom'});
+            $(self.cfg.popover).popover({placement: 'bottom'});
 
             // Event handler to initialize AJAX call
-            $('body').on('submit', '#chartFilters', function (e) {
+            $('body').on('submit', self.cfg.form, function (e) {
                 var input = $(this).serializeArray();
                 // Save params for annotation later
                 self.params = input;
@@ -136,7 +180,7 @@
                     .then(function (counts) {
                         self.drawChart(counts);
                         self.counts = counts;
-                        self.drawTable(counts);
+                        self.drawTable(counts, self.cfg.tables);
                         self.buildCSV(counts);
                     }, function (e) {
                         self.error(e);
@@ -146,98 +190,94 @@
             });
 
             // Live Filters
-            $('#main-chart-avgsum').on('click', function (e) {
+            $(self.cfg.mainAvgSum).on('click', function (e) {
                 var mainState,
                     locState,
                     avgState;
 
                 mainState = e.target.value;
-                locState = $('#supp-chart-locact > .active')[0].value;
-                avgState = $('#supp-chart-avgsum > .active')[0].value;
+                locState = $(self.cfg.locState)[0].value;
+                avgState = $(self.cfg.avgState)[0].value;
 
                 self.updateMainChart(self.counts, mainState, locState, avgState);
             });
 
-            $('#supp-chart-locact').on('click', function (e) {
+            $(self.cfg.suppLoc).on('click', function (e) {
                 var mainState,
                     locState,
                     avgState;
 
-                mainState = $('#main-chart-avgsum > .active')[0].value;
+                mainState = $(self.cfg.mainState)[0].value;
                 locState = e.target.value;
-                avgState = $('#supp-chart-avgsum > .active')[0].value;
+                avgState = $(self.cfg.avgState)[0].value;
 
                 self.updateSuppChart(self.counts, mainState, locState, avgState);
             });
 
-            $('#supp-chart-avgsum').on('click', function (e) {
+            $(self.cfg.suppAvgSum).on('click', function (e) {
                 var mainState,
                     locState,
                     avgState;
 
-                mainState = $('#main-chart-avgsum > .active')[0].value;
-                locState = $('#supp-chart-locact > .active')[0].value;
+                mainState = $(self.cfg.mainState)[0].value;
+                locState = $(self.cfg.locState)[0].value;
                 avgState = e.target.value;
 
                 if (avgState === 'avg') {
-                    $('#supp-chart-note').css('visibility', 'visible');
+                    $(self.cfg.suppNote).css('visibility', 'visible');
                 } else {
-                    $('#supp-chart-note').css('visibility', 'hidden');
+                    $(self.cfg.suppNote).css('visibility', 'hidden');
                 }
 
                 self.updateSuppChart(self.counts, mainState, locState, avgState);
             });
 
-            // Image Download (These need to be optimized)
-            $('#main-download').on('click', function () {
+            // Main Chart Download
+            $(self.cfg.mainDownload).on('click', function () {
                 var linkId = "#" + this.id,
-                    tempChart;
+                    chartId = "#" + $(this).attr('data-chart-div');
 
-                // Grab main chart code
-                tempChart = $('#chart1').html();
-
-                // Append chart code into invisible div for additional processing
-                $('body').append('<div id="temp-chart" style="display:none">' + tempChart + '</div>');
-
-                // Add inline styling to chart in temp div
-                $('#temp-chart .mainGraph path').attr('fill', 'steelblue');
-                $('#temp-chart .subGraph path').attr('fill', 'steelblue');
-                $('#temp-chart .y .tick').attr('fill', 'none').attr('stroke', '#000').attr('shape-rendering', 'crispEdges');
-                $('#temp-chart .y path').attr('fill', 'none').attr('stroke', '#000').attr('shape-rendering', 'crispEdges');
-                $('#temp-chart .x .tick').attr('fill', 'none').attr('stroke', '#000').attr('shape-rendering', 'crispEdges');
-                $('#temp-chart .x path').attr('fill', 'none').attr('stroke', '#000').attr('shape-rendering', 'crispEdges');
-
-                // Remove brush component
-                $('#temp-chart .subGraph').remove();
-
-                // Send dummy chart to conversion method
-                self.downloadPNG(linkId, '#temp-chart');
-
-                // Remove temp div
-                $('#temp-chart').remove();
+                self.downloadPNG(linkId, chartId, '.subGraph');
             });
 
-            $('#supp-download').on('click', function () {
+            // Supplemental Chart Download
+            $(self.cfg.suppDownload).on('click', function () {
                 var linkId = "#" + this.id,
                     chartId = "#" + $(this).attr('data-chart-div');
 
                 self.downloadPNG(linkId, chartId);
             });
+        },
+        /**
+         * Method to filter a single element from SVG
+         * @param  {string} chartId Contents of data-property with CSS ID
+         * @param  {string} filter  Class or ID of element to be removed
+         * @return {string}         Filtered SVG content
+         */
+        filterSvg: function (chartId, filter) {
+            var svg = $(chartId).clone();
 
+            svg.find(filter).remove();
+
+            return svg.html();
         },
          /**
          * Method to convert SVG to downloadable PNG
          *
-         * @param  string linkId  CSS ID of the link clicked to call method
-         * @param  string chartId Contents of data-property with CSS ID of source SVG wrapper div
+         * @param  {string} linkId  CSS ID of the link clicked to call method
+         * @param  {string} chartId Contents of data-property with CSS ID of source SVG wrapper div
          */
-        downloadPNG: function (linkId, chartId) {
+        downloadPNG: function (linkId, chartId, filter) {
             var canvas,
                 img,
                 svg;
 
             // Get svg markup from chart
-            svg = $(chartId).html();
+            if (filter) {
+                svg = this.filterSvg(chartId, filter);
+            } else {
+                svg = $(chartId).html();
+            }
 
             // Insert invisible canvas
             $('body').append('<canvas id="canvas" style="display:none"></canvas>');
@@ -266,7 +306,7 @@
                 context,
                 data       = {},
                 html,
-                initName   = $("#initiatives option:selected").text(),
+                initName   = $(this.cfg.initiatives).text(),
                 locations  = {},
                 source,
                 template;
@@ -322,13 +362,25 @@
                 data.etime = '24:00';
             }
 
-            source   = $('#main-annotation-template').html();
+            source   = $(this.cfg.mainAnnotateTemplate).html();
             template = Handlebars.compile(source);
             context  = data;
             html     = template(context);
 
-            $('#main-annotation').empty();
-            $('#main-annotation').append(html);
+            $(this.cfg.mainAnnotate).empty();
+            $(this.cfg.mainAnnotate).append(html);
+        },
+        toggleSubmit: function (loading) {
+            var loadingText = $(this.cfg.submit).data('loading-text'),
+                defaultText = $(this.cfg.submit).data('default-text');
+
+            if (loading) {
+                $(this.cfg.submit).addClass('disabled').val(loadingText);
+                $(this.cfg.submit).attr('disabled', 'true');
+            } else {
+                $(this.cfg.submit).removeClass('disabled').val(defaultText);
+                $(this.cfg.submit).removeAttr('disabled');
+            }
         },
         /**
          * AJAX call to retrieve data
@@ -337,32 +389,30 @@
          * @return {object} Returns a jQuery promise object
          */
         getData: function (input) {
+            var self = this;
+
             return $.ajax({
                 url: 'results.php',
                 data: input,
                 dataType: 'json',
                 // These are a hot mess and need to be optimized
                 beforeSend: function () {
-                    var text = $('#submit').data('loading-text');
-                    $('#submit').addClass('disabled').val(text);
-                    $('#submit').attr('disabled', 'true');
+                    self.toggleSubmit(true);
                     $('svg').remove();
-                    $('.alert').hide();
-                    $('#loading').show();
-                    $('#summary-data').hide();
-                    $('#supplemental-charts').hide();
-                    $('#main-chart-header').css('visibility', 'hidden');
+                    $(self.cfg.alert).hide();
+                    $(self.cfg.loading).show();
+                    $(self.cfg.summaryData).hide();
+                    $(self.cfg.suppChart).hide();
+                    $(self.cfg.mainChart).css('visibility', 'hidden');
                 },
                 success: function () {
-                    $('#summary-data').show();
-                    $('#supplemental-charts').show();
-                    $('#main-chart-header').css('visibility', 'visible');
+                    $(self.cfg.summaryData).show();
+                    $(self.cfg.suppChart).show();
+                    $(self.cfg.mainChart).css('visibility', 'visible');
                 },
                 complete: function () {
-                    var text = $('#submit').data('default-text');
-                    $('#submit').removeClass('disabled').val(text);
-                    $('#submit').removeAttr('disabled');
-                    $('#loading').hide();
+                    self.toggleSubmit();
+                    $(self.cfg.loading).hide();
                 },
                 timeout: 180000 // 3 mins
             });
@@ -719,8 +769,7 @@
          * @param  {array} counts
          */
         drawChart: function (counts) {
-            var self = this,
-                avgState,
+            var avgState,
                 locState,
                 mainState;
 
@@ -733,11 +782,11 @@
             }
 
             // Get states from DOM
-            mainState = $('#main-chart-avgsum > .active')[0].value;
-            locState = $('#supp-chart-locact > .active')[0].value;
-            avgState = $('#supp-chart-avgsum > .active')[0].value;
+            mainState = $(this.cfg.mainState)[0].value;
+            locState = $(this.cfg.locState)[0].value;
+            avgState = $(this.cfg.avgState)[0].value;
 
-            self.updateMainChart(counts, mainState, locState, avgState);
+            this.updateMainChart(counts, mainState, locState, avgState);
 
         },
         /**
@@ -748,8 +797,7 @@
          * @param  {string} avgState
          */
         updateMainChart: function (counts, mainState, locState, avgState) {
-            var self = this,
-                data;
+            var data;
 
             // Select Data Source
             if (mainState === 'sum') {
@@ -759,16 +807,16 @@
             }
 
             // Update Main Chairt
-            $('#chart1 > svg').remove();
-            d3.select("#chart1")
+            $(this.cfg.chart1svg).remove();
+            d3.select(this.cfg.chart1)
                 .datum(data)
                 .call(this.mainChart);
 
             // Update Supplemental Chart
-            self.updateSuppChart(counts, mainState, locState, avgState);
+            this.updateSuppChart(counts, mainState, locState, avgState);
 
             // Update metadata on UI
-            self.buildChartMetadata();
+            this.buildChartMetadata();
         },
         /**
          * Update secondary chart
@@ -818,21 +866,19 @@
                 data = actPct;
             }
 
-            d3.select("#chart2")
+            d3.select(this.cfg.chart2)
                 .datum(data)
                 .call(this.suppChart);
         },
         drawTable: function (counts) {
-            this.buildTemplate(counts.total, '#total-sum-table', '#total-data', true);
-            this.buildTemplate(counts.locationsSum, '#locations-sum-table', '#locations-data', true);
-            this.buildTemplate(counts.activitiesSum, '#activities-sum-table', '#activities-data', true);
-            this.buildTemplate(counts.yearSummary, '#year-table', '#year-data', true);
-            this.buildTemplate(counts.monthSummary, '#month-table', '#month-data', true);
-            this.buildTemplate(counts.dayOfWeekSummary, '#weekday-table', '#weekday-data', true);
-            this.buildTemplate(counts.hourSummary, '#hour-table', '#hour-data', true);
+            this.buildTemplate(counts.total, this.cfg.tables.totalSumTmp, this.cfg.tables.totalSumTgt, true);
+            this.buildTemplate(counts.locationsSum, this.cfg.tables.locSumTmp, this.cfg.tables.locSumTgt, true);
+            this.buildTemplate(counts.activitiesSum, this.cfg.tables.actSumTmp, this.cfg.tables.actSumTgt, true);
+            this.buildTemplate(counts.yearSummary, this.cfg.tables.yearTmp, this.cfg.tables.yearTgt, true);
+            this.buildTemplate(counts.monthSummary, this.cfg.tables.monthTmp, this.cfg.tables.monthTgt, true);
+            this.buildTemplate(counts.dayOfWeekSummary, this.cfg.tables.weekdayTmp, this.cfg.tables.weekdayTgt, true);
+            this.buildTemplate(counts.hourSummary, this.cfg.tables.hourTmp, this.cfg.tables.hourTgt, true);
         },
-        locHeader: null,
-        actHeader: null,
         sortCSV: function (a, b) {
             return a.name - b.name;
         },
@@ -972,7 +1018,7 @@
             base = 'data:application/csv;charset=utf-8,';
             href = encodeURI(base + finalContent);
 
-            $('#csv').attr('href', href);
+            $(self.cfg.csv).attr('href', href);
         },
         /**
          * Generic Method to add template to DOM
@@ -1018,11 +1064,11 @@
          * @param  {object} e system or custom error object
          */
         error: function (e) {
-            $('#welcome').hide();
-            $('#summary-data').hide();
-            $('#submit').removeAttr('disabled');
-            $('#supplemental-charts').hide();
-            $('#main-chart-header').css('visibility', 'hidden');
+            this.toggleSubmit();
+            $(this.cfg.welcome).hide();
+            $(this.cfg.summaryData).hide();
+            $(this.cfg.suppChart).hide();
+            $(this.cfg.mainChart).css('visibility', 'hidden');
 
             // Log errors for debugging
             console.log('error object', e);

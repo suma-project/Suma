@@ -1,15 +1,18 @@
-(function (ReportFilters, Errors, Calendar) {
+(function (ReportFilters, Errors, HourlyCalendar, HourlyLine) {
     var App = {
         cfg: {
             avgSum:        '#avg-sum',
             buttons:       '#controls',
             calendarDownload: '#calendar-download',
+            chart2:        '#chart2',
             chart:         '#chart',
+            csv:           '#csv',
             edate:         '#edate',
             errorTarget:   '#error-container',
             errorTemplate: '#error',
             filter:        '#initiatives',
             legend:        '#legend',
+            lineDownload:  '#line-download',
             loading:       '#loading',
             popover:       '.suma-popover',
             sdate:         '#sdate',
@@ -78,11 +81,25 @@
 
             // Get chart data on submit
             $('body').on('submit', 'form', function (e) {
-                var input = $(this).serializeArray();
+                var input,
+                    processData;
 
-                $.when(self.getData(input))
-                    .then(self.processData.bind(self))
-                    .then(self.drawChart.bind(self), self.error.bind(self));
+                input = $(this).serializeArray();
+
+                processData = $.when(self.getData(input))
+                                    .then(self.processData.bind(self));
+
+                processData.done(function (data) {
+                    self.drawChart(data);
+                });
+
+                processData.done(function (data) {
+                    self.buildCSV(data);
+                });
+
+                processData.fail(function (e) {
+                    self.error(e);
+                });
 
                 e.preventDefault();
             });
@@ -97,7 +114,14 @@
             // Initialize help popovers
             $(self.cfg.popover).popover({placement: 'bottom'});
 
-            // Chart download
+            // Chart Download
+            $(self.cfg.lineDownload).on('click', function () {
+                var linkId = "#" + this.id,
+                    chartId = "#" + $(this).attr('data-chart-div');
+
+                self.downloadPNG(linkId, chartId);
+            });
+
             $(self.cfg.calendarDownload).on('click', function () {
                 var linkId = "#" + this.id,
                     chartId = "#" + $(this).attr('data-chart-div');
@@ -152,15 +176,15 @@
                 beforeSend: function () {
                     self.toggleSubmit(true);
                     $(self.cfg.loading).show();
-                    $(self.cfg.buttons).hide();
                     $(self.cfg.legend).hide();
+                    $(self.cfg.buttons).hide();
                     $(self.cfg.welcome).hide();
                     $(self.cfg.errorTarget).empty();
                     $('svg').remove();
                 },
                 success: function () {
-                    $(self.cfg.buttons).show();
                     $(self.cfg.legend).show();
+                    $(self.cfg.buttons).show();
                 },
                 complete: function () {
                     self.toggleSubmit();
@@ -169,9 +193,12 @@
                 timeout: 180000 // 3 mins
             });
         },
+        getState: function () {
+            return $(this.cfg.state)[0].value;
+        },
         error: function (e) {
-            $(this.cfg.buttons).hide();
             $(this.cfg.legend).hide();
+            $(this.cfg.buttons).hide();
             $(this.cfg.welcome).hide();
 
             // Log errors for debugging
@@ -196,14 +223,30 @@
             var dfd = $.Deferred(),
                 data = {};
 
+            data.sum = _.flatten(_.map(response.dailyHourSummary, function (day, d) {
+                return _.map(day, function (hour, h) {
+                    return {
+                        day: d + 1,
+                        hour: h + 1,
+                        value: hour.sum
+                    };
+                });
+            }));
+
             // Does response have enough values to draw meaningful graph?
-            if (Object.keys(response.periodSum).length < 1) {
+            if (_.compact(_.pluck(data.sum, 'value')) < 1) {
                 dfd.reject({statusText: 'no data'});
             }
 
-            data.sum = this.sortData(response.periodSum);
-
-            data.avg = this.sortData(response.periodAvg);
+            data.avg = _.flatten(_.map(response.dailyHourSummary, function (day, d) {
+                return _.map(day, function (hour, h) {
+                    return {
+                        day: d + 1,
+                        hour: h + 1,
+                        value: hour.avg
+                    };
+                });
+            }));
 
             this.data = data;
 
@@ -211,11 +254,9 @@
 
             return dfd.promise();
         },
-        getState: function () {
-            return $(this.cfg.state)[0].value;
-        },
         drawChart: function (counts, state) {
-            var data;
+            var data,
+                self = this;
 
             if (state) {
                 data = counts[state];
@@ -225,12 +266,96 @@
             }
 
             if (!this.calendar) {
-                this.calendar = Calendar();
+                this.calendar = HourlyCalendar();
             }
 
-            d3.select(this.cfg.chart)
+            if (!this.line) {
+                this.line = HourlyLine();
+            }
+
+            d3.select(self.cfg.chart)
                 .datum(data)
                 .call(this.calendar);
+
+            d3.select(self.cfg.chart2)
+                .datum(data)
+                .call(this.line);
+        },
+        buildCSV: function (counts) {
+            var base,
+                formattedLines,
+                href,
+                lines,
+                weekdays,
+                hours;
+
+            weekdays = {
+                1: 'Sunday',
+                2: 'Monday',
+                3: 'Tuesday',
+                4: 'Wednesday',
+                5: 'Thursday',
+                6: 'Friday',
+                7: 'Saturday'
+            };
+
+            hours = {
+                1: '12:00 AM',
+                2: '1:00 AM',
+                3: '2:00 AM',
+                4: '3:00 AM',
+                5: '4:00 AM',
+                6: '5:00 AM',
+                7: '6:00 AM',
+                8: '7:00 AM',
+                9: '8:00 AM',
+                10: '9:00 AM',
+                11: '10:00 AM',
+                12: '11:00 AM',
+                13: '12:00 PM',
+                14: '1:00 PM',
+                15: '2:00 PM',
+                16: '3:00 PM',
+                17: '4:00 PM',
+                18: '5:00 PM',
+                19: '6:00 PM',
+                20: '7:00 PM',
+                21: '8:00 PM',
+                22: '9:00 PM',
+                23: '10:00 PM',
+                24: '11:00 PM'
+            };
+
+            lines = [];
+
+            _.each(counts, function (count, key) {
+                if (key === 'avg') {
+                    lines.push(['\n', '\n', '\n', '\n', '\n']);
+                }
+
+                lines.push([key]);
+                lines.push(['Weekday', 'Hour', 'Count']);
+                _.each(count, function (c) {
+                    var value;
+
+                    if (c.value === undefined || c.value === null) {
+                        value = 'No Data Found';
+                    } else {
+                        value = c.value;
+                    }
+
+                    lines.push([weekdays[c.day], hours[c.hour], value]);
+                });
+            });
+
+            // Format arrays into strings
+            formattedLines = d3.csv.format(lines);
+
+            // Build download URL
+            base = 'data:application/csv;charset=utf-8,';
+            href = encodeURI(base + formattedLines);
+
+            $(this.cfg.csv).attr('href', href);
         },
         buildTemplate: function (items, templateId, targetId, empty) {
             var html,
@@ -259,4 +384,4 @@
     $(document).ready(function () {
         App.init();
     });
-}(ReportFilters, Errors, Calendar));
+}(ReportFilters, Errors, HourlyCalendar, HourlyLine));

@@ -316,7 +316,7 @@ $initDropDown .= '</select>';
                 <tbody>
                     {{#each items}}
                         <tr>
-                            <td>{{name}}</td>
+                            <td>{{{name}}}</td>
                             <td>{{countFormat count}}</td>
                             <td>{{percent}}%</td>
                         </tr>

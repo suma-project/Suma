@@ -2,28 +2,27 @@ body {
     padding-bottom: 80px;
 }
 
-#chart{
+#chart {
     font: 10px sans-serif;
-    margin: 30px 30px 0 30px;
     width: 960px;
     shape-rendering: crispEdges;
-}
-
-#calendar-header {
-    min-height: 160px;
 }
 
 #controls {
     display: none;
 }
 
+#calendar-header {
+    min-height: 160px;
+}
+
 /* AJAX */
 #loading {
-    display: none;
-    left: 50%;
     position: relative;
-    top: 50%;
     width: 50%;
+    top: 50%;
+    left: 50%;
+    display: none;
 }
 
 #loading img {
@@ -43,7 +42,7 @@ body {
     display: none;
 }
 
-/* Legend */
+/* Calendar legend */
 #legend {
     display: none;
     float: right;
@@ -59,6 +58,17 @@ ul.legend-list {
 
 ul.legend-list li {
     display: inline-block;
-    height: 10px;
-    width: 10px;
+    width: 16px;
+    height: 16px;
+}
+
+
+/* Line Chart */
+.yAxis, .xAxis {
+    font: 10px sans-serif;
+    shape-rendering: crispEdges;
+}
+
+#tsLegend {
+    font: 10px sans-serif;
 }
