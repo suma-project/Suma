@@ -314,6 +314,10 @@
             lines = [];
 
             _.each(counts, function (count, key) {
+                if (key === 'avg') {
+                    lines.push(['\n', '\n', '\n', '\n', '\n']);
+                }
+
                 lines.push([key]);
                 lines.push(['Weekday', 'Hour', 'Count']);
                 _.each(count, function (c) {
