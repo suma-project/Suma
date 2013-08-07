@@ -77,10 +77,10 @@ $initDropDown .= '</select>';
                 </div>
                 <div id="controls" class="btn-toolbar pull-right">
                     <div id="line-chart-download" class="btn-group">
-                        <a id="line-download" download="suma_line_chart.png" data-chart-div="chart2" class="btn btn-small" target="_blank">Save Line Chart</a>
+                        <a id="line-download" download="suma_hourly_line_chart.png" data-chart-div="chart2" class="btn btn-small" target="_blank">Save Line Chart</a>
                     </div>
                     <div id="calendar-chart-download" class="btn-group">
-                        <a id="calendar-download" download="suma_calendar_chart.png" data-chart-div="chart" class="btn btn-small" target="_blank">Save Calendar Chart</a>
+                        <a id="calendar-download" download="suma_hourly_calendar_chart.png" data-chart-div="chart" class="btn btn-small" target="_blank">Save Calendar Chart</a>
                     </div>
                     <div id="csv-download" class="btn-group">
                         <a id="csv" download="suma_data_export.csv" class="btn btn-small suma-popover" href="" rel="popover">Export Raw Data</a>
