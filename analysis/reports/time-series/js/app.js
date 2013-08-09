@@ -157,7 +157,7 @@
             });
         },
         /**
-         * Binds events for datepicker and data AJAX call.
+         * Bind events
          */
         bindEvents: function () {
             var self = this;
@@ -263,7 +263,6 @@
         },
          /**
          * Method to convert SVG to downloadable PNG
-         *
          * @param  {string} linkId  CSS ID of the link clicked to call method
          * @param  {string} chartId Contents of data-property with CSS ID of source SVG wrapper div
          */
@@ -370,6 +369,10 @@
             $(this.cfg.mainAnnotate).empty();
             $(this.cfg.mainAnnotate).append(html);
         },
+        /**
+         * Toggle submit button state
+         * @param  {boolean} loading Is button in loading state?
+         */
         toggleSubmit: function (loading) {
             var loadingText = $(this.cfg.submit).data('loading-text'),
                 defaultText = $(this.cfg.submit).data('default-text');
@@ -384,7 +387,6 @@
         },
         /**
          * AJAX call to retrieve data
-         *
          * @param  {array} input
          * @return {object} Returns a jQuery promise object
          */
@@ -418,37 +420,37 @@
             });
         },
         /**
-         * Sort ascending according to date, meant to be used with
-         * native arr.sort() method.
-         *
-         * @param  {object} a
-         * @param  {object} b
-         * @return {integer}
+         * Calculate the counts for a loc/act or loc/act parent
+         * @param  {obj} obj  Act or Loc obj
+         * @param  {array} coll Collection of acts or locs
+         * @param  {string} prop Property to match in tree search
+         * @return {int}      Total value for obj
          */
-        sortData: function (a, b) {
-            return new Date(a.date).getTime() - new Date(b.date).getTime();
-        },
-        sortDays: function (a, b) {
-            return a.value - b.value;
-        },
-        calcCount: function (loc, coll, prop) {
+        calcCount: function (obj, coll, prop) {
             var hasChildren,
                 self = this;
 
-            hasChildren = _.filter(coll, function (item, index) {
-                return loc.id === item[prop];
+            hasChildren = _.filter(coll, function (item) {
+                return obj.id === item[prop];
             });
 
             if (hasChildren.length < 1) {
-                return loc.count;
+                return obj.count;
             }
 
-            return _.reduce(_.map(hasChildren, function (l) {
-                return self.calcCount(l, coll, prop);
+            return _.reduce(_.map(hasChildren, function (o) {
+                return self.calcCount(o, coll, prop);
             }), function (sum, num) {
                 return sum + num;
             });
         },
+        /**
+         * Helper method for compiling activities with key _No Activity
+         * @param  {array} source Array to serach for key
+         * @param  {int} total  Total from response object
+         * @param  {string} mode   Flag for avg, sum, or pct
+         * @return {obj}        Object with name/count/pct for _No Activity
+         */
         insertNoActs: function (source, total, mode) {
             var obj = {},
                 noActs;
@@ -480,6 +482,15 @@
 
             return false;
         },
+        /**
+         * Method to build summary data array
+         * @param  {array} source   Array of locations or activities
+         * @param  {array} response Data response from server
+         * @param  {int} total    Total count from data response
+         * @param  {boolean} trunc    Flag for truncation
+         * @param  {boolean} pct      Flag for pct
+         * @return {array}
+         */
         buildArray: function (source, response, total, trunc, pct) {
             return _.filter(_.map(_.cloneDeep(source), function (o) {
                 o.name = o.title;
@@ -505,6 +516,14 @@
                 return obj.count !== null;
             });
         },
+        /**
+         * Build data array for inclusion in summary table
+         * @param  {array} source   Array of locations or activities
+         * @param  {array} response Data response from server
+         * @param  {int} total    Total count from data response
+         * @param  {string} flag     Parent property to search (parent or activityGroup)
+         * @return {array}
+         */
         buildTableArray: function (source, response, total, flag) {
             var counts,
                 self = this;
@@ -594,19 +613,23 @@
             }
 
             // Period Sum
-            counts.periodSum = _.map(response.periodSum, function (element, index) {
+            counts.periodSum = _.sortBy(_.map(response.periodSum, function (element, index) {
                 return {
                     date: index,
                     count: element.count
                 };
+            }), function (item) {
+                return new Date(item.date).getTime();
             });
 
             // Period Avg
-            counts.periodAvg = _.map(response.periodAvg, function (element, index) {
+            counts.periodAvg = _.sortBy(_.map(response.periodAvg, function (element, index) {
                 return {
                     date: index,
                     count: element.count
                 };
+            }), function (item) {
+                return new Date(item.date).getTime();
             });
 
             // Hourly Summary
@@ -619,17 +642,19 @@
             });
 
             // Day of Week Summary
-            counts.dayOfWeekSummary = _.map(response.dayOfWeekSummary, function (element, index) {
+            counts.dayOfWeekSummary = _.sortBy(_.map(response.dayOfWeekSummary, function (element, index) {
                 return {
-                    value: self.weekdays[index],
+                    // value: self.weekdays[index],
                     name: index,
                     count: element,
                     percent: (element / response.total * 100).toFixed(2)
                 };
+            }), function (item) {
+                return self.weekdays[item.name];
             });
 
             // Month Summary
-            counts.monthSummary = _.flatten(_.map(response.monthSummary, function (months, year) {
+            counts.monthSummary = _.sortBy(_.flatten(_.map(response.monthSummary, function (months, year) {
                 return _.map(months, function (count, month) {
                     return {
                         date: month + ' ' + '1' + ', ' + year,
@@ -638,16 +663,19 @@
                         percent: (count / response.total * 100).toFixed(2)
                     };
                 });
-            }));
+            })), function (item) {
+                return new Date(item.date).getTime();
+            });
 
             // Year Summary
-            counts.yearSummary = _.map(response.yearSummary, function (element, index) {
+            counts.yearSummary = _.sortBy(_.map(response.yearSummary, function (element, index) {
                 return {
-                    date: index + '-01-01',
                     name: index,
                     count: element,
                     percent: (element / response.total * 100).toFixed(2)
                 };
+            }), function (item) {
+                return item.name;
             });
 
             // Check data for display
@@ -659,20 +687,12 @@
                 dfd.reject({statusText: 'no data'});
             }
 
-            // Sort period arrays by date
-            counts.periodSum.sort(self.sortData);
-            counts.periodAvg.sort(self.sortData);
-            counts.yearSummary.sort(self.sortData);
-            counts.monthSummary.sort(self.sortData);
-            counts.dayOfWeekSummary.sort(self.sortDays);
-
             dfd.resolve(counts);
 
             return dfd.promise();
         },
         /**
          * Draw chart
-         *
          * @param  {array} counts
          */
         drawChart: function (counts) {
@@ -777,6 +797,10 @@
                 .datum(data)
                 .call(this.suppChart);
         },
+        /**
+         * Insert summary tables into DOM
+         * @param  {array} counts
+         */
         drawTable: function (counts) {
             this.buildTemplate(counts.total, this.cfg.tables.totalSumTmp, this.cfg.tables.totalSumTgt, true);
             this.buildTemplate(counts.locationsTable, this.cfg.tables.locSumTmp, this.cfg.tables.locSumTgt, true);
@@ -811,6 +835,11 @@
             // Strip dashes from dates
             return a[0].replace(/-/g, "") - b[0].replace(/-/g, "");
         },
+        /**
+         * Add indent to element name
+         * @param  {obj} item
+         * @return {string}
+         */
         addCSVIndent: function (item) {
             var indent = '';
 
@@ -819,11 +848,11 @@
                 indent += '     '; // 5 spaces
             }
 
-            return indent + _.unescape(item.name);
+            return indent + item.name;
         },
         /**
-         * Method to convert preformed CSV object to CSV download
-         * @param  array csv
+         * Method to convert preformed CSV object and summary data to CSV download
+         * @param  {array} csv
          * @return
          */
         buildCSV: function (counts) {
@@ -942,15 +971,15 @@
 
             // Build download URL
             base = 'data:application/csv;charset=utf-8,';
-            href = encodeURI(base + finalContent);
+            href = encodeURI(base + _.unescape(finalContent));
 
             $(self.cfg.csv).attr('href', href);
         },
         /**
          * Generic Method to add template to DOM
-         * @param  array items
-         * @param  string templateId
-         * @param  string elementId
+         * @param  {array} items
+         * @param  {string} templateId
+         * @param  {string} elementId
          */
         buildTemplate: function (items, templateId, targetId, empty) {
             var html,
