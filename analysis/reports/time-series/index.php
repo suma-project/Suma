@@ -198,7 +198,7 @@ $initDropDown .= '</select>';
                 </fieldset>
                 </form>
             </div>
-            <div id="summary-data" class="row span5">
+            <div id="summary-data" class="row span6">
                 <a name="summary-data"></a>
                 <div id="summary-data-header" class="row"><h3>Summary Data</h3></div>
                 <div id="total-data" class="row"></div>
@@ -295,7 +295,7 @@ $initDropDown .= '</select>';
                 <tbody>
                     {{#each items}}
                         <tr>
-                            <td>{{name}}</td>
+                            <td>{{indent depth}}{{name}}</td>
                             <td>{{countFormat count}}</td>
                             <td>{{percent}}%</td>
                         </tr>
@@ -316,7 +316,7 @@ $initDropDown .= '</select>';
                 <tbody>
                     {{#each items}}
                         <tr>
-                            <td>{{{name}}}</td>
+                            <td>{{indent depth}}{{{name}}}</td>
                             <td>{{countFormat count}}</td>
                             <td>{{percent}}%</td>
                         </tr>

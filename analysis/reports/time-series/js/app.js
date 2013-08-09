@@ -181,7 +181,7 @@
                         self.drawChart(counts);
                         self.counts = counts;
                         self.drawTable(counts, self.cfg.tables);
-                        self.buildCSV(counts);
+                        self.buildCSV(_.cloneDeep(self.counts));
                     }, function (e) {
                         self.error(e);
                     });
@@ -431,6 +431,99 @@
         sortDays: function (a, b) {
             return a.value - b.value;
         },
+        calcCount: function (loc, coll, prop) {
+            var hasChildren,
+                self = this;
+
+            hasChildren = _.filter(coll, function (item, index) {
+                return loc.id === item[prop];
+            });
+
+            if (hasChildren.length < 1) {
+                return loc.count;
+            }
+
+            return _.reduce(_.map(hasChildren, function (l) {
+                return self.calcCount(l, coll, prop);
+            }), function (sum, num) {
+                return sum + num;
+            });
+        },
+        insertNoActs: function (source, total, mode) {
+            var obj = {},
+                noActs;
+
+            noActs = _.find(source, function (item, key) {
+                return key === "_No Activity";
+            });
+
+            if (noActs) {
+                obj.name = "No Activity";
+                obj.depth = 0;
+
+                obj.percent = (noActs / total * 100).toFixed(2);
+
+                if (mode === 'pct') {
+                    obj.count = (noActs / total * 100).toFixed(2);
+                }
+
+                if (mode === 'sum') {
+                    obj.count = noActs;
+                }
+
+                if (mode === 'avg') {
+                    obj.count = noActs.toFixed(2);
+                }
+
+                return obj;
+            }
+
+            return false;
+        },
+        buildArray: function (source, response, total, trunc, pct) {
+            return _.filter(_.map(_.cloneDeep(source), function (o) {
+                o.name = o.title;
+
+                if (trunc) {
+                    o.count = response[o.id] ? response[o.id].toFixed(2) : null;
+                } else {
+                    o.count = response[o.id] || null;
+                }
+
+                if (o.count !== null) {
+                    o.percent = (o.count / total * 100).toFixed(2);
+                } else {
+                    o.percent = null;
+                }
+
+                if (pct) {
+                    o.count = o.percent;
+                }
+
+                return o;
+            }), function (obj) {
+                return obj.count !== null;
+            });
+        },
+        buildTableArray: function (source, response, total, flag) {
+            var counts,
+                self = this;
+
+            counts = _.map(_.cloneDeep(source), function (loc, index) {
+                loc.name = loc.title;
+                loc.count = response[loc.id] || null;
+
+                return loc;
+            });
+
+            // Calculate counts for children
+            return _.map(counts, function (loc, index, coll) {
+                loc.count = self.calcCount(loc, coll, flag);
+                loc.percent = (loc.count / total * 100).toFixed(2);
+
+                return loc;
+            });
+        },
         /**
          * Process response from AJAX call
          *
@@ -440,6 +533,9 @@
         processData: function (response) {
             var dataTest,
                 dfd = $.Deferred(),
+                noActsSum,
+                noActsAvgSum,
+                noActsAvgAvg,
                 self = this,
                 counts,
                 locations,
@@ -465,282 +561,93 @@
                 count : response.total
             }];
 
-            // Locations Sum
-            counts.locationsSum = [];
-            counts.locationsPct = [];
-            _.each(response.locationsSum, function (element, index) {
-                var locDict,
-                    newObj,
-                    pctObj;
+            // Locations related data
+            counts.locationsTable = self.buildTableArray(locations, response.locationsSum, response.total, 'parent');
+            counts.locationsSum = self.buildArray(locations, response.locationsSum, response.total);
+            counts.locationsAvgSum = self.buildArray(locations, response.locationsAvgSum, response.total, true);
+            counts.locationsAvgAvg = self.buildArray(locations, response.locationsAvgAvg, response.total, true);
+            counts.locationsPct = self.buildArray(locations, response.locationsSum, response.total, false, true);
 
-                locDict = _.filter(locations, function (ele) {
-                    return ele.id === parseInt(index, 10);
-                });
+            // Activities related data
+            counts.activitiesTable = self.buildTableArray(activities, response.activitiesSum, response.total, 'activityGroup');
+            counts.activitiesSum = self.buildArray(activities, response.activitiesSum, response.total);
+            counts.activitiesAvgSum = self.buildArray(activities, response.activitiesAvgSum, response.total, true);
+            counts.activitiesAvgAvg = self.buildArray(activities, response.activitiesAvgAvg, response.total, true);
+            counts.activitiesPct = self.buildArray(activities, response.activitiesSum, response.total, false, true);
 
-                newObj = {
-                    id    : index,
-                    name  : locDict[0].title,
-                    depth : locDict[0].depth,
-                    rank  : locDict[0].rank,
-                    parent: locDict[0].parent,
-                    count : element,
-                    percent: (element / response.total * 100).toFixed(2)
-                };
+            // Handle insertion of no activity values
+            noActsSum = self.insertNoActs(response.activitiesSum, response.total, 'sum');
+            if (noActsSum) {
+                counts.activitiesSum.push(noActsSum);
+                counts.activitiesTable.push(noActsSum);
+                counts.activitiesPct.push(self.insertNoActs(response.activitiesSum, response.total, 'pct'));
+            }
 
-                pctObj = {
-                    id    : index,
-                    name  : locDict[0].title,
-                    depth : locDict[0].depth,
-                    rank  : locDict[0].rank,
-                    parent: locDict[0].parent,
-                    count : newObj.percent
-                };
+            noActsAvgSum = self.insertNoActs(response.activitiesAvgSum, response.total, 'avg');
+            if (noActsAvgSum) {
+                counts.activitiesAvgSum.push(noActsAvgSum);
+            }
 
-                counts.locationsSum.push(newObj);
-                counts.locationsPct.push(pctObj);
-            });
-
-            // Locations Avg Sum
-            counts.locationsAvgSum = [];
-            _.each(response.locationsAvgSum, function (element, index) {
-                var locDict,
-                    newObj;
-
-                locDict = _.filter(locations, function (parent) {
-                    return parent.id === parseInt(index, 10);
-                });
-
-                newObj = {
-                    id    : index,
-                    name  : locDict[0].title,
-                    depth : locDict[0].depth,
-                    rank  : locDict[0].rank,
-                    parent: locDict[0].parent,
-                    count : element.toFixed(2)
-                };
-                counts.locationsAvgSum.push(newObj);
-            });
-
-            //Locations Avg Avg
-            counts.locationsAvgAvg = [];
-            delete response.locationsAvgAvg.averages;
-            delete response.locationsAvgAvg.days;
-
-            _.each(response.locationsAvgAvg, function (element, index) {
-                var locDict,
-                    newObj;
-
-                locDict = _.filter(locations, function (parent) {
-                    return parent.id === parseInt(index, 10);
-                });
-
-                newObj = {
-                    id    : index,
-                    name  : locDict[0].title,
-                    depth : locDict[0].depth,
-                    rank  : locDict[0].rank,
-                    parent: locDict[0].parent,
-                    count : element.toFixed(2)
-                };
-                counts.locationsAvgAvg.push(newObj);
-            });
-
-            // Activities Sum
-            counts.activitiesSum = [];
-            counts.activitiesPct = [];
-            _.each(response.activitiesSum, function (element, index) {
-                var actDict,
-                    newObj,
-                    pctObj;
-
-                actDict = _.filter(activities, function (act) {
-                    return act.id === parseInt(index, 10) && act.type === 'activity';
-                });
-
-                if (actDict.length > 0) {
-                    newObj = {
-                        id    : index,
-                        name  : actDict[0].title,
-                        depth : actDict[0].depth,
-                        rank  : actDict[0].rank,
-                        activityGroup: actDict[0].activityGroup,
-                        count : element,
-                        percent: (element / response.total * 100).toFixed(2)
-                    };
-
-                    pctObj = {
-                        id    : index,
-                        name  : actDict[0].title,
-                        depth : actDict[0].depth,
-                        rank  : actDict[0].rank,
-                        activityGroup: actDict[0].activityGroup,
-                        count : newObj.percent
-                    };
-                } else {
-                    newObj = {
-                        id    : index,
-                        name  : 'No Activity',
-                        depth : null,
-                        rank  : null,
-                        activityGroup: null,
-                        count : element,
-                        percent: (element / response.total * 100).toFixed(2)
-                    };
-
-                    pctObj = {
-                        id    : index,
-                        name  : 'No Activity',
-                        depth : null,
-                        rank  : null,
-                        activityGroup: null,
-                        count : newObj.percent
-                    };
-                }
-
-                counts.activitiesSum.push(newObj);
-                counts.activitiesPct.push(pctObj);
-            });
-
-            // Activities Avg Sum
-            counts.activitiesAvgSum = [];
-            _.each(response.activitiesAvgSum, function (element, index) {
-                var actDict,
-                    newObj;
-
-                actDict = _.filter(activities, function (act) {
-                    return act.id === parseInt(index, 10) && act.type === 'activity';
-                });
-
-                if (actDict.length > 0) {
-                    newObj = {
-                        id    : index,
-                        name  : actDict[0].title,
-                        depth : actDict[0].depth,
-                        rank  : actDict[0].rank,
-                        activityGroup: actDict[0].activityGroup,
-                        count : element.toFixed(2)
-                    };
-                } else {
-                    newObj = {
-                        id    : index,
-                        name  : 'No Activity',
-                        depth : null,
-                        rank  : null,
-                        activityGroup: null,
-                        count : element.toFixed(2)
-                    };
-                }
-                counts.activitiesAvgSum.push(newObj);
-            });
-
-            // Activities Avg Avg
-            counts.activitiesAvgAvg = [];
-            delete response.activitiesAvgAvg.averages;
-            delete response.activitiesAvgAvg.days;
-
-            _.each(response.activitiesAvgAvg, function (element, index) {
-                var actDict,
-                    newObj;
-
-                actDict = _.filter(activities, function (act) {
-                    return act.id === parseInt(index, 10) && act.type === 'activity';
-                });
-
-                if (actDict.length > 0) {
-                    newObj = {
-                        id    : index,
-                        name  : actDict[0].title,
-                        depth : actDict[0].depth,
-                        rank  : actDict[0].rank,
-                        activityGroup: actDict[0].activityGroup,
-                        count : element.toFixed(2)
-                    };
-                } else {
-                    newObj = {
-                        id    : index,
-                        name  : 'No Activity',
-                        depth : null,
-                        rank  : null,
-                        activityGroup: null,
-                        count : element.toFixed(2)
-                    };
-                }
-                counts.activitiesAvgAvg.push(newObj);
-            });
+            noActsAvgAvg = self.insertNoActs(response.activitiesAvgAvg, response.total, 'avg');
+            if (noActsAvgAvg) {
+                counts.activitiesAvgAvg.push(noActsAvgAvg);
+            }
 
             // Period Sum
-            counts.periodSum = [];
-            _.each(response.periodSum, function (element, index) {
-                var newObj = {
+            counts.periodSum = _.map(response.periodSum, function (element, index) {
+                return {
                     date: index,
                     count: element.count
                 };
-
-                counts.periodSum.push(newObj);
             });
 
             // Period Avg
-            counts.periodAvg = [];
-            _.each(response.periodAvg, function (element, index) {
-                var newObj = {
+            counts.periodAvg = _.map(response.periodAvg, function (element, index) {
+                return {
                     date: index,
                     count: element.count
                 };
-
-                counts.periodAvg.push(newObj);
             });
 
             // Hourly Summary
-            counts.hourSummary = [];
-            _.each(response.hourSummary, function (element, index) {
-                var newObj = {
+            counts.hourlySummary = _.map(response.hourSummary, function (element, index) {
+                return {
                     name: index,
                     count: element,
                     percent: (element / response.total * 100).toFixed(2)
                 };
-
-                counts.hourSummary.push(newObj);
             });
 
             // Day of Week Summary
-            counts.dayOfWeekSummary = [];
-            _.each(response.dayOfWeekSummary, function (element, index) {
-                var newObj = {
+            counts.dayOfWeekSummary = _.map(response.dayOfWeekSummary, function (element, index) {
+                return {
                     value: self.weekdays[index],
                     name: index,
                     count: element,
                     percent: (element / response.total * 100).toFixed(2)
                 };
-
-                counts.dayOfWeekSummary.push(newObj);
             });
 
             // Month Summary
-            counts.monthSummary = [];
-            _.each(response.monthSummary, function (months, year) {
-                _.each(months, function (count, month) {
-                    var newObj = {
+            counts.monthSummary = _.flatten(_.map(response.monthSummary, function (months, year) {
+                return _.map(months, function (count, month) {
+                    return {
                         date: month + ' ' + '1' + ', ' + year,
                         name: month + ' ' + year,
                         count: count,
                         percent: (count / response.total * 100).toFixed(2)
                     };
-
-                    counts.monthSummary.push(newObj);
                 });
-            });
+            }));
 
             // Year Summary
-            counts.yearSummary = [];
-            _.each(response.yearSummary, function (element, index) {
-                var newObj = {
+            counts.yearSummary = _.map(response.yearSummary, function (element, index) {
+                return {
                     date: index + '-01-01',
                     name: index,
                     count: element,
                     percent: (element / response.total * 100).toFixed(2)
                 };
-
-                counts.yearSummary.push(newObj);
             });
 
             // Check data for display
@@ -872,12 +779,12 @@
         },
         drawTable: function (counts) {
             this.buildTemplate(counts.total, this.cfg.tables.totalSumTmp, this.cfg.tables.totalSumTgt, true);
-            this.buildTemplate(counts.locationsSum, this.cfg.tables.locSumTmp, this.cfg.tables.locSumTgt, true);
-            this.buildTemplate(counts.activitiesSum, this.cfg.tables.actSumTmp, this.cfg.tables.actSumTgt, true);
+            this.buildTemplate(counts.locationsTable, this.cfg.tables.locSumTmp, this.cfg.tables.locSumTgt, true);
+            this.buildTemplate(counts.activitiesTable, this.cfg.tables.actSumTmp, this.cfg.tables.actSumTgt, true);
             this.buildTemplate(counts.yearSummary, this.cfg.tables.yearTmp, this.cfg.tables.yearTgt, true);
             this.buildTemplate(counts.monthSummary, this.cfg.tables.monthTmp, this.cfg.tables.monthTgt, true);
             this.buildTemplate(counts.dayOfWeekSummary, this.cfg.tables.weekdayTmp, this.cfg.tables.weekdayTgt, true);
-            this.buildTemplate(counts.hourSummary, this.cfg.tables.hourTmp, this.cfg.tables.hourTgt, true);
+            this.buildTemplate(counts.hourlySummary, this.cfg.tables.hourTmp, this.cfg.tables.hourTgt, true);
         },
         sortCSV: function (a, b) {
             return a.name - b.name;
@@ -903,6 +810,16 @@
         sortCSVLines: function (a, b) {
             // Strip dashes from dates
             return a[0].replace(/-/g, "") - b[0].replace(/-/g, "");
+        },
+        addCSVIndent: function (item) {
+            var indent = '';
+
+            while (item.depth > 0) {
+                item.depth -= 1;
+                indent += '     '; // 5 spaces
+            }
+
+            return indent + item.name;
         },
         /**
          * Method to convert preformed CSV object to CSV download
@@ -976,10 +893,19 @@
             // Sort lines by date
             lines.sort(self.sortCSVLines);
 
+            // Add indents as necessary
+            _.each(counts.locationsTable, function (ele) {
+                ele.name = self.addCSVIndent(ele);
+            });
+
+            _.each(counts.activitiesTable, function (ele) {
+                ele.name = self.addCSVIndent(ele);
+            });
+
             // Build hash of summary data
             summaryHash = {
-                locations: counts.locationsSum,
-                activities: counts.activitiesSum,
+                locations: counts.locationsTable,
+                activities: counts.activitiesTable,
                 hourly: counts.hourSummary,
                 daily: counts.dayOfWeekSummary,
                 monthly: counts.monthSummary,
