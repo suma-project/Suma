@@ -819,7 +819,7 @@
                 indent += '     '; // 5 spaces
             }
 
-            return indent + item.name;
+            return indent + _.unescape(item.name);
         },
         /**
          * Method to convert preformed CSV object to CSV download
