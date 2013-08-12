@@ -234,16 +234,16 @@
 
             // Main Chart Download
             $(self.cfg.mainDownload).on('click', function () {
-                var linkId = "#" + this.id,
-                    chartId = "#" + $(this).attr('data-chart-div');
+                var linkId = '#' + this.id,
+                    chartId = '#' + $(this).attr('data-chart-div');
 
                 self.downloadPNG(linkId, chartId, '.subGraph');
             });
 
             // Supplemental Chart Download
             $(self.cfg.suppDownload).on('click', function () {
-                var linkId = "#" + this.id,
-                    chartId = "#" + $(this).attr('data-chart-div');
+                var linkId = '#' + this.id,
+                    chartId = '#' + $(this).attr('data-chart-div');
 
                 self.downloadPNG(linkId, chartId);
             });
@@ -288,7 +288,7 @@
             canvas = document.getElementById('canvas');
 
             // Convert canvas to data
-            img = canvas.toDataURL("image/png");
+            img = canvas.toDataURL('image/png');
 
             // Update href to use data:image
             $(linkId).attr('href', img);
@@ -456,11 +456,11 @@
                 noActs;
 
             noActs = _.find(source, function (item, key) {
-                return key === "_No Activity";
+                return key === '_No Activity';
             });
 
             if (noActs) {
-                obj.name = "No Activity";
+                obj.name = 'No Activity';
                 obj.depth = 0;
 
                 obj.percent = (noActs / total * 100).toFixed(2);
@@ -528,7 +528,7 @@
             var counts,
                 self = this;
 
-            counts = _.map(_.cloneDeep(source), function (loc, index) {
+            counts = _.map(_.cloneDeep(source), function (loc) {
                 loc.name = loc.title;
                 loc.count = response[loc.id] || null;
 
@@ -833,7 +833,7 @@
         },
         sortCSVLines: function (a, b) {
             // Strip dashes from dates
-            return a[0].replace(/-/g, "") - b[0].replace(/-/g, "");
+            return a[0].replace(/-/g, '') - b[0].replace(/-/g, '');
         },
         /**
          * Add indent to element name

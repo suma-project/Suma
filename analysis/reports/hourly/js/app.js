@@ -116,15 +116,15 @@
 
             // Chart Download
             $(self.cfg.lineDownload).on('click', function () {
-                var linkId = "#" + this.id,
-                    chartId = "#" + $(this).attr('data-chart-div');
+                var linkId = '#' + this.id,
+                    chartId = '#' + $(this).attr('data-chart-div');
 
                 self.downloadPNG(linkId, chartId);
             });
 
             $(self.cfg.calendarDownload).on('click', function () {
-                var linkId = "#" + this.id,
-                    chartId = "#" + $(this).attr('data-chart-div');
+                var linkId = '#' + this.id,
+                    chartId = '#' + $(this).attr('data-chart-div');
 
                 self.downloadPNG(linkId, chartId);
             });
@@ -147,7 +147,7 @@
             canvas = document.getElementById('canvas');
 
             // Convert canvas to data
-            img = canvas.toDataURL("image/png");
+            img = canvas.toDataURL('image/png');
 
             // Update href to use data:image
             $(linkId).attr('href', img);
