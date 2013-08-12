@@ -24,7 +24,7 @@ function reportFiltersData()
     }
     catch (Exception $e)
     {
-        echo500($e);
+        echo json_encode($e->getCode());
     }
 
     // Assemble filter data
