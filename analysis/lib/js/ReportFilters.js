@@ -40,6 +40,7 @@
                     .then(function () {
                         dfd.resolve();
                     }, function (e) {
+                        e.statusText = 'filter error';
                         dfd.reject(e);
                     });
 
