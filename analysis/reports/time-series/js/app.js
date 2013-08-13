@@ -431,7 +431,13 @@
                 self = this;
 
             hasChildren = _.filter(coll, function (item) {
-                return obj.id === item[prop];
+                if (prop === 'activityGroup') {
+                    return obj.id === item[prop] && obj.type === 'activityGroup';
+                }
+
+                if (prop === 'parent') {
+                    return obj.id === item[prop];
+                }
             });
 
             if (hasChildren.length < 1) {
