@@ -336,18 +336,25 @@
             }));
         },
         buildCSV: function (counts) {
-            var avg,
+            var data = {},
+                finalData = '',
                 base,
                 href,
                 lines,
-                sum;
+                space = '\n\n\n\n';
 
-            avg = 'Averages \n' + this.buildCSVString(counts.avg, this.dict) + '\n \n \n \n';
-            sum = 'Sums \n' + this.buildCSVString(counts.sum, this.dict);
+            data.Averages = this.buildCSVString(counts.avg, this.dict);
+            data.Sums = this.buildCSVString(counts.sum, this.dict);
+
+            _.each(data, function (str, name) {
+                finalData += (name + '\n');
+                finalData += str;
+                finalData += space;
+            });
 
             // Build download URL
             base = 'data:application/csv;charset=utf-8,';
-            href = encodeURI(base + avg + sum);
+            href = encodeURI(base + _.unescape(finalData));
 
             $(this.cfg.csv).attr('href', href);
         },
