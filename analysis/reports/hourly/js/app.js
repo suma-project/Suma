@@ -320,10 +320,18 @@
         },
         buildCSVString: function (counts, dict) {
             return d3.csv.format(_.map(counts, function (o) {
+                var count;
+
+                if (o.value === undefined || o.value === null) {
+                    count = 'No Data Found';
+                } else {
+                    count = o.value;
+                }
+
                 return {
                     Day: dict.weekdays[o.day],
                     Hour: dict.hours[o.hour],
-                    Count: o.value || 'No Data Found'
+                    Count: count
                 };
             }));
         },
