@@ -87,7 +87,7 @@
                 input = $(this).serializeArray();
 
                 processData = $.when(self.getData(input))
-                                    .then(self.processData.bind(self));
+                                    .then(_.bind(self.processData, self));
 
                 processData.done(function (data) {
                     self.drawChart(data);

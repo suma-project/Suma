@@ -81,8 +81,8 @@
                 var input = $(this).serializeArray();
 
                 $.when(self.getData(input))
-                    .then(self.processData.bind(self))
-                    .then(self.drawChart.bind(self), self.error.bind(self));
+                    .then(_.bind(self.processData, self))
+                    .then(_.bind(self.drawChart, self), _.bind(self.error, self));
 
                 e.preventDefault();
             });

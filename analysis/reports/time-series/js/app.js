@@ -176,7 +176,7 @@
                 self.params = input;
 
                 $.when(self.getData(input))
-                    .then(self.processData.bind(self))
+                    .then(_.bind(self.processData, self))
                     .then(function (counts) {
                         self.drawChart(counts);
                         self.counts = counts;
