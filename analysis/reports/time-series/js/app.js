@@ -857,128 +857,80 @@
             return indent + item.name;
         },
         /**
+         * Method to convert primary data to CSV string
+         * @param  {array} counts Array of count objects
+         * @return {string}
+         */
+        buildPrimaryCSVString: function (counts) {
+            return d3.csv.format(_.map(counts, function (o) {
+                var newObj = {};
+
+                newObj.Date = o.date;
+                newObj.Total = o.total;
+
+                _.each(o.locations, function (loc, i) {
+                    newObj[i] = loc;
+                });
+
+                _.each(o.activities, function (act, i) {
+                    newObj[i] = act;
+                });
+
+                return newObj;
+            }));
+        },
+        /**
+         * Method to build a CSV string from an object
+         * @param  {object} counts 
+         * @param  {string} label  Label for name field
+         * @param  {boolean} indent Should names be indented?
+         * @return {string}
+         */
+        buildCSVString: function (counts, label, indent) {
+            var self = this;
+
+            return d3.csv.format(_.map(counts, function (o, i) {
+                var object = {};
+
+                object[label] = indent ? self.addCSVIndent(o) : o.name;
+                object.Count = o.count;
+                object.Percent = o.percent;
+    
+                return object;
+            }));
+        },
+        /**
          * Method to convert preformed CSV object and summary data to CSV download
          * @param  {array} csv
          * @return
          */
         buildCSV: function (counts) {
-            var self = this,
+            var space = '\n\n\n',
+                data = {},
+                finalData = '',
+                self = this,
                 base,
-                finalContent,
-                formattedLines,
-                header,
-                href,
-                lines,
-                summaryHash;
+                href;
 
-            lines = [];
-            header = ['Date', 'Total'];
+            // Convert data to strings
+            data.Primary = self.buildPrimaryCSVString(counts.csv);
+            data.Locations = self.buildCSVString(counts.locationsTable, 'Location', true);
+            data.Activities = self.buildCSVString(counts.activitiesTable, 'Activity', true);
+            data.Hourly = self.buildCSVString(counts.hourlySummary, 'Hour');
+            data.Daily = self.buildCSVString(counts.dayOfWeekSummary, 'Day');
+            data.Monthly = self.buildCSVString(counts.monthSummary, 'Month');
+            data.Yearly = self.buildCSVString(counts.yearSummary, 'Year');
 
-            self.locHeader = null;
-            self.actHeader = null;
-
-            _.each(counts.csv, function (day) {
-                var actHeader,
-                    activities,
-                    line,
-                    locations,
-                    locHeader;
-
-                line = [];
-                line.push(day.date);
-                line.push(day.total);
-
-                // Build Header on first pass
-                if (!self.locHeader) {
-                    locHeader = self.sortCSVItems(day.locations);
-                    locHeader = _.pluck(locHeader, 'name');
-                    self.locHeader = locHeader;
-                }
-
-                if (!self.actHeader) {
-                    actHeader = self.sortCSVItems(day.activities);
-                    actHeader = _.pluck(actHeader, 'name');
-                    self.actHeader = actHeader;
-                }
-
-                // Convert locations to array and sort, add to line
-                locations = self.sortCSVItems(day.locations);
-                _.each(locations, function (loc) {
-                    line.push(loc.count);
-                });
-
-                // Convert activities to array and sort, add to line
-                activities = self.sortCSVItems(day.activities);
-                _.each(activities, function (act) {
-                    line.push(act.count);
-                });
-                lines.push(line);
+            // Build final string with section headers and spacing
+            _.each(data, function (str, name) {
+                finalData += (name + '\n');
+                finalData += str;
+                finalData += space;
             });
-
-            // Add location names to header
-            _.each(self.locHeader, function (locName) {
-                header.push(locName);
-            });
-
-            // Add activity names to header
-            _.each(self.actHeader, function (actname) {
-                header.push(actname);
-            });
-
-            // Sort lines by date
-            lines.sort(self.sortCSVLines);
-
-            // Add indents as necessary
-            _.each(counts.locationsTable, function (ele) {
-                ele.name = self.addCSVIndent(ele);
-            });
-
-            _.each(counts.activitiesTable, function (ele) {
-                ele.name = self.addCSVIndent(ele);
-            });
-
-            // Build hash of summary data
-            summaryHash = {
-                locations: counts.locationsTable,
-                activities: counts.activitiesTable,
-                hourly: counts.hourSummary,
-                daily: counts.dayOfWeekSummary,
-                monthly: counts.monthSummary,
-                yearly: counts.yearSummary
-            };
-
-            // Add summary data to csv lines array
-            _.each(summaryHash, function (e, i) {
-                var sumHeader = [
-                    i,
-                    'count',
-                    'percent'
-                ];
-
-                lines.push(sumHeader);
-
-                _.each(e, function (l) {
-                    var line = [];
-
-                    line.push(l.name);
-                    line.push(l.count);
-                    line.push(l.percent);
-
-                    lines.push(line);
-                });
-            });
-
-            // Format arrays into strings
-            formattedLines = d3.csv.format(lines);
-
-            // Merge header and lines
-            header = header + '\n';
-            finalContent = header + formattedLines;
 
             // Build download URL
             base = 'data:application/csv;charset=utf-8,';
-            href = encodeURI(base + _.unescape(finalContent));
-
+            href = encodeURI(base + _.unescape(finalData));
             $(self.cfg.csv).attr('href', href);
         },
         /**
