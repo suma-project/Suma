@@ -14,7 +14,7 @@ These requirements as based on our local testing. Earlier versions may also work
 
 Additional Client Requirements:
 
-* Device or computer with WebKit browser (e.g. iOS and Android browsers, Safari, Google Chrome) needed to use Suma client
+* Device or computer with WebKit browser (e.g. iOS and Android browsers, Google Chrome, Safari on Mac OS) needed to use Suma client. **NOTE: Suma does not work in Safari for Windows.**
 
 
 Zend Framework Installation (optional)
