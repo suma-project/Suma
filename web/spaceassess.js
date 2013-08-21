@@ -13,7 +13,7 @@ var startDialogVisible = true;
 var currentlySyncing = 0;
 
 var sessionStart;
-var currentSession;
+var currentSession = null;
 var sessionInit = null;
 var currentSessionArr = [];
 var currentActivities = null;
@@ -373,13 +373,13 @@ function syncSessions() {
     // but decremented here. This could be better for sure.
     if (0 === currentlySyncing) {
         serializeCollectedData(function(serJson, sessionIDs) {
-            var syncStart = (new Date).getTime();
+            var syncStart = (new Date()).getTime();
             $.ajax({
                 url: syncUrl,
                 type: 'POST',
                 data: {json:JSON.stringify(serJson)}
             }).success(function() {
-                var syncStop = (new Date).getTime();
+                var syncStop = (new Date()).getTime();
                 console.log((syncStop - syncStart) + " milliseconds to server");
                 $.each(sessionIDs, function(key, sessionID) {
                     Session.load(sessionID, function(session) {
@@ -624,7 +624,7 @@ $(function() {
         $('body').on('touchstart', '.tappable', function(event) {
             var e = event.originalEvent;
             submitTouchState.numTouches = e.touches.length;
-            submitTouchState.startTime  = (new Date).getTime();
+            submitTouchState.startTime  = (new Date()).getTime();
             submitTouchState.startX = e.changedTouches[0].clientX;
             submitTouchState.startY = e.changedTouches[0].clientY;
             return false;
@@ -632,7 +632,7 @@ $(function() {
 
 
         $('body').on('touchend', '.tappable', function(event) {
-            var timeDelta = (new Date).getTime() - submitTouchState.startTime;
+            var timeDelta = (new Date()).getTime() - submitTouchState.startTime;
             var e = event.originalEvent;
             var deltaX = Math.abs(submitTouchState.startX - e.changedTouches[0].clientX);
             var deltaY = Math.abs(submitTouchState.startX - e.changedTouches[0].clientX);
