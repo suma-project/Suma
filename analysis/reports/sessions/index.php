@@ -86,7 +86,7 @@ $initDropDown .= '</select>';
                         <form id="chartFilters">
                             <div class="col-xs-3">
                                 <div>
-                                    <h4 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Choose Initiative" data-content="Select an initiative by name.">Choose Initiative</h4>
+                                    <h4 class="suma-popover" data-trigger="hover" data-delay="300" data-title="Choose Initiative" data-content="Select an initiative by name.">Choose Initiative</h4>
                                     <label for="initiatives">Select an Initiative</label>
                                     <?php echo $initDropDown; ?>
                                 </div>

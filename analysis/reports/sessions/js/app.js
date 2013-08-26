@@ -48,7 +48,7 @@
             $('#edate').datepicker({'format': 'yyyy-mm-dd', 'autoclose': 'true'});
 
             // Help text on filters
-            $('.suma-popover').popover();
+            $('.suma-popover').popover({placement: 'bottom'});
 
             // Form submission
             $('body').on('submit', '#chartFilters', function (e) {
