@@ -504,7 +504,11 @@
                 if (trunc) {
                     o.count = response[o.id] ? response[o.id].toFixed(2) : null;
                 } else {
-                    o.count = response[o.id] || null;
+                    if (o.type === "activityGroup") {
+                        o.count = null;
+                    } else {
+                        o.count = response[o.id] || null;
+                    }
                 }
 
                 if (o.count !== null) {
