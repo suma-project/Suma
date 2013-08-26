@@ -436,7 +436,7 @@ function hitAbandonButton() {
 function isSessionWiped(callback) {
     if (null !== currentSession) {
         Session.findBy('startTime', currentSession.startTime, function(sess) {
-            if (null === sess) {
+            if ((null === sess) || (null !== sess.stopTime)) {
                 alert("There is a problem with the session metadata. This can happen when two instances of Suma are running at the same time. If this is the case, no data was lost.\n\nIf you don't understand why this may have occurred, please contact an administrator.\n\nPlease reload the page and try again.");
             } else {
                 callback();
