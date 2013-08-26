@@ -52,13 +52,13 @@ $initDropDown .= '</select>';
                   <span class="icon-bar"></span>
                   <span class="icon-bar"></span>
                 </button>
-                    <a class="navbar-brand" href="#"><img src="../../lib/img/logo.png"></a>
+                    <a class="navbar-brand" href=".."><img src="../../lib/img/logo.png"></a>
                 </div>
                 <div class="collapse navbar-collapse bs-navbar-collapse">
                     <ul class="nav navbar-nav">
-                        <li class="active"><a href="#">Home</a></li>
-                        <li><a href="about.html">About</a></li>
-                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="..">Home</a></li>
+                        <li><a href="../about.html">About</a></li>
+                        <li><a href="../contact.html">Contact</a></li>
                     </ul>
                 </div>
             </div>
