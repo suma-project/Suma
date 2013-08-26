@@ -7,7 +7,7 @@
  */
 
 var deviceName = 'iPad';
-var appVersion = '0.7.5';
+var appVersion = '1.1.0';
 
 var startDialogVisible = true;
 var currentlySyncing = 0;
