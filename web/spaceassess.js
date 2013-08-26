@@ -13,7 +13,7 @@ var startDialogVisible = true;
 var currentlySyncing = 0;
 
 var sessionStart;
-var currentSession;
+var currentSession = null;
 var sessionInit = null;
 var currentSessionArr = [];
 var currentActivities = null;
@@ -27,7 +27,7 @@ var countForm = null;
 var countIndicator = null;
 var submitTouchState = [];
 
-// This has been converted from a function that serializes all data and once and syncs it to
+// This has been converted from a function that serializes all data at once and syncs it to
 // one that just syncs one session at a time. This is a performance optimization.
 // There is still some cruft in here from the old way.
 // It is still pretty slow. Ideally, using transactions could speed it up,
@@ -199,7 +199,6 @@ function displayActivities(actInit, callback) {
             rightActivity = $('<div class="rightActivities activityContainer"></div>').appendTo(currentActivityGroup);
             currentColumn = leftActivity;
 
-            console.log(currentActivityGroup);
             activityGroup.activities.list(function(activities) {
                 $.each(activities, function(key, activity) {
 
@@ -373,13 +372,13 @@ function syncSessions() {
     // but decremented here. This could be better for sure.
     if (0 === currentlySyncing) {
         serializeCollectedData(function(serJson, sessionIDs) {
-            var syncStart = (new Date).getTime();
+            var syncStart = (new Date()).getTime();
             $.ajax({
                 url: syncUrl,
                 type: 'POST',
                 data: {json:JSON.stringify(serJson)}
             }).success(function() {
-                var syncStop = (new Date).getTime();
+                var syncStop = (new Date()).getTime();
                 console.log((syncStop - syncStart) + " milliseconds to server");
                 $.each(sessionIDs, function(key, sessionID) {
                     Session.load(sessionID, function(session) {
@@ -428,6 +427,30 @@ function abandonCollection() {
 
 function hitAbandonButton() {
     $("#abandonContent").dialog("open");
+}
+
+// Check to see if this session has been uploaded
+// or the metadata has been replaced by another Suma instance.
+// This can happen when Suma is running in multiple windows in the same browser.
+// No data should be lost.
+function isSessionWiped(callback) {
+    if (null !== currentSession) {
+        Session.findBy('startTime', currentSession.startTime, function(sess) {
+            if ((null === sess) || (null !== sess.stopTime)) {
+                alert("There is a problem with the session metadata. This can happen when two instances of Suma are running at the same time. If this is the case, no data was lost.\n\nIf you don't understand why this may have occurred, please contact an administrator.\n\nPlease reload the page and try again.");
+            } else {
+                callback();
+            }
+        });
+    } else {
+        Initiative.findBy('serverId', sessionInit.serverId, function(init) {
+            if (sessionInit.id !== init.id) {
+                alert("There is a problem with the initiative metadata. This can happen when two instances of Suma are running at the same time. If this is the case, no data was lost.\n\nIf you don't understand why this may have occurred, please contact an administrator.\n\nPlease reload the page and try again.");
+            } else {
+                callback();
+            }
+        });
+    }
 }
 
 function startCollecting(){
@@ -479,65 +502,68 @@ function updateTimer() {
 }
 
 function undoCount() {
-
-    if (readyToCollect() && startCollecting()) {
-        persistence.transaction(function(dbTransaction) {
-            var currentPeople, lastTimestamp;
-            currentPeople = Person.all().filter('session', '=', currentSession).filter('location', '=', currentLoc).order('timestamp', false);
-            lastTimestamp = null;
-            currentPeople.one(dbTransaction, function(person){
-                if (person.count > 0) {
-                    countIndicator.val(parseInt(countIndicator.val()) - person.count);
-                    currentLocCount.text('(' + countIndicator.val() + ')');
-                } else {
-                    countIndicator.val("0");
-                    currentLocCount.text("(0)");
-                }
-                persistence.remove(person);
-                persistence.flush(dbTransaction);
+    isSessionWiped(function() {
+        if (readyToCollect() && startCollecting()) {
+            persistence.transaction(function(dbTransaction) {
+                var currentPeople, lastTimestamp;
+                currentPeople = Person.all().filter('session', '=', currentSession).filter('location', '=', currentLoc).order('timestamp', false);
+                lastTimestamp = null;
+                currentPeople.one(dbTransaction, function(person){
+                    if (person.count > 0) {
+                        countIndicator.val(parseInt(countIndicator.val(), 10) - person.count);
+                        currentLocCount.text('(' + countIndicator.val() + ')');
+                    } else {
+                        countIndicator.val("0");
+                        currentLocCount.text("(0)");
+                    }
+                    persistence.remove(person);
+                    persistence.flush(dbTransaction);
+                });
             });
-        });
-    }
+        }
+    });
     return;
 }
 
 function countPeople(doubleTap) {
     var date = new Date();
 
-    if (!(readyToCollect() && startCollecting())) {
-        return false;
-    }
-
-    // If we want to re-enable non-incremental counts
-    //countInput = $("input#count_input");
-    //var newCount = parseInt(countInput.val());
-    var newCount = 1;
-    if (!isNaN(newCount)) {
-
-        if ((newCount === 1) && doubleTap) {
-            newCount++;
+    isSessionWiped(function() {
+        if (!(readyToCollect() && startCollecting())) {
+            return false;
         }
 
-        var countObj = new Person({timestamp:date.getTime()});
-        $("input.check:checked", countForm).each(function() {
-            countObj.activities.add(currentActivities[$(this).val()]);
-        }).prop("checked", false).button("refresh");
-        countObj.location = currentLoc;
-        countObj.session = currentSession;
-        countObj.count = newCount;
-        persistence.add(countObj);
+        // If we want to re-enable non-incremental counts
+        //countInput = $("input#count_input");
+        //var newCount = parseInt(countInput.val(), 10);
+        var newCount = 1;
+        if (!isNaN(newCount)) {
 
-        if (!parseInt(countIndicator.val())) {
-            countIndicator.val(newCount);
+            if ((newCount === 1) && doubleTap) {
+                newCount++;
+            }
+
+            var countObj = new Person({timestamp:date.getTime()});
+            $("input.check:checked", countForm).each(function() {
+                countObj.activities.add(currentActivities[$(this).val()]);
+            }).prop("checked", false).button("refresh");
+            countObj.location = currentLoc;
+            countObj.session = currentSession;
+            countObj.count = newCount;
+            persistence.add(countObj);
+
+            if (!parseInt(countIndicator.val(), 10)) {
+                countIndicator.val(newCount);
+            } else {
+                countIndicator.val(parseInt(countIndicator.val(), 10) + newCount);
+            }
+            currentLocCount.text('(' + countIndicator.val() + ')');
+            persistence.flush();
         } else {
-            countIndicator.val(parseInt(countIndicator.val()) + newCount);
+            alert("error--Not a Number");
+            return false;
         }
-        currentLocCount.text('(' + countIndicator.val() + ')');
-        persistence.flush();
-    } else {
-        alert("error--Not a Number");
-        return false;
-    }
+    });
 }
 
 function initAfterDB() {
@@ -556,7 +582,7 @@ $(function() {
     initSelectObj = $("select#init_selector");
     countForm = $("form#count_form");
     countIndicator = $("input#goesup", countForm);
-    // TODO: check for error
+
     initSADB(initAfterDB);
 
     $("#spaceAssessDialog").dialog({
@@ -624,7 +650,7 @@ $(function() {
         $('body').on('touchstart', '.tappable', function(event) {
             var e = event.originalEvent;
             submitTouchState.numTouches = e.touches.length;
-            submitTouchState.startTime  = (new Date).getTime();
+            submitTouchState.startTime  = (new Date()).getTime();
             submitTouchState.startX = e.changedTouches[0].clientX;
             submitTouchState.startY = e.changedTouches[0].clientY;
             return false;
@@ -632,7 +658,7 @@ $(function() {
 
 
         $('body').on('touchend', '.tappable', function(event) {
-            var timeDelta = (new Date).getTime() - submitTouchState.startTime;
+            var timeDelta = (new Date()).getTime() - submitTouchState.startTime;
             var e = event.originalEvent;
             var deltaX = Math.abs(submitTouchState.startX - e.changedTouches[0].clientX);
             var deltaY = Math.abs(submitTouchState.startX - e.changedTouches[0].clientX);
@@ -656,69 +682,72 @@ $(function() {
         $(this).parent().siblings("li").removeClass("selected_loc");
         $("li.deepest_loc").removeClass("deepest_loc");
         $(this).parent().addClass("selected_loc deepest_loc");
-        persistence.transaction(function(dbTransaction) {
-            Location.load(dbTransaction, $(clickEl).attr("href"), function(loc){
-                var parentLoc, i=0, combinedLocTitle;
-                // Build a string showing the chain of selected locations
-                parentLoc = loc;
-                combinedLocTitle = '';
+        isSessionWiped(function() {
+            persistence.transaction(function(dbTransaction) {
+                Location.load(dbTransaction, $(clickEl).attr("href"), function(loc){
+                    var parentLoc, i=0, combinedLocTitle;
+                    // Build a string showing the chain of selected locations
+                    parentLoc = loc;
+                    combinedLocTitle = '';
 
-                // Arbitrary max depth of 20
-                while ((parentLoc != null) || i > 20) {
-                    if ('' !== combinedLocTitle) {
-                        combinedLocTitle = parentLoc.name + ' | ' + combinedLocTitle;
-                    } else {
-                        combinedLocTitle = parentLoc.name;
+                    // Arbitrary max depth of 20
+                    while ((parentLoc !== null) || i > 20) {
+                        if ('' !== combinedLocTitle) {
+                            combinedLocTitle = parentLoc.name + ' | ' + combinedLocTitle;
+                        } else {
+                            combinedLocTitle = parentLoc.name;
+                        }
+                        parentLoc = parentLoc.parent;
+                        i++;
                     }
-                    parentLoc = parentLoc.parent;
-                    i++;
-                }
 
-                $("#current_loc_label").text(combinedLocTitle);
+                    $("#current_loc_label").text(combinedLocTitle);
 
-                loc.children.list(dbTransaction,function(locKids) {
-                    if (locKids.length > 0) {
-                        $(currentList).after('<ul class="loc_list"></ul>');
-                        // Insert the new child locations
-                        var childSel = $("ul.loc_list:last");
-                        $.each(locKids, function(key, loc){
-                            childSel.append('<li class="loc_item"><a id="loc' + loc.id + '" href="' + loc.id + '">' + loc.name + '    <span class="locCount"></span></a></li>');
-                            annotateLoc(loc);
-                        });
-
-                        countIndicator.val('Count');
-                        $("#loadingScreen").dialog('close');
-                    } else {
-                        // test for terminal locs--only allow collection if there are no children
-                        currentLoc = loc;
-                        currentLocCount = $(clickEl).find('span.locCount');
-
-                        // Start a new session as soon as a location is selected
-                        startCollecting();
-
-                        // TODO: Handle count rows that represent more than 1 person
-                        Person.all().filter('session', '=', currentSession).filter('location', '=', currentLoc).count(dbTransaction, function(numCounts) {
-                            if (numCounts > 0) {
-                                // right now, this subtracts the "zero" placeholder count
-                                countIndicator.val(numCounts-1);
-                                currentLocCount.text('(' + (numCounts-1) + ')');
-                            } else {
-                                // Placeholder so that we know that this location has been visited
-                                countIndicator.val('Count');
-                                var countObj = new Person({timestamp:(new Date).getTime()});
-                                countObj.location = currentLoc;
-                                countObj.session = currentSession;
-                                countObj.count = 0;
-                                persistence.add(countObj);
-                                currentLocCount.text('(0)');
-                            }
-                            persistence.flush(dbTransaction, function() {
-                                $("#loadingScreen").dialog('close');
+                    loc.children.list(dbTransaction,function(locKids) {
+                        if (locKids.length > 0) {
+                            $(currentList).after('<ul class="loc_list"></ul>');
+                            // Insert the new child locations
+                            var childSel = $("ul.loc_list:last");
+                            $.each(locKids, function(key, loc){
+                                childSel.append('<li class="loc_item"><a id="loc' + loc.id + '" href="' + loc.id + '">' + loc.name + '    <span class="locCount"></span></a></li>');
+                                annotateLoc(loc);
                             });
+
+                            countIndicator.val('Count');
+                            $("#loadingScreen").dialog('close');
+                        } else {
+                            // test for terminal locs--only allow collection if there are no children
+                            currentLoc = loc;
+                            currentLocCount = $(clickEl).find('span.locCount');
+
+                            // Start a new session as soon as a location is selected
+                            startCollecting();
+
+                            // TODO: Handle count rows that represent more than 1 person
+                            Person.all().filter('session', '=', currentSession).filter('location', '=', currentLoc).count(dbTransaction, function(numCounts) {
+                                if (numCounts > 0) {
+                                    // right now, this subtracts the "zero" placeholder count
+                                    countIndicator.val(numCounts-1);
+                                    currentLocCount.text('(' + (numCounts-1) + ')');
+                                } else {
+                                    // Placeholder so that we know that this location has been visited
+                                    countIndicator.val('Count');
+                                    var countObj = new Person({timestamp:(new Date()).getTime()});
+                                    countObj.location = currentLoc;
+                                    countObj.session = currentSession;
+                                    countObj.count = 0;
+                                    persistence.add(countObj);
+                                    currentLocCount.text('(0)');
+                                }
+                                persistence.flush(dbTransaction, function() {
+                                    $("#loadingScreen").dialog('close');
+                                });
+                            });
+                        }
                         });
-                    }
+                    });
+
                 });
-            });
         });
         return false;
     });
