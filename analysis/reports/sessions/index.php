@@ -13,7 +13,7 @@ catch (Exception $e)
     die;
 }
 
-$initDropDown = '<select name="id" id="initiatives">';
+$initDropDown = '<select name="id" id="initiatives" class="form-control">';
 foreach($initiatives as $init)
 {
     $initDropDown .= '<option value="' . $init['id'] . '">' . $init['title'] . '</option>' . "\n";
@@ -33,12 +33,8 @@ $initDropDown .= '</select>';
 
         <link href="../../lib/css/bootstrap.min.css" rel="stylesheet">
         <link href="../../lib/css/datepicker.css" rel="stylesheet">
+        <link href="../../lib/css/non-responsive.css" rel="stylesheet">
         <link href="css/style.css" rel="stylesheet">
-        <style>
-          body {
-            padding-top: 60px;
-          }
-        </style>
 
         <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
         <!--[if lt IE 9]>
@@ -47,80 +43,85 @@ $initDropDown .= '</select>';
     </head>
 
     <body>
-        <div class="navbar navbar-fixed-top">
-            <div class="navbar-inner">
-                <div class="container">
-                    <a class="brand" href=".."><img src="../../lib/img/logo.png"></a>
-                    <div class="nav-collapse">
-                        <ul class="nav">
-                            <li><a href="..">Home</a></li>
-                            <li><a href="../about.html">About</a></li>
-                            <li><a href="../contact.html">Contact</a></li>
-                        </ul>
-                    </div>
+        <div class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                    <a class="navbar-brand" href="#"><img src="../../lib/img/logo.png"></a>
+                </div>
+                <div class="collapse navbar-collapse bs-navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a href="#">Home</a></li>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
                 </div>
             </div>
         </div>
 
         <div class="container">
             <div class="row">
-                <div id="error-container">
-                </div>
-                <div id ="welcome" class="alert alert-info alert-block">
-                    <h4>Welcome!</h4>
+                <div class="col-xs-12">
+                    <div id="error-container">
+                    </div>
+                    <div id ="welcome" class="alert alert-info alert-block">
+                        <h4>Welcome!</h4>
                         Please select an initiative from the select menu below and limit your search by date or time as necessary.
-                </div>
-                <div class="span9">
-                <div class="row">
-                    <h3>Filter Sessions</h3>
-                <form id="chartFilters">
-                <fieldset>
-                <div class="span3">
-                    <div class="control-group">
-                        <h5 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Choose Initiative" data-content="Select an initiative by name.">Choose Initiative</h5>
-                        <label class="control-label" for="initiatives">Select an Initiative</label>
-                        <div class="controls">
-                            <?php echo $initDropDown; ?>
-                        </div>
                     </div>
                 </div>
-                <div class="span3">
-                    <div class="control-group">
-                        <h5 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Choose Date Range" data-content="Choose a start and end date for your analysis. Defaults to 6 months from current day. Clear fields to retrieve the complete data set.">Choose Date Range</h5>
-                        <label class="control-label" for="sdate">Start Date</label>
-                        <div class="controls">
-                            <input type="text" id="sdate" name="sdate" />
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="edate">End Date</label>
-                        <div class="controls">
-                            <input type="text" id="edate" name="edate" />
-                        </div>
-                    </div>
-                </div>
-                <div class="span3">
-                    <div class="control-group">
-                        <h5 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Choose subset of daily data" data-content="Include data gathered during a certain time of day.">Choose subset of daily data</h5>
-                        <label class="control-label" for="stime">Start Time (24-hour, e.g 08:00)</label>
-                        <div class="controls">
-                            <input type="text" id="stime" name="stime" placeholder="00:00" />
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="etime">End Time (24-hour, e.g. 13:00)</label>
-                        <div class="controls">
-                            <input type="text" id="etime" name="etime" placeholder="24:00"/>
-                        </div>
-                    </div>
-                    <div>
-                        <input type="submit" id="submit" class="btn btn-success" data-default-text ="Submit" data-loading-text="Loading..." value="Submit" />
-                    </div>
-                </div>
-                </fieldset>
-                </form>
             </div>
-            <div id="sessions-data" class="row"></div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <h3>Filter Sessions</h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <form id="chartFilters">
+                            <div class="col-xs-3">
+                                <div>
+                                    <h4 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Choose Initiative" data-content="Select an initiative by name.">Choose Initiative</h4>
+                                    <label for="initiatives">Select an Initiative</label>
+                                    <?php echo $initDropDown; ?>
+                                </div>
+                            </div>
+                            <div class="col-xs-3">
+                                <div class="form-group">
+                                    <h4 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Choose Date Range" data-content="Choose a start and end date for your analysis. Defaults to 6 months from current day. Clear fields to retrieve the complete data set.">Choose Date Range</h4>
+                                    <label for="sdate">Start Date</label>
+                                    <input class="form-control" type="text" id="sdate" name="sdate" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="edate">End Date</label>
+                                    <input class="form-control" type="text" id="edate" name="edate" />
+                                </div>
+                            </div>
+                            <div class="col-xs-3">
+                                <div class="form-group">
+                                    <h4 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Choose Subset of Day" data-content="Include data gathered during a certain time of day.">Choose Subset of Day</h4>
+                                    <label for="stime">Start Time (24-hour, e.g 08:00)</label>
+                                    <input class="form-control" type="text" id="stime" name="stime" placeholder="00:00" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="etime">End Time (24-hour, e.g. 13:00)</label>
+                                    <input class="form-control" type="text" id="etime" name="etime" placeholder="24:00"/>
+                                </div>
+                                <div>
+                                    <input type="submit" id="submit" class="btn btn-success" data-default-text ="Submit" data-loading-text="Loading..." value="Submit" />
+                                </div>
+                            </div>
+                            <div class="col-xs-3"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div id="sessions-data" class="row"></div>  
         </div>
 
         <div id="loadingWidget"></div>
