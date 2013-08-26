@@ -27,7 +27,7 @@ var countForm = null;
 var countIndicator = null;
 var submitTouchState = [];
 
-// This has been converted from a function that serializes all data and once and syncs it to
+// This has been converted from a function that serializes all data at once and syncs it to
 // one that just syncs one session at a time. This is a performance optimization.
 // There is still some cruft in here from the old way.
 // It is still pretty slow. Ideally, using transactions could speed it up,
@@ -437,7 +437,7 @@ function isSessionWiped(callback) {
     if (null !== currentSession) {
         Session.findBy('startTime', currentSession.startTime, function(sess) {
             if (null === sess) {
-                alert("There is a problem with the session metadata. This can happen when two two instances of Suma are running at the same time. If this is the case, no data was lost. If not, please contact an administrator.\nPlease reload the page and try again.");
+                alert("There is a problem with the session metadata. This can happen when two instances of Suma are running at the same time. If this is the case, no data was lost.\n\nIf you don't understand why this may have occurred, please contact an administrator.\n\nPlease reload the page and try again.");
             } else {
                 callback();
             }
@@ -445,7 +445,7 @@ function isSessionWiped(callback) {
     } else {
         Initiative.findBy('serverId', sessionInit.serverId, function(init) {
             if (sessionInit.id !== init.id) {
-                alert("There is a problem with the initiative metadata. This can happen when two two instances of Suma are running at the same time. If this is the case, no data was lost. If not, please contact an administrator.\nPlease reload the page and try again.");
+                alert("There is a problem with the initiative metadata. This can happen when two instances of Suma are running at the same time. If this is the case, no data was lost.\n\nIf you don't understand why this may have occurred, please contact an administrator.\n\nPlease reload the page and try again.");
             } else {
                 callback();
             }
@@ -535,7 +535,7 @@ function countPeople(doubleTap) {
 
         // If we want to re-enable non-incremental counts
         //countInput = $("input#count_input");
-        //var newCount = parseInt(countInput.val());
+        //var newCount = parseInt(countInput.val(), 10);
         var newCount = 1;
         if (!isNaN(newCount)) {
 
