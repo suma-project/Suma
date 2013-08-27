@@ -29,16 +29,15 @@ body {
     margin-top: 50px;
 }
 
-#secondary-loading {
+.secondary-loading {
     display: none;
 }
 
 #secondary-spinner {
    margin: 50px 0 0 75px;
-
 }
 
-#secondary-filters {
+.secondary-filters {
     display: none;
 }
 
