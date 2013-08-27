@@ -81,14 +81,14 @@ $initDropDown .= '</select>';
                     </div>
                     <div id="loading"><img src="../../lib/img/spinner.gif"></div>
                     <div id="controls" class="pull-right">
-                        <a id="line-download" download="suma_hourly_line_chart.png" data-chart-div="chart2" class="btn btn-default btn-small" target="_blank">Save Line Chart</a>
-                        <a id="calendar-download" download="suma_hourly_calendar_chart.png" data-chart-div="chart" class="btn btn-default btn-small" target="_blank">Save Calendar Chart</a>
-                        <a id="csv" download="suma_data_export.csv" class="btn btn-default btn-small suma-popover" href="" rel="popover">Export Raw Data</a>
+                        <a id="line-download" download="suma_hourly_line_chart.png" data-chart-div="chart2" class="btn btn-default btn-sm" target="_blank">Save Line Chart</a>
+                        <a id="calendar-download" download="suma_hourly_calendar_chart.png" data-chart-div="chart" class="btn btn-default btn-sm" target="_blank">Save Calendar Chart</a>
+                        <a id="csv" download="suma_data_export.csv" class="btn btn-default btn-sm suma-popover" href="" rel="popover">Export Raw Data</a>
                         <div id="avg-sum" class="btn-group" data-toggle="buttons">
-                            <label for="avg" class="btn btn-default" data-state="avg">
+                            <label for="avg" class="btn btn-default btn-sm" data-state="avg">
                                 <input type="radio" name="chart-state" id="avg" value="avg">Hourly Avg
                             </label>
-                            <label for="sum" class="btn btn-default active" data-state="sum">
+                            <label for="sum" class="btn btn-default btn-sm active" data-state="sum">
                                 <input type="radio" name="chart-state" id="sum" value="sum">Hourly Sum
                             </label>
                         </div>
