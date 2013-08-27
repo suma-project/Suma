@@ -153,7 +153,7 @@ $initDropDown .= '</select>';
             </table>
         </script>
         <script id="error" type="text/x-handlebars-template">
-            <div class="alert alert-error alert-block">
+            <div class="alert alert-danger alert-block">
                 <h4>Warning!</h4>
                 <p>There was a problem retrieving data from the server. Please try again or contact your system administrator.</p>
                 {{#each items}}
