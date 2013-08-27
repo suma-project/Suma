@@ -73,34 +73,42 @@ $initDropDown .= '</select>';
         <div id="main" class="container">
             <div id="calendar-header" class="row">
                 <div class="col-xs-12">
-                    <div id="error-container"></div>
-                    <div id ="welcome" class="alert alert-info alert-block">
-                        <h4>Welcome!</h4>
-                            Please select an initiative from the select menu below. Once you have chosen an initiative, additional filter options will appear. You can also limit your search by date or time.
-                    </div>
-                    <div id="loading"><img src="../../lib/img/spinner.gif"></div>
-                    <div id="controls" class="pull-right">
-                        <a id="calendar-download" download="suma_calendar_chart.png" data-chart-div="chart" class="btn btn-default btn-small" target="_blank">Save Chart</a>
-                        <div id="avg-sum" class="btn-group" data-toggle="buttons">
-                            <label for="avg" class="btn btn-default" data-state="avg">
-                                <input type="radio" name="chart-state" id="avg" value="avg">Daily Avg
-                            </label>
-                            <label for="sum" class="btn btn-default active" data-state="sum">
-                                <input type="radio" name="chart-state" id="sum" value="sum">Daily Sum
-                            </label>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div id="error-container"></div>
+                            <div id ="welcome" class="alert alert-info alert-block">
+                                <h4>Welcome!</h4>
+                                    Please select an initiative from the select menu below. Once you have chosen an initiative, additional filter options will appear. You can also limit your search by date or time.
+                            </div>
+                            <div id="loading"><img src="../../lib/img/spinner.gif"></div>
+                            <div id="controls" class="pull-right">
+                                <a id="calendar-download" download="suma_calendar_chart.png" data-chart-div="chart" class="btn btn-default btn-sm" target="_blank">Save Chart</a>
+                                <div id="avg-sum" class="btn-group" data-toggle="buttons">
+                                    <label for="avg" class="btn btn-default btn-sm" data-state="avg">
+                                        <input type="radio" name="chart-state" id="avg" value="avg">Daily Avg
+                                    </label>
+                                    <label for="sum" class="btn btn-default btn-sm active" data-state="sum">
+                                        <input type="radio" name="chart-state" id="sum" value="sum">Daily Sum
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div id="chart"></div>
-                    <div id="legend">
-                        <span>Less</span>
-                        <ul class="legend-list">
-                            <li style="background-color: #eee"></li>
-                            <li style="background-color: #d6e685"></li>
-                            <li style="background-color: #8cc665"></li>
-                            <li style="background-color: #44a340"></li>
-                            <li style="background-color: #1e6823"></li>
-                        </ul>
-                        <span>More</span>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div id="chart"></div>
+                            <div id="legend">
+                                <span>Less</span>
+                                <ul class="legend-list">
+                                    <li style="background-color: #eee"></li>
+                                    <li style="background-color: #d6e685"></li>
+                                    <li style="background-color: #8cc665"></li>
+                                    <li style="background-color: #44a340"></li>
+                                    <li style="background-color: #1e6823"></li>
+                                </ul>
+                                <span>More</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
