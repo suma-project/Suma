@@ -30,7 +30,7 @@ body {
     margin-top: 50px;
 }
 
-#secondary-loading {
+.secondary-loading {
     display: none;
 }
 
@@ -39,7 +39,7 @@ body {
 
 }
 
-#secondary-filters {
+.secondary-filters {
     display: none;
 }
 

@@ -19,7 +19,7 @@
             filterOptions: {
                 activitiesSelect:   '#activities',
                 activitiesTemplate: '#activities-template',
-                filterForm:         '#secondary-filters',
+                filterForm:         '.secondary-filters',
                 locationsSelect:    '#locations',
                 locationsTemplate:  '#locations-template',
                 triggerForm:        '#initiatives',
@@ -89,13 +89,16 @@
 
             // Toggle between sum and avg
             $(self.cfg.avgSum).on('click', function (e) {
-                var state = e.target.value;
+                var state = e.target.htmlFor;
 
                 self.drawChart(self.data, state);
             });
 
             // Initialize help popovers
-            $(self.cfg.popover).popover({placement: 'bottom'});
+            $(self.cfg.popover).popover({
+                trigger: 'hover',
+                delay: 300,
+                placement: 'bottom'});
 
             // Chart download
             $(self.cfg.calendarDownload).on('click', function () {
@@ -212,7 +215,7 @@
             return dfd.promise();
         },
         getState: function () {
-            return $(this.cfg.state)[0].value;
+            return $('#avg-sum').find('label.active').data('state');
         },
         drawChart: function (counts, state) {
             var data;

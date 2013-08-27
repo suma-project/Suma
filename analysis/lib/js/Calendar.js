@@ -124,7 +124,7 @@
 
                 // UPDATE
                 rect.attr('title', function (d) { return setTitle(format(d)); })
-                    .attr('rel', 'tooltip')
+                    .attr('data-toggle', 'tooltip')
                     .transition().duration(750)
                     .style('fill', function (d) { return setColor(format(d)); });
 
@@ -153,8 +153,12 @@
                     .text(function (d) { return d; });
 
                 // Initialize Tooltips
-                $('[rel=tooltip]').tooltip('destroy');
-                $('[rel=tooltip]').tooltip();
+                $('.day').tooltip('destroy');
+                $('.day').tooltip({
+                    container: 'body',
+                    html: true,
+                    placement: 'auto'
+                });
 
                 // Set svg dimensions
                 svg.attr('width', width)
