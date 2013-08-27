@@ -34,7 +34,6 @@ $initDropDown .= '</select>';
 
         <link href="../../lib/css/bootstrap.css" rel="stylesheet">
         <link href="../../lib/css/datepicker.css" rel="stylesheet">
-        <link href="../../lib/css/colorbrewer.css" rel="stylesheet" />
         <link href="../../lib/css/non-responsive.css" rel="stylesheet">
         <link href="css/style.css" rel="stylesheet"  />
         <style>
