@@ -123,7 +123,7 @@ $initDropDown .= '</select>';
                 </div>
             </div>
             <div class="row">
-                <div id="sessions-data" class="col-xs-12"></div>  
+                <div id="sessions-data" class="col-xs-6"></div>  
             </div>
         </div>
 
