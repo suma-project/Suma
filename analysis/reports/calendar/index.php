@@ -165,32 +165,29 @@ $initDropDown .= '</select>';
                                     </div>
                                 </div>
                                 <div class="col-xs-3 secondary-loading"><img id="secondary-spinner" src="../../lib/img/spinner.gif"></div>
-                            <div class="col-xs-3 secondary-filters">
-                                  <div class="form-group">
-                                    <label for="daygroup" class="suma-popover" data-title="Limit Days of the Week" data-content="Filter by Weekday or Weekend.">Limit Days of the Week</label>
-                                    <select name="daygroup" id="daygroup" class="form-control">
-                                        <option value="all">All</option>
-                                        <option value="weekdays">Weekdays Only</option>
-                                        <option value="weekends">Weekends Only</option>
-                                    </select>
+                                <div class="col-xs-3 secondary-filters">
+                                    <div class="form-group">
+                                        <label for="daygroup" class="suma-popover" data-title="Limit Days of the Week" data-content="Filter by Weekday or Weekend.">Limit Days of the Week</label>
+                                        <select name="daygroup" id="daygroup" class="form-control">
+                                            <option value="all">All</option>
+                                            <option value="weekdays">Weekdays Only</option>
+                                            <option value="weekends">Weekends Only</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="locations" class="suma-popover" data-title="Limit Locations" data-content="Select which locations to include in your analysis. Selecting a location with children will include all children in the data set.">Limit Locations</label>
+                                            <select name="locations" id="locations" class="form-control"></select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="activities" class="suma-popover" data-title="Limit Activities" data-content="Select which activities to include in your analysis. Selecting an Activity Group will include all group activities.">Limit Activities</label>
+                                        <select name="activities" id="activities" class="form-control"></select>
+                                    </div>
+                                    <div>
+                                        <input type="submit" id="submit" class="btn btn-success" data-default-text ="Submit" data-loading-text="Loading..." value="Submit" />
+                                    </div>
                                 </div>
-                                <div class="form-group">
-                                    <label for="locations" class="suma-popover" data-title="Limit Locations" data-content="Select which locations to include in your analysis. Selecting a location with children will include all children in the data set.">Limit Locations</label>
-                                        <select name="locations" id="locations" class="form-control"></select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="activities" class="suma-popover" data-title="Limit Activities" data-content="Select which activities to include in your analysis. Selecting an Activity Group will include all group activities.">Limit Activities</label>
-                                    <select name="activities" id="activities" class="form-control"></select>
-                                </div>
-                                 <div>
-                                    <input type="submit" id="submit" class="btn btn-success" data-default-text ="Submit" data-loading-text="Loading..." value="Submit" />
-                                </div>
-                            </div>
-
-
                             </div>
                         </div>
-        
                     </fieldset>
                 </form>
             </div>
