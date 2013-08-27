@@ -99,7 +99,7 @@
 
                 // UPDATE
                 heatMap.attr('data-toggle', 'tooltip')
-                    .attr('data-title', function (d) { return setTitle(d); })
+                    .attr('title', function (d) { return setTitle(d); })
                     .transition().duration(750)
                     .style('fill', function (d) { return setColor(d.value); });
 
