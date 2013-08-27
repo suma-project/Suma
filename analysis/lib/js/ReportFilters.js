@@ -110,11 +110,11 @@
                     url: options.url,
                     beforeSend: function () {
                         $(options.triggerForm).attr('disabled', 'true');
-                        $('#secondary-loading').show();
+                        $('.secondary-loading').show();
                     },
                     complete: function () {
                         $(options.triggerForm).removeAttr('disabled', 'true');
-                        $('#secondary-loading').hide();
+                        $('.secondary-loading').hide();
                     },
                     timeout: 60000 // 1 minute
                 });
