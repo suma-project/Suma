@@ -98,14 +98,18 @@
                     .style('fill', '#eee');
 
                 // UPDATE
-                heatMap.attr('rel', 'tooltip')
-                    .attr('title', function (d) { return setTitle(d); })
+                heatMap.attr('data-toggle', 'tooltip')
+                    .attr('data-title', function (d) { return setTitle(d); })
                     .transition().duration(750)
                     .style('fill', function (d) { return setColor(d.value); });
 
                 // Initialize Tooltips
-                $('[rel=tooltip]').tooltip('destroy');
-                $('[rel=tooltip]').tooltip();
+                $('.hour').tooltip('destroy');
+                $('.hour').tooltip({
+                    container: 'body',
+                    html: true,
+                    placement: 'auto'
+                });
             });
         }
 
