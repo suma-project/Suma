@@ -86,34 +86,35 @@ $initDropDown .= '</select>';
                         <form id="chartFilters">
                             <div class="col-xs-3">
                                 <div>
-                                    <h4 class="suma-popover" data-trigger="hover" data-delay="300" data-title="Choose Initiative" data-content="Select an initiative by name.">Choose Initiative</h4>
-                                    <label for="initiatives">Select an Initiative</label>
+                                    <label for="initiatives" class="suma-popover" data-title="Select Initiative" data-content="Select an initiative to reveal additional filters.">Select an Initiative</label>
                                     <?php echo $initDropDown; ?>
                                 </div>
                             </div>
                             <div class="col-xs-3">
                                 <div class="form-group">
-                                    <h4 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Choose Date Range" data-content="Choose a start and end date for your analysis. Defaults to 6 months from current day. Clear fields to retrieve the complete data set.">Choose Date Range</h4>
-                                    <label for="sdate">Start Date</label>
+                                    <label for="sdate" class="suma-popover" data-title="Choose Date Range" data-content="Select a start date for your analysis. Defaults to 6 months from current day. Clear fields to retrieve the complete data set.">Start Date</label>
                                     <input class="form-control" type="text" id="sdate" name="sdate" />
+                                    <span class="help-block">YYYY-MM-DD</span>
                                 </div>
                                 <div class="form-group">
-                                    <label for="edate">End Date</label>
+                                    <label for="edate" class="suma-popover" data-title="Choose Date Range" data-content="Select an end date for your analysis. Clear fields to retrieve complete data set.">End Date</label>
                                     <input class="form-control" type="text" id="edate" name="edate" />
+                                    <span class="help-block">YYYY-MM-DD</span>
                                 </div>
                             </div>
                             <div class="col-xs-3">
                                 <div class="form-group">
-                                    <h4 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Choose Subset of Day" data-content="Include data gathered during a certain time of day.">Choose Subset of Day</h4>
-                                    <label for="stime">Start Time (24-hour, e.g 08:00)</label>
+                                    <label for="stime" class="suma-popover" data-title="Select Subset of Day" data-content="Include only data gathered during a certain time of day in your analysis, e.g. 8pm-12am.">Start Time</label>
                                     <input class="form-control" type="text" id="stime" name="stime" placeholder="00:00" />
+                                    <span class="help-block">24-hour format, e.g. 08:00</span>
                                 </div>
                                 <div class="form-group">
-                                    <label for="etime">End Time (24-hour, e.g. 13:00)</label>
+                                    <label for="etime" class="suma-popover" data-title="Select Subset of Day" data-content="Include only data gathered during a certain time of day in your analysis, e.g. 8pm-12am.">End Time</label>
                                     <input class="form-control" type="text" id="etime" name="etime" placeholder="24:00"/>
+                                    <span class="help-block">24-hour format, e.g. 08:00</span>
                                 </div>
                                 <div>
-                                    <input type="submit" id="submit" class="btn btn-success" data-default-text ="Submit" data-loading-text="Loading..." value="Submit" />
+                                    <input type="submit" id="submit" class="btn btn-success" data-default-text ="Submit" data-placement="bottom" data-loading-text="Loading..." value="Submit" />
                                 </div>
                             </div>
                             <div class="col-xs-3"></div>
@@ -121,7 +122,9 @@ $initDropDown .= '</select>';
                     </div>
                 </div>
             </div>
-            <div id="sessions-data" class="row"></div>  
+            <div class="row">
+                <div id="sessions-data" class="col-xs-12"></div>  
+            </div>
         </div>
 
         <div id="loadingWidget"></div>
