@@ -6,7 +6,7 @@
     display:none;
 }
 
-#secondary-loading {
+.secondary-loading {
     display:none;
 }
 
@@ -69,7 +69,7 @@ svg {
 }
 
 /* Additional Interface Rules */
-#secondary-filters {
+.secondary-filters {
     display:none;
 }
 
@@ -78,5 +78,14 @@ svg {
 }
 
 #supp-chart-note {
+    visibility: hidden;
+}
+
+/* Hack to add padding to anchor link*/
+#summary-data-header {
+    display: block; 
+    content: " "; 
+    margin-top: -200px; 
+    height: 200px;
     visibility: hidden;
 }

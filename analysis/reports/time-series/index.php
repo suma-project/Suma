@@ -13,7 +13,7 @@ catch (Exception $e)
     die;
 }
 
-$initDropDown = '<select name="id" id="initiatives">';
+$initDropDown = '<select name="id" id="initiatives" class="form-control">';
 $initDropDown .= '<option value="' . 'default' . '">' . 'Select an Initiative' . '</option>' . "\n";
 foreach($initiatives as $init)
 {
@@ -34,6 +34,7 @@ $initDropDown .= '</select>';
 
         <link href="../../lib/css/bootstrap.min.css" rel="stylesheet">
         <link href="../../lib/css/datepicker.css" rel="stylesheet">
+        <link href="../../lib/css/non-responsive.css" rel="stylesheet">
         <link href="css/style.css" rel="stylesheet">
         <style>
           body {
@@ -49,45 +50,51 @@ $initDropDown .= '</select>';
     </head>
 
     <body>
-
-        <div class="navbar navbar-fixed-top">
-            <div class="navbar-inner">
-                <div class="container">
-                    <a class="brand" href=".."><img src="../../lib/img/logo.png"></a>
-                    <div class="nav-collapse">
-                        <ul class="nav">
-                            <li><a href="..">Home</a></li>
-                            <li><a href="../about.html">About</a></li>
-                            <li><a href="../contact.html">Contact</a></li>
-                        </ul>
-                    </div>
+        <div class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                    <a class="navbar-brand" href=".."><img src="../../lib/img/logo.png"></a>
+                </div>
+                <div class="collapse navbar-collapse bs-navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a href="..">Home</a></li>
+                        <li><a href="../about.html">About</a></li>
+                        <li><a href="../contact.html">Contact</a></li>
+                    </ul>
                 </div>
             </div>
         </div>
 
         <div class="container">
             <div id="main-chart-header" class="row">
-                <div id="main-annotation" class="span7">
-
-                </div>
-                <div class="btn-toolbar pull-right">
-                    <div id="main-chart-avgsum" class="btn-group" data-toggle="buttons-radio">
-                        <button type="button" class="btn btn-small" value="avg">Daily Avg</button>
-                        <button type="button" class="btn btn-small active" value="sum">Daily Sum</button>
-                    </div>
-                    <div class="btn-group">
-                        <a class="btn btn-small" href="#summary-data">Summary Data</a>
-                    </div>
-                    <div class="btn-group">
-                        <a class="btn btn-small" href="#csv-export">Export</a>
-                    </div>
-                    <div id="main-chart-download" class="btn-group">
-                        <a id="main-download" download="suma_main_chart.png" data-chart-div="chart1" class="btn btn-small" target="_blank">Save Chart</a>
+                <div id="main-annotation" class="col-xs-5"></div>
+                <div class="col-xs-7">
+                    <div class="row">
+                        <div id="main-chart-avgsum" class="btn-group col-xs-4 pull-right" data-toggle="buttons">
+                            <label for="avg" class="btn btn-default btn-sm" data-state="avg">
+                                <input type="radio" name="chart-state" id="avg" value="avg">Daily Avg
+                            </label>
+                            <label for="sum" class="btn btn-default btn-sm active" data-state="sum">
+                                <input type="radio" name="chart-state" id="sum" value="sum">Daily Sum
+                            </label>
+                        </div>
+                        <div class="pull-right">
+                            <a id="csv" download="suma_data_export.csv" class="btn btn-default btn-sm" href="" >Export Raw Data</a>
+                            <a class="btn btn-default btn-sm" href="#summary-data-header">Summary Data</a>
+                            <a id="main-download" download="suma_main_chart.png" data-chart-div="chart1" class="btn btn-default btn-sm" target="_blank">Save Chart</a>
+                        </div>
                     </div>
                 </div>
             </div>
+
             <div class="row">
-                <div id="chart" class="span12">
+                <div id="chart" class="col-xs-12">
                     <div id="loading"><img src="../../lib/img/spinner.gif"></div>
                     <div id ="welcome" class="alert alert-info alert-block">
                         <h4>Welcome!</h4>
@@ -98,156 +105,134 @@ $initDropDown .= '</select>';
             </div>
 
             <div class="row">
-                <div class="span6">
-                <div class="row">
-                <form id="chartFilters">
-                <fieldset>
-                <div class="span3">
-                    <h3>Modify Chart</h3>
-                    <div class="control-group">
-                        <h5 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Choose Initiative" data-content="Choose an initiative to reveal additional filters.">Choose Initiative</h5>
-                        <label class="control-label" for="initiatives"></label>
-                        <div class="controls">
-                            <?php echo $initDropDown; ?>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <h5 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Classify Counts By" data-content='Choose the date to use for grouping counts by date. "Count Date" shows the actual date of the count, while "Session Start" and "Session End" use the respective date on the collection session containing each count.'>Classify Counts By</h5>
-                        <label class="control-label" for="session"></label>
-                        <div class="controls">
-                             <select name="session" id="session">
-                                <option value="count">Count Date</option>
-                                <option value="start">Session Start</option>
-                                <option value="end">Session End</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <h5 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Always Include Whole Session" data-content='Select yes if you would like to include counts inside of sessions that may fall outside of your other filters.'>Always Include Whole Session</h5>
-                        <label class="control-label" for="session_filter"></label>
-                        <div class="controls">
-                             <select name="session_filter" id="session_filter">
-                                <option value="false">No</option>
-                                <option value="true">Yes</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <h5 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Choose Date Range" data-content="Choose a start and end date for your analysis. Defaults to 6 months from current day. Clear fields to retrieve the complete data set.">Choose Date Range</h5>
-                        <label class="control-label" for="sdate">Start Date</label>
-                        <div class="controls">
-                            <input type="text" id="sdate" name="sdate" />
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="edate">End Date</label>
-                        <div class="controls">
-                            <input type="text" id="edate" name="edate" />
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <h5 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Choose subset of daily data" data-content="Include only data gathered during a certain time of day in your analysis, e.g. 8pm-12am.">Choose subset of daily data</h5>
-                        <label class="control-label" for="stime">Start Time</label>
-                        <div class="controls">
-                            <input type="text" id="stime" name="stime" placeholder="00:00" />
-                            <span class="help-block">24-hour format, e.g. 08:00</span>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="etime">End Time</label>
-                        <div class="controls">
-                            <input type="text" id="etime" name="etime" placeholder="24:00"/>
-                            <span class="help-block">24-hour format, e.g. 08:00</span>
-                        </div>
-                    </div>
-                </div>
-                <div id="secondary-loading" class="span3"><img id="secondary-spinner" src="../../lib/img/spinner.gif"></div>
-                <div id="secondary-filters" class="span3">
-                    <h3>Initiative Filters</h3>
-                      <div class="control-group">
-                        <h5 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Limit days of the week" data-content="Filter days by weekday or weekend.">Limit days of the week</h5>
-                        <label class="control-label" for="daygroup"></label>
-                        <div class="controls">
-                            <select name="daygroup" id="daygroup">
-                                <option value="all">All</option>
-                                <option value="weekdays">Weekdays Only</option>
-                                <option value="weekends">Weekends Only</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <h5 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Limit Locations" data-content="Select which locations to include in your analysis. Selecting a location with children will include all children in the data set.">Limit locations</h5>
-                        <label class="control-label" for="locations"></label>
-                        <div class="controls">
-                            <select name="locations" id="locations">
-                            </select>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <h5 class="suma-popover" rel="popover" data-trigger="hover" data-delay="300" data-title="Limit Activities" data-content="Select which activities to include in your analysis. Activity Groups will include all member activities.">Limit activities</h5>
-                        <label class="control-label" for="activities"></label>
-                        <div class="controls">
-                            <select name="activities" id="activities">
-                            </select>
-                        </div>
-                    </div>
-                     <div>
-                        <input type="submit" id="submit" class="btn btn-success" data-default-text ="Submit" data-loading-text="Loading..." value="Submit" />
-                    </div>
-                </div>
-                </fieldset>
-                </form>
-            </div>
-            <div id="summary-data" class="row span6">
-                <a name="summary-data"></a>
-                <div id="summary-data-header" class="row"><h3>Summary Data</h3></div>
-                <div id="total-data" class="row"></div>
-                <div id="locations-data" class="row"></div>
-                <div id="activities-data" class="row"></div>
-                <div id="year-data" class="row"></div>
-                <div id="month-data" class="row"></div>
-                <div id="weekday-data" class="row"></div>
-                <div id="hour-data" class="row"></div>
-            </div>
-            </div>
-                <div id="supplemental-charts" class="span6">
+                <div class="col-xs-12">
                     <div class="row">
-                        <div class="span6">
-                            <h3>Locations and Activities</h3>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="btn-toolbar pull-right">
-                            <div id="supp-chart-locact" class="btn-group" data-toggle="buttons-radio">
-                                <button type="button" class="btn btn-small active" value="locations">Locations</button>
-                                <button type="button" class="btn btn-small" value="activities">Activities</button>
-                            </div>
-                            <div id="supp-chart-avgsum" class="btn-group" data-toggle="buttons-radio">
-                                <button type="button" class="btn btn-small" value="avg">Avg</button>
-                                <button type="button" class="btn btn-small active" value="sum">Sum</button>
-                                <button type="button" class="btn btn-small" value="pct">Pct</button>
-                            </div>
-                            <div id="supp-chart-download" class="btn-group">
-                                <a id="supp-download" download="suma_secondary_chart.png" data-chart-div="chart2" class="btn btn-small" target="_blank">Save Chart</a>
+                        <div class="col-xs-6">
+                            <div class="row">
+                                <form id="chartFilters">
+                                    <fieldset>
+                                        <div class="col-xs-6">
+                                            <h3>Modify Chart</h3>
+                                            <div class="form-group">
+                                                <label for="initiatives" class="suma-popover" data-title="Select Initiative" data-content="Select an initiative to reveal additional filters.">Select an Initiative</label>
+                                                <?php echo $initDropDown; ?>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="session" class="suma-popover" data-title="Classify Counts By" data-content='Choose the date to use for grouping counts by date. "Count Date" shows the actual date of the count, while "Session Start" and "Session End" use the respective date on the collection session containing each count.'>Classify Counts By</label>
+                                                <select name="session" id="session" class="form-control">
+                                                    <option value="count">Count Date</option>
+                                                    <option value="start">Session Start</option>
+                                                    <option value="end">Session End</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="session_filter" class="suma-popover" data-title="Always Include Whole Session" data-content="Select yes if you would like to include counts inside of sessions that may fall outside of your other filters.">Always Include Whole Session</label>
+                                                <select name="session_filter" id="session_filter" class="form-control">
+                                                    <option value="false">No</option>
+                                                    <option value="true">Yes</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="sdate" class="suma-popover" data-title="Choose Date Range" data-content="Select a start date for your analysis. Defaults to 6 months from current day. Clear fields to retrieve the complete data set.">Start Date</label>
+                                                <input type="text" id="sdate" name="sdate" class="form-control" />
+                                                <span class="help-block">YYYY-MM-DD</span>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="edate" class="suma-popover" data-title="Choose Date Range" data-content="Select an end date for your analysis. Clear fields to retrieve complete data set.">End Date</label>
+                                                <input type="text" id="edate" name="edate" class="form-control" />
+                                                <span class="help-block">YYYY-MM-DD</span>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="stime" class="suma-popover" data-title="Select Subset of Day" data-content="Include only data gathered during a certain time of day in your analysis, e.g. 8pm-12am.">Start Time</label>
+                                                <input type="text" id="stime" name="stime" class="form-control" placeholder="00:00" />
+                                                <span class="help-block">24-hour format, e.g. 08:00</span>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="etime" class="suma-popover" data-title="Select Subset of Day" data-content="Include only data gathered during a certain time of day in your analysis, e.g. 8pm-12am.">End Time</label>
+                                                <input type="text" id="etime" name="etime" class="form-control" placeholder="24:00"/>
+                                                <span class="help-block">24-hour format, e.g. 08:00</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-6 secondary-loading"><img id="secondary-spinner" src="../../lib/img/spinner.gif"></div>
+                                        <div class="col-xs-6 secondary-filters">
+                                            <h3>Initiative Filters</h3>
+                                            <div class="form-group">
+                                                <label for="daygroup" class="suma-popover" data-title="Limit Days of the Week" data-content="Filter by Weekday or Weekend.">Limit Days of the Week</label>
+                                                <div class="controls">
+                                                    <select name="daygroup" id="daygroup" class="form-control">
+                                                        <option value="all">All</option>
+                                                        <option value="weekdays">Weekdays Only</option>
+                                                        <option value="weekends">Weekends Only</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="locations" class="suma-popover" data-title="Limit Locations" data-content="Select which locations to include in your analysis. Selecting a location with children will include all children in the data set.">Limit Locations</label>
+                                                <div class="controls">
+                                                    <select name="locations" id="locations" class="form-control">
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="activities" class="suma-popover" data-title="Limit Activities" data-content="Select which activities to include in your analysis. Selecting an Activity Group will include all group activities.">Limit Activities</label>
+                                                <div class="controls">
+                                                    <select name="activities" id="activities" class="form-control">
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <input type="submit" id="submit" class="btn btn-success" data-default-text ="Submit" data-loading-text="Loading..." value="Submit" />
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </form>
+                                <div id="summary-data" class="col-xs-12">
+                                    <div id="summary-data-header"></div>
+                                    <h3>Summary Data</h3>
+                                    <div id="total-data"></div>
+                                    <div id="locations-data"></div>
+                                    <div id="activities-data"></div>
+                                    <div id="year-data"></div>
+                                    <div id="month-data"></div>
+                                    <div id="weekday-data"></div>
+                                    <div id="hour-data"></div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="span6">
-                            <div id="chart2"></div>
-                        </div>
-                    </div>
-                    <div id="supp-chart-note" class="row">
-                        <div class="span6">
-                            <p class="muted"><strong>Note:</strong> When "Avg" is selected on both charts, the supplemental chart displays the average of observations, rather than the average of days.</p>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="span6">
-                            <div>
-                                <a name="csv-export"></a>
-                                <h3>CSV Download</h3>
-                                <a id="csv" download="suma_data_export.csv" class="btn btn-small suma-popover" href="" rel="popover" data-trigger="hover" data-delay="300" data-title="Export Raw Data" data-content="Export the raw data for the filters submitted to create this report.">Export Raw Data</a>
+                        
+                        <div id="supplemental-charts" class="col-xs-6">
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <h3>Locations and Activities</h3>
+                                </div>
+                                <div class="col-xs-12">
+                                    <div id="supp-chart-locact" class="btn-group" data-toggle="buttons">
+                                        <label for="locations" class="btn btn-sm btn-default active" data-state="locations">
+                                            <input type="radio" name="chart-state" id="locations" value="locations">Locations
+                                        </label>
+                                        <label for="activities" class="btn btn-sm btn-default" data-state="activities">
+                                            <input type="radio" name="chart-state" id="activities" value="activities">Activities
+                                        </label>
+                                    </div>
+                                    <div id="supp-chart-avgsum" class="btn-group" data-toggle="buttons">
+                                        <label for="avg" class="btn btn-sm btn-default" data-state="avg">
+                                            <input type="radio" name="chart-state" id="avg" value="avg">Avg
+                                        </label>
+                                        <label for="sum" class="btn btn-sm btn-default active" data-state="sum">
+                                            <input type="radio" name="chart-state" id="sum" value="sum">Sum
+                                        </label>
+                                        <label for="pct" class="btn btn-sm btn-default" data-state="pct">
+                                            <input type="radio" name="chart-state" id="pct" value="pct">Pct
+                                        </label>
+                                    </div>
+                                    <a id="supp-download" download="suma_secondary_chart.png" data-chart-div="chart2" class="btn btn-default btn-sm" target="_blank">Save Chart</a>
+                                </div>
+                                <div class="col-xs-12">
+                                    <div id="chart2"></div>
+                                </div>
+                                <div id="supp-chart-note" class="col-xs-12">
+                                    <p class="text-muted"><strong>Note:</strong> When "Avg" is selected on both charts, the supplemental chart displays the average of observations, rather than the average of days.</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -257,7 +242,7 @@ $initDropDown .= '</select>';
 
         <!-- TEMPLATES -->
         <script id="main-annotation-template" type="text/x-handlebars-template">
-            <p class="muted"><strong>Initiative:</strong> {{id}}
+            <p class="text-muted"><strong>Initiative:</strong> {{id}} <br/>
                             <strong>Dates:</strong> {{sdate}} - {{edate}} <br/>
                             <strong>Subset:</strong> {{stime}} - {{etime}}
                             <strong>Days:</strong> {{daygroup}} <br/>

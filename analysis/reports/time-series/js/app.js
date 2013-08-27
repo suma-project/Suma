@@ -10,7 +10,7 @@
     var App = {
         cfg: {
             alert:         '.alert',
-            avgState:      '#supp-chart-avgsum > .active',
+            avgState:      '#supp-chart-avgsum',
             chart1:        '#chart1',
             chart1svg:     '#chart1 > svg',
             chart2:        '#chart2',
@@ -22,13 +22,13 @@
             form:          '#chartFilters',
             initiatives:   '#initiatives option:selected',
             loading:       '#loading',
-            locState:      '#supp-chart-locact > .active',
+            locState:      '#supp-chart-locact',
             mainAnnotate:  '#main-annotation',
             mainAnnotateTemplate: '#main-annotation-template',
             mainAvgSum:    '#main-chart-avgsum',
             mainChart:     '#main-chart-header',
             mainDownload:  '#main-download',
-            mainState:     '#main-chart-avgsum > .active',
+            mainState:     '#main-chart-avgsum',
             popover:       '.suma-popover',
             sDate:         '#sdate',
             submit:        '#submit',
@@ -41,7 +41,7 @@
             filterOptions: {
                 activitiesSelect:   '#activities',
                 activitiesTemplate: '#activities-template',
-                filterForm:         '#secondary-filters',
+                filterForm:         '.secondary-filters',
                 locationsSelect:    '#locations',
                 locationsTemplate:  '#locations-template',
                 triggerForm:        '#initiatives',
@@ -167,7 +167,10 @@
             $(self.cfg.eDate).datepicker({'format': 'yyyy-mm-dd', 'autoclose': 'true'});
 
             // Initialize help popovers
-            $(self.cfg.popover).popover({placement: 'bottom'});
+            $(self.cfg.popover).popover({
+                trigger: 'hover',
+                delay: 300,
+                placement: 'bottom'});
 
             // Event handler to initialize AJAX call
             $('body').on('submit', self.cfg.form, function (e) {
@@ -191,13 +194,14 @@
 
             // Live Filters
             $(self.cfg.mainAvgSum).on('click', function (e) {
+                console.log('hi', e)
                 var mainState,
                     locState,
                     avgState;
 
-                mainState = e.target.value;
-                locState = $(self.cfg.locState)[0].value;
-                avgState = $(self.cfg.avgState)[0].value;
+                mainState = e.target.htmlFor;
+                locState = $(self.cfg.locState).find('label.active').data('state');
+                avgState = $(self.cfg.avgState).find('label.active').data('state');
 
                 self.updateMainChart(self.counts, mainState, locState, avgState);
             });
@@ -207,9 +211,9 @@
                     locState,
                     avgState;
 
-                mainState = $(self.cfg.mainState)[0].value;
-                locState = e.target.value;
-                avgState = $(self.cfg.avgState)[0].value;
+                mainState = $(self.cfg.mainState).find('label.active').data('state');
+                locState = e.target.htmlFor;
+                avgState = $(self.cfg.avgState).find('label.active').data('state');
 
                 self.updateSuppChart(self.counts, mainState, locState, avgState);
             });
@@ -219,9 +223,9 @@
                     locState,
                     avgState;
 
-                mainState = $(self.cfg.mainState)[0].value;
-                locState = $(self.cfg.locState)[0].value;
-                avgState = e.target.value;
+                mainState = $(self.cfg.mainState).find('label.active').data('state');
+                locState = $(self.cfg.locState).find('label.active').data('state');
+                avgState = e.target.htmlFor;
 
                 if (avgState === 'avg') {
                     $(self.cfg.suppNote).css('visibility', 'visible');
@@ -719,10 +723,10 @@
             }
 
             // Get states from DOM
-            mainState = $(this.cfg.mainState)[0].value;
-            locState = $(this.cfg.locState)[0].value;
-            avgState = $(this.cfg.avgState)[0].value;
-
+            mainState = $(this.cfg.mainState).find('label.active').data('state');
+            locState = $(this.cfg.locState).find('label.active').data('state');
+            avgState = $(this.cfg.avgState).find('label.active').data('state');
+            console.log('test', mainState, locState, avgState)
             this.updateMainChart(counts, mainState, locState, avgState);
 
         },

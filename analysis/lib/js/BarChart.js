@@ -5,6 +5,7 @@
 
         function chart(selection) {
             selection.each(function (data) {
+                console.log('data', data)
                 var ann,
                     gBar,
                     gEnter,
