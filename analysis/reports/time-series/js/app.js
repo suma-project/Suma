@@ -194,7 +194,6 @@
 
             // Live Filters
             $(self.cfg.mainAvgSum).on('click', function (e) {
-                console.log('hi', e)
                 var mainState,
                     locState,
                     avgState;
@@ -726,7 +725,7 @@
             mainState = $(this.cfg.mainState).find('label.active').data('state');
             locState = $(this.cfg.locState).find('label.active').data('state');
             avgState = $(this.cfg.avgState).find('label.active').data('state');
-            console.log('test', mainState, locState, avgState)
+
             this.updateMainChart(counts, mainState, locState, avgState);
 
         },
