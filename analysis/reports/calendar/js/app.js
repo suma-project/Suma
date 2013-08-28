@@ -200,8 +200,12 @@
                 data = {};
 
             // Does response have enough values to draw meaningful graph?
+            if (!response.periodSum) {
+                return dfd.reject({statusText: 'no data'});
+            }
+
             if (Object.keys(response.periodSum).length < 1) {
-                dfd.reject({statusText: 'no data'});
+                return dfd.reject({statusText: 'no data'});
             }
 
             data.sum = this.sortData(response.periodSum);

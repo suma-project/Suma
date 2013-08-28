@@ -106,7 +106,7 @@
                 sortedData;
 
             if (data.length < 1) {
-                dfd.reject({statusText: 'no data'});
+                return dfd.reject({statusText: 'no data'});
             }
 
             sortedData = _.sortBy(data, function (obj) {

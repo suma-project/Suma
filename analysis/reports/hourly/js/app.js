@@ -274,7 +274,7 @@
 
             // Does response have enough values to draw meaningful graph?
             if (_.compact(_.pluck(data.sum, 'value')) < 1) {
-                dfd.reject({statusText: 'no data'});
+                return dfd.reject({statusText: 'no data'});
             }
 
             data.avg = _.flatten(_.map(response.dailyHourSummary, function (day, d) {

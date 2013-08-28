@@ -575,7 +575,7 @@
 
             // Reject if no locations
             if (!response.locationsSum) {
-                dfd.reject({statusText: 'no data'});
+                return dfd.reject({statusText: 'no data'});
             }
 
             // Convert response into arrays of objects
@@ -697,7 +697,7 @@
             });
 
             if (dataTest === 0) {
-                dfd.reject({statusText: 'no data'});
+                return dfd.reject({statusText: 'no data'});
             }
 
             dfd.resolve(counts);
