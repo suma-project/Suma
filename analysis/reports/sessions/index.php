@@ -128,6 +128,7 @@ $initDropDown .= '</select>';
 
         <div id="loadingWidget"></div>
 
+        <!-- Templates -->
         <script id="sessions-table" type="text/x-handlebars-template">
             <h4>Totals by Session</h4>
             <table class="table table-hover table-condensed">
@@ -161,15 +162,20 @@ $initDropDown .= '</select>';
             </div>
         </script>
 
+        <!-- Libraries -->
         <script src="../../lib/js/jquery.min.js"></script>
-        <script src="../../lib/js/handlebars.js"></script>
         <script src="../../lib/js/bootstrap.min.js"></script>
         <script src="../../lib/js/bootstrap-datepicker.js"></script>
+        <script src="../../lib/js/handlebars.js"></script>
         <script src="../../lib/js/d3.v3.min.js"></script>
         <script src="../../lib/js/lodash.min.js"></script>
         <script src="../../lib/js/moment.js"></script>
         <script src="../../lib/js/spin.min.js"></script>
+
+        <!-- Suma Modules -->
         <script src="../../lib/js/Errors.js"></script>
+
+        <!-- App -->
         <script src="js/app.js"></script>
     </body>
 </html>

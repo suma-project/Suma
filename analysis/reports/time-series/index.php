@@ -234,7 +234,7 @@ $initDropDown .= '</select>';
             </div>
         </div>
 
-        <!-- TEMPLATES -->
+        <!-- Templates -->
         <script id="main-annotation-template" type="text/x-handlebars-template">
             <p class="text-muted"><strong>Initiative:</strong> {{id}} <br/>
                             <strong>Dates:</strong> {{sdate}} - {{edate}} <br/>
@@ -397,19 +397,24 @@ $initDropDown .= '</select>';
             </div>
         </script>
 
+        <!-- Libraries -->
         <script src="../../lib/js/jquery.min.js"></script>
-        <script src="../../lib/js/handlebars.js"></script>
         <script src="../../lib/js/bootstrap.min.js"></script>
         <script src="../../lib/js/bootstrap-datepicker.js"></script>
+        <script src="../../lib/js/handlebars.js"></script>
         <script src="../../lib/js/d3.v3.min.js"></script>
         <script src="../../lib/js/lodash.min.js"></script>
         <script src="../../lib/js/moment.js"></script>
         <script src="../../lib/js/string.min.js"></script>
         <script src="../../lib/js/canvg.js"></script>
+
+        <!-- Suma Modules -->
         <script src="../../lib/js/Errors.js"></script>
         <script src="../../lib/js/ReportFilters.js"></script>
         <script src="../../lib/js/TimeSeries.js"></script>
         <script src="../../lib/js/BarChart.js"></script>
+
+        <!-- App -->
         <script src="js/app.js"></script>
 
     </body>

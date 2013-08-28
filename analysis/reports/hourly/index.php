@@ -27,7 +27,7 @@ $initDropDown .= '</select>';
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>Hourly</title>
+        <title>Suma Reports | Hourly</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         <link href="../../lib/css/bootstrap.min.css" rel="stylesheet">
@@ -215,6 +215,7 @@ $initDropDown .= '</select>';
             </div>
         </script>
 
+        <!-- Libraries -->
         <script src="../../lib/js/jquery.min.js"></script>
         <script src="../../lib/js/bootstrap.min.js"></script>
         <script src="../../lib/js/bootstrap-datepicker.js"></script>
@@ -223,10 +224,14 @@ $initDropDown .= '</select>';
         <script src="../../lib/js/lodash.min.js"></script>
         <script src="../../lib/js/moment.js"></script>
         <script src="../../lib/js/canvg.js"></script>
+
+        <!-- Suma Modules -->
         <script src="../../lib/js/Errors.js"></script>
         <script src="../../lib/js/ReportFilters.js"></script>
         <script src="../../lib/js/HourlyLine.js"></script>
         <script src="../../lib/js/HourlyCalendar.js"></script>
+
+        <!-- App -->
         <script src="js/app.js"></script>
 
     </body>
