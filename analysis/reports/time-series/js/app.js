@@ -823,31 +823,6 @@
             this.buildTemplate(counts.dayOfWeekSummary, this.cfg.tables.weekdayTmp, this.cfg.tables.weekdayTgt, true);
             this.buildTemplate(counts.hourlySummary, this.cfg.tables.hourTmp, this.cfg.tables.hourTgt, true);
         },
-        sortCSV: function (a, b) {
-            return a.name - b.name;
-        },
-        sortCSVItems: function (items) {
-            var self = this,
-                arr;
-
-            arr = [];
-            _.each(items, function (count, name) {
-                if (name) {
-                    var obj = {
-                        name: name,
-                        count: count || '' // empty string for null counts
-                    };
-                    arr.push(obj);
-                }
-            });
-
-            arr.sort(self.sortCSV);
-            return arr;
-        },
-        sortCSVLines: function (a, b) {
-            // Strip dashes from dates
-            return a[0].replace(/-/g, '') - b[0].replace(/-/g, '');
-        },
         /**
          * Add indent to element name
          * @param  {obj} item
