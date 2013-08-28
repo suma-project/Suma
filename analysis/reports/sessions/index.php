@@ -28,8 +28,6 @@ $initDropDown .= '</select>';
         <meta charset="utf-8">
         <title>Suma Reports | Sessions Summary</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="">
-        <meta name="author" content="">
 
         <link href="../../lib/css/bootstrap.min.css" rel="stylesheet">
         <link href="../../lib/css/datepicker.css" rel="stylesheet">
