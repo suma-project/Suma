@@ -31,6 +31,7 @@ $initDropDown .= '</select>';
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         <link href="../../lib/css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../lib/css/bootstrap-theme.min.css" rel="stylesheet">
         <link href="../../lib/css/datepicker.css" rel="stylesheet">
         <link href="../../lib/css/non-responsive.css" rel="stylesheet">
         <link href="css/style.css" rel="stylesheet">
