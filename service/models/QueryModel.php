@@ -426,7 +426,7 @@ class QueryModel
         $db = Globals::getDBConn();
         $select = $db->select()
             ->from(array('i' => 'initiative'),
-                   array('title', 'id', 'description'))
+                   array('title', 'id', 'description', 'fk_root_location'))
             ->join(array('s' => 'session'),
                          'i.id = s.fk_initiative', array())
             ->where('s.deleted = false')
@@ -443,6 +443,11 @@ class QueryModel
             {
                 $array[$key] = ($key == 'id') ? (int)$val : $val;
             }
+
+            $qModel = new QueryModel($array['id']);
+            $array['locations'] = $qModel->getInitLocs();
+            $array['activities'] = $qModel->getInitActs();
+            $array['activityGroups'] = $qModel->getInitActGroups();
             $parentArray[] = $array;
         }
 
