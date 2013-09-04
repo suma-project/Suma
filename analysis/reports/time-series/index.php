@@ -170,8 +170,8 @@ $initDropDown .= '</select>';
                                         </div>
                                     </fieldset>
                                 </form>
+                                <div id="summary-data-header" class="col-xs-12"></div>
                                 <div id="summary-data" class="col-xs-12">
-                                    <div id="summary-data-header"></div>
                                     <h3>Summary Data</h3>
                                     <div id="total-data"></div>
                                     <div id="locations-data"></div>

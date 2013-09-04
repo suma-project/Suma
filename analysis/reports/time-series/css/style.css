@@ -88,4 +88,6 @@ svg {
     margin-top: -200px; 
     height: 200px;
     visibility: hidden;
+    pointer-events: none;
+    z-index: -9999;
 }
