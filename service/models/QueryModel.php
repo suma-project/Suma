@@ -215,13 +215,14 @@ class QueryModel
                     // Match sessions with START time < start time input AND END time > end time input, ONLY when the session spans different days
                     // Matches 20:00-03:00
                     // NOTE: Sessions that are longer than 24 hours are accounted for later in this script
-                    $this->_sessSql .= ' OR (DATE(s.start) != DATE(s.end) AND TIME(s.start) < TIME(\''.$start.'\') AND TIME(s.end) > TIME(\''.$end.'\')) ';
+                    $this->_sessSql .= ' OR (DATE(s.start) != DATE(s.end) AND TIME(s.start) <= TIME(\''.$start.'\') AND TIME(s.end) >= TIME(\''.$end.'\')) ';
                 }
                 else
                 {
                     $this->_sessSql .= ' ((TIME(s.start) BETWEEN TIME(\''.$start.'\') AND TIME(\''.$end.'\') ';
                     $this->_sessSql .= ' OR TIME(s.end) BETWEEN TIME(\''.$start.'\') AND TIME(\''.$end.'\')) ';
-                    $this->_sessSql .= ' OR (TIME(s.start) < TIME(\''.$start.'\') AND TIME(s.end) > TIME(\''.$end.'\')) ';
+                    $this->_sessSql .= ' OR (TIME(s.start) <= TIME(\''.$start.'\') AND TIME(s.end) >= TIME(\''.$end.'\')) ';
+                    $this->_sessSql .= ' OR (DATE(s.start) != DATE(s.end) AND (TIME(s.start) <= TIME(\''.$start.'\') OR TIME(s.end) >= TIME(\''.$end.'\'))) ';
                 }
 
             }
@@ -230,6 +231,7 @@ class QueryModel
                 $start = $params['sTimeH'].':'.$params['sTimeM'].':00';
                 $this->_sessSql .= ' (TIME(s.start) BETWEEN TIME(\''.$start.'\') AND TIME(\'23:59:59\') ';
                 $this->_sessSql .= ' OR TIME(s.end) BETWEEN TIME(\''.$start.'\') AND TIME(\'23:59:59\') ';
+                $this->_sessSql .= ' OR (DATE(s.start) != DATE(s.end) AND (TIME(s.start) <= TIME(\''.$start.'\'))) ';
             }
             else if (isset($params['eTimeH']))
             {
@@ -238,11 +240,11 @@ class QueryModel
 
                 if (isset($params['eDate']))
                 {
-                    $this->_sessSql .= ' OR (TIME(s.end) <= TIME(\''.$end.'\') AND DATE(s.end) <= DATE(\''.$params['eDate'].'\')) ';
+                    $this->_sessSql .= ' OR ((TIME(s.end) <= TIME(\''.$end.'\') OR (DATE(s.start) != DATE(s.end))) AND DATE(s.end) <= DATE(\''.$params['eDate'].'\')) ';
                 }
                 else
                 {
-                    $this->_sessSql .= ' OR TIME(s.end) <= TIME(\''.$end.'\') ';
+                    $this->_sessSql .= ' OR TIME(s.end) <= TIME(\''.$end.'\') OR DATE(s.start) != DATE(s.end) ';
                 }
             }
 
@@ -335,7 +337,7 @@ class QueryModel
         }
         else if (isset($params['eDate']))
         {
-            $this->_countsSql .= ' AND (DATE(c.occurrence) < DATE(\''.$params['eDate'].'\')) ';
+            $this->_countsSql .= ' AND (DATE(c.occurrence) <= DATE(\''.$params['eDate'].'\')) ';
         }
 
         // Time filtration
