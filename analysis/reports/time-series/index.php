@@ -69,7 +69,7 @@ $initDropDown .= '</select>';
                             </label>
                         </div>
                         <div class="pull-right">
-                            <a id="csv" download="suma_data_export.csv" class="btn btn-default btn-sm" href="" >Export Raw Data</a>
+                            <a class="btn btn-default btn-sm" href="#export-data-header" >Export Raw Data</a>
                             <a class="btn btn-default btn-sm" href="#summary-data-header">Summary Data</a>
                             <a id="main-download" download="suma_main_chart.png" data-chart-div="chart1" class="btn btn-default btn-sm" target="_blank">Save Chart</a>
                         </div>
@@ -216,6 +216,13 @@ $initDropDown .= '</select>';
                                 </div>
                                 <div id="supp-chart-note" class="col-xs-12">
                                     <p class="text-muted"><strong>Note:</strong> When "Avg" is selected on both charts, the supplemental chart displays the average of observations, rather than the average of days.</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div id="export-data-header" class="col-xs-12"></div>
+                                <div class="col-xs-12">
+                                    <h3>Export Raw Data</h3>
+                                    <a id="csv" download="suma_data_export.csv" class="btn btn-default btn-sm" href="" >Export Raw Data</a>
                                 </div>
                             </div>
                         </div>
@@ -383,6 +390,15 @@ $initDropDown .= '</select>';
                 <p>There was a problem retrieving data from the server. Please try again or contact your system administrator.</p>
                 {{#each items}}
                     <p>Error Message: {{msg}}</p>
+                {{/each}}
+            </div>
+        </script>
+        <script id="timeSeriesError" type="text/x-handlebars-template">
+            <div class="alert alert-warning alert-block">
+                <h4>Notice!</h4>
+                <p>Limited data is available for this query.</p>
+                {{#each items}}
+                    <p>Message: {{msg}}</p>
                 {{/each}}
             </div>
         </script>

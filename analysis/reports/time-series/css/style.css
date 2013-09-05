@@ -82,7 +82,7 @@ svg {
 }
 
 /* Hack to add padding to anchor link*/
-#summary-data-header {
+#summary-data-header, #export-data-header {
     display: block; 
     content: " "; 
     margin-top: -200px; 
