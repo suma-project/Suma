@@ -38,6 +38,7 @@
             suppDownload:  '#supp-download',
             suppLoc:       '#supp-chart-locact',
             suppNote:      '#supp-chart-note',
+            timeSeriesErrorTemplate: '#timeSeriesError',
             filterOptions: {
                 activitiesSelect:   '#activities',
                 activitiesTemplate: '#activities-template',
@@ -713,21 +714,29 @@
                 locState,
                 mainState;
 
-            if (!this.mainChart) {
-                this.mainChart = new TimeSeries();
-            }
-
             if (!this.suppChart) {
                 this.suppChart = new BarChart();
             }
 
-            // Get states from DOM
-            mainState = $(this.cfg.mainState).find('label.active').data('state');
-            locState = $(this.cfg.locState).find('label.active').data('state');
-            avgState = $(this.cfg.avgState).find('label.active').data('state');
+            if (counts.periodSum.length > 1) {
+                if (!this.mainChart) {
+                    this.mainChart = new TimeSeries();
+                }
 
-            this.updateMainChart(counts, mainState, locState, avgState);
+                // Get states from DOM
+                mainState = $(this.cfg.mainState).find('label.active').data('state');
+                locState = $(this.cfg.locState).find('label.active').data('state');
+                avgState = $(this.cfg.avgState).find('label.active').data('state');
 
+                this.updateMainChart(counts, mainState, locState, avgState);
+            } else {
+                mainState = 'sum';
+                locState = $(this.cfg.locState).find('label.active').data('state');
+                avgState = $(this.cfg.avgState).find('label.active').data('state');
+
+                this.updateSuppChart(counts, mainState, locState, avgState);
+                this.timeSeriesError({statusText: 'not enough data'});
+            }
         },
         /**
          * Update primary chart
@@ -970,6 +979,15 @@
 
             // Insert template into DOM
             this.buildTemplate([{msg: Errors.getMsg(e.statusText)}], this.cfg.errorTemplate, this.cfg.errorTarget);
+        },
+        timeSeriesError: function (e) {
+            $(this.cfg.mainChart).css('visibility', 'hidden');
+
+            // Log errors for debugging
+            console.log('error object', e);
+
+            // Insert template into DOM
+            this.buildTemplate([{msg: Errors.getMsg(e.statusText)}], this.cfg.timeSeriesErrorTemplate, this.cfg.errorTarget);
         }
     };
 

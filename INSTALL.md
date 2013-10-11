@@ -9,7 +9,7 @@ These requirements as based on our local testing. Earlier versions may also work
 * MySQL recommended version 5.1
 * Apache recommended version 2.2
 * PHP recommended version 5.3.3 (although 5.2.3 may also work)
-* Zend Framework 1.12 - required for Suma server, included with Suma Code
+* Zend Framework 1.12 - required for Suma server, included with Suma code
 * Various Javascript Libraries - all included with Suma code
 
 Additional Client Requirements:

@@ -111,14 +111,6 @@ $initDropDown .= '</select>';
                                         <?php echo $initDropDown; ?>
                                     </div>
                                     <div class="form-group">
-                                        <label for="session" class="suma-popover" data-title="Classify Counts By" data-content='Choose the date to use for grouping counts by date. "Count Date" shows the actual date of the count, while "Session Start" and "Session End" use the respective date on the collection session containing each count.'>Classify Counts By</label>
-                                        <select name="session" id="session" class="form-control">
-                                            <option value="count">Count Date</option>
-                                            <option value="start">Session Start</option>
-                                            <option value="end">Session End</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
                                         <label for="session_filter" class="suma-popover" data-title="Always Include Whole Session" data-content="Select yes if you would like to include counts inside of sessions that may fall outside of your other filters.">Always Include Whole Session</label>
                                         <select name="session_filter" id="session_filter" class="form-control">
                                             <option value="false">No</option>

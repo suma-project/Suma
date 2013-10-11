@@ -24,6 +24,10 @@ function lineChartData()
     $params['format'] = 'lca';
     $queryType        = 'sessions';
 
+    // Set count classification (not applicable due to hour 
+    // based grouping)
+    $params['session'] = 'count';
+
     // Determine which array to use as filter for daygroup
     if ($params['daygroup'] === 'weekdays')
     {

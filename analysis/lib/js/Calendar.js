@@ -51,7 +51,7 @@
                     count = data[d].toFixed(2);
                 }
 
-                return date + ': ' + d + '<p>' + count + '</p>';
+                return date + ' : ' + d + ' : ' + count;
             }
 
             selection.each(function (counts) {

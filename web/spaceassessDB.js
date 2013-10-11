@@ -1,16 +1,34 @@
 var Session, Initiative, Activity, ActivityGroup, Person, Location;
 
+// http://stackoverflow.com/a/14223920
+function iOSversion() {
+    if (/iP(hone|od|ad)/.test(navigator.platform)) {
+        // supports iOS 2.0 and later: <http://bit.ly/TJjs1V>
+        var v = (navigator.appVersion).match(/OS (\d+)_(\d+)_?(\d+)?/);
+        return [parseInt(v[1], 10), parseInt(v[2], 10), parseInt(v[3] || 0, 10)];
+    }
+
+    return [-1, -1, -1];
+}
+
 
 function initSADB(callback) {
     try
     {
-    persistence.store.websql.config(persistence, 'ncsuSpaceAssess', 'NCSU Libraries Space Assessment Tool', 50 * 1024 * 1024);
+        // This is necessary to deal with a bug in Safari on iOS 7 (tested on iOS 7.0.2)
+        // iOS 7 Safari users will be prompted if the database exceeds 5MB
+        // FIXME: the insert that triggers that prompt may be lost!!
+        if (iOSversion()[0] >= 7) {
+            persistence.store.websql.config(persistence, 'ncsuSpaceAssess', 'NCSU Libraries Space Assessment Tool', 5 * 1024 * 1024);
+        } else {
+            persistence.store.websql.config(persistence, 'ncsuSpaceAssess', 'NCSU Libraries Space Assessment Tool', 50 * 1024 * 1024);
+        }
     }
     catch(err)
     {
-    alert("Error in browser (Web SQL) database setup. Are you using a WebKit browser (e.g. Chrome, Safari, Android Browser)?" +
-          " This Suma client unfortunately does not support Firefox or IE at this point. If you still are getting this message," +
-          " try clearing your browser data");
+        alert("Error in browser (Web SQL) database setup. Are you using a WebKit browser (e.g. Chrome, Safari, Android Browser)?" +
+              " This Suma client unfortunately does not support Firefox or IE at this point. If you still are getting this message," +
+              " try clearing your browser data");
     }
 
     Session = persistence.define('Session', {
