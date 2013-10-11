@@ -15,12 +15,14 @@ function iOSversion() {
 function initSADB(callback) {
     try
     {
-        // This is necessary to deal a bug in Safari on iOS 7 (tested on iOS 7.0.2)
-        // where a database must be created before it is expanded beyond 5MB.
+        // This is necessary to deal with a bug in Safari on iOS 7 (tested on iOS 7.0.2)
+        // iOS 7 Safari users will be prompted if the database exceeds 5MB
+        // FIXME: the insert that triggers that prompt may be lost!!
         if (iOSversion()[0] >= 7) {
             persistence.store.websql.config(persistence, 'ncsuSpaceAssess', 'NCSU Libraries Space Assessment Tool', 5 * 1024 * 1024);
+        } else {
+            persistence.store.websql.config(persistence, 'ncsuSpaceAssess', 'NCSU Libraries Space Assessment Tool', 50 * 1024 * 1024);
         }
-        persistence.store.websql.config(persistence, 'ncsuSpaceAssess', 'NCSU Libraries Space Assessment Tool', 50 * 1024 * 1024);
     }
     catch(err)
     {
