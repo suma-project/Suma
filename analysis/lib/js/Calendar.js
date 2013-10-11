@@ -13,7 +13,11 @@
                 month_name = d3.time.format('%b'),
                 days = ['S', 'M', 'T', 'W', 'Th', 'F', 'S'],
                 data,
-                color;
+                color,
+                colorRange = ['#d6e685', '#8cc665', '#44a340', '#1e6823'],
+                key,
+                keySet,
+                quantiles;
 
             function setDayVisibility(i) {
                 if (i === 0 || i === 2 || i === 4 || i === 6) {
@@ -76,7 +80,7 @@
                 // Color scale
                 color = d3.scale.quantile()
                     .domain(d3.values(data))
-                    .range(['#d6e685', '#8cc665', '#44a340', '#1e6823']);
+                    .range(colorRange);
 
                 // Define svg wrapper
                 svg = d3.select(this).selectAll('svg').data([data]);
@@ -106,6 +110,69 @@
 
                         return 'translate(' + 60 + ',' + rowHeight + ')';
                     });
+
+                // Add Key
+                keySet = [1, 2, 3, 4, 5];
+                key = d3.select('.gWrap')
+                    .append('g')
+                    .attr('class', 'gKey')
+                    .attr('transform', function () {
+                        return 'translate(' + (width - 185) + ',' + (totalHeight - 15) + ')'
+                    });
+
+                quantiles = color.quantiles();
+
+                key.append('text')
+                    .attr('x', '0')
+                    .attr('y', '9px')
+                    .text('Less')
+                    .attr('fill', '#000')
+                    .attr('alignment', 'baseline')
+
+                key.selectAll('.rKey')
+                    .data(keySet)
+                    .enter().append('rect')
+                    .attr('class', 'rKey')
+                    .attr('width', '10px')
+                    .attr('height', '10px')
+                    .attr('x', function (d, i) { return (15 * i) + 30; })
+                    .attr('y', function (d) { return 0; })
+                    .style('fill', function (d, i) {
+                        if (i === 0) {
+                            return '#eee'
+                        }
+
+                        return colorRange[i-1]
+                    })
+                    .attr('title', function (d, i) {
+                         if (i === 0) {
+                            return 'No Data Found';
+                         }
+
+                         if (i === 4) {
+                            return 'Greater than ' + (quantiles[2] - 1);
+                         }
+
+                         if (i === 1) {
+                            return 'Less than ' + quantiles[0];
+                         }
+
+                         if (i === 2) {
+                            return quantiles[0] + ' to ' + (quantiles[1] - 1);
+                         }
+
+                         if (i === 3) {
+                            return quantiles[1] + ' to ' + (quantiles[2] - 1);
+                         }
+                    })
+                    .attr('data-toggle', 'tooltip')
+
+                key.append('text')
+                    .attr('x', '110px')
+                    .attr('y', '9px')
+                    .text('More')
+                    .attr('fill', '#000')
+                    .attr('alignment', 'baseline')
 
                 // Create day rects
                 rect = gWrap.selectAll('.day')
@@ -155,6 +222,13 @@
                 // Initialize Tooltips
                 $('.day').tooltip('destroy');
                 $('.day').tooltip({
+                    container: 'body',
+                    html: true,
+                    placement: 'auto'
+                });
+
+                $('.rKey').tooltip('destroy');
+                $('.rKey').tooltip({
                     container: 'body',
                     html: true,
                     placement: 'auto'
