@@ -86,7 +86,7 @@ $initDropDown .= '</select>';
                 </div>
             </div>
 
-            <div class="row">
+            <div id="filters" class="row">
                 <form id="chartFilters">
                     <fieldset>
                         <div class="col-xs-12">
@@ -170,6 +170,36 @@ $initDropDown .= '</select>';
                         </div>
                     </fieldset>
                 </form>
+            </div>
+
+            <div id="summary" class="row">
+                <div class="col-xs-6">
+                    <h3>Summary Statistics</h4>
+                    <table class="table table-hover table-condensed">
+                        <tbody>
+                                <tr>
+                                    <td>Quartiles</td>
+                                    <td id="quartile"></td>
+                                </tr>
+                                <tr>
+                                    <td>Interquartile Range</td>
+                                    <td id="iqr"></td>
+                                </tr>
+                                <tr>
+                                    <td>Lower Outlier Threshold</td>
+                                    <td id="lot"></td>
+                                </tr>
+                                <tr>
+                                    <td>Upper Outlier Threshold</td>
+                                    <td id="uot"></td>
+                                </tr>
+                                <tr>
+                                    <td>Median</td>
+                                    <td id="median"></td>
+                                </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 

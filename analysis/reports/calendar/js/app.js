@@ -9,7 +9,7 @@
             errorTarget:   '#error-container',
             errorTemplate: '#error',
             filter:        '#initiatives',
-            legend:        '#legend',
+            summary:       '#summary',
             loading:       '#loading',
             popover:       '.suma-popover',
             sdate:         '#sdate',
@@ -156,14 +156,14 @@
                     self.toggleSubmit(true);
                     $(self.cfg.loading).show();
                     $(self.cfg.buttons).hide();
-                    $(self.cfg.legend).hide();
+                    $(self.cfg.summary).hide();
                     $(self.cfg.welcome).hide();
                     $(self.cfg.errorTarget).empty();
                     $('svg').remove();
                 },
                 success: function () {
                     $(self.cfg.buttons).show();
-                    $(self.cfg.legend).show();
+                    $(self.cfg.summary).show();
                 },
                 complete: function () {
                     self.toggleSubmit();
@@ -174,8 +174,8 @@
         },
         error: function (e) {
             $(this.cfg.buttons).hide();
-            $(this.cfg.legend).hide();
             $(this.cfg.welcome).hide();
+            $(this.cfg.summary).hide();
 
             // Log errors for debugging
             console.log('error object', e);
