@@ -64,7 +64,7 @@
                 }
 
                 if (i === 4) {
-                   return 'Greater than ' + (quantiles[2] - 1).toFixed(2);
+                   return quantiles[2].toFixed(2) + '+';
                 }
 
                 if (i === 1) {
@@ -72,11 +72,11 @@
                 }
 
                 if (i === 2) {
-                   return quantiles[0].toFixed(2) + ' to ' + (quantiles[1] - 1).toFixed(2);
+                   return quantiles[0].toFixed(2) + ' to ' + (quantiles[1] - 0.01).toFixed(2);
                 }
 
                 if (i === 3) {
-                   return quantiles[1].toFixed(2) + ' to ' + (quantiles[2] - 1).toFixed(2);
+                   return quantiles[1].toFixed(2) + ' to ' + (quantiles[2] - 0.01).toFixed(2);
                 }
             }
 
@@ -207,7 +207,7 @@
                 key.append('text')
                     .attr('x', '110px')
                     .attr('y', '9px')
-                    .text(function () { return 'More (' + (quantiles[2] - 1).toFixed(2) + '+)'; })
+                    .text(function () { return 'More (' + quantiles[2].toFixed(2) + '+)'; })
                     .attr('fill', '#000')
                     .attr('alignment', 'baseline');
 
