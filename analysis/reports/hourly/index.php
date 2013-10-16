@@ -78,21 +78,10 @@ $initDropDown .= '</select>';
                     </div>
                     <div id="chart2"></div>
                     <div id="chart"></div>
-                    <div id="legend">
-                        <span>Less</span>
-                        <ul class="legend-list">
-                            <li style="background-color: #eee"></li>
-                            <li style="background-color: #d6e685"></li>
-                            <li style="background-color: #8cc665"></li>
-                            <li style="background-color: #44a340"></li>
-                            <li style="background-color: #1e6823"></li>
-                        </ul>
-                        <span>More</span>
-                    </div>
                 </div>
             </div>
 
-            <div class="row">
+            <div id="filters" class="row">
                 <form id="chartFilters">
                     <fieldset>
                         <div class="col-xs-12">
@@ -170,6 +159,36 @@ $initDropDown .= '</select>';
                         </div>
                     </fieldset>
                 </form>
+            </div>
+
+            <div id="summary" class="row">
+                <div class="col-xs-6">
+                    <h3>Summary Statistics</h4>
+                    <table class="table table-hover table-condensed">
+                        <tbody>
+                                <tr>
+                                    <td>Quartiles</td>
+                                    <td id="quartile"></td>
+                                </tr>
+                                <tr>
+                                    <td>Interquartile Range</td>
+                                    <td id="iqr"></td>
+                                </tr>
+                                <tr>
+                                    <td>Lower Outlier Threshold</td>
+                                    <td id="lot"></td>
+                                </tr>
+                                <tr>
+                                    <td>Upper Outlier Threshold</td>
+                                    <td id="uot"></td>
+                                </tr>
+                                <tr>
+                                    <td>Median</td>
+                                    <td id="median"></td>
+                                </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 

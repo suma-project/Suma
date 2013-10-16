@@ -11,7 +11,7 @@
             errorTarget:   '#error-container',
             errorTemplate: '#error',
             filter:        '#initiatives',
-            legend:        '#legend',
+            summary:       '#summary',
             lineDownload:  '#line-download',
             loading:       '#loading',
             popover:       '.suma-popover',
@@ -215,15 +215,15 @@
                 beforeSend: function () {
                     self.toggleSubmit(true);
                     $(self.cfg.loading).show();
-                    $(self.cfg.legend).hide();
                     $(self.cfg.buttons).hide();
+                    $(self.cfg.summary).hide();
                     $(self.cfg.welcome).hide();
                     $(self.cfg.errorTarget).empty();
                     $('svg').remove();
                 },
                 success: function () {
-                    $(self.cfg.legend).show();
                     $(self.cfg.buttons).show();
+                    $(self.cfg.summary).show();
                 },
                 complete: function () {
                     self.toggleSubmit();
@@ -236,9 +236,9 @@
             return $('#avg-sum').find('label.active').data('state');
         },
         error: function (e) {
-            $(this.cfg.legend).hide();
             $(this.cfg.buttons).hide();
             $(this.cfg.welcome).hide();
+            $(self.cfg.summary).hide();
 
             // Log errors for debugging
             console.log('error object', e);
