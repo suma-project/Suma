@@ -52,7 +52,7 @@ body {
 }
 
 /* Summary */
-#summary {
+.summary {
     display: none;
 }
 

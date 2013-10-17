@@ -24,9 +24,10 @@ function lineChartData()
     $params['format'] = 'lca';
     $queryType        = 'sessions';
 
-    // Set count classification (not applicable due to hour 
+    // Set count classification (not applicable due to hour
     // based grouping)
     $params['session'] = 'count';
+    $params['session_filter'] = 'false';
 
     // Determine which array to use as filter for daygroup
     if ($params['daygroup'] === 'weekdays')
@@ -62,10 +63,7 @@ function lineChartData()
     }
 
     // Calculate averages for appropriate sub-arrays of countHash
-    $returnData = $data->calculateAvg($data->countHash);
-
-    // Pad days as necessary
-    // $returnData = $data->padData($returnData, $params);
+    $returnData = $data->calculateAvg($data->countHash, $params);
 
     return $returnData;
 }

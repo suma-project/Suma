@@ -152,7 +152,9 @@ class TimeSeriesData
         $subArray = array(
                 "sum" => NULL,
                 "avg" => NULL,
-                "hourCounts" => array()
+                "hourCounts" => array(),
+                "avgDays" => NULL,
+                "divisor" => NULL
             );
 
         for ($i = 0; $i <= 23; $i++)
@@ -172,6 +174,76 @@ class TimeSeriesData
         }
 
         return $array;
+    }
+    /**
+     * Builds a hash of divisors for calculating
+     * daily averages within the dailyHourSummary
+     * dataset.
+     * @param  array $params Form parameters
+     * @return array         Array with day indices and divisor values
+     */
+    private function buildHourlyDivisors($params)
+    {
+        $hash = array();
+
+        for ($i = 0; $i <= 6; $i++)
+        {
+            $hash[$i] = 0;
+        }
+
+        $sdate = $params['sdate'];
+        $edate = $params['edate'];
+
+        // If $sdate and $edate are empty, say for a full query, set dummy values
+        // using min/max values of data from server
+        if (empty($sdate))
+        {
+            $keys  = array_keys($countHash['periodSum']);
+            $sdate = min($keys);
+            $sdate = str_replace("-", "", $sdate);
+        }
+
+        if (empty($edate))
+        {
+            $keys  = array_keys($countHash['periodSum']);
+            $edate = max($keys);
+            $edate = str_replace("-", "", $edate);
+        }
+
+        // Calculate difference between sdate and edate
+        $diff = abs(strtotime($edate) - strtotime($sdate));
+
+        // Add 1 and convert to integer
+        $daysInRange = round(($diff / (60 * 60 * 24))) + 1;
+
+        // Detect remainder
+        $extras = $daysInRange % 7;
+
+        // Bulk of series
+        $mainChunk = $daysInRange - $extras;
+
+        // Get index of start date (same as first day of extras)
+        $startDayIndex = date('w', strtotime($sdate));
+
+        // Add bulk count to each day
+        foreach($hash as $key => $day)
+        {
+            $hash[$key] += $mainChunk / 7;
+        }
+
+        // Add extras to appropriate days
+        for ($i = 0; $i < $extras; $i++)
+        {
+            $dayIndex = $i + $startDayIndex;
+            if ($dayIndex > 6)
+            {
+                $dayIndex = $dayIndex - 7;
+            }
+
+            $hash[$dayIndex]++;
+        }
+
+        return $hash;
     }
     /**
      * Basic pluck method
@@ -802,7 +874,7 @@ class TimeSeriesData
      * @param  array $countHash
      * @return array
      */
-    public function calculateAvg($countHash)
+    public function calculateAvg($countHash, $params)
     {
         if (empty($countHash))
         {
@@ -933,6 +1005,9 @@ class TimeSeriesData
             }
         }
 
+
+        $hourlyHash = $this->buildHourlyDivisors($params);
+
         // dailyHourSummary averages
         foreach ($countHash['dailyHourSummary'] as $dayKey => $day)
         {
@@ -944,6 +1019,11 @@ class TimeSeriesData
                 {
                     $avg = array_sum(array_values($hour['hourCounts'])) / $count;
                     $countHash['dailyHourSummary'][$dayKey][$hourKey]['avg'] = $avg;
+
+                    $avgDays = array_sum(array_values($hour['hourCounts'])) / $hourlyHash[$dayKey];
+                    $countHash['dailyHourSummary'][$dayKey][$hourKey]['avgDays'] = $avgDays;
+                    $countHash['dailyHourSummary'][$dayKey][$hourKey]['divisor'] = $hourlyHash[$dayKey];
+
                 }
             }
         }

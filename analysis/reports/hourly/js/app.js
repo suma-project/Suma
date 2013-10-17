@@ -11,7 +11,7 @@
             errorTarget:   '#error-container',
             errorTemplate: '#error',
             filter:        '#initiatives',
-            summary:       '#summary',
+            summary:       '.summary',
             lineDownload:  '#line-download',
             loading:       '#loading',
             popover:       '.suma-popover',
@@ -238,7 +238,7 @@
         error: function (e) {
             $(this.cfg.buttons).hide();
             $(this.cfg.welcome).hide();
-            $(self.cfg.summary).hide();
+            $(this.cfg.summary).hide();
 
             // Log errors for debugging
             console.log('error object', e);
@@ -283,6 +283,16 @@
                         day: d + 1,
                         hour: h + 1,
                         value: hour.avg
+                    };
+                });
+            }));
+
+            data.avgDays = _.flatten(_.map(response.dailyHourSummary, function (day, d) {
+                return _.map(day, function (hour, h) {
+                    return {
+                        day: d + 1,
+                        hour: h + 1,
+                        value: hour.avgDays
                     };
                 });
             }));
@@ -345,7 +355,8 @@
                 lines,
                 space = '\n\n\n\n';
 
-            data.Averages = this.buildCSVString(counts.avg, this.dict);
+            data.AvgOfCounts = this.buildCSVString(counts.avg, this.dict);
+            data.AvgOfDays = this.buildCSVString(counts.avgDays, this.dict);
             data.Sums = this.buildCSVString(counts.sum, this.dict);
 
             _.each(data, function (str, name) {

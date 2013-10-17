@@ -68,11 +68,14 @@ $initDropDown .= '</select>';
                         <a id="calendar-download" download="suma_hourly_calendar_chart.png" data-chart-div="chart" class="btn btn-default btn-sm" target="_blank">Save Calendar Chart</a>
                         <a id="csv" download="suma_data_export.csv" class="btn btn-default btn-sm suma-popover" href="" rel="popover">Export Raw Data</a>
                         <div id="avg-sum" class="btn-group" data-toggle="buttons">
+                            <label for="avgDays" class="btn btn-default btn-sm" data-state="avgDays">
+                                <input type="radio" name="chart-state" id="avgDays" value="avgDays">Avg per Day
+                            </label>
                             <label for="avg" class="btn btn-default btn-sm" data-state="avg">
-                                <input type="radio" name="chart-state" id="avg" value="avg">Hourly Avg
+                                <input type="radio" name="chart-state" id="avg" value="avg">Avg of Counts
                             </label>
                             <label for="sum" class="btn btn-default btn-sm active" data-state="sum">
-                                <input type="radio" name="chart-state" id="sum" value="sum">Hourly Sum
+                                <input type="radio" name="chart-state" id="sum" value="sum">Sum
                             </label>
                         </div>
                     </div>
@@ -86,11 +89,14 @@ $initDropDown .= '</select>';
                     <fieldset>
                         <div class="col-xs-12">
                             <div class="row">
-                                <div class="col-xs-9">
+                                <div class="col-xs-3">
                                     <h3>Modify Chart</h3>
                                 </div>
                                 <div class="col-xs-3 secondary-filters">
                                     <h3>Initiative Filters</h3>
+                                </div>
+                                <div class="col-xs-6 summary">
+                                    <h3>Summary Statistics</h4>
                                 </div>
                             </div>
                             <div class="row">
@@ -100,15 +106,6 @@ $initDropDown .= '</select>';
                                         <?php echo $initDropDown; ?>
                                     </div>
                                     <div class="form-group">
-                                        <label for="session_filter" class="suma-popover" data-title="Always Include Whole Session" data-content="Select yes if you would like to include counts inside of sessions that may fall outside of your other filters.">Always Include Whole Session</label>
-                                        <select name="session_filter" id="session_filter" class="form-control">
-                                            <option value="false">No</option>
-                                            <option value="true">Yes</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-xs-3">
-                                    <div class="form-group">
                                         <label for="sdate" class="suma-popover" data-title="Choose Date Range" data-content="Select a start date for your analysis. Defaults to 6 months from current day. Clear fields to retrieve the complete data set.">Start Date</label>
                                         <input type="text" id="sdate" name="sdate" class="form-control"/>
                                         <span class="help-block">YYYY-MM-DD</span>
@@ -117,18 +114,6 @@ $initDropDown .= '</select>';
                                         <label for="edate" class="suma-popover" data-title="Choose Date Range" data-content="Select an end date for your analysis. Clear fields to retrieve complete data set.">End Date</label>
                                         <input type="text" id="edate" name="edate" class="form-control" />
                                         <span class="help-block">YYYY-MM-DD</span>
-                                    </div>
-                                </div>
-                                <div class="col-xs-3">
-                                    <div class="form-group">
-                                        <label for="stime" class="suma-popover" data-title="Select Subset of Day" data-content="Include only data gathered during a certain time of day in your analysis, e.g. 8pm-12am.">Start Time</label>
-                                        <input type="text" id="stime" name="stime" placeholder="00:00" class="form-control"/>
-                                        <span class="help-block">24-hour format, e.g. 08:00</span>
-                                    </div>
-                                    <div class="control-group">
-                                        <label for="etime" class="suma-popover" data-title="Select Subset of Day" data-content="Include only data gathered during a certain time of day in your analysis, e.g. 8pm-12am.">End Time</label>
-                                        <input type="text" id="etime" name="etime" placeholder="24:00" class="form-control"/>
-                                        <span class="help-block">24-hour format, e.g. 08:00</span>
                                     </div>
                                 </div>
                                 <div class="col-xs-3 secondary-loading">
@@ -155,40 +140,38 @@ $initDropDown .= '</select>';
                                         <input type="submit" id="submit" class="btn btn-success" data-default-text ="Submit" data-loading-text="Loading..." value="Submit" />
                                     </div>
                                 </div>
+                                <div class="col-xs-6 summary">
+                                    <table class="table table-hover table-condensed">
+                                        <tbody>
+                                                <tr>
+                                                    <td>Quartiles</td>
+                                                    <td id="quartile"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Interquartile Range</td>
+                                                    <td id="iqr"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Lower Outlier Threshold</td>
+                                                    <td id="lot"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Upper Outlier Threshold</td>
+                                                    <td id="uot"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Median</td>
+                                                    <td id="median"></td>
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+
                             </div>
                         </div>
                     </fieldset>
                 </form>
-            </div>
-
-            <div id="summary" class="row">
-                <div class="col-xs-6">
-                    <h3>Summary Statistics</h4>
-                    <table class="table table-hover table-condensed">
-                        <tbody>
-                                <tr>
-                                    <td>Quartiles</td>
-                                    <td id="quartile"></td>
-                                </tr>
-                                <tr>
-                                    <td>Interquartile Range</td>
-                                    <td id="iqr"></td>
-                                </tr>
-                                <tr>
-                                    <td>Lower Outlier Threshold</td>
-                                    <td id="lot"></td>
-                                </tr>
-                                <tr>
-                                    <td>Upper Outlier Threshold</td>
-                                    <td id="uot"></td>
-                                </tr>
-                                <tr>
-                                    <td>Median</td>
-                                    <td id="median"></td>
-                                </tr>
-                        </tbody>
-                    </table>
-                </div>
             </div>
         </div>
 
