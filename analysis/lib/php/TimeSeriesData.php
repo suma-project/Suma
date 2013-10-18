@@ -1152,7 +1152,7 @@ class TimeSeriesData
         $this->processData($sumaParams, $queryType, $params);
 
         // Calculate averages for appropriate sub-arrays of countHash
-        $returnData = $this->calculateAvg($this->countHash);
+        $returnData = $this->calculateAvg($this->countHash, $params);
 
         // Pad days as necessary
         $returnData = $this->padData($returnData, $params);
