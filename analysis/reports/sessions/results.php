@@ -1,6 +1,5 @@
 <?php
 
-require_once '../../lib/php/ChromePhp.php';
 require_once '../../lib/php/SessionsData.php';
 
 // Initialize class and retrieve data
