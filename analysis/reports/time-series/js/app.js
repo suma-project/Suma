@@ -872,7 +872,7 @@
         },
         /**
          * Method to build a CSV string from an object
-         * @param  {object} counts 
+         * @param  {object} counts
          * @param  {string} label  Label for name field
          * @param  {boolean} indent Should names be indented?
          * @return {string}
@@ -886,7 +886,7 @@
                 object[label] = indent ? self.addCSVIndent(o) : o.name;
                 object.Count = o.count;
                 object.Percent = o.percent;
-    
+
                 return object;
             }));
         },
