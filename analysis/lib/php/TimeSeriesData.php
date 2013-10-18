@@ -3,7 +3,6 @@
 require_once '../../lib/php/ServerIO.php';
 require_once '../../lib/php/Gump.php';
 require_once '../../lib/php/SumaGump.php';
-require_once '../../lib/php/ChromePhp.php';
 
 // Suppress Error Reporting
 error_reporting(0);
@@ -1096,7 +1095,6 @@ class TimeSeriesData
     }
     private function processData($sumaParams, $queryType, $params)
     {
-        // ChromePhp::log('processData')
         // Instantiate ServerIO class, begin retrieval of data from Suma Server,
         // and continue retrieval until the hasMore property is false
         try
