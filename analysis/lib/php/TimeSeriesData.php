@@ -210,8 +210,7 @@ class TimeSeriesData
             $edate = str_replace("-", "", $edate);
         }
 
-        // Calculate difference between sdate and edate
-        $diff = abs(strtotime($edate) - strtotime($sdate));
+        $diff = abs(strtotime($edate . 'Z') - strtotime($sdate . 'Z'));
 
         // Add 1 and convert to integer
         $daysInRange = round(($diff / (60 * 60 * 24))) + 1;
