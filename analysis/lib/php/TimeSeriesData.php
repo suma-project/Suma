@@ -3,6 +3,7 @@
 require_once '../../lib/php/ServerIO.php';
 require_once '../../lib/php/Gump.php';
 require_once '../../lib/php/SumaGump.php';
+require_once '../../lib/php/ChromePhp.php';
 
 // Suppress Error Reporting
 error_reporting(0);
@@ -1092,5 +1093,72 @@ class TimeSeriesData
         }
 
         return $data;
+    }
+    private function processData($sumaParams, $queryType, $params)
+    {
+        // ChromePhp::log('processData')
+        // Instantiate ServerIO class, begin retrieval of data from Suma Server,
+        // and continue retrieval until the hasMore property is false
+        try
+        {
+            $io = new ServerIO();
+            $this->populateHash($io->getData($sumaParams, $queryType), $params);
+            while ($io->hasMore())
+            {
+                $this->populateHash($io->next(), $params);
+            }
+        }
+        catch (Exception $e)
+        {
+            $this->echo500($e);
+        }
+    }
+    public function getData($params)
+    {
+        // Validate form input
+        $params = $this->validateInput($_GET);
+
+        // Set query type and format
+        $params['format'] = 'lca';
+        $queryType        = 'sessions';
+
+        // Determine which array to use as filter for daygroup
+        if ($params['daygroup'] === 'weekdays')
+        {
+            $params['days'] = $this->weekdays;
+        }
+        elseif ($params['daygroup'] === 'weekends')
+        {
+            $params['days'] = $this->weekends;
+        }
+        else
+        {
+            $params['days'] = $this->all;
+        }
+
+        // Defaults
+        if (!isset($params['session']))
+        {
+            $params['session'] = 'count';
+        }
+
+        if (!isset($params['session_filter']))
+        {
+            $params['session_filter'] = 'false';
+        }
+
+        // Create params array for Suma server
+        $sumaParams = $this->populateSumaParams($params);
+
+        // Process Data
+        $this->processData($sumaParams, $queryType, $params);
+
+        // Calculate averages for appropriate sub-arrays of countHash
+        $returnData = $this->calculateAvg($this->countHash);
+
+        // Pad days as necessary
+        $returnData = $this->padData($returnData, $params);
+
+        return $returnData;
     }
 }
