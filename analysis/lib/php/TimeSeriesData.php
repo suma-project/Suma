@@ -491,65 +491,83 @@ class TimeSeriesData
 
         return $actArray;
     }
-    private function filterCount($count, $day, $params)
+    private function filterCount($count, $day, $params, $weekday, $intersect)
     {
-        // Honor date filters and remove extra days pulled in by session
-        $sDate = $params['sdate'];
-        $eDate = $params['edate'];
-        $tDate = str_replace('-', '', $day);
-
-        // Enforce start date filter
-        if (!empty($sDate) && $tDate < $sDate)
+        if (!in_array($weekday, $params['days']))
         {
             return true;
         }
 
-        // Enforce end date filter
-        if (!empty($eDate) && $tDate > $eDate)
+        if ($params['session_filter'] === 'false')
+        {
+            // Honor date filters and remove extra days pulled in by session
+            $sDate = $params['sdate'];
+            $eDate = $params['edate'];
+            $tDate = str_replace('-', '', $day);
+
+            // Enforce start date filter
+            if (!empty($sDate) && $tDate < $sDate)
+            {
+                return true;
+            }
+
+            // Enforce end date filter
+            if (!empty($eDate) && $tDate > $eDate)
+            {
+                return true;
+            }
+
+            // Honor time filters using count time and input params
+            $cTime = str_replace(':', '', substr($count['time'], -8, 5));
+            $sTime = $params['stime'];
+            $eTime = $params['etime'];
+
+            // Both stime and etime filters are present
+            if (!empty($sTime) && !empty($eTime))
+            {
+                // Ordered time range
+                if ($sTime < $eTime)
+                {
+                    if ($cTime < $sTime || $cTime > $eTime)
+                    {
+                        return true;
+                    }
+                }
+                // Unordered time range
+                else
+                {
+                    if ($cTime < $sTime && $cTime > $eTime)
+                    {
+                        return true;
+                    }
+                }
+            }
+            // sTime is present
+            elseif (!empty($sTime))
+            {
+                if ($cTime < $sTime)
+                {
+                    return true;
+                }
+            }
+            // eTime is present
+            elseif (!empty($eTime))
+            {
+                if ($cTime > $eTime)
+                {
+                    return true;
+                }
+            }
+        }
+
+        if ($params['activities'] === 'all')
+        {
+            return false;
+        }
+
+        if (empty($intersect))
         {
             return true;
-        }
-
-        // Honor time filters using count time and input params
-        $cTime = str_replace(':', '', substr($count['time'], -8, 5));
-        $sTime = $params['stime'];
-        $eTime = $params['etime'];
-
-        // Both stime and etime filters are present
-        if (!empty($sTime) && !empty($eTime))
-        {
-            // Ordered time range
-            if ($sTime < $eTime)
-            {
-                if ($cTime < $sTime || $cTime > $eTime)
-                {
-                    return true;
-                }
-            }
-            // Unordered time range
-            else
-            {
-                if ($cTime < $sTime && $cTime > $eTime)
-                {
-                    return true;
-                }
-            }
-        }
-        // sTime is present
-        elseif (!empty($sTime))
-        {
-            if ($cTime < $sTime)
-            {
-                return true;
-            }
-        }
-        // eTime is present
-        elseif (!empty($eTime))
-        {
-            if ($cTime > $eTime)
-            {
-                return true;
-            }
         }
 
         return false;
@@ -566,6 +584,244 @@ class TimeSeriesData
         elseif ($bin === 'end')
         {
             return substr($session['end'], 0, -9);
+        }
+    }
+    private function addCount($count, $day, $locId, $sessId, $weekday, $intersect)
+    {
+        $weekdayInt = date('w', strtotime($day));
+        $year = date('Y', strtotime($day));
+        $month = date('F', strtotime($day));
+        $hour = date('G', strtotime($count['time']));
+
+        // Build CSV, activitiesSum, and activitiesAvgAvg arrays
+        if(!isset($this->countHash['csv'][$day]))
+        {
+            // Scaffold countHash for day
+            $this->countHash['csv'][$day] = $this->csvScaffold;
+
+            // Insert Base information for day, total and locations
+            $this->countHash['csv'][$day]['date'] = $day;
+            $this->countHash['csv'][$day]['total'] = $count['number'];
+            $this->countHash['csv'][$day]['locations'][$this->locHash[$locId]] = $count['number'];
+
+            if (!empty($intersect))
+            {
+                foreach($intersect as $x)
+                {
+                    // CSV
+                    $this->countHash['csv'][$day]['activities'][$this->actHash[$x]] = $count['number'];
+
+                    //activitiesSum
+                    if (!isset($this->countHash['activitiesSum'][$x]))
+                    {
+                        $this->countHash['activitiesSum'][$x] = $count['number'];
+                    }
+                    else
+                    {
+                        $this->countHash['activitiesSum'][$x] += $count['number'];
+                    }
+
+                    //activitiesAvgAvg
+                    if (!isset($this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sessId][$x]))
+                    {
+                        $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sessId][$x] = $count['number'];
+                    }
+                    else
+                    {
+                        $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sessId][$x] += $count['number'];
+                    }
+                }
+            }
+            else
+            {
+                foreach($count['activities'] as $countAct)
+                {
+                    // CSV
+                    $this->countHash['csv'][$day]['activities'][$this->actHash[$countAct]] = $count['number'];
+
+                    // activitiesSum
+                    if (!isset($this->countHash['activitiesSum'][$countAct]))
+                    {
+                        $this->countHash['activitiesSum'][$countAct] = $count['number'];
+                    }
+                    else
+                    {
+                        $this->countHash['activitiesSum'][$countAct] += $count['number'];
+                    }
+
+                    // activitiesAvgAvg
+                    if (!isset($this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sessId][$countAct]))
+                    {
+                        $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sessId][$countAct] = $count['number'];
+                    }
+                    else
+                    {
+                        $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sessId][$countAct] += $count['number'];
+                    }
+                }
+            }
+        }
+        else
+        {
+            $this->countHash['csv'][$day]['total'] += $count['number'];
+            $this->countHash['csv'][$day]['locations'][$this->locHash[$locId]] += $count['number'];
+
+            if (!empty($intersect))
+            {
+                foreach($intersect as $x)
+                {
+                    // CSV
+                    $this->countHash['csv'][$day]['activities'][$this->actHash[$x]] += $count['number'];
+
+                    //activitiesSum
+                    if (!isset($this->countHash['activitiesSum'][$x]))
+                    {
+                        $this->countHash['activitiesSum'][$x] = $count['number'];
+                    }
+                    else
+                    {
+                        $this->countHash['activitiesSum'][$x] += $count['number'];
+                    }
+
+                    //activitiesAvgAvg
+                    if (!isset($this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sessId][$x]))
+                    {
+                        $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sessId][$x] = $count['number'];
+                    }
+                    else
+                    {
+                        $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sessId][$x] += $count['number'];
+                    }
+                }
+            }
+            else
+            {
+                foreach($count['activities'] as $countAct)
+                {
+                    // CSV
+                    $this->countHash['csv'][$day]['activities'][$this->actHash[$countAct]] += $count['number'];
+
+                    // activitiesSum
+                    if (!isset($this->countHash['activitiesSum'][$countAct]))
+                    {
+                        $this->countHash['activitiesSum'][$countAct] = $count['number'];
+                    }
+                    else
+                    {
+                        $this->countHash['activitiesSum'][$countAct] += $count['number'];
+                    }
+
+                    // activitiesAvgAvg
+                    if (!isset($this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sessId][$countAct]))
+                    {
+                        $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sessId][$countAct] = $count['number'];
+                    }
+                    else
+                    {
+                        $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sessId][$countAct] += $count['number'];
+                    }
+                }
+            }
+        }
+
+        // Increment Total property
+        if (!isset($this->countHash['total']))
+        {
+            $this->countHash['total'] = $count['number'];
+        }
+        else
+        {
+            $this->countHash['total'] += $count['number'];
+        }
+
+        // Build year summary array
+        if(!isset($this->countHash['yearSummary'][$year]))
+        {
+            $this->countHash['yearSummary'][$year] = $count['number'];
+        }
+        else
+        {
+            $this->countHash['yearSummary'][$year] += $count['number'];
+        }
+
+        // Build month summary array
+        if(!isset($this->countHash['monthSummary'][$year][$month]))
+        {
+            $this->countHash['monthSummary'][$year][$month] = $count['number'];
+        }
+        else
+        {
+            $this->countHash['monthSummary'][$year][$month] += $count['number'];
+        }
+
+        // Build weekday Summary array
+        if(!isset($this->countHash['weekdaySummary'][$weekday]))
+        {
+            $this->countHash['weekdaySummary'][$weekday] = $count['number'];
+        }
+        else
+        {
+            $this->countHash['weekdaySummary'][$weekday] += $count['number'];
+        }
+
+        // Build hour summary array
+        if(!isset($this->countHash['hourSummary'][$hour]))
+        {
+            $this->countHash['hourSummary'][$hour] = $count['number'];
+        }
+        else
+        {
+            $this->countHash['hourSummary'][$hour] += $count['number'];
+        }
+
+        // Build Daily Hourly Summary array
+        if(!isset($this->countHash['dailyHourSummary'][$weekdayInt][$hour]))
+        {
+            $this->countHash['dailyHourSummary'][$weekdayInt][$hour]['sum'] = $count['number'];
+            $this->countHash['dailyHourSummary'][$weekdayInt][$hour]['hourCounts'][$day] = $count['number'];
+        }
+        else
+        {
+            $this->countHash['dailyHourSummary'][$weekdayInt][$hour]['sum'] += $count['number'];
+
+            if(!isset($this->countHash['dailyHourSummary'][$weekdayInt][$hour]['hourCounts'][$day]))
+            {
+                $this->countHash['dailyHourSummary'][$weekdayInt][$hour]['hourCounts'][$day] = $count['number'];
+            }
+            else
+            {
+                $this->countHash['dailyHourSummary'][$weekdayInt][$hour]['hourCounts'][$day] += $count['number'];
+            }
+        }
+
+        // Build periodSum array
+        if (!isset($this->countHash['periodSum'][$day]['count']))
+        {
+            $this->countHash['periodSum'][$day]['count'] = $count['number'];
+        }
+        else
+        {
+            $this->countHash['periodSum'][$day]['count'] += $count['number'];
+        }
+
+        // Build locationsSum array
+        if (!isset($this->countHash['locationsSum'][$locId]))
+        {
+            $this->countHash['locationsSum'][$locId] = $count['number'];
+        }
+        else
+        {
+            $this->countHash['locationsSum'][$locId] += $count['number'];
+        }
+
+        // Build periodAvg array
+        if (!isset($this->countHash['periodAvg'][$day]['sessions'][$sessId][$loc['id']]))
+        {
+            $this->countHash['periodAvg'][$day]['sessions'][$sessId][$loc['id']] = $count['number'];
+        }
+        else
+        {
+            $this->countHash['periodAvg'][$day]['sessions'][$sessId][$loc['id']] += $count['number'];
         }
     }
     /**
@@ -625,6 +881,7 @@ class TimeSeriesData
             $this->countHash['dailyHourSummary'] = $this->buildDailyHourSummaryScaffold();
         }
 
+        // Evaluate counts for inclusion
         foreach ($response['initiative']['sessions'] as $sess)
         {
             foreach ($sess['locations'] as $loc)
@@ -636,259 +893,12 @@ class TimeSeriesData
                     {
                         // Get date based on count or session
                         $day = $this->setDay($count, $bin, $sess);
-
-                        // Convert date to needed formats
                         $weekday = date('l', strtotime($day));
-                        $weekdayInt = date('w', strtotime($day));
-                        $year = date('Y', strtotime($day));
-                        $month = date('F', strtotime($day));
-                        $hour = date('G', strtotime($count['time']));
+                        $intersect = array_intersect($count['activities'], $this->actListIds);
 
-                        if (in_array($weekday, $params['days']))
+                        if (!$this->filterCount($count, $day, $params, $weekday, $intersect))
                         {
-                            if ($include_sessions === 'false')
-                            {
-                                $filterCount = $this->filterCount($count, $day, $params);
-                                if ($filterCount)
-                                {
-                                    continue;
-                                }
-                            }
-
-                            if ($params['activities'] === 'all' || $intersect = array_intersect($count['activities'], $this->actListIds))
-                            {
-
-                                // Build CSV, activitiesSum, and activitiesAvgAvg arrays
-                                if(!isset($this->countHash['csv'][$day]))
-                                {
-                                    // Scaffold countHash for day
-                                    $this->countHash['csv'][$day] = $this->csvScaffold;
-
-                                    // Insert Base information for day, total and locations
-                                    $this->countHash['csv'][$day]['date'] = $day;
-                                    $this->countHash['csv'][$day]['total'] = $count['number'];
-                                    $this->countHash['csv'][$day]['locations'][$this->locHash[$loc['id']]] = $count['number'];
-
-                                    if (isset($intersect))
-                                    {
-                                        foreach($intersect as $x)
-                                        {
-                                            // CSV
-                                            $this->countHash['csv'][$day]['activities'][$this->actHash[$x]] = $count['number'];
-
-                                            //activitiesSum
-                                            if (!isset($this->countHash['activitiesSum'][$x]))
-                                            {
-                                                $this->countHash['activitiesSum'][$x] = $count['number'];
-                                            }
-                                            else
-                                            {
-                                                $this->countHash['activitiesSum'][$x] += $count['number'];
-                                            }
-
-                                            //activitiesAvgAvg
-                                            if (!isset($this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sess['id']][$x]))
-                                            {
-                                                $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sess['id']][$x] = $count['number'];
-                                            }
-                                            else
-                                            {
-                                                $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sess['id']][$x] += $count['number'];
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        foreach($count['activities'] as $countAct)
-                                        {
-                                            // CSV
-                                            $this->countHash['csv'][$day]['activities'][$this->actHash[$countAct]] = $count['number'];
-
-                                            // activitiesSum
-                                            if (!isset($this->countHash['activitiesSum'][$countAct]))
-                                            {
-                                                $this->countHash['activitiesSum'][$countAct] = $count['number'];
-                                            }
-                                            else
-                                            {
-                                                $this->countHash['activitiesSum'][$countAct] += $count['number'];
-                                            }
-
-                                            // activitiesAvgAvg
-                                            if (!isset($this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sess['id']][$countAct]))
-                                            {
-                                                $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sess['id']][$countAct] = $count['number'];
-                                            }
-                                            else
-                                            {
-                                                $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sess['id']][$countAct] += $count['number'];
-                                            }
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    $this->countHash['csv'][$day]['total'] += $count['number'];
-                                    $this->countHash['csv'][$day]['locations'][$this->locHash[$loc['id']]] += $count['number'];
-
-                                    if (isset($intersect))
-                                    {
-                                        foreach($intersect as $x)
-                                        {
-                                            // CSV
-                                            $this->countHash['csv'][$day]['activities'][$this->actHash[$x]] += $count['number'];
-
-                                            //activitiesSum
-                                            if (!isset($this->countHash['activitiesSum'][$x]))
-                                            {
-                                                $this->countHash['activitiesSum'][$x] = $count['number'];
-                                            }
-                                            else
-                                            {
-                                                $this->countHash['activitiesSum'][$x] += $count['number'];
-                                            }
-
-                                            //activitiesAvgAvg
-                                            if (!isset($this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sess['id']][$x]))
-                                            {
-                                                $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sess['id']][$x] = $count['number'];
-                                            }
-                                            else
-                                            {
-                                                $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sess['id']][$x] += $count['number'];
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        foreach($count['activities'] as $countAct)
-                                        {
-                                            // CSV
-                                            $this->countHash['csv'][$day]['activities'][$this->actHash[$countAct]] += $count['number'];
-
-                                            // activitiesSum
-                                            if (!isset($this->countHash['activitiesSum'][$countAct]))
-                                            {
-                                                $this->countHash['activitiesSum'][$countAct] = $count['number'];
-                                            }
-                                            else
-                                            {
-                                                $this->countHash['activitiesSum'][$countAct] += $count['number'];
-                                            }
-
-                                            // activitiesAvgAvg
-                                            if (!isset($this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sess['id']][$countAct]))
-                                            {
-                                                $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sess['id']][$countAct] = $count['number'];
-                                            }
-                                            else
-                                            {
-                                                $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sess['id']][$countAct] += $count['number'];
-                                            }
-                                        }
-                                    }
-                                }
-
-                                // Increment Total property
-                                if (!isset($this->countHash['total']))
-                                {
-                                    $this->countHash['total'] = $count['number'];
-                                }
-                                else
-                                {
-                                    $this->countHash['total'] += $count['number'];
-                                }
-
-                                // Build year summary array
-                                if(!isset($this->countHash['yearSummary'][$year]))
-                                {
-                                    $this->countHash['yearSummary'][$year] = $count['number'];
-                                }
-                                else
-                                {
-                                    $this->countHash['yearSummary'][$year] += $count['number'];
-                                }
-
-                                // Build month summary array
-                                if(!isset($this->countHash['monthSummary'][$year][$month]))
-                                {
-                                    $this->countHash['monthSummary'][$year][$month] = $count['number'];
-                                }
-                                else
-                                {
-                                    $this->countHash['monthSummary'][$year][$month] += $count['number'];
-                                }
-
-                                // Build weekday Summary array
-                                if(!isset($this->countHash['weekdaySummary'][$weekday]))
-                                {
-                                    $this->countHash['weekdaySummary'][$weekday] = $count['number'];
-                                }
-                                else
-                                {
-                                    $this->countHash['weekdaySummary'][$weekday] += $count['number'];
-                                }
-
-                                // Build hour summary array
-                                if(!isset($this->countHash['hourSummary'][$hour]))
-                                {
-                                    $this->countHash['hourSummary'][$hour] = $count['number'];
-                                }
-                                else
-                                {
-                                    $this->countHash['hourSummary'][$hour] += $count['number'];
-                                }
-
-                                // Build Daily Hourly Summary array
-                                if(!isset($this->countHash['dailyHourSummary'][$weekdayInt][$hour]))
-                                {
-                                    $this->countHash['dailyHourSummary'][$weekdayInt][$hour]['sum'] = $count['number'];
-                                    $this->countHash['dailyHourSummary'][$weekdayInt][$hour]['hourCounts'][$day] = $count['number'];
-                                }
-                                else
-                                {
-                                    $this->countHash['dailyHourSummary'][$weekdayInt][$hour]['sum'] += $count['number'];
-
-                                    if(!isset($this->countHash['dailyHourSummary'][$weekdayInt][$hour]['hourCounts'][$day]))
-                                    {
-                                        $this->countHash['dailyHourSummary'][$weekdayInt][$hour]['hourCounts'][$day] = $count['number'];
-                                    }
-                                    else
-                                    {
-                                        $this->countHash['dailyHourSummary'][$weekdayInt][$hour]['hourCounts'][$day] += $count['number'];
-                                    }
-                                }
-
-                                // Build periodSum array
-                                if (!isset($this->countHash['periodSum'][$day]['count']))
-                                {
-                                    $this->countHash['periodSum'][$day]['count'] = $count['number'];
-                                }
-                                else
-                                {
-                                    $this->countHash['periodSum'][$day]['count'] += $count['number'];
-                                }
-
-                                // Build locationsSum array
-                                if (!isset($this->countHash['locationsSum'][$loc['id']]))
-                                {
-                                    $this->countHash['locationsSum'][$loc['id']] = $count['number'];
-                                }
-                                else
-                                {
-                                    $this->countHash['locationsSum'][$loc['id']] += $count['number'];
-                                }
-
-                                // Build periodAvg array
-                                if (!isset($this->countHash['periodAvg'][$day]['sessions'][$sess['id']][$loc['id']]))
-                                {
-                                    $this->countHash['periodAvg'][$day]['sessions'][$sess['id']][$loc['id']] = $count['number'];
-                                }
-                                else
-                                {
-                                    $this->countHash['periodAvg'][$day]['sessions'][$sess['id']][$loc['id']] += $count['number'];
-                                }
-                            }
+                            $this->addCount($count, $day, $loc['id'], $sess['id'], $weekday, $intersect);
                         }
                     }
                 }
