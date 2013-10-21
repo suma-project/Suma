@@ -1,4 +1,5 @@
 <?php
+header('Content-type: application/json');
 
 require_once '../../lib/php/SessionsData.php';
 
