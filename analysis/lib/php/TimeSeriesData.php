@@ -353,7 +353,7 @@ class TimeSeriesData
             $params['actId']   = $actId;
 
             // If end date parameter is greater than or equal
-            // to today, set end date to yesterday
+            // to today, set end date to today
             $today = date('Ymd');
 
             if ($params['edate'] > $today)
