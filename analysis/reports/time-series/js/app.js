@@ -656,7 +656,7 @@
             });
 
             // Day of Week Summary
-            counts.dayOfWeekSummary = _.sortBy(_.map(response.dayOfWeekSummary, function (element, index) {
+            counts.weekdaySummary = _.sortBy(_.map(response.weekdaySummary, function (element, index) {
                 return {
                     // value: self.weekdays[index],
                     name: index,
@@ -829,7 +829,7 @@
             this.buildTemplate(counts.activitiesTable, this.cfg.tables.actSumTmp, this.cfg.tables.actSumTgt, true);
             this.buildTemplate(counts.yearSummary, this.cfg.tables.yearTmp, this.cfg.tables.yearTgt, true);
             this.buildTemplate(counts.monthSummary, this.cfg.tables.monthTmp, this.cfg.tables.monthTgt, true);
-            this.buildTemplate(counts.dayOfWeekSummary, this.cfg.tables.weekdayTmp, this.cfg.tables.weekdayTgt, true);
+            this.buildTemplate(counts.weekdaySummary, this.cfg.tables.weekdayTmp, this.cfg.tables.weekdayTgt, true);
             this.buildTemplate(counts.hourlySummary, this.cfg.tables.hourTmp, this.cfg.tables.hourTgt, true);
         },
         /**
@@ -908,7 +908,7 @@
             data.Locations = self.buildCSVString(counts.locationsTable, 'Location', true);
             data.Activities = self.buildCSVString(counts.activitiesTable, 'Activity', true);
             data.Hourly = self.buildCSVString(counts.hourlySummary, 'Hour');
-            data.Daily = self.buildCSVString(counts.dayOfWeekSummary, 'Day');
+            data.Daily = self.buildCSVString(counts.weekdaySummary, 'Day');
             data.Monthly = self.buildCSVString(counts.monthSummary, 'Month');
             data.Yearly = self.buildCSVString(counts.yearSummary, 'Year');
 

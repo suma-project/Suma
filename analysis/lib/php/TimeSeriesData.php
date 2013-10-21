@@ -730,13 +730,13 @@ class TimeSeriesData
                                     }
 
                                     // Build weekday Summary array
-                                    if(!isset($this->countHash['dayOfWeekSummary'][$weekday]))
+                                    if(!isset($this->countHash['weekdaySummary'][$weekday]))
                                     {
-                                        $this->countHash['dayOfWeekSummary'][$weekday] = $count['number'];
+                                        $this->countHash['weekdaySummary'][$weekday] = $count['number'];
                                     }
                                     else
                                     {
-                                        $this->countHash['dayOfWeekSummary'][$weekday] += $count['number'];
+                                        $this->countHash['weekdaySummary'][$weekday] += $count['number'];
                                     }
 
                                     // Build hour summary array
