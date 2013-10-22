@@ -49,7 +49,7 @@
 
             // Help text on filters
             $('.suma-popover').popover({
-                trigger: 'hover', 
+                trigger: 'hover',
                 delay: 300,
                 placement: 'bottom'
             });
@@ -94,9 +94,11 @@
                     $('#sessions-data').hide();
                     $('.alert').hide();
                 },
+                success: function () {
+                    $('#sessions-data').show();
+                },
                 complete: function () {
                     $('#loadingWidget').fadeOut(400);
-                    $('#sessions-data').show();
                 },
                 timeout: 30000
             });
@@ -140,6 +142,7 @@
         },
         error: function (e) {
             $(this.cfg.welcome).hide();
+            $(this.cfg.tableTarget).hide();
 
             // Log errors for debugging
             console.log('error object', e);
