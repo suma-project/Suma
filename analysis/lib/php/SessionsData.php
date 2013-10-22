@@ -111,6 +111,9 @@ class SessionsData
                     "id" => $sess["id"],
                     "start" => $sess["start"],
                     "end"   => $sess["end"],
+                    "transId" => $sess["transId"],
+                    "transStart" => $sess["transStart"],
+                    "transEnd" => $sess["transEnd"],
                     "total" => 0
                 );
 
