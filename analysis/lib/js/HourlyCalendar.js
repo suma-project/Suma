@@ -16,10 +16,8 @@
                 iqr,
                 upperOutlier,
                 lowerOutlier,
-                days = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
-                daysTitle = {'1': 'Su', '2': 'Mo', '3': 'Tu', '4': 'We', '5': 'Th', '6': 'Fr', '7': 'Sa'},
-                times = ['12a', '1a', '2a', '3a', '4a', '5a', '6a', '7a', '8a', '9a', '10a', '11a', '12p', '1p', '2p', '3p', '4p', '5p', '6p', '7p', '8p', '9p', '10p', '11p'],
-                timesTitle = {'1': '12a', '2': '1a', '3': '2a', '4': '3a', '5': '4a', '6': '5a', '7': '6a', '8': '7a', '9': '8a', '10': '9a', '11': '10a', '12': '11a', '13': '12p', '14': '1p', '15': '2p', '16': '3p', '17': '4p', '18': '5p', '19': '6p', '20': '7p', '21': '8p', '22': '9p', '23': '10p', '24': '11p'};
+                days = {'1': 'Su', '2': 'Mo', '3': 'Tu', '4': 'We', '5': 'Th', '6': 'Fr', '7': 'Sa'},
+                times = {'1': '12a', '2': '1a', '3': '2a', '4': '3a', '5': '4a', '6': '5a', '7': '6a', '8': '7a', '9': '8a', '10': '9a', '11': '10a', '12': '11a', '13': '12p', '14': '1p', '15': '2p', '16': '3p', '17': '4p', '18': '5p', '19': '6p', '20': '7p', '21': '8p', '22': '9p', '23': '10p', '24': '11p'};
 
             function setColor(d) {
 
@@ -47,7 +45,7 @@
                     count = d.value.toFixed(2);
                 }
 
-                return daysTitle[d.day] + ' : ' + timesTitle[d.hour] + ' : ' + count;
+                return days[d.day] + ' : ' + times[d.hour] + ' : ' + count;
             }
 
             function setKeyColor (d, i) {
@@ -138,7 +136,7 @@
 
                 // Append day labels
                 svgEnter.selectAll('.dayLabel')
-                    .data(days)
+                    .data(d3.values(days))
                     .enter().append('text')
                     .text(function (d) { return d; })
                     .attr('x', 0)
@@ -148,7 +146,7 @@
 
                 // Append hour labels
                 svgEnter.selectAll('.timeLabel')
-                    .data(times)
+                    .data(d3.values(times))
                     .enter().append('text')
                     .text(function (d) { return d; })
                     .attr('x', function (d, i) { return i * gridSize; })
