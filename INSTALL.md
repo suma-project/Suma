@@ -192,9 +192,9 @@ Suma Analysis Tools Configuration
 Other Things You Can Configure
 -------------------------------
 
-* The config.ini protocol allows for development/testing settings that can override the production settings.  To switch from using production settings to dev/testing settings, on the line in `/SUMA_SERVER_INSTALL_DIR/config/Globals.php`
+* The configuration protocol allows for development/testing settings that can override the production settings.  To switch from using production settings to dev/testing settings, on the line in `/SUMA_SERVER_INSTALL_DIR/config/Globals.php`
 
-        self::$_config = new Zend_Config_Ini($file, 'production');
+	self::$_config = new Zend_Config_Yaml($yamlFile, 'production');
 
 you must change 'production' to 'development'.
 
@@ -217,7 +217,7 @@ How to create your first initiative
 Overview of administrative tools
 ---------------------------------
 
-To view the admin tools, visit the page at `http://YOUR_SERVER/sumaserver/admin/`. The username and password for these tools is set in config.ini.
+To view the admin tools, visit the page at `http://YOUR_SERVER/sumaserver/admin/`. The username and password for these tools is set in config.yaml.
 
 * Location editor
 
