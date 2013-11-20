@@ -84,7 +84,7 @@ class QueryController extends BaseController
 
         $params = array();
 
-        if (isset($initId) && is_numeric($initId))
+        if (isset($initId) && ctype_digit($initId))
         {
             if (empty($format) || ! in_array($format, $this->_formats))
             {
@@ -92,8 +92,8 @@ class QueryController extends BaseController
             }
 
             $params['format'] = $format;
-            $params['offset'] = (! empty($offset) && is_numeric($offset)) ? (int)$offset : 0;
-            $params['limit'] = (! empty($limit) && is_numeric($limit)) ? (int)$limit : Globals::getQsDbLimit();
+            $params['offset'] = (! empty($offset) && ctype_digit($offset)) ? (int)$offset : 0;
+            $params['limit'] = (! empty($limit) && ctype_digit($limit)) ? (int)$limit : Globals::getQsDbLimit();
 
             if (! empty($sDate))
             {
@@ -102,7 +102,7 @@ class QueryController extends BaseController
                 $month = substr($sDate[0], 4, 2);
                 $day = substr($sDate[0], 6, 2);
 
-                if (is_numeric($yr) && is_numeric($month) && is_numeric($day))
+                if (ctype_digit($yr) && ctype_digit($month) && ctype_digit($day))
                 {
                     $sDate = new Zend_Date(array('year' => $yr, 'month' => $month, 'day' => $day));
                     $params['sDate'] = $sDate->get(Zend_Date::ISO_8601);
@@ -116,7 +116,7 @@ class QueryController extends BaseController
                 $month = substr($eDate[0], 4, 2);
                 $day = substr($eDate[0], 6, 2);
 
-                if (is_numeric($yr) && is_numeric($month) && is_numeric($day))
+                if (ctype_digit($yr) && ctype_digit($month) && ctype_digit($day))
                 {
                     $eDate = new Zend_Date(array('year' => $yr, 'month' => $month, 'day' => $day));
                     if (is_object($sDate) && $eDate->isEarlier($sDate))
@@ -131,28 +131,20 @@ class QueryController extends BaseController
                 }
             }
 
-            if (! empty($sTime))
+            if (!empty($sTime) && ctype_digit($sTime) && 
+                (int)$sTime > 0 && (int)$sTime < 2400)
             {
-                $hr = substr($sTime, 0, 2);
-                $min = substr($sTime, 2, 2);
-
-                if (is_numeric($hr) && is_numeric($min))
-                {
-                    $params['sTimeH'] = $hr;
-                    $params['sTimeM'] = $min;
-                }
+                $sTime = str_pad($sTime, 4, '0', STR_PAD_LEFT);
+                $params['sTimeH'] = substr($sTime, 0, 2);
+                $params['sTimeM'] = substr($sTime, 2, 2);
             }
 
-            if (! empty($eTime))
+            if (!empty($eTime) && ctype_digit($eTime) && 
+                (int)$eTime >= 0 && (int)$eTime < 2359)
             {
-                $hr = substr($eTime, 0, 2);
-                $min = substr($eTime, 2, 2);
-
-                if (is_numeric($hr) && is_numeric($min))
-                {
-                    $params['eTimeH'] = $hr;
-                    $params['eTimeM'] = $min;
-                }
+                $sTime = str_pad($eTime, 4, '0', STR_PAD_LEFT);
+                $params['eTimeH'] = substr($sTime, 0, 2);
+                $params['eTimeM'] = substr($sTime, 2, 2);
             }
 
 
