@@ -17,15 +17,18 @@ function lineChartData()
     // Instantiate TimeSeriesData class
     $data = new TimeSeriesData();
 
+    // Capture superglobal for modification
+    $modifiedInput = $_GET;
+
     // Add time and Set count classification (not applicable due to hour
     // based grouping)
-    $_GET['stime'] = '';
-    $_GET['etime'] = '';
-    $_GET['session'] = 'count';
-    $_GET['session_filter'] = 'false';
+    $modifiedInput['stime'] = '';
+    $modifiedInput['etime'] = '';
+    $modifiedInput['session'] = 'count';
+    $modifiedInput['session_filter'] = 'false';
 
     // Validate form input
-    $params = $data->validateInput($_GET);
+    $params = $data->validateInput($modifiedInput);
 
     // Set query type and format
     $params['format'] = 'lca';
