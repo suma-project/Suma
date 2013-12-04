@@ -17,17 +17,19 @@ function lineChartData()
     // Instantiate TimeSeriesData class
     $data = new TimeSeriesData();
 
+    // Add time and Set count classification (not applicable due to hour
+    // based grouping)
+    $_GET['stime'] = '';
+    $_GET['etime'] = '';
+    $_GET['session'] = 'count';
+    $_GET['session_filter'] = 'false';
+
     // Validate form input
     $params = $data->validateInput($_GET);
 
     // Set query type and format
     $params['format'] = 'lca';
     $queryType        = 'sessions';
-
-    // Set count classification (not applicable due to hour
-    // based grouping)
-    $params['session'] = 'count';
-    $params['session_filter'] = 'false';
 
     // Determine which array to use as filter for daygroup
     if ($params['daygroup'] === 'weekdays')
