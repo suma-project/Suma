@@ -89,11 +89,11 @@ class CalTransformer extends BaseTransformer
 
         if (isset($row['act']))
         {
-            $activities[] = array('id' => (int)$row['act']);
+            $activities[] = (int)$row['act'];
         }
         else
         {
-            $activities[] = array('id' => '_No Activity');
+            $activities[] = '_No Activity';
         }
     }
 

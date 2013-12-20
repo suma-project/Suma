@@ -99,7 +99,6 @@ class LcaTransformer extends BaseTransformer
         return $addition;
     }
 
-
     private function addActivity($row, &$count)
     {
         $activities =& $count['activities'];
@@ -115,7 +114,7 @@ class LcaTransformer extends BaseTransformer
                 }
             }
 
-            $activities[] = array('id' => (int)$row['act']);
+            $activities[] = (int)$row['act'];
         }
         else
         {
@@ -128,8 +127,7 @@ class LcaTransformer extends BaseTransformer
                 }
             }
 
-
-            $activities[] = array('id' => '_No Activity');
+            $activities[] = '_No Activity';
         }
     }
 
