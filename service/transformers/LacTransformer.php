@@ -1,12 +1,12 @@
-<?php 
+<?php
 
 require_once 'BaseTransformer.php';
 
 class LacTransformer extends BaseTransformer
 {
-    private $_sessionHash = array();    
-    
-    
+    private $_sessionHash = array();
+
+
     public function addRow($row)
     {
         $tier = null;
@@ -18,7 +18,7 @@ class LacTransformer extends BaseTransformer
             }
             $tier =& $this->addSession($row);
         }
-        else 
+        else
         {
             if (! isset($this->_nestedArrays['initiative']['locations']))
             {
@@ -26,35 +26,38 @@ class LacTransformer extends BaseTransformer
             }
             $tier =& $this->_nestedArrays['initiative'];
         }
-        
+
         $location =& $this->addLocation($row, $tier);
         $activity =& $this->addActivity($row, $location);
         $this->addCount($row, $activity);
     }
-    
+
     private function &addSession($row)
     {
         if (isset($this->_sessionHash[(int)$row['sid']]))
         {
             return $this->_sessionHash[(int)$row['sid']];
-        }        
-        
+        }
+
         $addition = array('id'         =>  (int)$row['sid'],
                           'start'      =>  $row['start'],
                           'end'        =>  $row['end'],
+                          'transId' => $row['transId'],
+                          'transStart' => $row['transStart'],
+                          'transEnd' => $row['transEnd'],
                           'locations' =>  array());
-        
+
         $sessions =& $this->_nestedArrays['initiative']['sessions'];
         $sessions[] =& $addition;
         $this->_sessionHash[(int)$row['sid']] =& $addition;
-        return $addition; 
-    }    
-    
+        return $addition;
+    }
+
     private function &addLocation($row, &$tier)
     {
         $locations =& $tier['locations'];
         $selected = null;
-        
+
         foreach($locations as &$location)
         {
             if ($location['id'] == $row['loc'])
@@ -63,24 +66,24 @@ class LacTransformer extends BaseTransformer
                 unset($location);
                 break;
             }
-        }            
+        }
 
         if (isset($selected))
         {
             return $selected;
-        }        
-        
+        }
+
         $addition = array('id'     =>  (int)$row['loc'],
                          'activities'  =>  array());
-        
+
         $locations[] =& $addition;
         return $addition;
-    }    
-    
+    }
+
     private function &addActivity($row, &$location)
     {
         $activities =& $location['activities'];
-        
+
         if (isset($row['act']))
         {
             foreach($activities as &$activity)
@@ -97,18 +100,18 @@ class LacTransformer extends BaseTransformer
             {
                 return $selected;
             }
-            
+
             if ($this->_sum == true)
             {
                 $addition = array('id'     => (int)$row['act'],
-                                  'counts' => 0);                
+                                  'counts' => 0);
             }
             else
             {
                 $addition = array('id'     => (int)$row['act'],
-                                  'counts' => array());                
+                                  'counts' => array());
             }
-            
+
             $activities[] =& $addition;
             return $addition;
         }
@@ -123,33 +126,33 @@ class LacTransformer extends BaseTransformer
                     break;
                 }
             }
-            
+
             if (isset($selected))
             {
                 return $selected;
-            }        
-            
+            }
+
             if ($this->_sum == true)
             {
                 $addition = array('id'     => '_No Activity',
-                                  'counts' => 0);                
+                                  'counts' => 0);
             }
             else
             {
                 $addition = array('id'     => '_No Activity',
-                                  'counts' => array());                
+                                  'counts' => array());
             }
-            
+
             $activities[] =& $addition;
             return $addition;
         }
-        
-    }    
-    
+
+    }
+
     private function addCount($row, &$activity)
-    {        
+    {
         $counts =& $activity['counts'];
-        
+
         if ($this->_sum == true)
         {
             $counts += (int)$row['cnum'];
@@ -158,8 +161,8 @@ class LacTransformer extends BaseTransformer
         {
             $counts[] = array('id'    =>  (int)$row['cid'],
                              'time'   =>  $row['oc'],
-                             'number' => (int)$row['cnum']);            
-        }       
-    }    
-    
+                             'number' => (int)$row['cnum']);
+        }
+    }
+
 }

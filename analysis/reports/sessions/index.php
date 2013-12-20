@@ -112,7 +112,7 @@ $initDropDown .= '</select>';
                 </div>
             </div>
             <div class="row">
-                <div id="sessions-data" class="col-xs-6"></div>  
+                <div id="sessions-data" class="col-xs-12"></div>
             </div>
         </div>
 
@@ -127,6 +127,9 @@ $initDropDown .= '</select>';
                         <th>ID</th>
                         <th>Start Date</th>
                         <th>End Date</th>
+                        <th>Trans ID</th>
+                        <th>Trans Start</th>
+                        <th>Trans End</th>
                         <th>Total</th>
                     </tr>
                 </thead>
@@ -136,6 +139,9 @@ $initDropDown .= '</select>';
                             <td>{{id}}</td>
                             <td>{{start}}</td>
                             <td>{{end}}</td>
+                            <td>{{transId}}</td>
+                            <td>{{transStart}}</td>
+                            <td>{{transEnd}}</td>
                             <td>{{total}}</td>
                         </tr>
                     {{/each}}
