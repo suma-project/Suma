@@ -1,0 +1,23 @@
+{
+  "name": "angular-promise-tracker",
+  "version": "0.0.1",
+  "author": {
+    "name": "Andy Joslin"
+  },
+  "homepage": "https://github.com/ajoslin/angular-promise-tracker",
+  "devDependencies": {
+    "karma": "~0.8.5",
+    "grunt": "~0.4.1",
+    "grunt-contrib-watch": "~0.3.1",
+    "grunt-contrib-concat": "~0.2.0",
+    "grunt-contrib-uglify": "~0.2.x",
+    "grunt-contrib-jshint": "~0.4.x",
+    "grunt-karma": "~0.4.x",
+    "node-markdown": "~0.1.1",
+    "grunt-contrib-copy": "~0.4.1",
+    "grunt-contrib-clean": "~0.4.1",
+    "grunt-conventional-changelog": "git://github.com/ajoslin/grunt-conventional-changelog",
+    "semver": "~1.1.4",
+    "grunt-shell": "~0.2.2"
+  }
+}
