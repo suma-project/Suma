@@ -1,0 +1,104 @@
+<div class="sessions">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="alert alert-info alert-block" ng-show="initial">
+        <h4>Welcome!</h4>
+        Please select an initiative from the select menu below. You can also limit your search by date or time.
+      </div>
+      <div class="alert alert-danger alert-block" ng-show="error">
+        <h4>Notice!</h4>
+        <p>There was a problem retrieving data from the server. Please try again or contact your system administrator.</p>
+        <p>Error Code: {{errorCode}}</p>
+        <p>Error Message: {{errorMessage}}</p>
+      </div>
+    </div>
+  </div>
+  <div class="row" ng-hide="finder.active()">
+    <div class="col-xs-3">
+      <h3>Filter Sessions</h3>
+    </div>
+  </div>
+
+  <div class="row" ng-show="finder.active()">
+    <div class="col-xs-12 initial-loading-wrap">
+      <div class="loading"><img src="images/spinner.gif"></div>
+    </div>
+  </div>
+
+  <div class="row filter-row" ng-hide="finder.active()">
+    <form ng-submit="submit()">
+      <fieldset ng-disabled="loading">
+        <div class="col-xs-3">
+          <div class="form-group">
+            <label for="initiatives" class="suma-popover" data-title="Select Initiative" data-content="Select an initiative to reveal additional filters." popover="">Select an Initiative</label>
+            <select name="initiative" ng-model="params.init" ng-options="init.title for init in inits" class="form-control">
+              <option value="">Select an Initiative</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="col-xs-3">
+          <div class="form-group">
+            <label for="sdate" class="suma-popover" data-title="Choose Date Range" data-content="Select a start date for your analysis. Defaults to 6 months from current day. Clear fields to retrieve the complete data set." popover="">Start Date</label>
+            <datepicker model="params.sdate"></datepicker>
+            <span class="help-block">YYYY-MM-DD</span>
+          </div>
+
+          <div class="form-group">
+            <label for="edate" class="suma-popover" data-title="Choose Date Range" data-content="Select an end date for your analysis. Clear fields to retrieve complete data set." popover="">End Date</label>
+            <datepicker model="params.edate"></datepicker>
+            <span class="help-block">YYYY-MM-DD</span>
+          </div>
+        </div>
+
+        <div class="col-xs-3">
+          <div class="form-group">
+            <label for="stime" class="suma-popover" data-title="Select Subset of Day" data-content="Include only data gathered during a certain time of day in your analysis, e.g. 20:00-22:00." popover="">Start Time</label>
+            <timepicker model="params.stime" placeholder="00:00"></timepicker>
+            <span class="help-block">24-hour format, e.g. 08:00</span>
+          </div>
+
+          <div class="form-group">
+            <label for="etime" class="suma-popover" data-title="Select Subset of Day" data-content="Include only data gathered during a certain time of day in your analysis, e.g. 20:00-22:00." popover="">End Time</label>
+            <timepicker model="params.etime" placeholder="23:59"></timepicker>
+            <span class="help-block">24-hour format, e.g. 08:00</span>
+          </div>
+          <div ng-show="params.init">
+            <input type="submit" id="submit" class="btn btn-success" value="{{loading ? 'Loading...' : 'Submit'}}">
+          </div>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-12" ng-show="loading">
+      <div class="loading"><img src="images/spinner.gif"></div>
+    </div>
+    <div class="col-xs-12" ng-show="success">
+      <h4>Totals by Session</h4>
+      <table class="table table-hover table-condensed">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Transaction Start</th>
+            <th>Transaction End</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="data in data">
+            <td>{{data.id}}</td>
+            <td>{{data.start}}</td>
+            <td>{{data.end}}</td>
+            <td>{{data.transStart}}</td>
+            <td>{{data.transEnd}}</td>
+            <td>{{data.total}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

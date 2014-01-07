@@ -1,0 +1,15 @@
+// All local styles should be written in an external .scss
+// file and imported here.
+
+$icon-font-path: "bower_components/bootstrap-sass/fonts/";
+
+@import "bower_components/bootstrap-sass/lib/bootstrap.scss";
+@import "non-responsive.scss";
+@import "bootstrap-theme.scss";
+
+@import "base.scss";
+@import "home.scss";
+@import "time-series.scss";
+@import "calendar.scss";
+@import "hourly.scss";
+@import "sessions.scss";
