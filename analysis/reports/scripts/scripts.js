@@ -5433,7 +5433,7 @@
         }
         return match;
       });
-      message = message + '\nhttp://errors.angularjs.org/1.2.4/' + (module ? module + '/' : '') + code;
+      message = message + '\nhttp://errors.angularjs.org/1.2.8-build.2087+sha.affcbad/' + (module ? module + '/' : '') + code;
       for (i = 2; i < arguments.length; i++) {
         message = message + (i == 2 ? '?' : '&') + 'p' + (i - 2) + '=' + encodeURIComponent(stringify(arguments[i]));
       }
@@ -5484,7 +5484,7 @@
     if (obj) {
       if (isFunction(obj)) {
         for (key in obj) {
-          if (key != 'prototype' && key != 'length' && key != 'name' && obj.hasOwnProperty(key)) {
+          if (key != 'prototype' && key != 'length' && key != 'name' && (!obj.hasOwnProperty || obj.hasOwnProperty(key))) {
             iterator.call(context, obj[key], key);
           }
         }
@@ -5583,31 +5583,31 @@
     };
   }
   function isUndefined(value) {
-    return typeof value == 'undefined';
+    return typeof value === 'undefined';
   }
   function isDefined(value) {
-    return typeof value != 'undefined';
+    return typeof value !== 'undefined';
   }
   function isObject(value) {
-    return value != null && typeof value == 'object';
+    return value != null && typeof value === 'object';
   }
   function isString(value) {
-    return typeof value == 'string';
+    return typeof value === 'string';
   }
   function isNumber(value) {
-    return typeof value == 'number';
+    return typeof value === 'number';
   }
   function isDate(value) {
-    return toString.apply(value) == '[object Date]';
+    return toString.call(value) === '[object Date]';
   }
   function isArray(value) {
-    return toString.apply(value) == '[object Array]';
+    return toString.call(value) === '[object Array]';
   }
   function isFunction(value) {
-    return typeof value == 'function';
+    return typeof value === 'function';
   }
   function isRegExp(value) {
-    return toString.apply(value) == '[object RegExp]';
+    return toString.call(value) === '[object RegExp]';
   }
   function isWindow(obj) {
     return obj && obj.document && obj.location && obj.alert && obj.setInterval;
@@ -5616,10 +5616,10 @@
     return obj && obj.$evalAsync && obj.$watch;
   }
   function isFile(obj) {
-    return toString.apply(obj) === '[object File]';
+    return toString.call(obj) === '[object File]';
   }
   function isBoolean(value) {
-    return typeof value == 'boolean';
+    return typeof value === 'boolean';
   }
   var trim = function () {
       if (!String.prototype.trim) {
@@ -5738,7 +5738,7 @@
   function shallowCopy(src, dst) {
     dst = dst || {};
     for (var key in src) {
-      if (src.hasOwnProperty(key) && key.substr(0, 2) !== '$$') {
+      if (src.hasOwnProperty(key) && key.charAt(0) !== '$' && key.charAt(1) !== '$') {
         dst[key] = src[key];
       }
     }
@@ -5832,7 +5832,9 @@
     return isString(json) ? JSON.parse(json) : json;
   }
   function toBoolean(value) {
-    if (value && value.length !== 0) {
+    if (typeof value === 'function') {
+      value = true;
+    } else if (value && value.length !== 0) {
       var v = lowercase('' + value);
       value = !(v == 'f' || v == '0' || v == 'false' || v == 'no' || v == 'n' || v == '[]');
     } else {
@@ -5843,7 +5845,7 @@
   function startingTag(element) {
     element = jqLite(element).clone();
     try {
-      element.html('');
+      element.empty();
     } catch (e) {
     }
     var TEXT_NODE = 3;
@@ -6131,11 +6133,11 @@
     });
   }
   var version = {
-      full: '1.2.4',
+      full: '1.2.8-build.2087+sha.affcbad',
       major: 1,
       minor: 2,
-      dot: 4,
-      codeName: 'wormhole-baster'
+      dot: 8,
+      codeName: 'interdimensional-cartography'
     };
   function publishExternalAPI(angular) {
     extend(angular, {
@@ -6215,7 +6217,7 @@
           required: requiredDirective,
           ngRequired: requiredDirective,
           ngValue: ngValueDirective
-        }).directive(ngAttributeAliasDirectives).directive(ngEventDirectives);
+        }).directive({ ngInclude: ngIncludeFillContentDirective }).directive(ngAttributeAliasDirectives).directive(ngEventDirectives);
         $provide.provider({
           $anchorScroll: $AnchorScrollProvider,
           $animate: $AnimateProvider,
@@ -6437,6 +6439,14 @@
       element = element.parent();
     }
   }
+  function jqLiteEmpty(element) {
+    for (var i = 0, childNodes = element.childNodes; i < childNodes.length; i++) {
+      jqLiteDealoc(childNodes[i]);
+    }
+    while (element.firstChild) {
+      element.removeChild(element.firstChild);
+    }
+  }
   var JQLitePrototype = JQLite.prototype = {
       ready: function (fn) {
         var fired = false;
@@ -6587,11 +6597,12 @@
         jqLiteDealoc(childNodes[i]);
       }
       element.innerHTML = value;
-    }
+    },
+    empty: jqLiteEmpty
   }, function (fn, name) {
     JQLite.prototype[name] = function (arg1, arg2) {
       var i, key;
-      if ((fn.length == 2 && (fn !== jqLiteHasClass && fn !== jqLiteController) ? arg1 : arg2) === undefined) {
+      if (fn !== jqLiteEmpty && (fn.length == 2 && (fn !== jqLiteHasClass && fn !== jqLiteController) ? arg1 : arg2) === undefined) {
         if (isObject(arg1)) {
           for (i = 0; i < this.length; i++) {
             if (fn === jqLiteData) {
@@ -6646,7 +6657,8 @@
       event.isDefaultPrevented = function () {
         return event.defaultPrevented || event.returnValue === false;
       };
-      forEach(events[type || event.type], function (fn) {
+      var eventHandlersCopy = shallowCopy(events[type || event.type] || []);
+      forEach(eventHandlersCopy, function (fn) {
         fn.call(element, event);
       });
       if (msie <= 8) {
@@ -6711,6 +6723,14 @@
       });
     },
     off: jqLiteOff,
+    one: function (element, type, fn) {
+      element = jqLite(element);
+      element.on(type, function onFn() {
+        element.off(type, fn);
+        element.off(type, onFn);
+      });
+      element.on(type, fn);
+    },
     replaceWith: function (element, replaceNode) {
       var index, parent = element.parentNode;
       jqLiteDealoc(element);
@@ -6998,6 +7018,11 @@
             path.unshift(serviceName);
             cache[serviceName] = INSTANTIATING;
             return cache[serviceName] = factory(serviceName);
+          } catch (err) {
+            if (cache[serviceName] === INSTANTIATING) {
+              delete cache[serviceName];
+            }
+            throw err;
           } finally {
             path.shift();
           }
@@ -7015,32 +7040,7 @@
         if (!fn.$inject) {
           fn = fn[length];
         }
-        switch (self ? -1 : args.length) {
-        case 0:
-          return fn();
-        case 1:
-          return fn(args[0]);
-        case 2:
-          return fn(args[0], args[1]);
-        case 3:
-          return fn(args[0], args[1], args[2]);
-        case 4:
-          return fn(args[0], args[1], args[2], args[3]);
-        case 5:
-          return fn(args[0], args[1], args[2], args[3], args[4]);
-        case 6:
-          return fn(args[0], args[1], args[2], args[3], args[4], args[5]);
-        case 7:
-          return fn(args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
-        case 8:
-          return fn(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
-        case 9:
-          return fn(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8]);
-        case 10:
-          return fn(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9]);
-        default:
-          return fn.apply(self, args);
-        }
+        return fn.apply(self, args);
       }
       function instantiate(Type, locals) {
         var Constructor = function () {
@@ -7113,6 +7113,12 @@
             throw $animateMinErr('notcsel', 'Expecting class selector starting with \'.\' got \'{0}\'.', name);
           this.$$selectors[name.substr(1)] = key;
           $provide.factory(key, factory);
+        };
+        this.classNameFilter = function (expression) {
+          if (arguments.length === 1) {
+            this.$$classNameFilter = expression instanceof RegExp ? expression : null;
+          }
+          return this.$$classNameFilter;
         };
         this.$get = [
           '$timeout',
@@ -7210,6 +7216,8 @@
     self.url = function (url, replace) {
       if (location !== window.location)
         location = window.location;
+      if (history !== window.history)
+        history = window.history;
       if (url) {
         if (lastBrowserUrl == url)
           return;
@@ -7259,7 +7267,7 @@
     };
     self.baseHref = function () {
       var href = baseElement.attr('href');
-      return href ? href.replace(/^https?\:\/\/[^\/]*/, '') : '';
+      return href ? href.replace(/^(https?\:)?\/\/[^\/]*/, '') : '';
     };
     var lastCookies = {};
     var lastCookieString = '';
@@ -7585,6 +7593,7 @@
             }
           });
           var compositeLinkFn = compileNodes($compileNodes, transcludeFn, $compileNodes, maxPriority, ignoreDirective, previousCompileContext);
+          safeAddClass($compileNodes, 'ng-scope');
           return function publicLinkFn(scope, cloneConnectFn, transcludeControllers) {
             assertArg(scope, 'scope');
             var $linkNode = cloneConnectFn ? JQLitePrototype.clone.call($compileNodes) : $compileNodes;
@@ -7592,12 +7601,11 @@
               $linkNode.data('$' + name + 'Controller', instance);
             });
             for (var i = 0, ii = $linkNode.length; i < ii; i++) {
-              var node = $linkNode[i];
-              if (node.nodeType == 1 || node.nodeType == 9) {
+              var node = $linkNode[i], nodeType = node.nodeType;
+              if (nodeType === 1 || nodeType === 9) {
                 $linkNode.eq(i).data('$scope', scope);
               }
             }
-            safeAddClass($linkNode, 'ng-scope');
             if (cloneConnectFn)
               cloneConnectFn($linkNode, scope);
             if (compositeLinkFn)
@@ -7612,23 +7620,25 @@
           }
         }
         function compileNodes(nodeList, transcludeFn, $rootElement, maxPriority, ignoreDirective, previousCompileContext) {
-          var linkFns = [], nodeLinkFn, childLinkFn, directives, attrs, linkFnFound;
+          var linkFns = [], attrs, directives, nodeLinkFn, childNodes, childLinkFn, linkFnFound;
           for (var i = 0; i < nodeList.length; i++) {
             attrs = new Attributes();
             directives = collectDirectives(nodeList[i], [], attrs, i === 0 ? maxPriority : undefined, ignoreDirective);
             nodeLinkFn = directives.length ? applyDirectivesToNode(directives, nodeList[i], attrs, transcludeFn, $rootElement, null, [], [], previousCompileContext) : null;
-            childLinkFn = nodeLinkFn && nodeLinkFn.terminal || !nodeList[i].childNodes || !nodeList[i].childNodes.length ? null : compileNodes(nodeList[i].childNodes, nodeLinkFn ? nodeLinkFn.transclude : transcludeFn);
-            linkFns.push(nodeLinkFn);
-            linkFns.push(childLinkFn);
+            if (nodeLinkFn && nodeLinkFn.scope) {
+              safeAddClass(jqLite(nodeList[i]), 'ng-scope');
+            }
+            childLinkFn = nodeLinkFn && nodeLinkFn.terminal || !(childNodes = nodeList[i].childNodes) || !childNodes.length ? null : compileNodes(childNodes, nodeLinkFn ? nodeLinkFn.transclude : transcludeFn);
+            linkFns.push(nodeLinkFn, childLinkFn);
             linkFnFound = linkFnFound || nodeLinkFn || childLinkFn;
             previousCompileContext = null;
           }
           return linkFnFound ? compositeLinkFn : null;
           function compositeLinkFn(scope, nodeList, $rootElement, boundTranscludeFn) {
             var nodeLinkFn, childLinkFn, node, $node, childScope, childTranscludeFn, i, ii, n;
-            var stableNodeList = [];
-            for (i = 0, ii = nodeList.length; i < ii; i++) {
-              stableNodeList.push(nodeList[i]);
+            var nodeListLength = nodeList.length, stableNodeList = new Array(nodeListLength);
+            for (i = 0; i < nodeListLength; i++) {
+              stableNodeList[i] = nodeList[i];
             }
             for (i = 0, n = 0, ii = linkFns.length; i < ii; n++) {
               node = stableNodeList[n];
@@ -7639,7 +7649,6 @@
                 if (nodeLinkFn.scope) {
                   childScope = scope.$new();
                   $node.data('$scope', childScope);
-                  safeAddClass($node, 'ng-scope');
                 } else {
                   childScope = scope;
                 }
@@ -7693,7 +7702,7 @@
                 }
                 nName = directiveNormalize(name.toLowerCase());
                 attrsMap[nName] = name;
-                attrs[nName] = value = trim(msie && name == 'href' ? decodeURIComponent(node.getAttribute(name, 2)) : attr.value);
+                attrs[nName] = value = trim(attr.value);
                 if (getBooleanAttrName(node, nName)) {
                   attrs[nName] = true;
                 }
@@ -7806,7 +7815,7 @@
                 childTranscludeFn = compile($template, transcludeFn, terminalPriority, replaceDirective && replaceDirective.name, { nonTlbTranscludeDirective: nonTlbTranscludeDirective });
               } else {
                 $template = jqLite(jqLiteClone(compileNode)).contents();
-                $compileNode.html('');
+                $compileNode.empty();
                 childTranscludeFn = compile($template, transcludeFn);
               }
             }
@@ -7935,7 +7944,7 @@
               }
               safeAddClass($linkNode, 'ng-isolate-scope');
               forEach(newIsolateScopeDirective.scope, function (definition, scopeName) {
-                var match = definition.match(LOCAL_REGEXP) || [], attrName = match[3] || scopeName, optional = match[2] == '?', mode = match[1], lastValue, parentGet, parentSet;
+                var match = definition.match(LOCAL_REGEXP) || [], attrName = match[3] || scopeName, optional = match[2] == '?', mode = match[1], lastValue, parentGet, parentSet, compare;
                 isolateScope.$$isolateBindings[scopeName] = mode + attrName;
                 switch (mode) {
                 case '@':
@@ -7952,6 +7961,13 @@
                     return;
                   }
                   parentGet = $parse(attrs[attrName]);
+                  if (parentGet.literal) {
+                    compare = equals;
+                  } else {
+                    compare = function (a, b) {
+                      return a === b;
+                    };
+                  }
                   parentSet = parentGet.assign || function () {
                     lastValue = isolateScope[scopeName] = parentGet(scope);
                     throw $compileMinErr('nonassign', 'Expression \'{0}\' used with directive \'{1}\' is non-assignable!', attrs[attrName], newIsolateScopeDirective.name);
@@ -7959,15 +7975,15 @@
                   lastValue = isolateScope[scopeName] = parentGet(scope);
                   isolateScope.$watch(function parentValueWatch() {
                     var parentValue = parentGet(scope);
-                    if (parentValue !== isolateScope[scopeName]) {
-                      if (parentValue !== lastValue) {
+                    if (!compare(parentValue, isolateScope[scopeName])) {
+                      if (!compare(parentValue, lastValue)) {
                         isolateScope[scopeName] = parentValue;
                       } else {
                         parentSet(scope, parentValue = isolateScope[scopeName]);
                       }
                     }
                     return lastValue = parentValue;
-                  });
+                  }, null, parentGet.literal);
                   break;
                 case '&':
                   parentGet = $parse(attrs[attrName]);
@@ -8097,7 +8113,7 @@
               replace: null,
               $$originalDirective: origAsyncDirective
             }), templateUrl = isFunction(origAsyncDirective.templateUrl) ? origAsyncDirective.templateUrl($compileNode, tAttrs) : origAsyncDirective.templateUrl;
-          $compileNode.html('');
+          $compileNode.empty();
           $http.get($sce.getTrustedResourceUrl(templateUrl), { cache: $templateCache }).success(function (content) {
             var compileNode, tempTemplateAttrs, $template, childBoundTranscludeFn;
             content = denormalizeTemplate(content);
@@ -8628,32 +8644,20 @@
       }
     ];
   }
-  var XHR = window.XMLHttpRequest || function () {
-      try {
-        return new ActiveXObject('Msxml2.XMLHTTP.6.0');
-      } catch (e1) {
-      }
-      try {
-        return new ActiveXObject('Msxml2.XMLHTTP.3.0');
-      } catch (e2) {
-      }
-      try {
-        return new ActiveXObject('Msxml2.XMLHTTP');
-      } catch (e3) {
-      }
-      throw minErr('$httpBackend')('noxhr', 'This browser does not support XMLHttpRequest.');
-    };
+  function createXhr(method) {
+    return msie <= 8 && lowercase(method) === 'patch' ? new ActiveXObject('Microsoft.XMLHTTP') : new window.XMLHttpRequest();
+  }
   function $HttpBackendProvider() {
     this.$get = [
       '$browser',
       '$window',
       '$document',
       function ($browser, $window, $document) {
-        return createHttpBackend($browser, XHR, $browser.defer, $window.angular.callbacks, $document[0]);
+        return createHttpBackend($browser, createXhr, $browser.defer, $window.angular.callbacks, $document[0]);
       }
     ];
   }
-  function createHttpBackend($browser, XHR, $browserDefer, callbacks, rawDocument) {
+  function createHttpBackend($browser, createXhr, $browserDefer, callbacks, rawDocument) {
     var ABORTED = -1;
     return function (method, url, post, callback, headers, timeout, withCredentials, responseType) {
       var status;
@@ -8673,7 +8677,7 @@
             delete callbacks[callbackId];
           });
       } else {
-        var xhr = new XHR();
+        var xhr = createXhr(method);
         xhr.open(method, url, true);
         forEach(headers, function (value, key) {
           if (isDefined(value)) {
@@ -8681,7 +8685,7 @@
           }
         });
         xhr.onreadystatechange = function () {
-          if (xhr.readyState == 4) {
+          if (xhr && xhr.readyState == 4) {
             var responseHeaders = null, response = null;
             if (status !== ABORTED) {
               responseHeaders = xhr.getAllResponseHeaders();
@@ -9168,6 +9172,9 @@
               return;
           }
           var absHref = elm.prop('href');
+          if (isObject(absHref) && absHref.toString() === '[object SVGAnimatedString]') {
+            absHref = urlResolve(absHref.animVal).href;
+          }
           var rewrittenUrl = $location.$$rewrite(absHref);
           if (absHref && !elm.attr('target') && rewrittenUrl && !event.isDefaultPrevented()) {
             event.preventDefault();
@@ -9183,14 +9190,15 @@
         }
         $browser.onUrlChange(function (newUrl) {
           if ($location.absUrl() != newUrl) {
-            if ($rootScope.$broadcast('$locationChangeStart', newUrl, $location.absUrl()).defaultPrevented) {
-              $browser.url($location.absUrl());
-              return;
-            }
             $rootScope.$evalAsync(function () {
               var oldUrl = $location.absUrl();
               $location.$$parse(newUrl);
-              afterLocationChange(oldUrl);
+              if ($rootScope.$broadcast('$locationChangeStart', newUrl, oldUrl).defaultPrevented) {
+                $location.$$parse(oldUrl);
+                $browser.url(oldUrl);
+              } else {
+                afterLocationChange(oldUrl);
+              }
             });
             if (!$rootScope.$$phase)
               $rootScope.$digest();
@@ -9259,8 +9267,12 @@
           return arg;
         }
         function consoleLog(type) {
-          var console = $window.console || {}, logFn = console[type] || console.log || noop;
-          if (logFn.apply) {
+          var console = $window.console || {}, logFn = console[type] || console.log || noop, hasApply = false;
+          try {
+            hasApply = !!logFn.apply;
+          } catch (e) {
+          }
+          if (hasApply) {
             return function () {
               var args = [];
               forEach(arguments, function (arg) {
@@ -10049,25 +10061,33 @@
     ensureSafeMemberName(key4, fullExp);
     return !options.unwrapPromises ? function cspSafeGetter(scope, locals) {
       var pathVal = locals && locals.hasOwnProperty(key0) ? locals : scope;
-      if (pathVal === null || pathVal === undefined)
+      if (pathVal == null)
         return pathVal;
       pathVal = pathVal[key0];
-      if (!key1 || pathVal === null || pathVal === undefined)
+      if (!key1)
         return pathVal;
+      if (pathVal == null)
+        return undefined;
       pathVal = pathVal[key1];
-      if (!key2 || pathVal === null || pathVal === undefined)
+      if (!key2)
         return pathVal;
+      if (pathVal == null)
+        return undefined;
       pathVal = pathVal[key2];
-      if (!key3 || pathVal === null || pathVal === undefined)
+      if (!key3)
         return pathVal;
+      if (pathVal == null)
+        return undefined;
       pathVal = pathVal[key3];
-      if (!key4 || pathVal === null || pathVal === undefined)
+      if (!key4)
         return pathVal;
+      if (pathVal == null)
+        return undefined;
       pathVal = pathVal[key4];
       return pathVal;
     } : function cspSafePromiseEnabledGetter(scope, locals) {
       var pathVal = locals && locals.hasOwnProperty(key0) ? locals : scope, promise;
-      if (pathVal === null || pathVal === undefined)
+      if (pathVal == null)
         return pathVal;
       pathVal = pathVal[key0];
       if (pathVal && pathVal.then) {
@@ -10081,8 +10101,10 @@
         }
         pathVal = pathVal.$$v;
       }
-      if (!key1 || pathVal === null || pathVal === undefined)
+      if (!key1)
         return pathVal;
+      if (pathVal == null)
+        return undefined;
       pathVal = pathVal[key1];
       if (pathVal && pathVal.then) {
         promiseWarning(fullExp);
@@ -10095,8 +10117,10 @@
         }
         pathVal = pathVal.$$v;
       }
-      if (!key2 || pathVal === null || pathVal === undefined)
+      if (!key2)
         return pathVal;
+      if (pathVal == null)
+        return undefined;
       pathVal = pathVal[key2];
       if (pathVal && pathVal.then) {
         promiseWarning(fullExp);
@@ -10109,8 +10133,10 @@
         }
         pathVal = pathVal.$$v;
       }
-      if (!key3 || pathVal === null || pathVal === undefined)
+      if (!key3)
         return pathVal;
+      if (pathVal == null)
+        return undefined;
       pathVal = pathVal[key3];
       if (pathVal && pathVal.then) {
         promiseWarning(fullExp);
@@ -10123,8 +10149,10 @@
         }
         pathVal = pathVal.$$v;
       }
-      if (!key4 || pathVal === null || pathVal === undefined)
+      if (!key4)
         return pathVal;
+      if (pathVal == null)
+        return undefined;
       pathVal = pathVal[key4];
       if (pathVal && pathVal.then) {
         promiseWarning(fullExp);
@@ -10140,12 +10168,34 @@
       return pathVal;
     };
   }
+  function simpleGetterFn1(key0, fullExp) {
+    ensureSafeMemberName(key0, fullExp);
+    return function simpleGetterFn1(scope, locals) {
+      if (scope == null)
+        return undefined;
+      return (locals && locals.hasOwnProperty(key0) ? locals : scope)[key0];
+    };
+  }
+  function simpleGetterFn2(key0, key1, fullExp) {
+    ensureSafeMemberName(key0, fullExp);
+    ensureSafeMemberName(key1, fullExp);
+    return function simpleGetterFn2(scope, locals) {
+      if (scope == null)
+        return undefined;
+      scope = (locals && locals.hasOwnProperty(key0) ? locals : scope)[key0];
+      return scope == null ? undefined : scope[key1];
+    };
+  }
   function getterFn(path, options, fullExp) {
     if (getterFnCache.hasOwnProperty(path)) {
       return getterFnCache[path];
     }
     var pathKeys = path.split('.'), pathKeysLength = pathKeys.length, fn;
-    if (options.csp) {
+    if (!options.unwrapPromises && pathKeysLength === 1) {
+      fn = simpleGetterFn1(pathKeys[0], fullExp);
+    } else if (!options.unwrapPromises && pathKeysLength === 2) {
+      fn = simpleGetterFn2(pathKeys[0], pathKeys[1], fullExp);
+    } else if (options.csp) {
       if (pathKeysLength < 6) {
         fn = cspSafeGetterFn(pathKeys[0], pathKeys[1], pathKeys[2], pathKeys[3], pathKeys[4], fullExp, options);
       } else {
@@ -10160,19 +10210,17 @@
         };
       }
     } else {
-      var code = 'var l, fn, p;\n';
+      var code = 'var p;\n';
       forEach(pathKeys, function (key, index) {
         ensureSafeMemberName(key, fullExp);
-        code += 'if(s === null || s === undefined) return s;\n' + 'l=s;\n' + 's=' + (index ? 's' : '((k&&k.hasOwnProperty("' + key + '"))?k:s)') + '["' + key + '"]' + ';\n' + (options.unwrapPromises ? 'if (s && s.then) {\n' + ' pw("' + fullExp.replace(/(["\r\n])/g, '\\$1') + '");\n' + ' if (!("$$v" in s)) {\n' + ' p=s;\n' + ' p.$$v = undefined;\n' + ' p.then(function(v) {p.$$v=v;});\n' + '}\n' + ' s=s.$$v\n' + '}\n' : '');
+        code += 'if(s == null) return undefined;\n' + 's=' + (index ? 's' : '((k&&k.hasOwnProperty("' + key + '"))?k:s)') + '["' + key + '"]' + ';\n' + (options.unwrapPromises ? 'if (s && s.then) {\n' + ' pw("' + fullExp.replace(/(["\r\n])/g, '\\$1') + '");\n' + ' if (!("$$v" in s)) {\n' + ' p=s;\n' + ' p.$$v = undefined;\n' + ' p.then(function(v) {p.$$v=v;});\n' + '}\n' + ' s=s.$$v\n' + '}\n' : '');
       });
       code += 'return s;';
       var evaledFnGetter = new Function('s', 'k', 'pw', code);
-      evaledFnGetter.toString = function () {
-        return code;
-      };
-      fn = function (scope, locals) {
+      evaledFnGetter.toString = valueFn(code);
+      fn = options.unwrapPromises ? function (scope, locals) {
         return evaledFnGetter(scope, locals, promiseWarning);
-      };
+      } : evaledFnGetter;
     }
     if (path !== 'hasOwnProperty') {
       getterFnCache[path] = fn;
@@ -10493,6 +10541,7 @@
           this.$$asyncQueue = [];
           this.$$postDigestQueue = [];
           this.$$listeners = {};
+          this.$$listenerCount = {};
           this.$$isolateBindings = {};
         }
         Scope.prototype = {
@@ -10513,6 +10562,7 @@
             }
             child['this'] = child;
             child.$$listeners = {};
+            child.$$listenerCount = {};
             child.$parent = this;
             child.$$watchers = child.$$nextSibling = child.$$childHead = child.$$childTail = null;
             child.$$prevSibling = this.$$childTail;
@@ -10552,6 +10602,7 @@
             array.unshift(watcher);
             return function () {
               arrayRemove(array, watcher);
+              lastDirtyWatch = null;
             };
           },
           $watchCollection: function (obj, listener) {
@@ -10704,6 +10755,7 @@
             this.$$destroyed = true;
             if (this === $rootScope)
               return;
+            forEach(this.$$listenerCount, bind(null, decrementListenerCount, this));
             if (parent.$$childHead == this)
               parent.$$childHead = this.$$nextSibling;
             if (parent.$$childTail == this)
@@ -10755,8 +10807,17 @@
               this.$$listeners[name] = namedListeners = [];
             }
             namedListeners.push(listener);
+            var current = this;
+            do {
+              if (!current.$$listenerCount[name]) {
+                current.$$listenerCount[name] = 0;
+              }
+              current.$$listenerCount[name]++;
+            } while (current = current.$parent);
+            var self = this;
             return function () {
               namedListeners[indexOf(namedListeners, listener)] = null;
+              decrementListenerCount(self, 1, name);
             };
           },
           $emit: function (name, args) {
@@ -10802,8 +10863,7 @@
                 },
                 defaultPrevented: false
               }, listenerArgs = concat([event], arguments, 1), listeners, i, length;
-            do {
-              current = next;
+            while (current = next) {
               event.currentScope = current;
               listeners = current.$$listeners[name] || [];
               for (i = 0, length = listeners.length; i < length; i++) {
@@ -10819,12 +10879,12 @@
                   $exceptionHandler(e);
                 }
               }
-              if (!(next = current.$$childHead || current !== target && current.$$nextSibling)) {
+              if (!(next = current.$$listenerCount[name] && current.$$childHead || current !== target && current.$$nextSibling)) {
                 while (current !== target && !(next = current.$$nextSibling)) {
                   current = current.$parent;
                 }
               }
-            } while (current = next);
+            }
             return event;
           }
         };
@@ -10843,6 +10903,14 @@
           var fn = $parse(exp);
           assertArgFn(fn, name);
           return fn;
+        }
+        function decrementListenerCount(current, count, name) {
+          do {
+            current.$$listenerCount[name] -= count;
+            if (current.$$listenerCount[name] === 0) {
+              delete current.$$listenerCount[name];
+            }
+          } while (current = current.$parent);
         }
         function initWatchVal() {
         }
@@ -11130,6 +11198,7 @@
           vendorPrefix: vendorPrefix,
           transitions: transitions,
           animations: animations,
+          android: android,
           msie: msie,
           msieDocumentMode: documentMode
         };
@@ -11299,26 +11368,13 @@
         expression = { $: expression };
       case 'object':
         for (var key in expression) {
-          if (key == '$') {
-            (function () {
-              if (!expression[key])
-                return;
-              var path = key;
-              predicates.push(function (value) {
-                return search(value, expression[path]);
-              });
-            }());
-          } else {
-            (function () {
-              if (typeof expression[key] == 'undefined') {
-                return;
-              }
-              var path = key;
-              predicates.push(function (value) {
-                return search(getter(value, path), expression[path]);
-              });
-            }());
-          }
+          (function (path) {
+            if (typeof expression[path] == 'undefined')
+              return;
+            predicates.push(function (value) {
+              return search(path == '$' ? value : getter(value, path), expression[path]);
+            });
+          }(key));
         }
         break;
       case 'function':
@@ -11640,13 +11696,15 @@
           }
           element.append(document.createComment('IE fix'));
         }
-        return function (scope, element) {
-          element.on('click', function (event) {
-            if (!element.attr('href')) {
-              event.preventDefault();
-            }
-          });
-        };
+        if (!attr.href && !attr.name) {
+          return function (scope, element) {
+            element.on('click', function (event) {
+              if (!element.attr('href')) {
+                event.preventDefault();
+              }
+            });
+          };
+        }
       }
     });
   var ngAttributeAliasDirectives = {};
@@ -11840,14 +11898,20 @@
       'submit': noop,
       'reset': noop
     };
+  function validate(ctrl, validatorName, validity, value) {
+    ctrl.$setValidity(validatorName, validity);
+    return validity ? value : undefined;
+  }
   function textInputType(scope, element, attr, ctrl, $sniffer, $browser) {
-    var composing = false;
-    element.on('compositionstart', function () {
-      composing = true;
-    });
-    element.on('compositionend', function () {
-      composing = false;
-    });
+    if (!$sniffer.android) {
+      var composing = false;
+      element.on('compositionstart', function (data) {
+        composing = true;
+      });
+      element.on('compositionend', function () {
+        composing = false;
+      });
+    }
     var listener = function () {
       if (composing)
         return;
@@ -11856,9 +11920,13 @@
         value = trim(value);
       }
       if (ctrl.$viewValue !== value) {
-        scope.$apply(function () {
+        if (scope.$$phase) {
           ctrl.$setViewValue(value);
-        });
+        } else {
+          scope.$apply(function () {
+            ctrl.$setViewValue(value);
+          });
+        }
       }
     };
     if ($sniffer.hasEvent('input')) {
@@ -11888,21 +11956,15 @@
       element.val(ctrl.$isEmpty(ctrl.$viewValue) ? '' : ctrl.$viewValue);
     };
     var pattern = attr.ngPattern, patternValidator, match;
-    var validate = function (regexp, value) {
-      if (ctrl.$isEmpty(value) || regexp.test(value)) {
-        ctrl.$setValidity('pattern', true);
-        return value;
-      } else {
-        ctrl.$setValidity('pattern', false);
-        return undefined;
-      }
-    };
     if (pattern) {
+      var validateRegex = function (regexp, value) {
+        return validate(ctrl, 'pattern', ctrl.$isEmpty(value) || regexp.test(value), value);
+      };
       match = pattern.match(/^\/(.*)\/([gim]*)$/);
       if (match) {
         pattern = new RegExp(match[1], match[2]);
         patternValidator = function (value) {
-          return validate(pattern, value);
+          return validateRegex(pattern, value);
         };
       } else {
         patternValidator = function (value) {
@@ -11910,7 +11972,7 @@
           if (!patternObj || !patternObj.test) {
             throw minErr('ngPattern')('noregexp', 'Expected {0} to be a RegExp but was {1}. Element: {2}', pattern, patternObj, startingTag(element));
           }
-          return validate(patternObj, value);
+          return validateRegex(patternObj, value);
         };
       }
       ctrl.$formatters.push(patternValidator);
@@ -11919,13 +11981,7 @@
     if (attr.ngMinlength) {
       var minlength = int(attr.ngMinlength);
       var minLengthValidator = function (value) {
-        if (!ctrl.$isEmpty(value) && value.length < minlength) {
-          ctrl.$setValidity('minlength', false);
-          return undefined;
-        } else {
-          ctrl.$setValidity('minlength', true);
-          return value;
-        }
+        return validate(ctrl, 'minlength', ctrl.$isEmpty(value) || value.length >= minlength, value);
       };
       ctrl.$parsers.push(minLengthValidator);
       ctrl.$formatters.push(minLengthValidator);
@@ -11933,13 +11989,7 @@
     if (attr.ngMaxlength) {
       var maxlength = int(attr.ngMaxlength);
       var maxLengthValidator = function (value) {
-        if (!ctrl.$isEmpty(value) && value.length > maxlength) {
-          ctrl.$setValidity('maxlength', false);
-          return undefined;
-        } else {
-          ctrl.$setValidity('maxlength', true);
-          return value;
-        }
+        return validate(ctrl, 'maxlength', ctrl.$isEmpty(value) || value.length <= maxlength, value);
       };
       ctrl.$parsers.push(maxLengthValidator);
       ctrl.$formatters.push(maxLengthValidator);
@@ -11963,13 +12013,7 @@
     if (attr.min) {
       var minValidator = function (value) {
         var min = parseFloat(attr.min);
-        if (!ctrl.$isEmpty(value) && value < min) {
-          ctrl.$setValidity('min', false);
-          return undefined;
-        } else {
-          ctrl.$setValidity('min', true);
-          return value;
-        }
+        return validate(ctrl, 'min', ctrl.$isEmpty(value) || value >= min, value);
       };
       ctrl.$parsers.push(minValidator);
       ctrl.$formatters.push(minValidator);
@@ -11977,37 +12021,19 @@
     if (attr.max) {
       var maxValidator = function (value) {
         var max = parseFloat(attr.max);
-        if (!ctrl.$isEmpty(value) && value > max) {
-          ctrl.$setValidity('max', false);
-          return undefined;
-        } else {
-          ctrl.$setValidity('max', true);
-          return value;
-        }
+        return validate(ctrl, 'max', ctrl.$isEmpty(value) || value <= max, value);
       };
       ctrl.$parsers.push(maxValidator);
       ctrl.$formatters.push(maxValidator);
     }
     ctrl.$formatters.push(function (value) {
-      if (ctrl.$isEmpty(value) || isNumber(value)) {
-        ctrl.$setValidity('number', true);
-        return value;
-      } else {
-        ctrl.$setValidity('number', false);
-        return undefined;
-      }
+      return validate(ctrl, 'number', ctrl.$isEmpty(value) || isNumber(value), value);
     });
   }
   function urlInputType(scope, element, attr, ctrl, $sniffer, $browser) {
     textInputType(scope, element, attr, ctrl, $sniffer, $browser);
     var urlValidator = function (value) {
-      if (ctrl.$isEmpty(value) || URL_REGEXP.test(value)) {
-        ctrl.$setValidity('url', true);
-        return value;
-      } else {
-        ctrl.$setValidity('url', false);
-        return undefined;
-      }
+      return validate(ctrl, 'url', ctrl.$isEmpty(value) || URL_REGEXP.test(value), value);
     };
     ctrl.$formatters.push(urlValidator);
     ctrl.$parsers.push(urlValidator);
@@ -12015,13 +12041,7 @@
   function emailInputType(scope, element, attr, ctrl, $sniffer, $browser) {
     textInputType(scope, element, attr, ctrl, $sniffer, $browser);
     var emailValidator = function (value) {
-      if (ctrl.$isEmpty(value) || EMAIL_REGEXP.test(value)) {
-        ctrl.$setValidity('email', true);
-        return value;
-      } else {
-        ctrl.$setValidity('email', false);
-        return undefined;
-      }
+      return validate(ctrl, 'email', ctrl.$isEmpty(value) || EMAIL_REGEXP.test(value), value);
     };
     ctrl.$formatters.push(emailValidator);
     ctrl.$parsers.push(emailValidator);
@@ -12439,15 +12459,15 @@
       '$http',
       '$templateCache',
       '$anchorScroll',
-      '$compile',
       '$animate',
       '$sce',
-      function ($http, $templateCache, $anchorScroll, $compile, $animate, $sce) {
+      function ($http, $templateCache, $anchorScroll, $animate, $sce) {
         return {
           restrict: 'ECA',
           priority: 400,
           terminal: true,
           transclude: 'element',
+          controller: angular.noop,
           compile: function (element, attr) {
             var srcExp = attr.ngInclude || attr.src, onloadExp = attr.onload || '', autoScrollExp = attr.autoscroll;
             return function (scope, $element, $attr, ctrl, $transclude) {
@@ -12474,13 +12494,13 @@
                     if (thisChangeId !== changeCounter)
                       return;
                     var newScope = scope.$new();
-                    var clone = $transclude(newScope, noop);
-                    cleanupLastIncludeContent();
+                    ctrl.template = response;
+                    var clone = $transclude(newScope, function (clone) {
+                        cleanupLastIncludeContent();
+                        $animate.enter(clone, null, $element, afterAnimation);
+                      });
                     currentScope = newScope;
                     currentElement = clone;
-                    currentElement.html(response);
-                    $animate.enter(currentElement, null, $element, afterAnimation);
-                    $compile(currentElement.contents())(currentScope);
                     currentScope.$emit('$includeContentLoaded');
                     scope.$eval(onloadExp);
                   }).error(function () {
@@ -12490,9 +12510,24 @@
                   scope.$emit('$includeContentRequested');
                 } else {
                   cleanupLastIncludeContent();
+                  ctrl.template = null;
                 }
               });
             };
+          }
+        };
+      }
+    ];
+  var ngIncludeFillContentDirective = [
+      '$compile',
+      function ($compile) {
+        return {
+          restrict: 'ECA',
+          priority: -400,
+          require: 'ngInclude',
+          link: function (scope, $element, $attr, ctrl) {
+            $element.html(ctrl.template);
+            $compile($element.contents())(scope);
           }
         };
       }
@@ -12557,13 +12592,13 @@
           $$tlb: true,
           link: function ($scope, $element, $attr, ctrl, $transclude) {
             var expression = $attr.ngRepeat;
-            var match = expression.match(/^\s*(.+)\s+in\s+(.*?)\s*(\s+track\s+by\s+(.+)\s*)?$/), trackByExp, trackByExpGetter, trackByIdExpFn, trackByIdArrayFn, trackByIdObjFn, lhs, rhs, valueIdentifier, keyIdentifier, hashFnLocals = { $id: hashKey };
+            var match = expression.match(/^\s*([\s\S]+?)\s+in\s+([\s\S]+?)(?:\s+track\s+by\s+([\s\S]+?))?\s*$/), trackByExp, trackByExpGetter, trackByIdExpFn, trackByIdArrayFn, trackByIdObjFn, lhs, rhs, valueIdentifier, keyIdentifier, hashFnLocals = { $id: hashKey };
             if (!match) {
               throw ngRepeatMinErr('iexp', 'Expected expression in form of \'_item_ in _collection_[ track by _id_]\' but got \'{0}\'.', expression);
             }
             lhs = match[1];
             rhs = match[2];
-            trackByExp = match[4];
+            trackByExp = match[3];
             if (trackByExp) {
               trackByExpGetter = $parse(trackByExp);
               trackByIdExpFn = function (key, value, index) {
@@ -12795,7 +12830,7 @@
       ],
       link: function ($scope, $element, $attrs, controller) {
         controller.$transclude(function (clone) {
-          $element.html('');
+          $element.empty();
           $element.append(clone);
         });
       }
@@ -12883,16 +12918,10 @@
               }
             }
             selectCtrl.init(ngModelCtrl, nullOption, unknownOption);
-            if (multiple && (attr.required || attr.ngRequired)) {
-              var requiredValidator = function (value) {
-                ngModelCtrl.$setValidity('required', !attr.required || value && value.length);
-                return value;
+            if (multiple) {
+              ngModelCtrl.$isEmpty = function (value) {
+                return !value || value.length === 0;
               };
-              ngModelCtrl.$parsers.push(requiredValidator);
-              ngModelCtrl.$formatters.unshift(requiredValidator);
-              attr.$observe('required', function () {
-                requiredValidator(ngModelCtrl.$viewValue);
-              });
             }
             if (optionsExp)
               setupAsOptions(scope, element, ngModelCtrl);
@@ -12965,7 +12994,7 @@
                 nullOption.removeClass('ng-scope');
                 nullOption.remove();
               }
-              selectElement.html('');
+              selectElement.empty();
               selectElement.on('change', function () {
                 scope.$apply(function () {
                   var optionGroup, collection = valuesFn(scope) || [], locals = {}, key, value, optionElement, index, groupIndex, length, groupLength, trackIndex;
@@ -13199,7 +13228,7 @@
     angularInit(document, bootstrap);
   });
 }(window, document));
-!angular.$$csp() && angular.element(document).find('head').prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide{display:none !important;}ng\\:form{display:block;}.ng-animate-start{border-spacing:1px 1px;-ms-zoom:1.0001;}.ng-animate-active{border-spacing:0px 0px;-ms-zoom:1;}</style>');
+!angular.$$csp() && angular.element(document).find('head').prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide{display:none !important;}ng\\:form{display:block;}</style>');
 (function (window, angular, undefined) {
   'use strict';
   var ngRouteModule = angular.module('ngRoute', ['ng']).provider('$route', $RouteProvider);
@@ -13376,14 +13405,13 @@
     };
   }
   ngRouteModule.directive('ngView', ngViewFactory);
+  ngRouteModule.directive('ngView', ngViewFillContentFactory);
   ngViewFactory.$inject = [
     '$route',
     '$anchorScroll',
-    '$compile',
-    '$controller',
     '$animate'
   ];
-  function ngViewFactory($route, $anchorScroll, $compile, $controller, $animate) {
+  function ngViewFactory($route, $anchorScroll, $animate) {
     return {
       restrict: 'ECA',
       terminal: true,
@@ -13405,35 +13433,51 @@
         }
         function update() {
           var locals = $route.current && $route.current.locals, template = locals && locals.$template;
-          if (template) {
+          if (angular.isDefined(template)) {
             var newScope = scope.$new();
-            var clone = $transclude(newScope, angular.noop);
-            clone.html(template);
-            $animate.enter(clone, null, currentElement || $element, function onNgViewEnter() {
-              if (angular.isDefined(autoScrollExp) && (!autoScrollExp || scope.$eval(autoScrollExp))) {
-                $anchorScroll();
-              }
-            });
-            cleanupLastView();
-            var link = $compile(clone.contents()), current = $route.current;
-            currentScope = current.scope = newScope;
+            var current = $route.current;
+            var clone = $transclude(newScope, function (clone) {
+                $animate.enter(clone, null, currentElement || $element, function onNgViewEnter() {
+                  if (angular.isDefined(autoScrollExp) && (!autoScrollExp || scope.$eval(autoScrollExp))) {
+                    $anchorScroll();
+                  }
+                });
+                cleanupLastView();
+              });
             currentElement = clone;
-            if (current.controller) {
-              locals.$scope = currentScope;
-              var controller = $controller(current.controller, locals);
-              if (current.controllerAs) {
-                currentScope[current.controllerAs] = controller;
-              }
-              clone.data('$ngControllerController', controller);
-              clone.children().data('$ngControllerController', controller);
-            }
-            link(currentScope);
+            currentScope = current.scope = newScope;
             currentScope.$emit('$viewContentLoaded');
             currentScope.$eval(onloadExp);
           } else {
             cleanupLastView();
           }
         }
+      }
+    };
+  }
+  ngViewFillContentFactory.$inject = [
+    '$compile',
+    '$controller',
+    '$route'
+  ];
+  function ngViewFillContentFactory($compile, $controller, $route) {
+    return {
+      restrict: 'ECA',
+      priority: -400,
+      link: function (scope, $element) {
+        var current = $route.current, locals = current.locals;
+        $element.html(locals.$template);
+        var link = $compile($element.contents());
+        if (current.controller) {
+          locals.$scope = scope;
+          var controller = $controller(current.controller, locals);
+          if (current.controllerAs) {
+            scope[current.controllerAs] = controller;
+          }
+          $element.data('$ngControllerController', controller);
+          $element.children().data('$ngControllerController', controller);
+        }
+        link(scope);
       }
     };
   }
@@ -16278,7 +16322,7 @@
   }
 }.call(this));
 d3 = function () {
-  var d3 = { version: '3.3.11' };
+  var d3 = { version: '3.3.13' };
   if (!Date.now)
     Date.now = function () {
       return +new Date();
@@ -16984,7 +17028,7 @@ d3 = function () {
   d3_selectionPrototype.classed = function (name, value) {
     if (arguments.length < 2) {
       if (typeof name === 'string') {
-        var node = this.node(), n = (name = name.trim().split(/^|\s+/g)).length, i = -1;
+        var node = this.node(), n = (name = d3_selection_classes(name)).length, i = -1;
         if (value = node.classList) {
           while (++i < n)
             if (!value.contains(name[i]))
@@ -17006,8 +17050,11 @@ d3 = function () {
   function d3_selection_classedRe(name) {
     return new RegExp('(?:^|\\s+)' + d3.requote(name) + '(?:\\s+|$)', 'g');
   }
+  function d3_selection_classes(name) {
+    return name.trim().split(/^|\s+/);
+  }
   function d3_selection_classed(name, value) {
-    name = name.trim().split(/\s+/).map(d3_selection_classedName);
+    name = d3_selection_classes(name).map(d3_selection_classedName);
     var n = name.length;
     function classedConstant() {
       var i = -1;
@@ -21211,20 +21258,43 @@ d3 = function () {
     return d3_geo_projection(d3_geo_stereographic);
   }).raw = d3_geo_stereographic;
   function d3_geo_transverseMercator(λ, φ) {
-    var B = Math.cos(φ) * Math.sin(λ);
     return [
-      Math.log((1 + B) / (1 - B)) / 2,
-      Math.atan2(Math.tan(φ), Math.cos(λ))
+      Math.log(Math.tan(π / 4 + φ / 2)),
+      -λ
     ];
   }
   d3_geo_transverseMercator.invert = function (x, y) {
     return [
-      Math.atan2(d3_sinh(x), Math.cos(y)),
-      d3_asin(Math.sin(y) / d3_cosh(x))
+      -y,
+      2 * Math.atan(Math.exp(x)) - halfπ
     ];
   };
   (d3.geo.transverseMercator = function () {
-    return d3_geo_mercatorProjection(d3_geo_transverseMercator);
+    var projection = d3_geo_mercatorProjection(d3_geo_transverseMercator), center = projection.center, rotate = projection.rotate;
+    projection.center = function (_) {
+      return _ ? center([
+        -_[1],
+        _[0]
+      ]) : (_ = center(), [
+        -_[1],
+        _[0]
+      ]);
+    };
+    projection.rotate = function (_) {
+      return _ ? rotate([
+        _[0],
+        _[1],
+        _.length > 2 ? _[2] + 90 : 90
+      ]) : (_ = rotate(), [
+        _[0],
+        _[1],
+        _[2] - 90
+      ]);
+    };
+    return projection.rotate([
+      0,
+      0
+    ]);
   }).raw = d3_geo_transverseMercator;
   d3.geom = {};
   function d3_geom_pointX(d) {
@@ -24268,11 +24338,17 @@ d3 = function () {
         return Math.exp(random());
       };
     },
+    bates: function (m) {
+      var random = d3.random.irwinHall(m);
+      return function () {
+        return random() / m;
+      };
+    },
     irwinHall: function (m) {
       return function () {
         for (var s = 0, j = 0; j < m; j++)
           s += Math.random();
-        return s / m;
+        return s;
       };
     }
   };
@@ -27246,7 +27322,9 @@ d3 = function () {
   var d3_time_scaleMilliseconds = {
       range: function (start, stop, step) {
         return d3.range(+start, +stop, step).map(d3_time_scaleDate);
-      }
+      },
+      floor: d3_identity,
+      ceil: d3_identity
     };
   var d3_time_scaleUTCMethods = d3_time_scaleLocalMethods.map(function (m) {
       return [
@@ -31540,656 +31618,784 @@ if (typeof CanvasRenderingContext2D != 'undefined') {
     });
   };
 }
-(function (d) {
-  var c = 0, a = moment, b = function (g, i) {
-      var s = {
+(function (a) {
+  if (typeof define === 'function' && define.amd) {
+    define([
+      'jquery',
+      'moment'
+    ], a);
+  } else {
+    if (!jQuery) {
+      throw 'bootstrap-datetimepicker requires jQuery to be loaded first';
+    } else {
+      if (!moment) {
+        throw 'bootstrap-datetimepicker requires moment.js to be loaded first';
+      } else {
+        a(jQuery, moment);
+      }
+    }
+  }
+}(function (d, e) {
+  if (typeof e === 'undefined') {
+    alert('momentjs is requried');
+    throw new Error('momentjs is requried');
+  }
+  var c = 0, a = e, b = function (o, q) {
+      var z = {
           pickDate: true,
           pickTime: true,
+          useMinutes: true,
+          useSeconds: false,
+          minuteStepping: 1,
           startDate: new a({ y: 1970 }),
           endDate: new a().add(50, 'y'),
           collapse: true,
           language: 'en',
           defaultDate: '',
           disabledDates: [],
+          enabledDates: false,
           icons: {},
           useStrict: false
-        }, K = {
+        }, M = {
           time: 'glyphicon glyphicon-time',
           date: 'glyphicon glyphicon-calendar',
           up: 'glyphicon glyphicon-chevron-up',
           down: 'glyphicon glyphicon-chevron-down'
-        }, q = this, E = function () {
-          var O = false, N, P, M;
-          q.options = d.extend({}, s, i);
-          q.options.icons = d.extend({}, K, q.options.icons);
-          if (!(q.options.pickTime || q.options.pickDate)) {
+        }, l = this, I = function () {
+          var S = false, R, T, Q;
+          l.options = d.extend({}, z, q);
+          l.options.icons = d.extend({}, M, l.options.icons);
+          l.element = d(o);
+          f();
+          if (!(l.options.pickTime || l.options.pickDate)) {
             throw new Error('Must choose at least one picker');
           }
-          q.id = c++;
-          a.lang(q.options.language);
-          q.date = a();
-          q.element = d(g);
-          q.unset = false;
-          q.isInput = q.element.is('input');
-          q.component = false;
-          if (q.element.hasClass('input-group')) {
-            if (q.element.find('.datepickerbutton').size() == 0) {
-              q.component = q.element.find('.input-group-addon');
+          l.id = c++;
+          a.lang(l.options.language);
+          l.date = a();
+          l.unset = false;
+          l.isInput = l.element.is('input');
+          l.component = false;
+          if (l.element.hasClass('input-group')) {
+            if (l.element.find('.datepickerbutton').size() == 0) {
+              l.component = l.element.find('[class^=\'input-group-\']');
             } else {
-              q.component = q.element.find('.datepickerbutton');
+              l.component = l.element.find('.datepickerbutton');
             }
           }
-          q.format = q.options.format;
-          M = a()._lang._longDateFormat;
-          if (!q.format) {
-            if (q.isInput) {
-              q.format = q.element.data('format');
+          l.format = l.options.format;
+          Q = a()._lang._longDateFormat;
+          if (!l.format) {
+            if (l.isInput) {
+              l.format = l.element.data('format');
             } else {
-              q.format = q.element.find('input').data('format');
+              l.format = l.element.find('input').data('format');
             }
-            if (!q.format) {
-              q.format = q.options.pickDate ? M.L : '';
-              if (q.options.pickDate && q.options.pickTime) {
-                q.format += ' ';
+            if (!l.format) {
+              l.format = l.options.pickDate ? Q.L : '';
+              if (l.options.pickDate && l.options.pickTime) {
+                l.format += ' ';
               }
-              q.format += q.options.pickTime ? M.LT : '';
+              l.format += l.options.pickTime ? Q.LT : '';
+              if (l.options.useSeconds) {
+                if (~Q.LT.indexOf(' A')) {
+                  l.format = l.format.split(' A')[0] + ':ss A';
+                } else {
+                  l.format += ':ss';
+                }
+              }
             }
           }
-          q.use24hours = q.format.toLowerCase().indexOf('a') < 1;
-          if (q.component) {
-            O = q.component.find('span');
+          l.options.use24hours = l.format.toLowerCase().indexOf('a') < 1;
+          if (l.component) {
+            S = l.component.find('span');
           }
-          if (q.options.pickTime) {
-            if (O) {
-              O.addClass(q.options.icons.time);
+          if (l.options.pickTime) {
+            if (S) {
+              S.addClass(l.options.icons.time);
             }
           }
-          if (q.options.pickDate) {
-            if (O) {
-              O.removeClass(q.options.icons.time);
-              O.addClass(q.options.icons.date);
+          if (l.options.pickDate) {
+            if (S) {
+              S.removeClass(l.options.icons.time);
+              S.addClass(l.options.icons.date);
             }
           }
-          q.widget = d(I(q.options.pickDate, q.options.pickTime, q.options.collapse)).appendTo('body');
-          q.minViewMode = q.options.minViewMode || q.element.data('date-minviewmode') || 0;
-          if (typeof q.minViewMode === 'string') {
-            switch (q.minViewMode) {
+          l.widget = d(P(l.options.pickDate, l.options.pickTime, l.options.collapse)).appendTo('body');
+          l.minViewMode = l.options.minViewMode || l.element.data('date-minviewmode') || 0;
+          if (typeof l.minViewMode === 'string') {
+            switch (l.minViewMode) {
             case 'months':
-              q.minViewMode = 1;
+              l.minViewMode = 1;
               break;
             case 'years':
-              q.minViewMode = 2;
+              l.minViewMode = 2;
               break;
             default:
-              q.minViewMode = 0;
+              l.minViewMode = 0;
               break;
             }
           }
-          q.viewMode = q.options.viewMode || q.element.data('date-viewmode') || 0;
-          if (typeof q.viewMode === 'string') {
-            switch (q.viewMode) {
+          l.viewMode = l.options.viewMode || l.element.data('date-viewmode') || 0;
+          if (typeof l.viewMode === 'string') {
+            switch (l.viewMode) {
             case 'months':
-              q.viewMode = 1;
+              l.viewMode = 1;
               break;
             case 'years':
-              q.viewMode = 2;
+              l.viewMode = 2;
               break;
             default:
-              q.viewMode = 0;
+              l.viewMode = 0;
               break;
             }
           }
-          for (N = 0; N < q.options.disabledDates.length; N++) {
-            P = q.options.disabledDates[N];
-            P = a(P);
-            if (!P.isValid()) {
-              P = a(q.options.startDate).subtract(1, 'day');
+          for (R = 0; R < l.options.disabledDates.length; R++) {
+            T = l.options.disabledDates[R];
+            T = a(T);
+            if (!T.isValid()) {
+              T = a(l.options.startDate).subtract(1, 'day');
             }
-            q.options.disabledDates[N] = P.format('L');
+            l.options.disabledDates[R] = T.format('L');
           }
-          q.startViewMode = q.viewMode;
-          q.setStartDate(q.options.startDate || q.element.data('date-startdate'));
-          q.setEndDate(q.options.endDate || q.element.data('date-enddate'));
+          for (R = 0; R < l.options.enabledDates.length; R++) {
+            T = l.options.enabledDates[R];
+            T = a(T);
+            if (!T.isValid()) {
+              T = a(l.options.startDate).subtract(1, 'day');
+            }
+            l.options.enabledDates[R] = T.format('L');
+          }
+          l.startViewMode = l.viewMode;
+          l.setStartDate(l.options.startDate || l.element.data('date-startdate'));
+          l.setEndDate(l.options.endDate || l.element.data('date-enddate'));
           H();
-          L();
-          l();
-          C();
-          n();
-          f();
-          J();
-          if (q.options.defaultDate !== '') {
-            q.setValue(q.options.defaultDate);
-          }
-        }, o = function () {
-          var M = 'absolute', O = q.component ? q.component.offset() : q.element.offset(), N = d(window);
-          q.width = q.component ? q.component.outerWidth() : q.element.outerWidth();
-          O.top = O.top + q.element.outerHeight();
-          if (q.options.width !== undefined) {
-            q.widget.width(q.options.width);
-          }
-          if (q.options.orientation === 'left') {
-            q.widget.addClass('left-oriented');
-            O.left = O.left - q.widget.width() + 20;
-          }
-          if (A()) {
-            M = 'fixed';
-            O.top -= N.scrollTop();
-            O.left -= N.scrollLeft();
-          }
-          if (N.width() < O.left + q.widget.outerWidth()) {
-            O.right = N.width() - O.left - q.width;
-            O.left = 'auto';
-            q.widget.addClass('pull-right');
-          } else {
-            O.right = 'auto';
-            q.widget.removeClass('pull-right');
-          }
-          q.widget.css({
-            position: M,
-            top: O.top,
-            left: O.left,
-            right: O.right
-          });
-        }, z = function (M) {
-          q.element.trigger({
-            type: 'change.dp',
-            date: q.getDate(),
-            oldDate: M
-          });
-        }, w = function (M) {
-          q.element.trigger({
-            type: 'error.dp',
-            date: M
-          });
-        }, n = function (M) {
-          a.lang(q.options.language);
-          var N = M;
-          if (!N) {
-            if (q.isInput) {
-              N = q.element.val();
-            } else {
-              N = q.element.find('input').val();
-            }
-            if (N) {
-              q.date = a(N, q.format, q.options.useStrict);
-            }
-            if (!q.date) {
-              q.date = a();
-            }
-          }
-          q.viewDate = a(q.date).startOf('month');
+          u();
+          v();
+          t();
           h();
           y();
+          g();
+          J();
+          if (l.options.defaultDate !== '') {
+            l.setValue(l.options.defaultDate);
+          }
+        }, f = function () {
+          var Q = l.element.data();
+          if (Q.pickdate !== undefined) {
+            l.options.pickDate = Q.pickdate;
+          }
+          if (Q.picktime !== undefined) {
+            l.options.pickTime = Q.picktime;
+          }
+          if (Q.useminutes !== undefined) {
+            l.options.useMinutes = Q.useminutes;
+          }
+          if (Q.useseconds !== undefined) {
+            l.options.useSeconds = Q.useseconds;
+          }
+          if (Q.minutestepping !== undefined) {
+            l.options.minuteStepping = Q.minutestepping;
+          }
+          if (Q.startdate !== undefined) {
+            l.options.startDate = Q.startdate;
+          }
+          if (Q.enddate !== undefined) {
+            l.options.endDate = Q.enddate;
+          }
+          if (Q.collapse !== undefined) {
+            l.options.collapse = Q.collapse;
+          }
+          if (Q.language !== undefined) {
+            l.options.language = Q.language;
+          }
+          if (Q.defaultdate !== undefined) {
+            l.options.defaultDate = Q.defaultdate;
+          }
+          if (Q.disableddates !== undefined) {
+            l.options.disabledDates = Q.disableddates;
+          }
+          if (Q.enableddates !== undefined) {
+            l.options.enabledDates = Q.enableddates;
+          }
+          if (Q.icons !== undefined) {
+            l.options.icons = Q.icons;
+          }
+          if (Q.usestrict !== undefined) {
+            l.options.useStrict = Q.usestrict;
+          }
+        }, j = function () {
+          var Q = 'absolute', S = l.component ? l.component.offset() : l.element.offset(), R = d(window);
+          l.width = l.component ? l.component.outerWidth() : l.element.outerWidth();
+          S.top = S.top + l.element.outerHeight();
+          if (l.options.width !== undefined) {
+            l.widget.width(l.options.width);
+          }
+          if (l.options.orientation === 'left') {
+            l.widget.addClass('left-oriented');
+            S.left = S.left - l.widget.width() + 20;
+          }
+          if (B()) {
+            Q = 'fixed';
+            S.top -= R.scrollTop();
+            S.left -= R.scrollLeft();
+          }
+          if (R.width() < S.left + l.widget.outerWidth()) {
+            S.right = R.width() - S.left - l.width;
+            S.left = 'auto';
+            l.widget.addClass('pull-right');
+          } else {
+            S.right = 'auto';
+            l.widget.removeClass('pull-right');
+          }
+          l.widget.css({
+            position: Q,
+            top: S.top,
+            left: S.left,
+            right: S.right
+          });
+        }, p = function (R, Q) {
+          l.element.trigger({
+            type: 'change.dp',
+            date: a(l.date),
+            oldDate: a(R)
+          });
+          if (Q !== 'change') {
+            l.element.change();
+          }
+        }, C = function (Q) {
+          l.element.trigger({
+            type: 'error.dp',
+            date: a(Q)
+          });
+        }, y = function (Q) {
+          a.lang(l.options.language);
+          var R = Q;
+          if (!R) {
+            if (l.isInput) {
+              R = l.element.val();
+            } else {
+              R = l.element.find('input').val();
+            }
+            if (R) {
+              l.date = a(R, l.format, l.options.useStrict);
+            }
+            if (!l.date) {
+              l.date = a();
+            }
+          }
+          l.viewDate = a(l.date).startOf('month');
+          n();
+          k();
         }, H = function () {
-          a.lang(q.options.language);
-          var O = d('<tr>'), M = a.weekdaysMin(), N;
+          a.lang(l.options.language);
+          var S = d('<tr>'), Q = a.weekdaysMin(), R;
           if (a()._lang._week.dow == 0) {
-            for (N = 0; N < 7; N++) {
-              O.append('<th class="dow">' + M[N] + '</th>');
+            for (R = 0; R < 7; R++) {
+              S.append('<th class="dow">' + Q[R] + '</th>');
             }
           } else {
-            for (N = 1; N < 8; N++) {
-              if (N == 7) {
-                O.append('<th class="dow">' + M[0] + '</th>');
+            for (R = 1; R < 8; R++) {
+              if (R == 7) {
+                S.append('<th class="dow">' + Q[0] + '</th>');
               } else {
-                O.append('<th class="dow">' + M[N] + '</th>');
+                S.append('<th class="dow">' + Q[R] + '</th>');
               }
             }
           }
-          q.widget.find('.datepicker-days thead').append(O);
-        }, L = function () {
-          a.lang(q.options.language);
-          var N = '', M = 0, O = a.monthsShort();
-          while (M < 12) {
-            N += '<span class="month">' + O[M++] + '</span>';
+          l.widget.find('.datepicker-days thead').append(S);
+        }, u = function () {
+          a.lang(l.options.language);
+          var R = '', Q = 0, S = a.monthsShort();
+          while (Q < 12) {
+            R += '<span class="month">' + S[Q++] + '</span>';
           }
-          q.widget.find('.datepicker-months td').append(N);
-        }, h = function () {
-          a.lang(q.options.language);
-          var X = q.viewDate.year(), V = q.viewDate.month(), W = q.options.startDate.year(), Z = q.options.startDate.month(), aa = q.options.endDate.year(), T = q.options.endDate.month(), P, S, R = [], ab, O, Q, Y, N, U, M = a.months();
-          q.widget.find('.datepicker-days').find('.disabled').removeClass('disabled');
-          q.widget.find('.datepicker-months').find('.disabled').removeClass('disabled');
-          q.widget.find('.datepicker-years').find('.disabled').removeClass('disabled');
-          q.widget.find('.datepicker-days th:eq(1)').text(M[V] + ' ' + X);
-          P = a(q.viewDate).subtract('months', 1);
-          Y = P.daysInMonth();
-          P.date(Y).startOf('week');
-          if (X == W && V <= Z || X < W) {
-            q.widget.find('.datepicker-days th:eq(0)').addClass('disabled');
+          l.widget.find('.datepicker-months td').append(R);
+        }, n = function () {
+          a.lang(l.options.language);
+          var ab = l.viewDate.year(), Z = l.viewDate.month(), aa = l.options.startDate.year(), ad = l.options.startDate.month(), ae = l.options.endDate.year(), X = l.options.endDate.month(), T, W, V = [], af, S, U, ac, R, Y, Q = a.months();
+          l.widget.find('.datepicker-days').find('.disabled').removeClass('disabled');
+          l.widget.find('.datepicker-months').find('.disabled').removeClass('disabled');
+          l.widget.find('.datepicker-years').find('.disabled').removeClass('disabled');
+          l.widget.find('.datepicker-days th:eq(1)').text(Q[Z] + ' ' + ab);
+          T = a(l.viewDate).subtract('months', 1);
+          ac = T.daysInMonth();
+          T.date(ac).startOf('week');
+          if (ab == aa && Z <= ad || ab < aa) {
+            l.widget.find('.datepicker-days th:eq(0)').addClass('disabled');
           }
-          if (X == aa && V >= T || X > aa) {
-            q.widget.find('.datepicker-days th:eq(2)').addClass('disabled');
+          if (ab == ae && Z >= X || ab > ae) {
+            l.widget.find('.datepicker-days th:eq(2)').addClass('disabled');
           }
-          S = a(P).add(42, 'd');
-          while (P.isBefore(S)) {
-            if (P.weekday() === a().startOf('week').weekday()) {
-              ab = d('<tr>');
-              R.push(ab);
+          W = a(T).add(42, 'd');
+          while (T.isBefore(W)) {
+            if (T.weekday() === a().startOf('week').weekday()) {
+              af = d('<tr>');
+              V.push(af);
             }
-            O = '';
-            if (P.year() < X || P.year() == X && P.month() < V) {
-              O += ' old';
+            S = '';
+            if (T.year() < ab || T.year() == ab && T.month() < Z) {
+              S += ' old';
             } else {
-              if (P.year() > X || P.year() == X && P.month() > V) {
-                O += ' new';
+              if (T.year() > ab || T.year() == ab && T.month() > Z) {
+                S += ' new';
               }
             }
-            if (P.isSame(a({
-                y: q.date.year(),
-                M: q.date.month(),
-                d: q.date.date()
+            if (T.isSame(a({
+                y: l.date.year(),
+                M: l.date.month(),
+                d: l.date.date()
               }))) {
-              O += ' active';
+              S += ' active';
             }
-            if (a(P).add(1, 'd') <= q.options.startDate || P > q.options.endDate || e(P)) {
-              O += ' disabled';
+            if (a(T).add(1, 'd') <= l.options.startDate || T > l.options.endDate || O(T) || !s(T)) {
+              S += ' disabled';
             }
-            ab.append('<td class="day' + O + '">' + P.date() + '</td>');
-            P.add(1, 'd');
+            af.append('<td class="day' + S + '">' + T.date() + '</td>');
+            T.add(1, 'd');
           }
-          q.widget.find('.datepicker-days tbody').empty().append(R);
-          U = a().year(), M = q.widget.find('.datepicker-months').find('th:eq(1)').text(X).end().find('span').removeClass('active');
-          if (U === X) {
-            M.eq(a().month()).addClass('active');
+          l.widget.find('.datepicker-days tbody').empty().append(V);
+          Y = a().year(), Q = l.widget.find('.datepicker-months').find('th:eq(1)').text(ab).end().find('span').removeClass('active');
+          if (Y === ab) {
+            Q.eq(a().month()).addClass('active');
           }
-          if (U - 1 < W) {
-            q.widget.find('.datepicker-months th:eq(0)').addClass('disabled');
+          if (Y - 1 < aa) {
+            l.widget.find('.datepicker-months th:eq(0)').addClass('disabled');
           }
-          if (U + 1 > aa) {
-            q.widget.find('.datepicker-months th:eq(2)').addClass('disabled');
+          if (Y + 1 > ae) {
+            l.widget.find('.datepicker-months th:eq(2)').addClass('disabled');
           }
-          for (Q = 0; Q < 12; Q++) {
-            if (X == W && Z > Q || X < W) {
-              d(M[Q]).addClass('disabled');
+          for (U = 0; U < 12; U++) {
+            if (ab == aa && ad > U || ab < aa) {
+              d(Q[U]).addClass('disabled');
             } else {
-              if (X == aa && T < Q || X > aa) {
-                d(M[Q]).addClass('disabled');
+              if (ab == ae && X < U || ab > ae) {
+                d(Q[U]).addClass('disabled');
               }
             }
           }
-          R = '';
-          X = parseInt(X / 10, 10) * 10;
-          N = q.widget.find('.datepicker-years').find('th:eq(1)').text(X + '-' + (X + 9)).end().find('td');
-          q.widget.find('.datepicker-years').find('th').removeClass('disabled');
-          if (W > X) {
-            q.widget.find('.datepicker-years').find('th:eq(0)').addClass('disabled');
+          V = '';
+          ab = parseInt(ab / 10, 10) * 10;
+          R = l.widget.find('.datepicker-years').find('th:eq(1)').text(ab + '-' + (ab + 9)).end().find('td');
+          l.widget.find('.datepicker-years').find('th').removeClass('disabled');
+          if (aa > ab) {
+            l.widget.find('.datepicker-years').find('th:eq(0)').addClass('disabled');
           }
-          if (aa < X + 9) {
-            q.widget.find('.datepicker-years').find('th:eq(2)').addClass('disabled');
+          if (ae < ab + 9) {
+            l.widget.find('.datepicker-years').find('th:eq(2)').addClass('disabled');
           }
-          X -= 1;
-          for (Q = -1; Q < 11; Q++) {
-            R += '<span class="year' + (Q === -1 || Q === 10 ? ' old' : '') + (U === X ? ' active' : '') + (X < W || X > aa ? ' disabled' : '') + '">' + X + '</span>';
-            X += 1;
+          ab -= 1;
+          for (U = -1; U < 11; U++) {
+            V += '<span class="year' + (U === -1 || U === 10 ? ' old' : '') + (Y === ab ? ' active' : '') + (ab < aa || ab > ae ? ' disabled' : '') + '">' + ab + '</span>';
+            ab += 1;
           }
-          N.html(R);
-        }, l = function () {
-          a.lang(q.options.language);
-          var P = q.widget.find('.timepicker .timepicker-hours table'), O = '', Q, N, M;
-          P.parent().hide();
-          if (q.use24hours) {
-            Q = 0;
-            for (N = 0; N < 6; N += 1) {
-              O += '<tr>';
-              for (M = 0; M < 4; M += 1) {
-                O += '<td class="hour">' + D(Q.toString()) + '</td>';
-                Q++;
+          R.html(V);
+        }, v = function () {
+          a.lang(l.options.language);
+          var T = l.widget.find('.timepicker .timepicker-hours table'), S = '', U, R, Q;
+          T.parent().hide();
+          if (l.options.use24hours) {
+            U = 0;
+            for (R = 0; R < 6; R += 1) {
+              S += '<tr>';
+              for (Q = 0; Q < 4; Q += 1) {
+                S += '<td class="hour">' + N(U.toString()) + '</td>';
+                U++;
               }
-              O += '</tr>';
+              S += '</tr>';
             }
           } else {
-            Q = 1;
-            for (N = 0; N < 3; N += 1) {
-              O += '<tr>';
-              for (M = 0; M < 4; M += 1) {
-                O += '<td class="hour">' + D(Q.toString()) + '</td>';
-                Q++;
+            U = 1;
+            for (R = 0; R < 3; R += 1) {
+              S += '<tr>';
+              for (Q = 0; Q < 4; Q += 1) {
+                S += '<td class="hour">' + N(U.toString()) + '</td>';
+                U++;
               }
-              O += '</tr>';
+              S += '</tr>';
             }
           }
-          P.html(O);
-        }, C = function () {
-          var P = q.widget.find('.timepicker .timepicker-minutes table'), O = '', Q = 0, N, M;
-          P.parent().hide();
-          for (N = 0; N < 5; N++) {
-            O += '<tr>';
-            for (M = 0; M < 4; M += 1) {
-              O += '<td class="minute">' + D(Q.toString()) + '</td>';
-              Q += 3;
+          T.html(S);
+        }, t = function () {
+          var T = l.widget.find('.timepicker .timepicker-minutes table'), S = '', U = 0, R, Q;
+          T.parent().hide();
+          for (R = 0; R < 5; R++) {
+            S += '<tr>';
+            for (Q = 0; Q < 4; Q += 1) {
+              S += '<td class="minute">' + N(U.toString()) + '</td>';
+              U += 3;
             }
-            O += '</tr>';
+            S += '</tr>';
           }
-          P.html(O);
-        }, y = function () {
-          if (!q.date) {
+          T.html(S);
+        }, h = function () {
+          var T = l.widget.find('.timepicker .timepicker-seconds table'), S = '', U = 0, R, Q;
+          T.parent().hide();
+          for (R = 0; R < 5; R++) {
+            S += '<tr>';
+            for (Q = 0; Q < 4; Q += 1) {
+              S += '<td class="second">' + N(U.toString()) + '</td>';
+              U += 3;
+            }
+            S += '</tr>';
+          }
+          T.html(S);
+        }, k = function () {
+          if (!l.date) {
             return;
           }
-          var O = q.widget.find('.timepicker span[data-time-component]'), M = q.date.hours(), N = 'AM';
-          if (!q.use24hours) {
-            if (M >= 12) {
-              N = 'PM';
+          var S = l.widget.find('.timepicker span[data-time-component]'), Q = l.date.hours(), R = 'AM';
+          if (!l.options.use24hours) {
+            if (Q >= 12) {
+              R = 'PM';
             }
-            if (M === 0) {
-              M = 12;
+            if (Q === 0) {
+              Q = 12;
             } else {
-              if (M != 12) {
-                M = M % 12;
+              if (Q != 12) {
+                Q = Q % 12;
               }
             }
-            q.widget.find('.timepicker [data-action=togglePeriod]').text(N);
+            l.widget.find('.timepicker [data-action=togglePeriod]').text(R);
           }
-          O.filter('[data-time-component=hours]').text(D(M));
-          O.filter('[data-time-component=minutes]').text(D(q.date.minutes()));
-        }, B = function (S) {
-          S.stopPropagation();
-          S.preventDefault();
-          q.unset = false;
-          var R = d(S.target).closest('span, td, th'), Q, O, P, M, N = q.date;
-          if (R.length === 1) {
-            if (!R.is('.disabled')) {
-              switch (R[0].nodeName.toLowerCase()) {
+          S.filter('[data-time-component=hours]').text(N(Q));
+          S.filter('[data-time-component=minutes]').text(N(l.date.minutes()));
+          S.filter('[data-time-component=seconds]').text(N(l.date.second()));
+        }, A = function (W) {
+          W.stopPropagation();
+          W.preventDefault();
+          l.unset = false;
+          var V = d(W.target).closest('span, td, th'), U, S, T, Q, R = a(l.date);
+          if (V.length === 1) {
+            if (!V.is('.disabled')) {
+              switch (V[0].nodeName.toLowerCase()) {
               case 'th':
-                switch (R[0].className) {
+                switch (V[0].className) {
                 case 'switch':
-                  f(1);
+                  g(1);
                   break;
                 case 'prev':
                 case 'next':
-                  P = G.modes[q.viewMode].navStep;
-                  if (R[0].className === 'prev') {
-                    P = P * -1;
+                  T = w.modes[l.viewMode].navStep;
+                  if (V[0].className === 'prev') {
+                    T = T * -1;
                   }
-                  q.viewDate.add(P, G.modes[q.viewMode].navFnc);
-                  h();
+                  l.viewDate.add(T, w.modes[l.viewMode].navFnc);
+                  n();
                   break;
                 }
                 break;
               case 'span':
-                if (R.is('.month')) {
-                  Q = R.parent().find('span').index(R);
-                  q.viewDate.month(Q);
+                if (V.is('.month')) {
+                  U = V.parent().find('span').index(V);
+                  l.viewDate.month(U);
                 } else {
-                  O = parseInt(R.text(), 10) || 0;
-                  q.viewDate.year(O);
+                  S = parseInt(V.text(), 10) || 0;
+                  l.viewDate.year(S);
                 }
-                if (q.viewMode !== 0) {
-                  q.date = a({
-                    y: q.viewDate.year(),
-                    M: q.viewDate.month(),
-                    d: q.viewDate.date(),
-                    h: q.date.hours(),
-                    m: q.date.minutes()
+                if (l.viewMode !== 0) {
+                  l.date = a({
+                    y: l.viewDate.year(),
+                    M: l.viewDate.month(),
+                    d: l.viewDate.date(),
+                    h: l.date.hours(),
+                    m: l.date.minutes()
                   });
-                  z(N);
+                  p(R, W.type);
                 }
-                f(-1);
-                h();
+                g(-1);
+                n();
                 break;
               case 'td':
-                if (R.is('.day')) {
-                  M = parseInt(R.text(), 10) || 1;
-                  Q = q.viewDate.month();
-                  O = q.viewDate.year();
-                  if (R.is('.old')) {
-                    if (Q === 0) {
-                      Q = 11;
-                      O -= 1;
+                if (V.is('.day')) {
+                  Q = parseInt(V.text(), 10) || 1;
+                  U = l.viewDate.month();
+                  S = l.viewDate.year();
+                  if (V.is('.old')) {
+                    if (U === 0) {
+                      U = 11;
+                      S -= 1;
                     } else {
-                      Q -= 1;
+                      U -= 1;
                     }
                   } else {
-                    if (R.is('.new')) {
-                      if (Q == 11) {
-                        Q = 0;
-                        O += 1;
+                    if (V.is('.new')) {
+                      if (U == 11) {
+                        U = 0;
+                        S += 1;
                       } else {
-                        Q += 1;
+                        U += 1;
                       }
                     }
                   }
-                  q.date = a({
-                    y: O,
-                    M: Q,
-                    d: M,
-                    h: q.date.hours(),
-                    m: q.date.minutes()
+                  l.date = a({
+                    y: S,
+                    M: U,
+                    d: Q,
+                    h: l.date.hours(),
+                    m: l.date.minutes()
                   });
-                  q.viewDate = a({
-                    y: O,
-                    M: Q,
-                    d: Math.min(28, M)
+                  l.viewDate = a({
+                    y: S,
+                    M: U,
+                    d: Math.min(28, Q)
                   });
-                  h();
-                  x();
-                  z(N);
+                  n();
+                  r();
+                  p(R, W.type);
                 }
                 break;
               }
             }
           }
-        }, r = {
+        }, D = {
           incrementHours: function () {
-            j('add', 'hours');
+            m('add', 'hours', 1);
           },
           incrementMinutes: function () {
-            j('add', 'minutes');
+            m('add', 'minutes', l.options.minuteStepping);
+          },
+          incrementSeconds: function () {
+            m('add', 'seconds', 1);
           },
           decrementHours: function () {
-            j('subtract', 'hours');
+            m('subtract', 'hours', 1);
           },
           decrementMinutes: function () {
-            j('subtract', 'minutes');
+            m('subtract', 'minutes', l.options.minuteStepping);
+          },
+          decrementSeconds: function () {
+            m('subtract', 'seconds', 1);
           },
           togglePeriod: function () {
-            var M = q.date.hours();
-            if (M >= 12) {
-              M -= 12;
+            var Q = l.date.hours();
+            if (Q >= 12) {
+              Q -= 12;
             } else {
-              M += 12;
+              Q += 12;
             }
-            q.date.hours(M);
+            l.date.hours(Q);
           },
           showPicker: function () {
-            q.widget.find('.timepicker > div:not(.timepicker-picker)').hide();
-            q.widget.find('.timepicker .timepicker-picker').show();
+            l.widget.find('.timepicker > div:not(.timepicker-picker)').hide();
+            l.widget.find('.timepicker .timepicker-picker').show();
           },
           showHours: function () {
-            q.widget.find('.timepicker .timepicker-picker').hide();
-            q.widget.find('.timepicker .timepicker-hours').show();
+            l.widget.find('.timepicker .timepicker-picker').hide();
+            l.widget.find('.timepicker .timepicker-hours').show();
           },
           showMinutes: function () {
-            q.widget.find('.timepicker .timepicker-picker').hide();
-            q.widget.find('.timepicker .timepicker-minutes').show();
+            l.widget.find('.timepicker .timepicker-picker').hide();
+            l.widget.find('.timepicker .timepicker-minutes').show();
           },
-          selectHour: function (M) {
-            q.date.hours(parseInt(d(M.target).text(), 10));
-            r.showPicker.call(q);
+          showSeconds: function () {
+            l.widget.find('.timepicker .timepicker-picker').hide();
+            l.widget.find('.timepicker .timepicker-seconds').show();
           },
-          selectMinute: function (M) {
-            q.date.minutes(parseInt(d(M.target).text(), 10));
-            r.showPicker.call(q);
+          selectHour: function (Q) {
+            l.date.hours(parseInt(d(Q.target).text(), 10));
+            D.showPicker.call(l);
+          },
+          selectMinute: function (Q) {
+            l.date.minutes(parseInt(d(Q.target).text(), 10));
+            D.showPicker.call(l);
+          },
+          selectSecond: function (Q) {
+            l.date.seconds(parseInt(d(Q.target).text(), 10));
+            D.showPicker.call(l);
           }
-        }, v = function (O) {
-          var N = d(O.currentTarget).data('action'), P = r[N].apply(q, arguments), M = q.date;
-          F(O);
-          if (!q.date) {
-            q.date = a({ y: 1970 });
+        }, x = function (S) {
+          var Q = a(l.date), R = d(S.currentTarget).data('action'), T = D[R].apply(l, arguments);
+          K(S);
+          if (!l.date) {
+            l.date = a({ y: 1970 });
           }
-          x();
-          y();
-          z(M);
-          return P;
-        }, F = function (M) {
-          M.stopPropagation();
-          M.preventDefault();
-        }, u = function (O) {
-          a.lang(q.options.language);
-          var M = d(O.target), N = q.date, P = a(M.val(), q.format, q.options.useStrict);
-          if (P.isValid()) {
-            n();
-            q.setValue(P);
-            z(N);
-            x();
+          r();
+          k();
+          p(Q);
+          return T;
+        }, K = function (Q) {
+          Q.stopPropagation();
+          Q.preventDefault();
+        }, i = function (S) {
+          a.lang(l.options.language);
+          var Q = d(S.target), R = a(l.date), T = a(Q.val(), l.format, l.options.useStrict);
+          if (T.isValid()) {
+            y();
+            l.setValue(T);
+            p(R);
+            r();
           } else {
-            q.viewDate = N;
-            z(N);
-            w(P);
-            q.unset = true;
-            M.val('');
+            l.viewDate = R;
+            p(R);
+            C(T);
+            l.unset = true;
+            Q.val('');
           }
-        }, f = function (M) {
-          if (M) {
-            q.viewMode = Math.max(q.minViewMode, Math.min(2, q.viewMode + M));
+        }, g = function (Q) {
+          if (Q) {
+            l.viewMode = Math.max(l.minViewMode, Math.min(2, l.viewMode + Q));
           }
-          q.widget.find('.datepicker > div').hide().filter('.datepicker-' + G.modes[q.viewMode].clsName).show();
+          l.widget.find('.datepicker > div').hide().filter('.datepicker-' + w.modes[l.viewMode].clsName).show();
         }, J = function () {
-          var Q, P, N, M, O;
-          q.widget.on('click', '.datepicker *', d.proxy(B, this));
-          q.widget.on('click', '[data-action]', d.proxy(v, this));
-          q.widget.on('mousedown', d.proxy(F, this));
-          if (q.options.pickDate && q.options.pickTime) {
-            q.widget.on('click.togglePicker', '.accordion-toggle', function (R) {
-              R.stopPropagation();
-              Q = d(this);
-              P = Q.closest('ul');
-              N = P.find('.in');
-              M = P.find('.collapse:not(.in)');
-              if (N && N.length) {
-                O = N.data('collapse');
-                if (O && O.transitioning) {
+          var U, T, R, Q, S;
+          l.widget.on('click', '.datepicker *', d.proxy(A, this));
+          l.widget.on('click', '[data-action]', d.proxy(x, this));
+          l.widget.on('mousedown', d.proxy(K, this));
+          if (l.options.pickDate && l.options.pickTime) {
+            l.widget.on('click.togglePicker', '.accordion-toggle', function (V) {
+              V.stopPropagation();
+              U = d(this);
+              T = U.closest('ul');
+              R = T.find('.in');
+              Q = T.find('.collapse:not(.in)');
+              if (R && R.length) {
+                S = R.data('collapse');
+                if (S && S.transitioning) {
                   return;
                 }
-                N.collapse('hide');
-                M.collapse('show');
-                Q.find('span').toggleClass(q.options.icons.time + ' ' + q.options.icons.date);
-                q.element.find('.input-group-addon span').toggleClass(q.options.icons.time + ' ' + q.options.icons.date);
+                R.collapse('hide');
+                Q.collapse('show');
+                U.find('span').toggleClass(l.options.icons.time + ' ' + l.options.icons.date);
+                l.element.find('.input-group-addon span').toggleClass(l.options.icons.time + ' ' + l.options.icons.date);
               }
             });
           }
-          if (q.isInput) {
-            q.element.on({
-              focus: d.proxy(q.show, this),
-              change: d.proxy(u, this),
-              blur: d.proxy(q.hide, this)
+          if (l.isInput) {
+            l.element.on({
+              focus: d.proxy(l.show, this),
+              change: d.proxy(i, this),
+              blur: d.proxy(l.hide, this)
             });
           } else {
-            q.element.on({ change: d.proxy(u, this) }, 'input');
-            if (q.component) {
-              q.component.on('click', d.proxy(q.show, this));
+            l.element.on({ change: d.proxy(i, this) }, 'input');
+            if (l.component) {
+              l.component.on('click', d.proxy(l.show, this));
             } else {
-              q.element.on('click', d.proxy(q.show, this));
+              l.element.on('click', d.proxy(l.show, this));
             }
           }
-        }, p = function () {
-          d(window).on('resize.datetimepicker' + q.id, d.proxy(o, this));
-          if (!q.isInput) {
-            d(document).on('mousedown.datetimepicker' + q.id, d.proxy(q.hide, this));
+        }, L = function () {
+          d(window).on('resize.datetimepicker' + l.id, d.proxy(j, this));
+          if (!l.isInput) {
+            d(document).on('mousedown.datetimepicker' + l.id, d.proxy(l.hide, this));
           }
-        }, t = function () {
-          q.widget.off('click', '.datepicker *', q.click);
-          q.widget.off('click', '[data-action]');
-          q.widget.off('mousedown', q.stopEvent);
-          if (q.options.pickDate && q.options.pickTime) {
-            q.widget.off('click.togglePicker');
+        }, F = function () {
+          l.widget.off('click', '.datepicker *', l.click);
+          l.widget.off('click', '[data-action]');
+          l.widget.off('mousedown', l.stopEvent);
+          if (l.options.pickDate && l.options.pickTime) {
+            l.widget.off('click.togglePicker');
           }
-          if (q.isInput) {
-            q.element.off({
-              focus: q.show,
-              change: q.change
+          if (l.isInput) {
+            l.element.off({
+              focus: l.show,
+              change: l.change
             });
           } else {
-            q.element.off({ change: q.change }, 'input');
-            if (q.component) {
-              q.component.off('click', q.show);
+            l.element.off({ change: l.change }, 'input');
+            if (l.component) {
+              l.component.off('click', l.show);
             } else {
-              q.element.off('click', q.show);
+              l.element.off('click', l.show);
             }
           }
-        }, k = function () {
-          d(window).off('resize.datetimepicker' + q.id);
-          if (!q.isInput) {
-            d(document).off('mousedown.datetimepicker' + q.id);
+        }, E = function () {
+          d(window).off('resize.datetimepicker' + l.id);
+          if (!l.isInput) {
+            d(document).off('mousedown.datetimepicker' + l.id);
           }
-        }, A = function () {
-          if (q.element) {
-            var N = q.element.parents(), M = false, O;
-            for (O = 0; O < N.length; O++) {
-              if (d(N[O]).css('position') == 'fixed') {
-                M = true;
+        }, B = function () {
+          if (l.element) {
+            var R = l.element.parents(), Q = false, S;
+            for (S = 0; S < R.length; S++) {
+              if (d(R[S]).css('position') == 'fixed') {
+                Q = true;
                 break;
               }
             }
-            return M;
+            return Q;
           } else {
             return false;
           }
-        }, x = function () {
-          a.lang(q.options.language);
-          var N = '', M;
-          if (!q.unset) {
-            N = a(q.date).format(q.format);
+        }, r = function () {
+          a.lang(l.options.language);
+          var R = '', Q;
+          if (!l.unset) {
+            R = a(l.date).format(l.format);
           }
-          if (!q.isInput) {
-            if (q.component) {
-              M = q.element.find('input');
-              M.val(N);
+          if (!l.isInput) {
+            if (l.component) {
+              Q = l.element.find('input');
+              Q.val(R);
             }
-            q.element.data('date', N);
+            l.element.data('date', R);
           } else {
-            q.element.val(N);
+            l.element.val(R);
           }
-          if (!q.options.pickTime) {
-            q.hide();
+          if (!l.options.pickTime) {
+            l.hide();
           }
-        }, j = function (O, N) {
-          a.lang(q.options.language);
-          var M;
-          if (O == 'add') {
-            M = a(q.date);
-            if (M.hours() == 23) {
-              M.add(1, N);
+        }, m = function (T, S, R) {
+          a.lang(l.options.language);
+          var Q;
+          if (T == 'add') {
+            Q = a(l.date);
+            if (Q.hours() == 23) {
+              Q.add(R, S);
             }
-            M.add(1, N);
+            Q.add(R, S);
           } else {
-            M = a(q.date).subtract(1, N);
+            Q = a(l.date).subtract(R, S);
           }
-          if (M.isAfter(q.options.endDate) || M.subtract(1, N).isBefore(q.options.startDate) || e(M)) {
-            w(M.format(q.format));
+          if (Q.isAfter(l.options.endDate) || a(Q.subtract(R, S)).isBefore(l.options.startDate) || O(Q)) {
+            C(Q.format(l.format));
             return;
           }
-          if (O == 'add') {
-            q.date.add(1, N);
+          if (T == 'add') {
+            l.date.add(R, S);
           } else {
-            q.date.subtract(1, N);
+            l.date.subtract(R, S);
           }
-        }, e = function (M) {
-          a.lang(q.options.language);
-          var O = q.options.disabledDates, N;
-          for (N in O) {
-            if (O[N] == a(M).format('L')) {
+        }, O = function (Q) {
+          a.lang(l.options.language);
+          var S = l.options.disabledDates, R;
+          for (R in S) {
+            if (S[R] == a(Q).format('L')) {
               return true;
             }
           }
           return false;
-        }, D = function (M) {
-          M = M.toString();
-          if (M.length >= 2) {
-            return M;
-          } else {
-            return '0' + M;
+        }, s = function (R) {
+          a.lang(l.options.language);
+          var Q = l.options.enabledDates, S;
+          if (Q.length) {
+            for (S in Q) {
+              if (Q[S] == a(R).format('L')) {
+                return true;
+              }
+            }
+            return false;
           }
-        }, I = function (N, M, O) {
-          if (N && M) {
-            return '<div class="bootstrap-datetimepicker-widget dropdown-menu" style="z-index:9999 !important;"><ul class="list-unstyled"><li' + (O ? ' class="collapse in"' : '') + '><div class="datepicker">' + G.template + '</div></li><li class="picker-switch accordion-toggle"><a class="btn" style="width:100%"><span class="' + q.options.icons.time + '"></span></a></li><li' + (O ? ' class="collapse"' : '') + '><div class="timepicker">' + m.getTemplate() + '</div></li></ul></div>';
+          return Q === false ? true : false;
+        }, N = function (Q) {
+          Q = Q.toString();
+          if (Q.length >= 2) {
+            return Q;
           } else {
-            if (M) {
-              return '<div class="bootstrap-datetimepicker-widget dropdown-menu"><div class="timepicker">' + m.getTemplate() + '</div></div>';
+            return '0' + Q;
+          }
+        }, P = function (R, Q, S) {
+          if (R && Q) {
+            return '<div class="bootstrap-datetimepicker-widget dropdown-menu" style="z-index:9999 !important;"><ul class="list-unstyled"><li' + (S ? ' class="collapse in"' : '') + '><div class="datepicker">' + w.template + '</div></li><li class="picker-switch accordion-toggle"><a class="btn" style="width:100%"><span class="' + l.options.icons.time + '"></span></a></li><li' + (S ? ' class="collapse"' : '') + '><div class="timepicker">' + G.getTemplate() + '</div></li></ul></div>';
+          } else {
+            if (Q) {
+              return '<div class="bootstrap-datetimepicker-widget dropdown-menu"><div class="timepicker">' + G.getTemplate() + '</div></div>';
             } else {
-              return '<div class="bootstrap-datetimepicker-widget dropdown-menu"><div class="datepicker">' + G.template + '</div></div>';
+              return '<div class="bootstrap-datetimepicker-widget dropdown-menu"><div class="datepicker">' + w.template + '</div></div>';
             }
           }
-        }, G = {
+        }, w = {
           modes: [
             {
               clsName: 'days',
@@ -32209,116 +32415,140 @@ if (typeof CanvasRenderingContext2D != 'undefined') {
           ],
           headTemplate: '<thead><tr><th class="prev">&lsaquo;</th><th colspan="5" class="switch"></th><th class="next">&rsaquo;</th></tr></thead>',
           contTemplate: '<tbody><tr><td colspan="7"></td></tr></tbody>'
-        }, m = {
-          hourTemplate: '<span data-action="showHours" data-time-component="hours" class="timepicker-hour"></span>',
-          minuteTemplate: '<span data-action="showMinutes" data-time-component="minutes" class="timepicker-minute"></span>'
+        }, G = {
+          hourTemplate: '<span data-action="showHours"   data-time-component="hours"   class="timepicker-hour"></span>',
+          minuteTemplate: '<span data-action="showMinutes" data-time-component="minutes" class="timepicker-minute"></span>',
+          secondTemplate: '<span data-action="showSeconds"  data-time-component="seconds" class="timepicker-second"></span>'
         };
-      G.template = '<div class="datepicker-days"><table class="table-condensed">' + G.headTemplate + '<tbody></tbody></table></div><div class="datepicker-months"><table class="table-condensed">' + G.headTemplate + G.contTemplate + '</table></div><div class="datepicker-years"><table class="table-condensed">' + G.headTemplate + G.contTemplate + '</table></div>';
-      m.getTemplate = function () {
-        return '<div class="timepicker-picker"><table class="table-condensed"><tr><td><a href="#" class="btn" data-action="incrementHours"><span class="' + q.options.icons.up + '"></span></a></td><td class="separator"></td><td><a href="#" class="btn" data-action="incrementMinutes"><span class="' + q.options.icons.up + '"></span></a></td>' + (!q.use24hours ? '<td class="separator"></td>' : '') + '</tr><tr><td>' + m.hourTemplate + '</td> <td class="separator">:</td><td>' + m.minuteTemplate + '</td> ' + (!q.use24hours ? '<td class="separator"></td><td><button type="button" class="btn btn-primary" data-action="togglePeriod"></button></td>' : '') + '</tr><tr><td><a href="#" class="btn" data-action="decrementHours"><span class="' + q.options.icons.down + '"></span></a></td><td class="separator"></td><td><a href="#" class="btn" data-action="decrementMinutes"><span class="' + q.options.icons.down + '"></span></a></td>' + (!q.use24hours ? '<td class="separator"></td>' : '') + '</tr></table></div><div class="timepicker-hours" data-action="selectHour"><table class="table-condensed"></table></div><div class="timepicker-minutes" data-action="selectMinute"><table class="table-condensed"></table></div>';
+      w.template = '<div class="datepicker-days"><table class="table-condensed">' + w.headTemplate + '<tbody></tbody></table></div><div class="datepicker-months"><table class="table-condensed">' + w.headTemplate + w.contTemplate + '</table></div><div class="datepicker-years"><table class="table-condensed">' + w.headTemplate + w.contTemplate + '</table></div>';
+      G.getTemplate = function () {
+        return '<div class="timepicker-picker"><table class="table-condensed"><tr><td><a href="#" class="btn" data-action="incrementHours"><span class="' + l.options.icons.up + '"></span></a></td><td class="separator"></td><td>' + (l.options.useMinutes ? '<a href="#" class="btn" data-action="incrementMinutes"><span class="' + l.options.icons.up + '"></span></a>' : '') + '</td>' + (l.options.useSeconds ? '<td class="separator"></td><td><a href="#" class="btn" data-action="incrementSeconds"><span class="' + l.options.icons.up + '"></span></a></td>' : '') + (l.options.use24hours ? '' : '<td class="separator"></td>') + '</tr><tr><td>' + G.hourTemplate + '</td> <td class="separator">:</td><td>' + (l.options.useMinutes ? G.minuteTemplate : '<span class="timepicker-minute">00</span>') + '</td> ' + (l.options.useSeconds ? '<td class="separator">:</td><td>' + G.secondTemplate + '</td>' : '') + (l.options.use24hours ? '' : '<td class="separator"></td><td><button type="button" class="btn btn-primary" data-action="togglePeriod"></button></td>') + '</tr><tr><td><a href="#" class="btn" data-action="decrementHours"><span class="' + l.options.icons.down + '"></span></a></td><td class="separator"></td><td>' + (l.options.useMinutes ? '<a href="#" class="btn" data-action="decrementMinutes"><span class="' + l.options.icons.down + '"></span></a>' : '') + '</td>' + (l.options.useSeconds ? '<td class="separator"></td><td><a href="#" class="btn" data-action="decrementSeconds"><span class="' + l.options.icons.down + '"></span></a></td>' : '') + (l.options.use24hours ? '' : '<td class="separator"></td>') + '</tr></table></div><div class="timepicker-hours" data-action="selectHour"><table class="table-condensed"></table></div><div class="timepicker-minutes" data-action="selectMinute"><table class="table-condensed"></table></div>' + (l.options.useSeconds ? '<div class="timepicker-seconds" data-action="selectSecond"><table class="table-condensed"></table></div>' : '');
       };
-      q.destroy = function () {
-        t();
-        k();
-        q.widget.remove();
-        q.element.removeData('DateTimePicker');
-        q.component.removeData('DateTimePicker');
-      };
-      q.show = function (M) {
-        q.widget.show();
-        q.height = q.component ? q.component.outerHeight() : q.element.outerHeight();
-        o();
-        q.element.trigger({
-          type: 'show.dp',
-          date: q.date
-        });
-        p();
-        if (M) {
-          F(M);
+      l.destroy = function () {
+        F();
+        E();
+        l.widget.remove();
+        l.element.removeData('DateTimePicker');
+        if (l.component) {
+          l.component.removeData('DateTimePicker');
         }
-      }, q.disable = function () {
-        q.element.find('input').prop('disabled', true);
-        t();
-      }, q.enable = function () {
-        q.element.find('input').prop('disabled', false);
+      };
+      l.show = function (Q) {
+        l.widget.show();
+        l.height = l.component ? l.component.outerHeight() : l.element.outerHeight();
+        j();
+        l.element.trigger({
+          type: 'show.dp',
+          date: a(l.date)
+        });
+        L();
+        if (Q) {
+          K(Q);
+        }
+      }, l.disable = function () {
+        var Q = l.element.find('input');
+        if (!Q.prop('disabled')) {
+          return;
+        }
+        Q.prop('disabled', true);
+        F();
+      }, l.enable = function () {
+        var Q = l.element.find('input');
+        if (!Q.prop('disabled')) {
+          return;
+        }
+        Q.prop('disabled', true);
         J();
-      }, q.hide = function () {
-        var O = q.widget.find('.collapse'), M, N;
-        for (M = 0; M < O.length; M++) {
-          N = O.eq(M).data('collapse');
-          if (N && N.transitioning) {
+      }, l.hide = function (S) {
+        if (S && d(S.target).is(l.element.attr('id'))) {
+          return;
+        }
+        var T = l.widget.find('.collapse'), Q, R;
+        for (Q = 0; Q < T.length; Q++) {
+          R = T.eq(Q).data('collapse');
+          if (R && R.transitioning) {
             return;
           }
         }
-        q.widget.hide();
-        q.viewMode = q.startViewMode;
-        f();
-        q.element.trigger({
+        l.widget.hide();
+        l.viewMode = l.startViewMode;
+        g();
+        l.element.trigger({
           type: 'hide.dp',
-          date: q.date
+          date: a(l.date)
         });
-        k();
-      }, q.setValue = function (M) {
-        a.lang(q.options.language);
-        if (!M) {
-          q.unset = true;
+        E();
+      }, l.setValue = function (Q) {
+        a.lang(l.options.language);
+        if (!Q) {
+          l.unset = true;
         } else {
-          q.unset = false;
+          l.unset = false;
         }
-        if (!a.isMoment(M)) {
-          M = a(M);
+        if (!a.isMoment(Q)) {
+          Q = a(Q);
         }
-        if (M.isValid()) {
-          q.date = M;
-          x();
-          q.viewDate = a({
-            y: q.date.year(),
-            M: q.date.month()
+        if (Q.isValid()) {
+          l.date = Q;
+          r();
+          l.viewDate = a({
+            y: l.date.year(),
+            M: l.date.month()
           });
-          h();
-          y();
+          n();
+          k();
         } else {
-          w(M);
+          C(Q);
         }
-      }, q.getDate = function () {
-        if (q.unset) {
+      }, l.getDate = function () {
+        if (l.unset) {
           return null;
         }
-        return q.date;
-      }, q.setDate = function (M) {
-        if (!M) {
-          q.setValue(null);
+        return l.date;
+      }, l.setDate = function (Q) {
+        Q = a(Q);
+        if (!Q) {
+          l.setValue(null);
         } else {
-          q.setValue(M);
+          l.setValue(Q);
         }
-      }, q.setEndDate = function (M) {
-        q.options.endDate = a(M);
-        if (!q.options.endDate.isValid()) {
-          q.options.endDate = a().add(50, 'y');
+      }, l.setEnabledDates = function (Q) {
+        if (!Q) {
+          l.options.enabledDates = false;
+        } else {
+          l.options.enabledDates = Q;
         }
-        if (q.viewDate) {
-          n();
+        if (l.viewDate) {
+          y();
         }
-      }, q.setStartDate = function (M) {
-        q.options.startDate = a(M);
-        if (!q.options.startDate.isValid()) {
-          q.options.startDate = a({ y: 1970 });
+      }, l.setEndDate = function (Q) {
+        l.options.endDate = a(Q);
+        if (!l.options.endDate.isValid()) {
+          l.options.endDate = a().add(50, 'y');
         }
-        if (q.viewDate) {
-          n();
+        if (l.viewDate) {
+          y();
+        }
+      }, l.setStartDate = function (Q) {
+        l.options.startDate = a(Q);
+        if (!l.options.startDate.isValid()) {
+          l.options.startDate = a({ y: 1970 });
+        }
+        if (l.viewDate) {
+          y();
         }
       };
-      E();
+      I();
     };
-  d.fn.datetimepicker = function (e) {
+  d.fn.datetimepicker = function (f) {
     return this.each(function () {
-      var g = d(this), f = g.data('DateTimePicker');
-      if (!f) {
-        g.data('DateTimePicker', new b(this, e));
+      var h = d(this), g = h.data('DateTimePicker');
+      if (!g) {
+        h.data('DateTimePicker', new b(this, f));
       }
     });
   };
-}(jQuery));
+}));
 'use strict';
 angular.module('sumaAnalysis', [
   'ngRoute',
