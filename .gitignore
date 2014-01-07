@@ -7,6 +7,8 @@ tmp/**/*
 ._*
 .htaccess
 .htpasswd
+.sass-cache
+.tmp
 
 # Configuration Files
 service/config/config.ini
