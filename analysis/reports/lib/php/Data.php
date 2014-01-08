@@ -815,13 +815,13 @@ class Data
         }
 
         // Build periodAvg array
-        if (!isset($this->countHash['periodAvg'][$day]['sessions'][$sessId][$loc['id']]))
+        if (!isset($this->countHash['periodAvg'][$day]['sessions'][$sessId][$locId]))
         {
-            $this->countHash['periodAvg'][$day]['sessions'][$sessId][$loc['id']] = $count['number'];
+            $this->countHash['periodAvg'][$day]['sessions'][$sessId][$locId] = $count['number'];
         }
         else
         {
-            $this->countHash['periodAvg'][$day]['sessions'][$sessId][$loc['id']] += $count['number'];
+            $this->countHash['periodAvg'][$day]['sessions'][$sessId][$locId] += $count['number'];
         }
     }
     /**
