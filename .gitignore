@@ -9,6 +9,7 @@ tmp/**/*
 .htpasswd
 .sass-cache
 .tmp
+node_modules/**/*
 
 # Configuration Files
 service/config/config.ini
