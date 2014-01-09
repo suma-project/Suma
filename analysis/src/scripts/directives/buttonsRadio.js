@@ -7,7 +7,7 @@ angular.module('sumaAnalysis')
     return {
       restrict: 'E',
       templateUrl: 'views/directives/buttonsRadio.html',
-      scope: {model: '=model', options: '='},
+      scope: {model: '=', options: '='},
       controller: ['$scope', function ($scope) {
         $scope.activate = function (option) {
           if (option.$$hashKey !== oldOption) {
