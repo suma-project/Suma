@@ -21,7 +21,7 @@ describe('Directive: barChart', function () {
     linkScope = element.isolateScope();
   }));
 
-  it('should make hidden element visible', inject(function ($compile) {
+  it('should respond to data change and call render', inject(function ($compile) {
     stub = sinon.stub(linkScope, 'render');
     stub.returns(true);
 
