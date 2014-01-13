@@ -34,6 +34,7 @@ module.exports = function(config) {
       'test/js/spec/directives/timepicker.js',
       'test/js/spec/directives/datepicker.js',
       'test/js/spec/directives/chartDownload.js',
+      'test/js/spec/directives/csv.js',
       // 'test/js/spec/**/*.js',
       'src/views/directives/**/*.html'
     ],

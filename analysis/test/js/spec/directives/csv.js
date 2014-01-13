@@ -5,16 +5,33 @@ describe('Directive: csv', function () {
   // load the directive's module
   beforeEach(module('sumaAnalysis'));
 
-  var element,
-    scope;
+  // load the directive's template
+  beforeEach(module('views/directives/csv.html'));
 
-  beforeEach(inject(function ($rootScope) {
+  var element,
+      scope,
+      ctrlScope,
+      stub;
+
+  beforeEach(inject(function ($rootScope, $compile) {
+    element = angular.element('<csv data="data"></csv>');
+
     scope = $rootScope.$new();
+
+    element = $compile(element)(scope);
+    scope.$digest();
+
+    ctrlScope = element.isolateScope();
   }));
 
-  it('should make hidden element visible', inject(function ($compile) {
-    element = angular.element('<csv></csv>');
-    element = $compile(element)(scope);
-    expect(true).to.equal(false);
+  it('should call download when clicked', inject(function ($compile) {
+
+    stub = sinon.stub(ctrlScope, 'download');
+    stub.returns(true);
+
+    element.find('a')[0].click()
+
+    expect(stub).to.be.calledOnce();
+    stub.restore();
   }));
 });
