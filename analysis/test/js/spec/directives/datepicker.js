@@ -27,7 +27,7 @@ describe('Directive: datepicker', function () {
     });
   }));
 
-  it('should make hidden element visible', inject(function ($compile) {
+  it('should initialize a datetimepicker', inject(function ($compile) {
     expect($.fn.datetimepicker).to.be.calledOnce;
     expect($.fn.datetimepicker).to.be.calledWith({
       defaultDate: scope.model,
