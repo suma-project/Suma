@@ -36,6 +36,7 @@ module.exports = function(config) {
       'test/js/spec/directives/chartDownload.js',
       'test/js/spec/directives/csv.js',
       'test/js/spec/directives/csvHourly.js',
+      'test/js/spec/directives/barChart.js',
       // 'test/js/spec/**/*.js',
       'src/views/directives/**/*.html'
     ],
