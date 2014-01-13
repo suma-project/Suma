@@ -6,13 +6,26 @@ describe('Service: Sessionsdata', function () {
   beforeEach(module('sumaAnalysis'));
 
   // instantiate service
-  var Sessionsdata;
-  beforeEach(inject(function (_sessionsData_) {
+  var Sessionsdata,
+      $rootScope,
+      $httpBackend,
+      params = {init: {id: 1}, count: {}, session_filter: 'false', daygroup: {}, location: {}, activity: {}};
+
+  beforeEach(inject(function (_$rootScope_, _$httpBackend_, _sessionsData_) {
+    $rootScope = _$rootScope_;
+    $httpBackend = _$httpBackend_;
     Sessionsdata = _sessionsData_;
   }));
 
-  it('should do something', function () {
-    expect(!!Sessionsdata).to.equal(true);
-  });
+  it('should make an AJAX call', function (done) {
+      $httpBackend.whenGET('lib/php/sessionsResults.php?activities=all&daygroup=all&edate=&etime=&id=1&locations=all&sdate=&session=session&session_filter=true&stime=').respond([{}, {}]);
+
+      Sessionsdata.get(params).then(function (result) {
+        expect(result.length).to.equal(2);
+        done();
+      });
+
+      $httpBackend.flush();
+    });
 
 });
