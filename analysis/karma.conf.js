@@ -22,6 +22,7 @@ module.exports = function(config) {
       'src/bower_components/bootstrap3-datetimepicker/src/js/bootstrap-datetimepicker.js',
       'src/bower_components/lodash/dist/lodash.js',
       'src/bower_components/d3/d3.js',
+      'src/bower_components/canvg/canvg.js',
       'src/scripts/*.js',
       'src/scripts/**/*.js',
       // 'test/js/mock/**/*.js',
@@ -32,6 +33,7 @@ module.exports = function(config) {
       'test/js/spec/directives/popover.js',
       'test/js/spec/directives/timepicker.js',
       'test/js/spec/directives/datepicker.js',
+      'test/js/spec/directives/chartDownload.js',
       // 'test/js/spec/**/*.js',
       'src/views/directives/**/*.html'
     ],
