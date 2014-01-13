@@ -11,7 +11,7 @@ describe('Filter: depth', function () {
     depth = $filter('depth');
   }));
 
-  it('should append mdash to title:"', function () {
+  it('should append mdash to title', function () {
     var obj1 = {
       title: 'Title',
       depth: 1

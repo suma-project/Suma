@@ -11,7 +11,7 @@ describe('Filter: hourFormat', function () {
     hourFormat = $filter('hourFormat');
   }));
 
-  it('should return a human readable hour format:"', function () {
+  it('should return a human readable hour format', function () {
     var hours = {
       0: '12:00 AM',
       1: '01:00 AM',
