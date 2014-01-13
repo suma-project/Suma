@@ -38,6 +38,7 @@ module.exports = function(config) {
       'test/js/spec/directives/csvHourly.js',
       'test/js/spec/directives/barChart.js',
       'test/js/spec/directives/calendarChart.js',
+      'test/js/spec/directives/hourlyCalendarChart.js',
       // 'test/js/spec/**/*.js',
       'src/views/directives/**/*.html'
     ],
