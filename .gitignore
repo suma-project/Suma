@@ -10,6 +10,7 @@ tmp/**/*
 .sass-cache
 .tmp
 node_modules
+analysis/coverage
 
 # Configuration Files
 service/config/config.ini

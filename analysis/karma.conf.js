@@ -25,7 +25,6 @@ module.exports = function(config) {
       'src/bower_components/canvg/canvg.js',
       'src/scripts/*.js',
       'src/scripts/**/*.js',
-      // 'test/js/mock/**/*.js',
       'test/js/spec/**/*.js',
       'src/views/directives/**/*.html'
     ],
@@ -40,13 +39,16 @@ module.exports = function(config) {
     // possible values: LOG_DISABLE || LOG_ERROR || LOG_WARN || LOG_INFO || LOG_DEBUG
     logLevel: config.LOG_INFO,
 
+    // reporters
+    reporters: ['progress', 'coverage'],
 
     // enable / disable watching file and executing tests whenever any file changes
     autoWatch: true,
 
     // config for directive testing
     preprocessors: {
-      'src/views/directives/**/*.html': 'ng-html2js'
+      'src/views/directives/**/*.html': 'ng-html2js',
+      'src/scripts/**/*.js': ['coverage']
     },
     ngHtml2JsPreprocessor: {
       // strip this from the file path
