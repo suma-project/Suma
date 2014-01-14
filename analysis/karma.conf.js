@@ -50,9 +50,16 @@ module.exports = function(config) {
       'src/views/directives/**/*.html': 'ng-html2js',
       'src/scripts/**/*.js': ['coverage']
     },
+
     ngHtml2JsPreprocessor: {
       // strip this from the file path
       stripPrefix: 'src/'         // HERE
+    },
+
+    // coverageReporter config
+    coverageReporter: {
+      type: 'html',
+      dir: 'test/js/coverage/'
     },
 
     // Start these browsers, currently available:
