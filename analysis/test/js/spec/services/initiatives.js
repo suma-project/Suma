@@ -25,4 +25,17 @@ describe('Service: Initiatives', function () {
 
     $httpBackend.flush();
   });
+
+  it('should respond with error message on failure', function (done) {
+    $httpBackend.whenGET('lib/php/initiatives.php').respond(500, {message: 'Error'});
+
+    Initiatives.get().then(function (result) {
+
+    }, function (result) {
+      expect(result).to.deep.equal({message: 'Error', code: 500});
+      done();
+    });
+
+    $httpBackend.flush();
+  });
 });
