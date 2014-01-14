@@ -36,10 +36,7 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
       // });
       //
 
-    // Whitelist data for CSV download
-    if (angular.isDefined($compileProvider.urlSanitizationWhitelist)) {
-      $compileProvider.urlSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|data):/);
-    } else {
-      $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|data):/);
-    }
+    // whitelist data for csv download
+    $compileProvider.aHrefSanitizationWhitelist(/^\s*(data):/);
+
   });
