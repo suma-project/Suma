@@ -26,10 +26,7 @@ module.exports = function(config) {
       'src/scripts/*.js',
       'src/scripts/**/*.js',
       // 'test/js/mock/**/*.js',
-      'test/js/spec/filters/**/*.js',
-      'test/js/spec/services/**/*.js',
-      'test/js/spec/directives/**/*.js',
-      // 'test/js/spec/**/*.js',
+      'test/js/spec/**/*.js',
       'src/views/directives/**/*.html'
     ],
 
