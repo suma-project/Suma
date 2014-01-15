@@ -8,6 +8,7 @@ describe('Directive: timepicker', function () {
   beforeEach(module('views/directives/timepicker.html'));
 
   var element,
+    linkScope,
     scope,
     stub;
 
@@ -25,6 +26,8 @@ describe('Directive: timepicker', function () {
       scope.params = {};
       scope.params.stime = '';
     });
+
+    linkScope = element.isolateScope();
   }));
 
   it('should attach timepicker listener to element', inject(function ($compile) {
@@ -40,5 +43,12 @@ describe('Directive: timepicker', function () {
       }
     });
     stub.restore();
+  }));
+
+  it('should call scope.$apply on change', inject(function ($compile) {
+    element.find('input').val('updated value');
+    element.find('.input-group').trigger('change.dp');
+
+    expect(linkScope.model).to.equal('updated value');
   }));
 });
