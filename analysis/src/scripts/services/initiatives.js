@@ -13,7 +13,6 @@ angular.module('sumaAnalysis')
         $http.get(url).success(function (data, status, headers, config) {
           dfd.resolve(data);
         }).error(function (data, status, headers, config) {
-          console.log('initiatives error', data, status, headers, config);
           dfd.reject({message: data.message, code: status});
         });
 
