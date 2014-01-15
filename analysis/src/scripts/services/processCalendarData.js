@@ -19,18 +19,8 @@ angular.module('sumaAnalysis')
 
     function processData(response) {
       var avg,
-          dfd = $.Deferred(),
           data = {},
           sum;
-
-      // Does response have enough values to draw meaningful graph?
-      if (!response.periodSum) {
-        return dfd.reject({statusText: 'no data'});
-      }
-
-      if (Object.keys(response.periodSum).length < 1) {
-        return dfd.reject({statusText: 'no data'});
-      }
 
       sum = sortData(response.periodSum);
 
@@ -43,9 +33,7 @@ angular.module('sumaAnalysis')
 
       data.data = data.options[1];
 
-      dfd.resolve(data);
-
-      return dfd.promise();
+      return data;
     }
 
     return {
@@ -53,6 +41,18 @@ angular.module('sumaAnalysis')
         var dfd;
 
         dfd = $q.defer();
+
+        // TODO: improve rejection of poor data set
+        // Does response have enough values to draw meaningful graph?
+        if (!response.periodSum) {
+          dfd.reject({statusText: 'no data, periodSum not found'});
+        }
+
+        if (response.periodSum) {
+          if (Object.keys(response.periodSum).length < 1) {
+            dfd.reject({statusText: 'not enough data'});
+          }
+        }
 
         dfd.resolve(processData(response));
 
