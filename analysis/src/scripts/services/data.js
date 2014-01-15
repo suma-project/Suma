@@ -33,7 +33,7 @@ angular.module('sumaAnalysis')
             'etime': params.etime || '',
             'daygroup': params.daygroup.id || 'all' ,
             'locations': params.location.id || 'all',
-            'activities': params.activity.id === 'all' ? 'all' : (params.activity.type + '-' + params.activity.id) || 'all'
+            'activities': params.activity.type ? (params.activity.type + '-' + params.activity.id) : 'all'
           }
         };
 

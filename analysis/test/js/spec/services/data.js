@@ -10,6 +10,7 @@ describe('Service: Data', function () {
       $rootScope,
       okResponse,
       params = {init: {id: 1}, count: {}, session_filter: 'false', daygroup: {}, location: {id: 'all'}, activity: {id: 'all'}},
+      params2 = {init: {id: 1}, count: {}, session_filter: 'false', daygroup: {}, location: {}, activity: {type: 'activity', id: 4}},
       Processtimeseriesdata,
       Processcalendardata,
       Processhourlydata,
@@ -43,14 +44,6 @@ describe('Service: Data', function () {
       expect(result.success).to.equal(true);
       done();
     });
-
-
-
-    // Data.get(params, [], []).then(function (result) {
-    //   console.log('result', result)
-    //   expect(result.success).to.equal(false);
-    //   done();
-    // });
 
     $httpBackend.flush();
     timeseriesStub.restore();
@@ -86,6 +79,23 @@ describe('Service: Data', function () {
 
     $httpBackend.flush();
     hourlyStub.restore();
+  });
+
+  it('should format activityType and activityId into string', function (done) {
+    $httpBackend.whenGET('lib/php/dataResults.php?activities=activity-4&daygroup=all&edate=&etime=&id=1&locations=all&sdate=&session=count&session_filter=false&stime=')
+      .respond([{}, {}]);
+
+    timeseriesStub = sinon.stub(Processtimeseriesdata, 'get');
+    timeseriesStub.returns(okResponse());
+
+    // Note use of params2 object
+    Data.get(params2, [], [], 'processTimeSeriesData').then(function (result) {
+      expect(result.success).to.equal(true);
+      done();
+    });
+
+    $httpBackend.flush();
+    timeseriesStub.restore();
   });
 
   it('should return an error if no processor is passed', function (done) {
