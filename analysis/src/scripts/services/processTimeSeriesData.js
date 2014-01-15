@@ -20,9 +20,7 @@ angular.module('sumaAnalysis')
           return obj.id === item[prop] && obj.type === 'activityGroup';
         }
 
-        if (prop === 'parent') {
-          return obj.id === item[prop];
-        }
+        return obj.id === item[prop];
       });
 
       if (hasChildren.length < 1) {
@@ -118,17 +116,10 @@ angular.module('sumaAnalysis')
     }
 
     function processData (response, activities, locations) {
-      var dataTest,
-        dfd = $q.defer(),
-        noActsSum,
+      var noActsSum,
         noActsAvgSum,
         noActsAvgAvg,
         counts;
-
-      // Reject if no locations
-      if (!response.locationsSum) {
-        return dfd.reject({statusText: 'no data'});
-      }
 
       // Convert response into arrays of objects
       counts = {};
@@ -238,15 +229,6 @@ angular.module('sumaAnalysis')
         return item.name;
       });
 
-      // Check data for display
-      dataTest = _.reduce(_.pluck(counts.periodSum, 'count'), function (sum, num) {
-        return sum + num;
-      });
-
-      if (dataTest === 0) {
-        return dfd.reject({statusText: 'no data'});
-      }
-
       counts.timeSeriesOptions = [
         {title: 'Daily Avg', val: 'avg', data: counts.periodAvg},
         {title: 'Daily Sum', val: 'sum', data: counts.periodSum}
@@ -272,15 +254,17 @@ angular.module('sumaAnalysis')
       counts.actsLocsData = counts.actsLocsOptions[1];
 
       counts.barChartData = counts.actsLocsData.items[2];
+      return counts;
+      // dfd.resolve(counts);
 
-      dfd.resolve(counts);
-
-      return dfd.promise;
+      // return dfd.promise;
     }
 
     return {
       get: function (response, acts, locs) {
-        var dfd;
+        var data,
+            dataTest,
+            dfd;
 
         dfd = $q.defer();
 
@@ -292,7 +276,24 @@ angular.module('sumaAnalysis')
           return loc.id !== 'all';
         });
 
-        dfd.resolve(processData(response, acts, locs));
+        // TODO: Clean-up response checking and expand conditions
+        // Reject if no locations
+        if (!response.locationsSum) {
+          dfd.reject({statusText: 'no data, locationsSum not found'});
+        }
+
+        data = processData(response, acts, locs);
+
+        // Check data for display
+        dataTest = _.reduce(_.pluck(data.periodSum, 'count'), function (sum, num) {
+          return sum + num;
+        });
+
+        if (!dataTest) {
+          dfd.reject({statusText: 'no data, dataTest failed'});
+        }
+
+        dfd.resolve(data);
 
         return dfd.promise;
       }
