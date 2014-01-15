@@ -8,6 +8,7 @@ describe('Directive: datepicker', function () {
   beforeEach(module('views/directives/datepicker.html'));
 
   var element,
+    linkScope,
     scope,
     stub;
 
@@ -25,7 +26,13 @@ describe('Directive: datepicker', function () {
       scope.params = {};
       scope.params.sdate = moment().subtract('months', 6).add('days', 1).format('YYYY-MM-DD');;
     });
+
+    linkScope = element.isolateScope();
   }));
+
+  afterEach(function () {
+    stub.restore();
+  })
 
   it('should initialize a datetimepicker', inject(function ($compile) {
     expect($.fn.datetimepicker).to.be.calledOnce;
@@ -34,7 +41,12 @@ describe('Directive: datepicker', function () {
       pickDate: true,
       pickTime: false
     });
+  }));
 
-    stub.restore();
+  it('should update scope.model on change', inject(function ($compile) {
+    element.find('input').val('updated value');
+    element.find('.input-group').trigger('change.dp');
+
+    expect(linkScope.model).to.equal('updated value');
   }));
 });

@@ -30,6 +30,10 @@ describe('Directive: timepicker', function () {
     linkScope = element.isolateScope();
   }));
 
+  afterEach(function () {
+    stub.restore();
+  });
+
   it('should attach timepicker listener to element', inject(function ($compile) {
     expect($.fn.datetimepicker).to.be.calledOnce;
     expect($.fn.datetimepicker).to.be.calledWith({
@@ -42,10 +46,9 @@ describe('Directive: timepicker', function () {
         down: 'fa fa-arrow-down'
       }
     });
-    stub.restore();
   }));
 
-  it('should call scope.$apply on change', inject(function ($compile) {
+  it('should update scope.model on change', inject(function ($compile) {
     element.find('input').val('updated value');
     element.find('.input-group').trigger('change.dp');
 
