@@ -12,8 +12,17 @@ describe('Filter: countFormat', function () {
   }));
 
   it('should format numbers with thousands separator:"', function () {
-    var text = '10000';
-    expect(countFormat(text)).to.equal('10,000');
-  });
+    var numbers = {
+      1000: '1,000',
+      10000: '10,000',
+      100000: '100,000',
+      1000000: '1,000,000',
+      10000000: '10,000,000',
+      100000000: '100,000,000'
+    };
 
+    for (var num in numbers) {
+      expect(countFormat(num)).to.equal(numbers[num])
+    }
+  });
 });
