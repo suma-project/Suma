@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Directive: chartDownload', function () {
+describe('Directive: sumaChartDownload', function () {
 
   // load the directive's module
   beforeEach(module('sumaAnalysis'));
@@ -15,7 +15,7 @@ describe('Directive: chartDownload', function () {
 
   beforeEach(inject(function ($rootScope, $compile) {
     element = angular.element(
-      '<chart-download chart="#chart-1" title="suma_timeseries_chart.png" filter=".sub-graph"></chart-download>'
+      '<suma-chart-download chart="#chart-1" title="suma_timeseries_chart.png" filter=".sub-graph"></suma-chart-download>'
     );
 
     scope = $rootScope.$new();

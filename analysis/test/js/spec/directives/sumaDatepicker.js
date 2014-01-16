@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Directive: datepicker', function () {
+describe('Directive: sumaDatepicker', function () {
 
   // load the directive's module
   beforeEach(module('sumaAnalysis'));
@@ -16,7 +16,7 @@ describe('Directive: datepicker', function () {
     stub = sinon.stub($.fn, 'datetimepicker');
     stub.returns(true);
 
-    element = angular.element('<datepicker model="params.sdate"></datepicker>');
+    element = angular.element('<suma-datepicker model="params.sdate"></suma-datepicker>');
 
     scope = $rootScope.$new();
     $compile(element)(scope);

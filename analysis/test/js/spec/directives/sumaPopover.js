@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Directive: popover', function () {
+describe('Directive: sumaPopover', function () {
   var element,
     scope,
     stub;
@@ -15,7 +15,7 @@ describe('Directive: popover', function () {
 
     // instantiate directive
     element = angular.element(
-      '<label for="initiatives" class="suma-popover" data-title="Select Initiative" data-content="Select an initiative to reveal additional filters." popover>Select an Initiative</label>'
+      '<label for="initiatives" class="suma-popover" data-title="Select Initiative" data-content="Select an initiative to reveal additional filters." suma-popover>Select an Initiative</label>'
     )
     scope = $rootScope.$new();
     $compile(element)(scope);

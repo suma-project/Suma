@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Directive: csvHourly', function () {
+describe('Directive: sumaCsvHourly', function () {
 
   // load the directive's module
   beforeEach(module('sumaAnalysis'));
@@ -14,7 +14,7 @@ describe('Directive: csvHourly', function () {
         stub;
 
     beforeEach(inject(function ($rootScope, $compile) {
-      element = angular.element('<csv-hourly data="data"></csv-hourly>');
+      element = angular.element('<suma-csv-hourly data="data"></suma-csv-hourly>');
 
       scope = $rootScope.$new();
 

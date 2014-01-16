@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Directive: buttonsRadio', function () {
+describe('Directive: sumaButtonsRadio', function () {
 
   // load the directive's module
   beforeEach(module('sumaAnalysis'));
@@ -14,7 +14,7 @@ describe('Directive: buttonsRadio', function () {
   beforeEach(inject(function ($rootScope, $compile) {
     // instantiate directive
     element = angular.element(
-      '<buttons-radio model="data" options="options"></buttons-radio>'
+      '<suma-buttons-radio model="data" options="options"></suma-buttons-radio>'
     )
 
     scope = $rootScope.$new();
