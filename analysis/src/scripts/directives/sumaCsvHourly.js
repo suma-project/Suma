@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('sumaAnalysis')
-  .directive('csvHourly', function () {
+  .directive('sumaCsvHourly', function () {
     var dict = {
       weekdays: {
         1: 'Sunday',

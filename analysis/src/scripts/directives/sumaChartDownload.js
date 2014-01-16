@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('sumaAnalysis')
-  .directive('chartDownload', function () {
+  .directive('sumaChartDownload', function () {
     return {
       restrict: 'E',
       templateUrl: 'views/directives/chartDownload.html',

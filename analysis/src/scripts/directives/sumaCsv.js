@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('sumaAnalysis')
-  .directive('csv', function () {
+  .directive('sumaCsv', function () {
     return {
       restrict: 'E',
       templateUrl: 'views/directives/csv.html',

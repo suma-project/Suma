@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('sumaAnalysis')
-  .directive('timepicker', function () {
+  .directive('sumaTimepicker', function () {
     return {
       restrict: 'E',
       templateUrl: 'views/directives/timepicker.html',

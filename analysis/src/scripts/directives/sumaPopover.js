@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('sumaAnalysis')
-  .directive('popover', function () {
+  .directive('sumaPopover', function () {
     return {
       restrict: 'A',
       link: function postLink(scope, element, attrs) {

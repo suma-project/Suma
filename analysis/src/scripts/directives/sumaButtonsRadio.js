@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('sumaAnalysis')
-  .directive('buttonsRadio', function () {
+  .directive('sumaButtonsRadio', function () {
     var oldOption;
 
     return {
