@@ -6,7 +6,6 @@ angular.module('sumaAnalysis')
       get: function (params) {
         var dfd,
             options,
-            processor,
             url;
 
         dfd = $q.defer();
