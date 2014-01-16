@@ -5,7 +5,8 @@ describe('Controller: SessionsCtrl', function () {
   // load the controller's module
   beforeEach(module('sumaAnalysis'));
 
-  var scope,
+  var SessionsCtrl,
+      scope,
       Initiatives,
       SessionsData,
       ErrorDispatcher,
@@ -56,10 +57,7 @@ describe('Controller: SessionsCtrl', function () {
   });
 
   it(':initialize should set UI state to initial', inject(function ($controller) {
-    var SessionsCtrl;
-
     initiativesStub.returns(okResponse());
-
     SessionsCtrl = $controller('SessionsCtrl', {
       $scope: scope
     });
@@ -68,8 +66,6 @@ describe('Controller: SessionsCtrl', function () {
   }));
 
   it(':initialize should set default values', inject(function ($controller) {
-    var SessionsCtrl;
-
     initiativesStub.returns(okResponse());
 
     SessionsCtrl = $controller('SessionsCtrl', {
@@ -82,8 +78,6 @@ describe('Controller: SessionsCtrl', function () {
   }));
 
   it(':initialize should assign initiaives to scope', inject(function ($controller) {
-    var SessionsCtrl;
-
     initiativesStub.returns(okResponse());
 
     SessionsCtrl = $controller('SessionsCtrl', {
@@ -95,8 +89,6 @@ describe('Controller: SessionsCtrl', function () {
   }));
 
   it(':initialize should dispatch an error if Initiatives.get fails', inject(function ($controller) {
-    var SessionsCtrl;
-
     initiativesStub.returns(errorResponse());
 
     SessionsCtrl = $controller('SessionsCtrl', {
@@ -110,8 +102,6 @@ describe('Controller: SessionsCtrl', function () {
   }));
 
   it(':submit should setUIState to loading', inject(function($controller) {
-    var SessionsCtrl;
-
     initiativesStub.returns(okResponse());
     sessionsStub.returns(okResponse());
 
@@ -125,8 +115,6 @@ describe('Controller: SessionsCtrl', function () {
   }));
 
   it(':submit should assign data to scope and set state to success', inject(function($controller) {
-    var SessionsCtrl;
-
     initiativesStub.returns(okResponse());
     sessionsStub.returns(okResponse());
 
@@ -142,8 +130,6 @@ describe('Controller: SessionsCtrl', function () {
   }));
 
   it(':submit should dispatch an error if SessionsData.get fails', inject(function($controller) {
-    var SessionsCtrl;
-
     initiativesStub.returns(okResponse());
     sessionsStub.returns(errorResponse());
 
