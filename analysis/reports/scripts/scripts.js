@@ -32570,11 +32570,7 @@ angular.module('sumaAnalysis', [
       templateUrl: 'views/sessions.html',
       controller: 'SessionsCtrl'
     }).when('/about', { templateUrl: 'views/about.html' }).when('/contact', { templateUrl: 'views/contact.html' });
-    if (angular.isDefined($compileProvider.urlSanitizationWhitelist)) {
-      $compileProvider.urlSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|data):/);
-    } else {
-      $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|data):/);
-    }
+    $compileProvider.aHrefSanitizationWhitelist(/^\s*(data):/);
   }
 ]);
 'use strict';
@@ -32696,7 +32692,6 @@ angular.module('sumaAnalysis').factory('initiatives', [
         $http.get(url).success(function (data, status, headers, config) {
           dfd.resolve(data);
         }).error(function (data, status, headers, config) {
-          console.log('initiatives error', data, status, headers, config);
           dfd.reject({
             message: data.message,
             code: status
@@ -32803,7 +32798,7 @@ angular.module('sumaAnalysis').factory('data', [
             'etime': params.etime || '',
             'daygroup': params.daygroup.id || 'all',
             'locations': params.location.id || 'all',
-            'activities': params.activity.id === 'all' ? 'all' : params.activity.type + '-' + params.activity.id || 'all'
+            'activities': params.activity.type ? params.activity.type + '-' + params.activity.id : 'all'
           }
         };
         $http.get(url, options).success(function (data) {
@@ -32841,9 +32836,7 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
         if (prop === 'activityGroup') {
           return obj.id === item[prop] && obj.type === 'activityGroup';
         }
-        if (prop === 'parent') {
-          return obj.id === item[prop];
-        }
+        return obj.id === item[prop];
       });
       if (hasChildren.length < 1) {
         return obj.count;
@@ -32915,10 +32908,7 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
       return false;
     }
     function processData(response, activities, locations) {
-      var dataTest, dfd = $q.defer(), noActsSum, noActsAvgSum, noActsAvgAvg, counts;
-      if (!response.locationsSum) {
-        return dfd.reject({ statusText: 'no data' });
-      }
+      var noActsSum, noActsAvgSum, noActsAvgAvg, counts;
       counts = {};
       counts.csv = response.csv;
       counts.total = [{ count: response.total }];
@@ -32999,12 +32989,6 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
       }), function (item) {
         return item.name;
       });
-      dataTest = _.reduce(_.pluck(counts.periodSum, 'count'), function (sum, num) {
-        return sum + num;
-      });
-      if (dataTest === 0) {
-        return dfd.reject({ statusText: 'no data' });
-      }
       counts.timeSeriesOptions = [
         {
           title: 'Daily Avg',
@@ -33066,12 +33050,11 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
       ];
       counts.actsLocsData = counts.actsLocsOptions[1];
       counts.barChartData = counts.actsLocsData.items[2];
-      dfd.resolve(counts);
-      return dfd.promise;
+      return counts;
     }
     return {
       get: function (response, acts, locs) {
-        var dfd;
+        var data, dataTest, dfd;
         dfd = $q.defer();
         acts = _.filter(acts, function (act) {
           return act.id !== 'all';
@@ -33079,7 +33062,17 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
         locs = _.filter(locs, function (loc) {
           return loc.id !== 'all';
         });
-        dfd.resolve(processData(response, acts, locs));
+        if (!response.locationsSum) {
+          dfd.reject({ statusText: 'no data, locationsSum not found' });
+        }
+        data = processData(response, acts, locs);
+        dataTest = _.reduce(_.pluck(data.periodSum, 'count'), function (sum, num) {
+          return sum + num;
+        });
+        if (!dataTest) {
+          dfd.reject({ statusText: 'no data, dataTest failed' });
+        }
+        dfd.resolve(data);
         return dfd.promise;
       }
     };
@@ -33439,7 +33432,7 @@ angular.module('sumaAnalysis').directive('buttonsRadio', function () {
     restrict: 'E',
     templateUrl: 'views/directives/buttonsRadio.html',
     scope: {
-      model: '=model',
+      model: '=',
       options: '='
     },
     controller: [
@@ -33725,13 +33718,7 @@ angular.module('sumaAnalysis').factory('processCalendarData', [
       });
     }
     function processData(response) {
-      var avg, dfd = $.Deferred(), data = {}, sum;
-      if (!response.periodSum) {
-        return dfd.reject({ statusText: 'no data' });
-      }
-      if (Object.keys(response.periodSum).length < 1) {
-        return dfd.reject({ statusText: 'no data' });
-      }
+      var avg, data = {}, sum;
       sum = sortData(response.periodSum);
       avg = sortData(response.periodAvg);
       data.options = [
@@ -33747,13 +33734,20 @@ angular.module('sumaAnalysis').factory('processCalendarData', [
         }
       ];
       data.data = data.options[1];
-      dfd.resolve(data);
-      return dfd.promise();
+      return data;
     }
     return {
       get: function (response) {
         var dfd;
         dfd = $q.defer();
+        if (!response.periodSum) {
+          dfd.reject({ statusText: 'no data, periodSum not found' });
+        }
+        if (response.periodSum) {
+          if (Object.keys(response.periodSum).length < 1) {
+            dfd.reject({ statusText: 'not enough data' });
+          }
+        }
         dfd.resolve(processData(response));
         return dfd.promise;
       }
@@ -34668,7 +34662,7 @@ angular.module('sumaAnalysis').factory('sessionsData', [
   function ($q, $http) {
     return {
       get: function (params) {
-        var dfd, options, processor, url;
+        var dfd, options, url;
         dfd = $q.defer();
         url = 'lib/php/sessionsResults.php';
         options = {
