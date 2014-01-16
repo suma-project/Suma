@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('sumaAnalysis')
-  .directive('hourlyCalendarChart', function () {
+  .directive('sumaHourlyCalendarChart', function () {
     var iqr,
         quantiles,
         upperOutlier,

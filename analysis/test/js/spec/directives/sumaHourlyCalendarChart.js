@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Directive: hourlyCalendarChart', function () {
+describe('Directive: sumaHourlyCalendarChart', function () {
 
   // load the directive's module
     beforeEach(module('sumaAnalysis'));
@@ -12,7 +12,7 @@ describe('Directive: hourlyCalendarChart', function () {
         statsStub;
 
     beforeEach(inject(function ($rootScope, $compile) {
-      element = angular.element('<hourly-calendar-chart id="chart-2" data="data.data" stats="stats" ng-show="success"></hourly-calendar-chart>');
+      element = angular.element('<suma-hourly-calendar-chart id="chart-2" data="data.data" stats="stats" ng-show="success"></suma-hourly-calendar-chart>');
 
       scope = $rootScope.$new();
 
