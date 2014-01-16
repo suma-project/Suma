@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Directive: hourlyLineChart', function () {
+describe('Directive: sumaHourlyLineChart', function () {
 
   // load the directive's module
     beforeEach(module('sumaAnalysis'));
@@ -11,7 +11,7 @@ describe('Directive: hourlyLineChart', function () {
         renderStub;
 
     beforeEach(inject(function ($rootScope, $compile) {
-      element = angular.element('<hourly-line-chart id="chart-1" data="data.data" ng-show="success"></hourly-line-chart>');
+      element = angular.element('<suma-hourly-line-chart id="chart-1" data="data.data" ng-show="success"></suma-hourly-line-chart>');
 
       scope = $rootScope.$new();
 

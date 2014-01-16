@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('sumaAnalysis')
-  .directive('hourlyLineChart', function () {
+  .directive('sumaHourlyLineChart', function () {
     var HourlyLine = function () {
       function chart(selection) {
 
