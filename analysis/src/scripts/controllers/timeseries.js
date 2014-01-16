@@ -68,7 +68,6 @@ angular.module('sumaAnalysis')
 
       data.get($scope.params, $scope.activities, $scope.locations, 'processTimeSeriesData')
         .then(function (processedData) {
-          $scope.testData = processedData;
           // Bind Data to Scope
           $scope.data = processedData;
 
