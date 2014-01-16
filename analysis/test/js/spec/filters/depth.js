@@ -7,23 +7,25 @@ describe('Filter: depth', function () {
 
   // initialize a new instance of the filter before each test
   var depth;
+
   beforeEach(inject(function ($filter) {
     depth = $filter('depth');
   }));
 
   it('should append mdash to title', function () {
-    var obj1 = {
-      title: 'Title',
-      depth: 1
-    };
+    var objs = [],
+        title = 'Title';
 
-    var obj2 = {
-      title: 'Title',
-      depth: 2
-    };
+    for (var i = 1; i < 10; i += 1) {
+      objs.push({
+        title: 'Title',
+        depth: i
+      });
+    }
 
-    expect(depth(obj1)).to.equal('—Title');
-    expect(depth(obj2)).to.equal('——Title');
+    objs.forEach(function (obj, i) {
+      title = '—' + title;
+      expect(depth(obj)).to.equal(title)
+    });
   });
-
 });
