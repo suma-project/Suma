@@ -47,5 +47,17 @@ describe('Directive: sumaButtonsRadio', function () {
 
     expect(buttons.eq(0)).to.have.class('active');
     expect(buttons.eq(1)).not.to.have.class('active');
+
+    //click 2nd button
+    buttons.eq(1).click();
+
+    expect(buttons.eq(0)).not.to.have.class('active');
+    expect(buttons.eq(1)).to.have.class('active');
+
+    //click 2nd button again
+    buttons.eq(1).click();
+
+    expect(buttons.eq(0)).not.to.have.class('active');
+    expect(buttons.eq(1)).to.have.class('active');
   }));
 });
