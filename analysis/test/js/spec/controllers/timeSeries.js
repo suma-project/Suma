@@ -6,6 +6,8 @@ describe('Controller: TimeSeriesCtrl', function () {
   beforeEach(module('sumaAnalysis'));
 
   var TimeSeriesCtrl,
+    Controller,
+    Timeout,
     scope,
     Initiatives,
     Data,
@@ -23,8 +25,10 @@ describe('Controller: TimeSeriesCtrl', function () {
     location;
 
   // Initialize the controller and a mock scope
-  beforeEach(inject(function ($controller, $rootScope, initiatives, errorDispatcher, uiStates, data, $q, $location, actsLocs) {
+  beforeEach(inject(function ($controller, $rootScope, initiatives, errorDispatcher, uiStates, data, $q, $location, actsLocs, $timeout) {
     scope = $rootScope.$new();
+    Controller = $controller;
+    Timeout = $timeout;
     Initiatives = initiatives;
     Data = data;
     ErrorDispatcher = errorDispatcher;
@@ -61,25 +65,26 @@ describe('Controller: TimeSeriesCtrl', function () {
   }));
 
   afterEach(function () {
-    statesStub.restore();
-    errorDispatcherStub.restore();
     initiativesStub.restore();
     dataStub.restore();
+    statesStub.restore();
+    errorDispatcherStub.restore();
   });
 
-  it(':initialize should set UI state to initial', inject(function ($controller) {
+  it(':initialize should set UI state to initial', function () {
     initiativesStub.returns(okResponse());
-    TimeSeriesCtrl = $controller('TimeSeriesCtrl', {
+
+    TimeSeriesCtrl = Controller('TimeSeriesCtrl', {
       $scope: scope
     });
 
     expect(UIStates.setUIState).to.be.calledWithExactly('initial', scope);
-  }));
+  });
 
-  it(':initialize should set default values', inject(function ($controller) {
+  it(':initialize should set default values', function () {
     initiativesStub.returns(okResponse());
 
-    TimeSeriesCtrl = $controller('TimeSeriesCtrl', {
+    TimeSeriesCtrl = Controller('TimeSeriesCtrl', {
       $scope: scope
     });
 
@@ -92,23 +97,23 @@ describe('Controller: TimeSeriesCtrl', function () {
     expect(scope.params.session_filter).to.deep.equal({id: 'false', title: 'No'});
     expect(scope.params.sdate).to.equal(moment().subtract('months', 6).add('days', 1).format('YYYY-MM-DD'));
     expect(scope.params.edate).to.equal(moment().add('days', 1).format('YYYY-MM-DD'));
-  }));
-
-it(':initialize should assign initiaives to scope', inject(function ($controller) {
-  initiativesStub.returns(okResponse());
-
-  TimeSeriesCtrl = $controller('TimeSeriesCtrl', {
-    $scope: scope
   });
 
-  scope.$digest();
-  expect(scope.inits).to.deep.equal({success: true})
-}));
+  it(':initialize should assign initiaives to scope', function () {
+    initiativesStub.returns(okResponse());
 
-  it(':initialize should dispatch an error if Initiatives.get fails', inject(function ($controller) {
+    TimeSeriesCtrl = Controller('TimeSeriesCtrl', {
+      $scope: scope
+    });
+
+    scope.$digest();
+    expect(scope.inits).to.deep.equal({success: true});
+  });
+
+  it(':initialize should dispatch an error if Initiatives.get fails', function () {
     initiativesStub.returns(errorResponse());
 
-    TimeSeriesCtrl = $controller('TimeSeriesCtrl', {
+    TimeSeriesCtrl = Controller('TimeSeriesCtrl', {
       $scope: scope
     });
 
@@ -116,13 +121,13 @@ it(':initialize should assign initiaives to scope', inject(function ($controller
     expect(scope.inits).to.equal(undefined);
     expect(errorDispatcherStub).to.have.been.calledOnce;
     expect(errorDispatcherStub).to.have.been.calledWith({error:true});
-  }));
+  });
 
-  it(':submit should assign data to scope and set state to success', inject(function($controller) {
+  it(':submit should assign data to scope and set state to success', function() {
     initiativesStub.returns(okResponse());
     dataStub.returns(dataResponse());
 
-    TimeSeriesCtrl = $controller('TimeSeriesCtrl', {
+    TimeSeriesCtrl = Controller('TimeSeriesCtrl', {
       $scope: scope
     });
 
@@ -131,13 +136,13 @@ it(':initialize should assign initiaives to scope', inject(function ($controller
 
     expect(UIStates.setUIState).to.be.calledWith('success');
     expect(scope.data.success).to.equal(true);
-  }));
+  });
 
-  it(':submit should dispatch an error if Data.get fails', inject(function($controller) {
+  it(':submit should dispatch an error if Data.get fails', function() {
     initiativesStub.returns(okResponse());
     dataStub.returns(errorResponse());
 
-    TimeSeriesCtrl = $controller('TimeSeriesCtrl', {
+    TimeSeriesCtrl = Controller('TimeSeriesCtrl', {
       $scope: scope
     });
 
@@ -147,30 +152,51 @@ it(':initialize should assign initiaives to scope', inject(function ($controller
     expect(scope.data).to.equal(undefined);
     expect(errorDispatcherStub).to.have.been.calledOnce;
     expect(errorDispatcherStub).to.have.been.calledWith({error:true});
-  }));
+  });
 
-  it(':scrollTo should set locationHash', inject(function ($controller) {
+  it(':scrollTo should set locationHash', function () {
     initiativesStub.returns(okResponse());
-    TimeSeriesCtrl = $controller('TimeSeriesCtrl', {
+
+    TimeSeriesCtrl = Controller('TimeSeriesCtrl', {
       $scope: scope
     });
 
     scope.scrollTo(12345);
     scope.$digest();
 
-    expect(location.hash(12345).$$hash).to.deep.equal(12345)
-  }));
+    expect(location.hash(12345).$$hash).to.deep.equal(12345);
+  });
 
-  // it(':updateMetadata should respond to init changes', inject(function ($controller) {
-  //   initiativesStub.returns(okResponse());
-  //   TimeSeriesCtrl = $controller('TimeSeriesCtrl', {
-  //     $scope: scope
-  //   });
+  it(':updateMetadata should respond to init changes', function () {
+    var actsLocsStub = sinon.stub(ActsLocs, 'get'),
+        response = {activities: ['first', 'second'], locations: ['third', 'fourth']};
 
-  //   scope.updateMetadata();
-  //   scope.$digest();
-  //   expect(scope.processMetadata).to.equal(undefined);
+    actsLocsStub.returns(response);
+    initiativesStub.returns(okResponse());
 
+    TimeSeriesCtrl = Controller('TimeSeriesCtrl', {
+      $scope: scope
+    });
 
-  // }));
+    // Check branch if params.init is undefined
+    scope.updateMetadata();
+    scope.$digest();
+    expect(scope.processMetadata).to.equal(undefined);
+
+    // Check branch if params.init is defined
+    scope.params = {};
+    scope.params.init = {};
+    scope.updateMetadata();
+    scope.$digest();
+    expect(scope.processMetadata).to.equal(true);
+    expect(scope.activities).to.equal(response.activities);
+    expect(scope.locations).to.equal(response.locations);
+    expect(scope.params.activity).to.equal(response.activities[0]);
+    expect(scope.params.location).to.equal(response.locations[0]);
+
+    Timeout.flush();
+    expect(scope.processMetadata).to.equal(false);
+
+    actsLocsStub.restore();
+  });
 });
