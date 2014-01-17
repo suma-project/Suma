@@ -27,7 +27,8 @@ describe('Directive: sumaChartDownload', function () {
 
     Ctrlscope = element.isolateScope();
 
-    element.find('a')[0].click();
+    // element.find('a')[0].click();
+    Ctrlscope.download('#chart-1');
     expect(Ctrlscope.href).to.equal(link)
   }));
 
@@ -51,7 +52,8 @@ describe('Directive: sumaChartDownload', function () {
 
     Ctrlscope = element.isolateScope();
 
-    element.find('a')[0].click();
+    // element.find('a')[0].click();
+    Ctrlscope.download('#chart-2', '.sub-graph')
     expect(Ctrlscope.href).to.equal(link)
   }));
 });
