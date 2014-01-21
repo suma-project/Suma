@@ -3,7 +3,7 @@
 angular.module('sumaAnalysis')
   .directive('sumaDatepicker', function () {
     return {
-      restrict: 'E',
+      restrict: 'A',
       templateUrl: 'views/directives/datepicker.html',
       scope: {model: '='},
       link: function postLink(scope, el, attrs) {
