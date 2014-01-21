@@ -32663,7 +32663,6 @@ angular.module('sumaAnalysis').controller('TimeSeriesCtrl', [
     $scope.submit = function () {
       uiStates.setUIState('loading', $scope);
       data.get($scope.params, $scope.activities, $scope.locations, 'processTimeSeriesData').then(function (processedData) {
-        $scope.testData = processedData;
         $scope.data = processedData;
         $scope.$watch('data.actsLocsData', function () {
           var index = _.findIndex($scope.data.actsLocsData.items, function (item) {
@@ -33129,7 +33128,7 @@ angular.module('sumaAnalysis').filter('countFormat', function () {
   };
 });
 'use strict';
-angular.module('sumaAnalysis').directive('timeSeriesChart', function () {
+angular.module('sumaAnalysis').directive('sumaTimeSeriesChart', function () {
   var TimeSeries = function () {
     var margin, margin2, width, height, height2;
     margin = {
@@ -33293,7 +33292,7 @@ angular.module('sumaAnalysis').directive('timeSeriesChart', function () {
     return chart;
   };
   return {
-    restrict: 'E',
+    restrict: 'A',
     scope: { data: '=' },
     link: function postLink(scope, element, attrs) {
       var chart = new TimeSeries();
@@ -33311,7 +33310,7 @@ angular.module('sumaAnalysis').directive('timeSeriesChart', function () {
   };
 });
 'use strict';
-angular.module('sumaAnalysis').directive('barChart', function () {
+angular.module('sumaAnalysis').directive('sumaBarChart', function () {
   var BarChart = function () {
     var width = 500, oldHeight, height;
     function myTrunc(string, n, useWordBoundary) {
@@ -33409,7 +33408,7 @@ angular.module('sumaAnalysis').directive('barChart', function () {
     return chart;
   };
   return {
-    restrict: 'E',
+    restrict: 'A',
     scope: { data: '=' },
     link: function postLink(scope, element, attrs) {
       var chart = new BarChart();
@@ -33426,10 +33425,10 @@ angular.module('sumaAnalysis').directive('barChart', function () {
   };
 });
 'use strict';
-angular.module('sumaAnalysis').directive('buttonsRadio', function () {
+angular.module('sumaAnalysis').directive('sumaButtonsRadio', function () {
   var oldOption;
   return {
-    restrict: 'E',
+    restrict: 'A',
     templateUrl: 'views/directives/buttonsRadio.html',
     scope: {
       model: '=',
@@ -33449,9 +33448,9 @@ angular.module('sumaAnalysis').directive('buttonsRadio', function () {
   };
 });
 'use strict';
-angular.module('sumaAnalysis').directive('chartDownload', function () {
+angular.module('sumaAnalysis').directive('sumaChartDownload', function () {
   return {
-    restrict: 'E',
+    restrict: 'A',
     templateUrl: 'views/directives/chartDownload.html',
     scope: {
       chart: '@',
@@ -33486,9 +33485,9 @@ angular.module('sumaAnalysis').directive('chartDownload', function () {
   };
 });
 'use strict';
-angular.module('sumaAnalysis').directive('csv', function () {
+angular.module('sumaAnalysis').directive('sumaCsv', function () {
   return {
-    restrict: 'E',
+    restrict: 'A',
     templateUrl: 'views/directives/csv.html',
     scope: { data: '=' },
     controller: [
@@ -33551,9 +33550,9 @@ angular.module('sumaAnalysis').directive('csv', function () {
   };
 });
 'use strict';
-angular.module('sumaAnalysis').directive('datepicker', function () {
+angular.module('sumaAnalysis').directive('sumaDatepicker', function () {
   return {
-    restrict: 'E',
+    restrict: 'A',
     templateUrl: 'views/directives/datepicker.html',
     scope: { model: '=' },
     link: function postLink(scope, el, attrs) {
@@ -33571,9 +33570,9 @@ angular.module('sumaAnalysis').directive('datepicker', function () {
   };
 });
 'use strict';
-angular.module('sumaAnalysis').directive('timepicker', function () {
+angular.module('sumaAnalysis').directive('sumaTimepicker', function () {
   return {
-    restrict: 'E',
+    restrict: 'A',
     templateUrl: 'views/directives/timepicker.html',
     scope: {
       model: '=',
@@ -33599,7 +33598,7 @@ angular.module('sumaAnalysis').directive('timepicker', function () {
   };
 });
 'use strict';
-angular.module('sumaAnalysis').directive('popover', function () {
+angular.module('sumaAnalysis').directive('sumaPopover', function () {
   return {
     restrict: 'A',
     link: function postLink(scope, element, attrs) {
@@ -33755,7 +33754,7 @@ angular.module('sumaAnalysis').factory('processCalendarData', [
   }
 ]);
 'use strict';
-angular.module('sumaAnalysis').directive('calendarChart', function () {
+angular.module('sumaAnalysis').directive('sumaCalendarChart', function () {
   var iqr, quantiles, upperOutlier, lowerOutlier;
   var Calendar = function () {
     var width = 960, height = 136, totalHeight;
@@ -33962,7 +33961,7 @@ angular.module('sumaAnalysis').directive('calendarChart', function () {
     return chart;
   };
   return {
-    restrict: 'E',
+    restrict: 'A',
     scope: {
       data: '=',
       stats: '='
@@ -34155,7 +34154,7 @@ angular.module('sumaAnalysis').factory('processHourlyData', [
   }
 ]);
 'use strict';
-angular.module('sumaAnalysis').directive('hourlyLineChart', function () {
+angular.module('sumaAnalysis').directive('sumaHourlyLineChart', function () {
   var HourlyLine = function () {
     function chart(selection) {
       var displayFormat = d3.time.format('%a %I %p');
@@ -34268,7 +34267,7 @@ angular.module('sumaAnalysis').directive('hourlyLineChart', function () {
     return chart;
   };
   return {
-    restrict: 'E',
+    restrict: 'A',
     scope: { data: '=' },
     link: function postLink(scope, element, attrs) {
       var chart = new HourlyLine();
@@ -34285,7 +34284,7 @@ angular.module('sumaAnalysis').directive('hourlyLineChart', function () {
   };
 });
 'use strict';
-angular.module('sumaAnalysis').directive('hourlyCalendarChart', function () {
+angular.module('sumaAnalysis').directive('sumaHourlyCalendarChart', function () {
   var iqr, quantiles, upperOutlier, lowerOutlier;
   var HourlyCalendar = function () {
     function chart(selection) {
@@ -34473,7 +34472,7 @@ angular.module('sumaAnalysis').directive('hourlyCalendarChart', function () {
     return chart;
   };
   return {
-    restrict: 'E',
+    restrict: 'A',
     scope: {
       data: '=',
       stats: '='
@@ -34538,7 +34537,7 @@ angular.module('sumaAnalysis').factory('errorDispatcher', [
   }
 ]);
 'use strict';
-angular.module('sumaAnalysis').directive('csvHourly', function () {
+angular.module('sumaAnalysis').directive('sumaCsvHourly', function () {
   var dict = {
       weekdays: {
         1: 'Sunday',
@@ -34578,7 +34577,7 @@ angular.module('sumaAnalysis').directive('csvHourly', function () {
     };
   return {
     templateUrl: 'views/directives/csv.html',
-    restrict: 'E',
+    restrict: 'A',
     scope: { data: '=' },
     controller: [
       '$scope',

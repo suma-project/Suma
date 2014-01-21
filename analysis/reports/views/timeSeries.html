@@ -1,5 +1,5 @@
 <div class="time-series">
-  <div class="row" ng-show="success">
+  <div class="row" data-ng-show="success">
     <div class="col-xs-5">
       <p class="text-muted">
         <strong>Initiative: </strong> {{params.init.title}} <br>
@@ -14,11 +14,11 @@
     </div>
     <div class="col-xs-7">
       <div class="row">
-        <buttons-radio class="btn-group col-xs-4 pull-right" model="data.timeSeriesData" options="data.timeSeriesOptions"></buttons-radio>
+        <div data-suma-buttons-radio="" class="btn-group col-xs-4 pull-right" data-model="data.timeSeriesData" data-options="data.timeSeriesOptions"></div>
         <div class="pull-right">
-          <a class="btn btn-default btn-sm" ng-click="scrollTo('export-data')">Export Raw Data</a>
-          <a class="btn btn-default btn-sm" ng-click="scrollTo('summary-data')">Summary Data</a>
-          <chart-download chart="#chart-1" title="suma_timeseries_chart.png" filter=".sub-graph"></chart-download>
+          <a class="btn btn-default btn-sm" data-ng-click="scrollTo('export-data')">Export Raw Data</a>
+          <a class="btn btn-default btn-sm" data-ng-click="scrollTo('summary-data')">Summary Data</a>
+          <span data-suma-chart-download="" data-chart="#chart-1" title="suma_timeseries_chart.png" data-filter=".sub-graph"></span>
         </div>
       </div>
     </div>
@@ -26,111 +26,111 @@
 
   <div class="row">
     <div class="col-xs-12 time-series-chart-wrapper">
-      <div class="loading" ng-show="loading"><img src="images/spinner.gif"></div>
-      <div class="alert alert-info alert-block" ng-show="initial">
+      <div class="loading" data-ng-show="loading"><img src="images/spinner.gif"></div>
+      <div class="alert alert-info alert-block" data-ng-show="initial">
         <h4>Welcome!</h4>
         Please select an initiative from the select menu below. Once you have chosen an initiative, additional filter options will appear. You can also limit your search by date or time.
       </div>
-      <div class="alert alert-danger alert-block" ng-show="error">
+      <div class="alert alert-danger alert-block" data-ng-show="error">
         <h4>Notice!</h4>
         <p>There was a problem retrieving data from the server. Please try again or contact your system administrator.</p>
         <p>Error Code: {{errorCode}}</p>
         <p>Error Message: {{errorMessage}}</p>
       </div>
-      <time-series-chart id="chart-1" data="data.timeSeriesData" ng-show="success"></time-series-chart>
+      <div data-suma-time-series-chart="" id="chart-1" data-data="data.timeSeriesData" data-ng-show="success"></div>
     </div>
   </div>
 
-  <div class="row" ng-hide="finder.active()">
+  <div class="row" data-ng-hide="finder.active()">
     <div class="col-xs-9">
       <h3>Modify Chart</h3>
     </div>
 
-    <div class="col-xs-3" ng-show="params.init && !processMetadata">
+    <div class="col-xs-3" data-ng-show="params.init && !processMetadata">
       <h3>Initiative Filters</h3>
     </div>
   </div>
 
   <div class="row">
-    <div class="loading" ng-show="finder.active()"><img src="images/spinner.gif"></div>
+    <div class="loading" data-ng-show="finder.active()"><img src="images/spinner.gif"></div>
   </div>
 
-  <div class="row filter-row" ng-hide="finder.active()">
-    <form ng-submit="submit()">
-      <fieldset ng-disabled="loading">
+  <div class="row filter-row" data-ng-hide="finder.active()">
+    <form data-ng-submit="submit()">
+      <fieldset data-ng-disabled="loading">
         <div class="col-xs-3">
           <div class="form-group">
-            <label for="initiatives" class="suma-popover" data-title="Select Initiative" data-content="Select an initiative to reveal additional filters." popover="">Select an Initiative</label>
-            <select name="initiative" ng-model="params.init" ng-options="init.title for init in inits" ng-change="updateMetadata()" class="form-control">
+            <label for="initiatives" class="suma-popover" data-title="Select Initiative" data-content="Select an initiative to reveal additional filters." suma-popover="">Select an Initiative</label>
+            <select name="initiative" data-ng-model="params.init" data-ng-options="init.title for init in inits" data-ng-change="updateMetadata()" class="form-control">
               <option value="">Select an Initiative</option>
             </select>
           </div>
 
           <div class="form-group">
-            <label for="session" class="suma-popover" data-title="Classify Counts By" data-content="Choose the date to use for grouping counts by date. \"Count Date\" shows the actual date of the count, while \"Session Start\" and \"Session End\" use the respective date on the collection session containing each count." popover="">Classify Counts By</label>
-            <select name="session" id="session" class="form-control" ng-model="params.count" ng-options="count.title for count in countOptions">
+            <label for="session" class="suma-popover" data-title="Classify Counts By" data-content="Choose the date to use for grouping counts by date. \"Count Date\" shows the actual date of the count, while \"Session Start\" and \"Session End\" use the respective date on the collection session containing each count." suma-popover="">Classify Counts By</label>
+            <select name="session" id="session" class="form-control" data-ng-model="params.count" data-ng-options="count.title for count in countOptions">
             </select>
           </div>
 
           <div class="form-group">
-            <label for="session_filter" class="suma-popover" data-title="Always Include Whole Session" data-content="Select yes if you would like to include counts inside of sessions that may fall outside of your other filters." popover="">Always Include Whole Session</label>
-            <select name="session_filter" id="session_filter" class="form-control" ng-model="params.session_filter" ng-options="opt.title for opt in sessionOptions">
+            <label for="session_filter" class="suma-popover" data-title="Always Include Whole Session" data-content="Select yes if you would like to include counts inside of sessions that may fall outside of your other filters." suma-popover="">Always Include Whole Session</label>
+            <select name="session_filter" id="session_filter" class="form-control" data-ng-model="params.session_filter" data-ng-options="opt.title for opt in sessionOptions">
             </select>
           </div>
         </div>
 
         <div class="col-xs-3">
           <div class="form-group">
-            <label for="sdate" class="suma-popover" data-title="Choose Date Range" data-content="Select a start date for your analysis. Defaults to 6 months from current day. Clear fields to retrieve the complete data set." popover="">Start Date</label>
-            <datepicker model="params.sdate"></datepicker>
+            <label for="sdate" class="suma-popover" data-title="Choose Date Range" data-content="Select a start date for your analysis. Defaults to 6 months from current day. Clear fields to retrieve the complete data set." suma-popover="">Start Date</label>
+            <div data-suma-datepicker="" data-model="params.sdate"></div>
             <span class="help-block">YYYY-MM-DD</span>
           </div>
 
           <div class="form-group">
-            <label for="edate" class="suma-popover" data-title="Choose Date Range" data-content="Select an end date for your analysis. Clear fields to retrieve complete data set." popover="">End Date</label>
-            <datepicker model="params.edate"></datepicker>
+            <label for="edate" class="suma-popover" data-title="Choose Date Range" data-content="Select an end date for your analysis. Clear fields to retrieve complete data set." suma-popover="">End Date</label>
+            <div data-suma-datepicker="" data-model="params.edate"></div>
             <span class="help-block">YYYY-MM-DD</span>
           </div>
         </div>
 
         <div class="col-xs-3">
           <div class="form-group">
-            <label for="stime" class="suma-popover" data-title="Select Subset of Day" data-content="Include only data gathered during a certain time of day in your analysis, e.g. 20:00-22:00." popover="">Start Time</label>
-            <timepicker model="params.stime" placeholder="00:00"></timepicker>
+            <label for="stime" class="suma-popover" data-title="Select Subset of Day" data-content="Include only data gathered during a certain time of day in your analysis, e.g. 20:00-22:00." suma-popover="">Start Time</label>
+            <div data-suma-timepicker="" data-model="params.stime" data-placeholder="00:00"></div>
             <span class="help-block">24-hour format, e.g. 08:00</span>
           </div>
 
           <div class="form-group">
-            <label for="etime" class="suma-popover" data-title="Select Subset of Day" data-content="Include only data gathered during a certain time of day in your analysis, e.g. 20:00-22:00." popover="">End Time</label>
-            <timepicker model="params.etime" placeholder="23:59"></timepicker>
+            <label for="etime" class="suma-popover" data-title="Select Subset of Day" data-content="Include only data gathered during a certain time of day in your analysis, e.g. 20:00-22:00." suma-popover="">End Time</label>
+            <div data-suma-timepicker="" data-model="params.etime" data-placeholder="23:59"></div>
             <span class="help-block">24-hour format, e.g. 08:00</span>
           </div>
         </div>
 
-        <div class="col-xs-3 supp-wrapper" ng-show="processMetadata">
+        <div class="col-xs-3 supp-wrapper" data-ng-show="processMetadata">
           <div class="loading"><img src="images/spinner.gif"></div>
         </div>
 
-        <div class="col-xs-3" ng-show="params.init && !processMetadata">
+        <div class="col-xs-3" data-ng-show="params.init && !processMetadata">
           <div class="form-group">
-            <label for="daygroup" class="suma-popover" data-title="Limit Days of the Week" data-content="Filter by Weekday or Weekend." popover="">Limit Days of the Week</label>
+            <label for="daygroup" class="suma-popover" data-title="Limit Days of the Week" data-content="Filter by Weekday or Weekend." suma-popover="">Limit Days of the Week</label>
             <div class="controls">
-              <select name="daygroup" id="daygroup" class="form-control" ng-model="params.daygroup" ng-options="day.title for day in dayOptions"></select>
+              <select name="daygroup" id="daygroup" class="form-control" data-ng-model="params.daygroup" data-ng-options="day.title for day in dayOptions"></select>
             </div>
           </div>
 
           <div class="form-group">
-            <label for="locations" class="suma-popover" data-title="Limit Locations" data-content="Select which locations to include in your analysis. Selecting a location with children will include all children in the data set." popover="">Limit Locations</label>
+            <label for="locations" class="suma-popover" data-title="Limit Locations" data-content="Select which locations to include in your analysis. Selecting a location with children will include all children in the data set." suma-popover="">Limit Locations</label>
             <div class="controls">
-              <select name="locations" ng-model="params.location" ng-options="loc | depth for loc in locations" class="form-control">
+              <select name="locations" data-ng-model="params.location" data-ng-options="loc | depth for loc in locations" class="form-control">
               </select>
             </div>
           </div>
 
           <div class="form-group">
-            <label for="activities" class="suma-popover" data-title="Limit Activities" data-content="Select which activities to include in your analysis. Selecting an Activity Group will include all group activities." popover="">Limit Activities</label>
+            <label for="activities" class="suma-popover" data-title="Limit Activities" data-content="Select which activities to include in your analysis. Selecting an Activity Group will include all group activities." suma-popover="">Limit Activities</label>
             <div class="controls">
-              <select name="activities" ng-model="params.activity" ng-options="act | depth for act in activities" class="form-control">
+              <select name="activities" data-ng-model="params.activity" data-ng-options="act | depth for act in activities" class="form-control">
               </select>
             </div>
           </div>
@@ -144,7 +144,7 @@
   </div>
 
   <div id="summary-data" class="row">
-    <div class="col-xs-5" ng-show="success">
+    <div class="col-xs-5" data-ng-show="success">
       <h3>Summary Data</h3>
       <div>
         <h4>Total Sum</h4>
@@ -161,7 +161,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="loc in data.locationsTable">
+            <tr data-ng-repeat="loc in data.locationsTable">
               <td>{{loc | depth}}</td>
               <td>{{loc.count | countFormat}}</td>
               <td>{{loc.percent}}%</td>
@@ -180,7 +180,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="act in data.activitiesTable">
+            <tr data-ng-repeat="act in data.activitiesTable">
               <td>{{act | depth}}</td>
               <td>{{act.count | countFormat}}</td>
               <td>{{act.percent}}%</td>
@@ -200,7 +200,7 @@
           </thead>
           <tbody>
 
-            <tr ng-repeat="year in data.yearSummary">
+            <tr data-ng-repeat="year in data.yearSummary">
               <td>{{year.name}}</td>
               <td>{{year.count | countFormat}}</td>
               <td>{{year.percent}}%</td>
@@ -219,7 +219,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="month in data.monthSummary">
+            <tr data-ng-repeat="month in data.monthSummary">
               <td>{{month.name}}</td>
               <td>{{month.count | countFormat}}</td>
               <td>{{month.percent}}%</td>
@@ -238,7 +238,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="weekday in data.dayOfWeekSummary">
+            <tr data-ng-repeat="weekday in data.dayOfWeekSummary">
               <td>{{weekday.name}}</td>
               <td>{{weekday.count | countFormat}}</td>
               <td>{{weekday.percent}}%</td>
@@ -257,7 +257,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="hour in data.hourlySummary">
+            <tr data-ng-repeat="hour in data.hourlySummary">
               <td>{{hour.name | hourFormat}}</td>
               <td>{{hour.count | countFormat}}</td>
               <td>{{hour.percent}}%</td>
@@ -267,22 +267,21 @@
       </div>
     </div>
 
-    <div class="col-xs-7" ng-show="success">
+    <div class="col-xs-7" data-ng-show="success">
       <div class="col-xs-12">
         <h3>Locations and Activities</h3>
       </div>
       <div class="col-xs-12">
-        <buttons-radio class="btn-group" data-toggle="buttons" model="data.actsLocsData" options="data.actsLocsOptions"></buttons-radio>
-        <buttons-radio class="btn-group" data-toggle="buttons" model="data.barChartData" options="data.actsLocsData.items"></buttons-radio>
-        <chart-download chart="#chart-2" title="suma_bar_chart.png"></chart-download>
-
+        <span data-suma-buttons-radio="" class="btn-group" data-toggle="buttons" data-model="data.actsLocsData" options="data.actsLocsOptions"></span>
+        <span data-suma-buttons-radio="" class="btn-group" data-toggle="buttons" data-model="data.barChartData" options="data.actsLocsData.items"></span>
+        <span data-suma-chart-download="" data-chart="#chart-2" data-title="suma_bar_chart.png"></span>
       </div>
       <div class="col-xs-12 bar-chart-wrapper">
-        <bar-chart id="chart-2" data="data.barChartData"></bar-chart>
+        <div data-suma-bar-chart="" id="chart-2" data-data="data.barChartData"></div>
       </div>
       <div id="export-data" class="col-xs-12">
         <h3>Export Raw Data</h3>
-        <csv data="data"></csv>
+        <div data-suma-csv="" data-data="data"></div>
       </div>
     </div>
   </div>
