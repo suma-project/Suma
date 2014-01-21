@@ -10,7 +10,7 @@ describe('Directive: sumaTimeSeriesChart', function () {
         renderStub;
 
     beforeEach(inject(function ($rootScope, $compile) {
-      element = angular.element('<suma-time-series-chart id="chart-1" data="data.timeSeriesData" ng-show="success"></suma-time-series-chart>');
+      element = angular.element('<div suma-time-series-chart id="chart-1" data="data.timeSeriesData" ng-show="success"></div>');
 
       scope = $rootScope.$new();
 

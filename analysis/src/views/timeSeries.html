@@ -37,7 +37,7 @@
         <p>Error Code: {{errorCode}}</p>
         <p>Error Message: {{errorMessage}}</p>
       </div>
-      <suma-time-series-chart id="chart-1" data="data.timeSeriesData" ng-show="success"></suma-time-series-chart>
+      <div data-suma-time-series-chart id="chart-1" data-data="data.timeSeriesData" ng-show="success"></div>
     </div>
   </div>
 
@@ -278,7 +278,7 @@
 
       </div>
       <div class="col-xs-12 bar-chart-wrapper">
-        <suma-bar-chart id="chart-2" data="data.barChartData"></suma-bar-chart>
+        <div data-suma-bar-chart id="chart-2" data-data="data.barChartData"></div>
       </div>
       <div id="export-data" class="col-xs-12">
         <h3>Export Raw Data</h3>

@@ -296,7 +296,7 @@ angular.module('sumaAnalysis')
     };
 
     return {
-      restrict: 'E',
+      restrict: 'A',
       scope: {data: '='},
       link: function postLink(scope, element, attrs) {
         var chart = new TimeSeries();

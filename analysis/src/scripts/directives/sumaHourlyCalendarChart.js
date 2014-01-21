@@ -252,7 +252,7 @@ angular.module('sumaAnalysis')
     };
 
     return {
-      restrict: 'E',
+      restrict: 'A',
       scope: {data: '=', stats: '='},
       link: function postLink(scope, element, attrs) {
         var chart = new HourlyCalendar();

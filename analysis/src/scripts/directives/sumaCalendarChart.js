@@ -322,7 +322,7 @@ angular.module('sumaAnalysis')
       return chart;
     };
     return {
-      restrict: 'E',
+      restrict: 'A',
       scope: {data: '=', stats: '='},
       link: function postLink(scope, element, attrs) {
         var chart = new Calendar();
