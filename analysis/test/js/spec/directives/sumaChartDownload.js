@@ -17,7 +17,7 @@ describe('Directive: sumaChartDownload', function () {
 
     $('body').append(chart1)
     element = angular.element(
-      '<suma-chart-download chart="#chart-1" title="suma_timeseries_chart.png"></suma-chart-download>'
+      '<span data-suma-chart-download data-chart="#chart-1" data-title="suma_timeseries_chart.png"></span>'
     );
 
     scope = $rootScope.$new();
@@ -42,7 +42,7 @@ describe('Directive: sumaChartDownload', function () {
     $('body').append(chart2);
 
     element = angular.element(
-      '<suma-chart-download chart="#chart-2" title="suma_timeseries_chart.png" filter=".sub-graph"></suma-chart-download>'
+      '<span data-suma-chart-download data-chart="#chart-2" data-title="suma_timeseries_chart.png" filter=".sub-graph"></span>'
     );
 
     scope = $rootScope.$new();

@@ -3,7 +3,7 @@
 angular.module('sumaAnalysis')
   .directive('sumaChartDownload', function () {
     return {
-      restrict: 'E',
+      restrict: 'A',
       templateUrl: 'views/directives/chartDownload.html',
       scope: {chart: '@', filter: '@', title: '@', text: '@'},
       controller: ['$scope', function ($scope) {

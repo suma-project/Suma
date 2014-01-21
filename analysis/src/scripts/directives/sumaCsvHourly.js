@@ -42,7 +42,7 @@ angular.module('sumaAnalysis')
 
     return {
       templateUrl: 'views/directives/csv.html',
-      restrict: 'E',
+      restrict: 'A',
       scope: {data: '='},
       controller: ['$scope', function ($scope) {
         $scope.buildCSVString = function (counts, dict) {

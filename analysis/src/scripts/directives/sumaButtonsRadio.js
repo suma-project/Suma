@@ -5,7 +5,7 @@ angular.module('sumaAnalysis')
     var oldOption;
 
     return {
-      restrict: 'E',
+      restrict: 'A',
       templateUrl: 'views/directives/buttonsRadio.html',
       scope: {model: '=', options: '='},
       controller: ['$scope', function ($scope) {

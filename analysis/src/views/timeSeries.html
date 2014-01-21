@@ -14,11 +14,11 @@
     </div>
     <div class="col-xs-7">
       <div class="row">
-        <suma-buttons-radio class="btn-group col-xs-4 pull-right" model="data.timeSeriesData" options="data.timeSeriesOptions"></suma-buttons-radio>
+        <div data-suma-buttons-radio class="btn-group col-xs-4 pull-right" data-model="data.timeSeriesData" data-options="data.timeSeriesOptions"></div>
         <div class="pull-right">
           <a class="btn btn-default btn-sm" ng-click="scrollTo('export-data')">Export Raw Data</a>
           <a class="btn btn-default btn-sm" ng-click="scrollTo('summary-data')">Summary Data</a>
-          <suma-chart-download chart="#chart-1" title="suma_timeseries_chart.png" filter=".sub-graph"></suma-chart-download>
+          <span data-suma-chart-download data-chart="#chart-1" title="suma_timeseries_chart.png" data-filter=".sub-graph"></span>
         </div>
       </div>
     </div>
@@ -282,7 +282,7 @@
       </div>
       <div id="export-data" class="col-xs-12">
         <h3>Export Raw Data</h3>
-        <suma-csv data="data"></suma-csv>
+        <div data-suma-csv data-data="data"></div>
       </div>
     </div>
   </div>

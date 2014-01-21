@@ -3,7 +3,7 @@
 angular.module('sumaAnalysis')
   .directive('sumaCsv', function () {
     return {
-      restrict: 'E',
+      restrict: 'A',
       templateUrl: 'views/directives/csv.html',
       scope: {data: '='},
       controller: ['$scope', function ($scope) {
