@@ -94,13 +94,13 @@
         <div class="col-xs-3">
           <div class="form-group">
             <label for="stime" class="suma-popover" data-title="Select Subset of Day" data-content="Include only data gathered during a certain time of day in your analysis, e.g. 20:00-22:00." suma-popover>Start Time</label>
-            <suma-timepicker model="params.stime" placeholder="00:00"></suma-timepicker>
+            <div data-suma-timepicker data-model="params.stime" data-placeholder="00:00"></div>
             <span class="help-block">24-hour format, e.g. 08:00</span>
           </div>
 
           <div class="form-group">
             <label for="etime" class="suma-popover" data-title="Select Subset of Day" data-content="Include only data gathered during a certain time of day in your analysis, e.g. 20:00-22:00." suma-popover>End Time</label>
-            <suma-timepicker model="params.etime" placeholder="23:59"></suma-timepicker>
+            <div data-suma-timepicker data-model="params.etime" data-placeholder="23:59"></div>
             <span class="help-block">24-hour format, e.g. 08:00</span>
           </div>
         </div>

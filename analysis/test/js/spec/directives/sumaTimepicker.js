@@ -16,7 +16,7 @@ describe('Directive: sumaTimepicker', function () {
     stub = sinon.stub($.fn, 'datetimepicker');
     stub.returns(true);
 
-    element = angular.element('<suma-timepicker model="params.stime" placeholder="00:00"></suma-timepicker>');
+    element = angular.element('<div data-suma-timepicker data-model="params.stime" data-placeholder="00:00"></div>');
 
     scope = $rootScope.$new();
     $compile(element)(scope);
