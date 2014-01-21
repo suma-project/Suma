@@ -25,7 +25,7 @@
 
   <div class="row">
     <div class="col-xs-12 chart-wrapper">
-      <div class="loading" data-ng-show="loading"><img src="images/spinner.gif"></div>
+      <div class="loading" data-ng-show="loading"><img src="images/spinner.gif" alt="Spinner"></div>
       <div class="alert alert-info alert-block" data-ng-show="initial">
         <h4>Welcome!</h4>
         Please select an initiative from the select menu below. Once you have chosen an initiative, additional filter options will appear. You can also limit your search by date or time.
@@ -57,7 +57,7 @@
   </div>
 
   <div class="row">
-    <div class="loading" data-ng-show="finder.active()"><img src="images/spinner.gif"></div>
+    <div class="loading" data-ng-show="finder.active()"><img src="images/spinner.gif" alt="Spinner"></div>
   </div>
 
   <div class="row filter-row" data-ng-hide="finder.active()">
@@ -65,39 +65,39 @@
       <fieldset data-ng-disabled="loading">
         <div class="col-xs-3">
           <div class="form-group">
-            <label for="initiatives" class="suma-popover" data-title="Select Initiative" data-content="Select an initiative to reveal additional filters." suma-popover="">Select an Initiative</label>
+            <label class="suma-popover" data-title="Select Initiative" data-content="Select an initiative to reveal additional filters." data-suma-popover="">Select an Initiative</label>
             <select name="initiative" data-ng-model="params.init" data-ng-options="init.title for init in inits" data-ng-change="updateMetadata()" class="form-control">
               <option value="">Select an Initiative</option>
             </select>
           </div>
 
           <div class="form-group">
-            <label for="sdate" class="suma-popover" data-title="Choose Date Range" data-content="Select a start date for your analysis. Defaults to 6 months from current day. Clear fields to retrieve the complete data set." suma-popover="">Start Date</label>
+            <label class="suma-popover" data-title="Choose Date Range" data-content="Select a start date for your analysis. Defaults to 6 months from current day. Clear fields to retrieve the complete data set." data-suma-popover="">Start Date</label>
             <div data-suma-datepicker="" data-model="params.sdate"></div>
             <span class="help-block">YYYY-MM-DD</span>
           </div>
 
           <div class="form-group">
-            <label for="edate" class="suma-popover" data-title="Choose Date Range" data-content="Select an end date for your analysis. Clear fields to retrieve complete data set." suma-popover="">End Date</label>
+            <label class="suma-popover" data-title="Choose Date Range" data-content="Select an end date for your analysis. Clear fields to retrieve complete data set." data-suma-popover="">End Date</label>
             <div data-suma-datepicker="" data-model="params.edate"></div>
             <span class="help-block">YYYY-MM-DD</span>
           </div>
         </div>
 
         <div class="col-xs-3 supp-wrapper" data-ng-show="processMetadata">
-          <div class="loading"><img src="images/spinner.gif"></div>
+          <div class="loading"><img src="images/spinner.gif" alt="Spinner"></div>
         </div>
 
         <div class="col-xs-3" data-ng-show="params.init && !processMetadata">
           <div class="form-group">
-            <label for="daygroup" class="suma-popover" data-title="Limit Days of the Week" data-content="Filter by Weekday or Weekend." suma-popover="">Limit Days of the Week</label>
+            <label class="suma-popover" data-title="Limit Days of the Week" data-content="Filter by Weekday or Weekend." data-suma-popover="">Limit Days of the Week</label>
             <div class="controls">
               <select name="daygroup" id="daygroup" class="form-control" data-ng-model="params.daygroup" data-ng-options="day.title for day in dayOptions"></select>
             </div>
           </div>
 
           <div class="form-group">
-            <label for="locations" class="suma-popover" data-title="Limit Locations" data-content="Select which locations to include in your analysis. Selecting a location with children will include all children in the data set." suma-popover="">Limit Locations</label>
+            <label class="suma-popover" data-title="Limit Locations" data-content="Select which locations to include in your analysis. Selecting a location with children will include all children in the data set." data-suma-popover="">Limit Locations</label>
             <div class="controls">
               <select name="locations" data-ng-model="params.location" data-ng-options="loc | depth for loc in locations" class="form-control">
               </select>
@@ -105,7 +105,7 @@
           </div>
 
           <div class="form-group">
-            <label for="activities" class="suma-popover" data-title="Limit Activities" data-content="Select which activities to include in your analysis. Selecting an Activity Group will include all group activities." suma-popover="">Limit Activities</label>
+            <label class="suma-popover" data-title="Limit Activities" data-content="Select which activities to include in your analysis. Selecting an Activity Group will include all group activities." data-suma-popover="">Limit Activities</label>
             <div class="controls">
               <select name="activities" data-ng-model="params.activity" data-ng-options="act | depth for act in activities" class="form-control">
               </select>

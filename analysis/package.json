@@ -35,7 +35,8 @@
     "karma-mocha": "~0.1.1",
     "karma-sinon-chai": "~0.1.1",
     "karma-chai-jquery": "~0.1.0",
-    "karma-coverage": "~0.1.4"
+    "karma-coverage": "~0.1.4",
+    "grunt-html-validation": "~0.1.13"
   },
   "engines": {
     "node": ">=0.8.0"

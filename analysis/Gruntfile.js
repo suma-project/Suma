@@ -94,7 +94,8 @@ module.exports = function (grunt) {
           ]
         }]
       },
-      server: '.tmp'
+      server: '.tmp',
+      validate: 'validation-status.json'
     },
     jshint: {
       options: {
@@ -227,6 +228,22 @@ module.exports = function (grunt) {
           ]
         }
       }
+    },
+    validation: {
+      options: {
+        reportpath: false,
+        // failHard: true,
+        doctype: 'HTML5',
+        relaxerror: [
+          'Element head is missing a required instance of child element title.'
+        ]
+      },
+      files: {
+        src: [
+          '<%= yeoman.app %>/index.html',
+          '<%= yeoman.app %>/views/**/*.html'
+        ]
+      }
     }
   });
 
@@ -244,6 +261,11 @@ module.exports = function (grunt) {
   //     'watch'
   //   ]);
   // });
+
+  grunt.registerTask('validateHTML', [
+    'validation',
+    'clean:validate'
+  ]);
 
   grunt.registerTask('lint', [
     'jshint'
