@@ -11,7 +11,7 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
       })
       .when('/timeseries', {
         templateUrl: 'views/timeSeries.html',
-        controller: 'TimeSeriesCtrl',
+        controller: 'ReportCtrl',
         resolve: {
           sumaConfig: function () {
             return {
@@ -34,7 +34,7 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
       })
       .when('/calendar', {
         templateUrl: 'views/calendar.html',
-        controller: 'TimeSeriesCtrl',
+        controller: 'ReportCtrl',
         resolve: {
           sumaConfig: function () {
             return {
@@ -57,7 +57,7 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
       })
       .when('/hourly', {
         templateUrl: 'views/hourly.html',
-        controller: 'TimeSeriesCtrl',
+        controller: 'ReportCtrl',
         resolve: {
           sumaConfig: function () {
             return {
@@ -80,7 +80,7 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
       })
       .when('/sessions', {
         templateUrl: 'views/sessions.html',
-        controller: 'TimeSeriesCtrl',
+        controller: 'ReportCtrl',
         resolve: {
           sumaConfig: function () {
             return {

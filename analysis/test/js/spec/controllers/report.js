@@ -1,11 +1,11 @@
 'use strict';
 
-describe('Controller: TimeSeriesCtrl', function () {
+describe('Controller: ReportCtrl', function () {
 
   // load the controller's module
   beforeEach(module('sumaAnalysis'));
 
-  var TimeSeriesCtrl,
+  var ReportCtrl,
     Controller,
     Timeout,
     scope,
@@ -74,7 +74,7 @@ describe('Controller: TimeSeriesCtrl', function () {
   // it(':initialize should set UI state to initial', function () {
   //   initiativesStub.returns(okResponse());
 
-  //   TimeSeriesCtrl = Controller('TimeSeriesCtrl', {
+  //   ReportCtrl = Controller('ReportCtrl', {
   //     $scope: scope
   //   });
 
@@ -84,7 +84,7 @@ describe('Controller: TimeSeriesCtrl', function () {
   // it(':initialize should set default values', function () {
   //   initiativesStub.returns(okResponse());
 
-  //   TimeSeriesCtrl = Controller('TimeSeriesCtrl', {
+  //   ReportCtrl = Controller('ReportCtrl', {
   //     $scope: scope
   //   });
 
@@ -102,7 +102,7 @@ describe('Controller: TimeSeriesCtrl', function () {
   // it(':initialize should assign initiaives to scope', function () {
   //   initiativesStub.returns(okResponse());
 
-  //   TimeSeriesCtrl = Controller('TimeSeriesCtrl', {
+  //   ReportCtrl = Controller('ReportCtrl', {
   //     $scope: scope
   //   });
 
@@ -113,7 +113,7 @@ describe('Controller: TimeSeriesCtrl', function () {
   // it(':initialize should dispatch an error if Initiatives.get fails', function () {
   //   initiativesStub.returns(errorResponse());
 
-  //   TimeSeriesCtrl = Controller('TimeSeriesCtrl', {
+  //   ReportCtrl = Controller('ReportCtrl', {
   //     $scope: scope
   //   });
 
@@ -127,7 +127,7 @@ describe('Controller: TimeSeriesCtrl', function () {
   //   initiativesStub.returns(okResponse());
   //   dataStub.returns(dataResponse());
 
-  //   TimeSeriesCtrl = Controller('TimeSeriesCtrl', {
+  //   ReportCtrl = Controller('ReportCtrl', {
   //     $scope: scope
   //   });
 
@@ -142,7 +142,7 @@ describe('Controller: TimeSeriesCtrl', function () {
   //   initiativesStub.returns(okResponse());
   //   dataStub.returns(errorResponse());
 
-  //   TimeSeriesCtrl = Controller('TimeSeriesCtrl', {
+  //   ReportCtrl = Controller('ReportCtrl', {
   //     $scope: scope
   //   });
 
@@ -157,7 +157,7 @@ describe('Controller: TimeSeriesCtrl', function () {
   // it(':scrollTo should set locationHash', function () {
   //   initiativesStub.returns(okResponse());
 
-  //   TimeSeriesCtrl = Controller('TimeSeriesCtrl', {
+  //   ReportCtrl = Controller('ReportCtrl', {
   //     $scope: scope
   //   });
 
@@ -174,7 +174,7 @@ describe('Controller: TimeSeriesCtrl', function () {
   //   actsLocsStub.returns(response);
   //   initiativesStub.returns(okResponse());
 
-  //   TimeSeriesCtrl = Controller('TimeSeriesCtrl', {
+  //   ReportCtrl = Controller('ReportCtrl', {
   //     $scope: scope
   //   });
 
