@@ -65,29 +65,28 @@ angular.module('sumaAnalysis')
       $scope.errorCode = data.code;
     };
 
+    $scope.success = function (processedData) {
+      $scope.data = processedData;
+
+      if (sumaConfig.suppWatch) {
+        $scope.$watch('data.actsLocsData', function () {
+          var index = _.findIndex($scope.data.actsLocsData.items, function (item) {
+            return item.title === $scope.data.barChartData.title;
+          });
+
+          $scope.data.barChartData = $scope.data.actsLocsData.items[index];
+        });
+      }
+
+      $scope.state = uiStates.setUIState('success');
+    };
+
     // Submit Form and Draw Chart
     $scope.submit = function () {
-      // UI State
       $scope.state = uiStates.setUIState('loading');
 
       data[sumaConfig.dataSource]($scope.params, $scope.activities, $scope.locations, sumaConfig.dataProcessor)
-        .then(function (processedData) {
-          // Bind Data to Scope
-          $scope.data = processedData;
-
-          if (sumaConfig.suppWatch) {
-            $scope.$watch('data.actsLocsData', function () {
-              var index = _.findIndex($scope.data.actsLocsData.items, function (item) {
-                return item.title === $scope.data.barChartData.title;
-              });
-
-              $scope.data.barChartData = $scope.data.actsLocsData.items[index];
-            });
-          }
-
-          // UI State
-          $scope.state = uiStates.setUIState('success');
-        }, $scope.error);
+        .then($scope.success, $scope.error);
     };
 
     $scope.initialize();
