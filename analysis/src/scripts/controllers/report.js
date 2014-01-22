@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('sumaAnalysis')
-  .controller('ReportCtrl', function ($scope, $http, $location, $anchorScroll, $timeout, initiatives, actsLocs, data, promiseTracker, uiStates, errorDispatcher, sumaConfig) {
+  .controller('ReportCtrl', function ($scope, $http, $location, $anchorScroll, $timeout, initiatives, actsLocs, data, promiseTracker, uiStates, sumaConfig) {
     $scope.initialize = function () {
       // UI State
       $scope.state = uiStates.setUIState('initial');
