@@ -12,12 +12,10 @@ describe('Controller: ReportCtrl', function () {
     Initiatives,
     Data,
     ActsLocs,
-    ErrorDispatcher,
     UIStates,
     statesStub,
     initiativesStub,
     dataStub,
-    errorDispatcherStub,
     actsLocsStub,
     okResponse,
     errorResponse,
@@ -27,13 +25,12 @@ describe('Controller: ReportCtrl', function () {
     sumaConfig2;
 
   // Initialize the controller and a mock scope
-  beforeEach(inject(function ($controller, $rootScope, initiatives, errorDispatcher, uiStates, data, $q, $location, actsLocs, $timeout) {
+  beforeEach(inject(function ($controller, $rootScope, initiatives, uiStates, data, $q, $location, actsLocs, $timeout) {
     scope = $rootScope.$new();
     Controller = $controller;
     Timeout = $timeout;
     Initiatives = initiatives;
     Data = data;
-    ErrorDispatcher = errorDispatcher;
     UIStates = uiStates;
     location = $location;
     ActsLocs = actsLocs;
@@ -78,7 +75,7 @@ describe('Controller: ReportCtrl', function () {
 
     errorResponse = function () {
       var dfd = $q.defer();
-      dfd.reject({error: true});
+      dfd.reject({message: 'Error', code: 500});
       return dfd.promise;
     };
 
@@ -93,16 +90,12 @@ describe('Controller: ReportCtrl', function () {
 
     statesStub = sinon.stub(UIStates, 'setUIState');
     statesStub.returns(true);
-
-    errorDispatcherStub = sinon.stub(ErrorDispatcher, 'dispatch');
-    errorDispatcherStub.returns(true);
   }));
 
   afterEach(function () {
     initiativesStub.restore();
     dataStub.restore();
     statesStub.restore();
-    errorDispatcherStub.restore();
   });
 
   it(':initialize should set UI state to initial', function () {
@@ -113,7 +106,7 @@ describe('Controller: ReportCtrl', function () {
       sumaConfig: sumaConfig
     });
 
-    expect(UIStates.setUIState).to.be.calledWithExactly('initial', scope);
+    expect(UIStates.setUIState).to.be.calledWithExactly('initial');
   });
 
   it(':initialize should set default values', function () {
@@ -157,8 +150,8 @@ describe('Controller: ReportCtrl', function () {
 
     scope.$digest();
     expect(scope.inits).to.equal(undefined);
-    expect(errorDispatcherStub).to.have.been.calledOnce;
-    expect(errorDispatcherStub).to.have.been.calledWith({error:true});
+    expect(scope.errorMessage).to.equal('Error');
+    expect(scope.errorCode).to.equal(500);
   });
 
   it(':submit should assign data to scope and set state to success', function() {
@@ -212,8 +205,8 @@ describe('Controller: ReportCtrl', function () {
     scope.$digest();
 
     expect(scope.data).to.equal(undefined);
-    expect(errorDispatcherStub).to.have.been.calledOnce;
-    expect(errorDispatcherStub).to.have.been.calledWith({error:true});
+    expect(scope.errorMessage).to.equal('Error');
+    expect(scope.errorCode).to.equal(500);
   });
 
   it(':scrollTo should set locationHash', function () {

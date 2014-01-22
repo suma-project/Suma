@@ -5,14 +5,18 @@ angular.module('sumaAnalysis')
     var states = ['initial', 'loading', 'success', 'error'];
 
     return {
-      setUIState: function (s, $scope) {
+      setUIState: function (s) {
+        var newState = {};
+
         _.each(states, function (state, key) {
           if (s === state) {
-            $scope[state] = true;
+            newState[state] = true;
           } else {
-            $scope[state] = false;
+            newState[state] = false;
           }
         });
+
+        return newState;
       }
     };
   });

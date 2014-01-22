@@ -4,7 +4,7 @@ angular.module('sumaAnalysis')
   .controller('ReportCtrl', function ($scope, $http, $location, $anchorScroll, $timeout, initiatives, actsLocs, data, promiseTracker, uiStates, errorDispatcher, sumaConfig) {
     $scope.initialize = function () {
       // UI State
-      uiStates.setUIState('initial', $scope);
+      $scope.state = uiStates.setUIState('initial');
 
       // Form data
       _.each(sumaConfig.formData, function (e, i) {
@@ -24,9 +24,7 @@ angular.module('sumaAnalysis')
       // Get inits on load
       $scope.loadInits = initiatives.get().then(function (data) {
         $scope.inits = data;
-      }, function (data) {
-        errorDispatcher.dispatch(data, $scope);
-      });
+      }, $scope.error);
 
       // Setup promise tracker for spinner on initial load
       $scope.finder = promiseTracker('initTracker');
@@ -61,10 +59,16 @@ angular.module('sumaAnalysis')
       }
     };
 
+    $scope.error = function (data) {
+      $scope.state = uiStates.setUIState('error');
+      $scope.errorMessage = data.message;
+      $scope.errorCode = data.code;
+    };
+
     // Submit Form and Draw Chart
     $scope.submit = function () {
       // UI State
-      uiStates.setUIState('loading', $scope);
+      $scope.state = uiStates.setUIState('loading');
 
       data[sumaConfig.dataSource]($scope.params, $scope.activities, $scope.locations, sumaConfig.dataProcessor)
         .then(function (processedData) {
@@ -82,10 +86,8 @@ angular.module('sumaAnalysis')
           }
 
           // UI State
-          uiStates.setUIState('success', $scope);
-        }, function (data) {
-          errorDispatcher.dispatch(data, $scope);
-        });
+          $scope.state = uiStates.setUIState('success');
+        }, $scope.error);
     };
 
     $scope.initialize();

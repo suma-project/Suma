@@ -1,5 +1,5 @@
 <div class="calendar">
-  <div class="row" data-ng-show="success">
+  <div class="row" data-ng-show="state.success">
     <div class="col-xs-5">
       <p class="text-muted">
         <strong>Initiative: </strong> {{params.init.title}} <br/>
@@ -24,18 +24,18 @@
 
   <div class="row">
     <div class="col-xs-12 chart-wrapper">
-      <div class="loading" data-ng-show="loading"><img src="images/spinner.gif" alt="Spinner"></div>
-      <div class="alert alert-info alert-block" data-ng-show="initial">
+      <div class="loading" data-ng-show="state.loading"><img src="images/spinner.gif" alt="Spinner"></div>
+      <div class="alert alert-info alert-block" data-ng-show="state.initial">
         <h4>Welcome!</h4>
         Please select an initiative from the select menu below. Once you have chosen an initiative, additional filter options will appear. You can also limit your search by date or time.
       </div>
-      <div class="alert alert-danger alert-block" data-ng-show="error">
+      <div class="alert alert-danger alert-block" data-ng-show="state.error">
         <h4>Notice!</h4>
         <p>There was a problem retrieving data from the server. Please try again or contact your system administrator.</p>
         <p>Error Code: {{errorCode}}</p>
         <p>Error Message: {{errorMessage}}</p>
       </div>
-      <div data-suma-calendar-chart id="chart-1" data-data="data.data" data-stats="stats" data-ng-show="success"></div>
+      <div data-suma-calendar-chart id="chart-1" data-data="data.data" data-stats="stats" data-ng-show="state.success"></div>
     </div>
   </div>
 
@@ -55,7 +55,7 @@
 
   <div class="row filter-row" data-ng-hide="finder.active()">
     <form data-ng-submit="submit()">
-      <fieldset data-ng-disabled="loading">
+      <fieldset data-ng-disabled="state.loading">
         <div class="col-xs-3">
           <div class="form-group">
             <label class="suma-popover" data-title="Select Initiative" data-content="Select an initiative to reveal additional filters." data-suma-popover>Select an Initiative</label>
@@ -134,13 +134,13 @@
           </div>
 
           <div>
-            <input type="submit" id="submit" class="btn btn-success" value="{{loading ? 'Loading...' : 'Submit'}}" />
+            <input type="submit" id="submit" class="btn btn-success" value="{{state.loading ? 'Loading...' : 'Submit'}}" />
           </div>
         </div>
       </fieldset>
     </form>
   </div>
-  <div id="summary" class="row" data-ng-show="success">
+  <div id="summary" class="row" data-ng-show="state.success">
     <div class="col-xs-6">
       <h3>Summary Statistics</h3>
         <table class="table table-hover table-condensed">
