@@ -4,9 +4,20 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
   .config(function ($routeProvider, $compileProvider) {
     var sumaBaseConfig = {
       formData: {
-        countOptions: [{id: 'count', title: 'Count Date'}, {id: 'start', title: 'Session Start'}, {id: 'end', title: 'Session End'}],
-        dayOptions: [{id: 'all', title: 'All'}, {id: 'weekdays', title: 'Weekdays Only'}, {id: 'weekends', title: 'Weekends Only'}],
-        sessionOptions: [{id: 'false', title: 'No'}, {id: 'true', title: 'Yes'}]
+        countOptions: [
+          {id: 'count', title: 'Count Date'},
+          {id: 'start', title: 'Session Start'},
+          {id: 'end', title: 'Session End'}
+        ],
+        dayOptions: [
+          {id: 'all', title: 'All'},
+          {id: 'weekdays', title: 'Weekdays Only'},
+          {id: 'weekends', title: 'Weekends Only'}
+        ],
+        sessionOptions: [
+          {id: 'false', title: 'No'},
+          {id: 'true', title: 'Yes'}
+        ]
       },
       formDefaults: {
         count: 'countOptions',
