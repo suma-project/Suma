@@ -5,7 +5,7 @@ describe('Directive: sumaCsvHourly', function () {
   // load the directive's module
   beforeEach(module('sumaAnalysis'));
 
-  beforeEach(module('csvMock'))
+  beforeEach(module('csvHourlyMock'))
 
   // load the directive's template
   beforeEach(module('views/directives/csv.html'));
@@ -15,12 +15,12 @@ describe('Directive: sumaCsvHourly', function () {
       testLink,
       Ctrlscope;
 
-  beforeEach(inject(function ($rootScope, $compile, csvMockData, csvMockLink) {
+  beforeEach(inject(function ($rootScope, $compile, mockData, mockLink) {
     element = angular.element('<span data-suma-csv-hourly data-data="data"></span>');
-    testLink = csvMockLink;
+    testLink = mockLink;
 
     scope = $rootScope.$new();
-    scope.data = csvMockData;
+    scope.data = mockData;
 
     element = $compile(element)(scope);
     scope.$digest();
