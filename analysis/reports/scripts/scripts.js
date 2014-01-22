@@ -32710,20 +32710,21 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
       $scope.errorMessage = data.message;
       $scope.errorCode = data.code;
     };
+    $scope.success = function (processedData) {
+      $scope.data = processedData;
+      if (sumaConfig.suppWatch) {
+        $scope.$watch('data.actsLocsData', function () {
+          var index = _.findIndex($scope.data.actsLocsData.items, function (item) {
+              return item.title === $scope.data.barChartData.title;
+            });
+          $scope.data.barChartData = $scope.data.actsLocsData.items[index];
+        });
+      }
+      $scope.state = uiStates.setUIState('success');
+    };
     $scope.submit = function () {
       $scope.state = uiStates.setUIState('loading');
-      data[sumaConfig.dataSource]($scope.params, $scope.activities, $scope.locations, sumaConfig.dataProcessor).then(function (processedData) {
-        $scope.data = processedData;
-        if (sumaConfig.suppWatch) {
-          $scope.$watch('data.actsLocsData', function () {
-            var index = _.findIndex($scope.data.actsLocsData.items, function (item) {
-                return item.title === $scope.data.barChartData.title;
-              });
-            $scope.data.barChartData = $scope.data.actsLocsData.items[index];
-          });
-        }
-        $scope.state = uiStates.setUIState('success');
-      }, $scope.error);
+      data[sumaConfig.dataSource]($scope.params, $scope.activities, $scope.locations, sumaConfig.dataProcessor).then($scope.success, $scope.error);
     };
     $scope.initialize();
   }
