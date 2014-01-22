@@ -2,6 +2,22 @@
 
 angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
   .config(function ($routeProvider, $compileProvider) {
+    var sumaBaseConfig = {
+      formData: {
+        countOptions: [{id: 'count', title: 'Count Date'}, {id: 'start', title: 'Session Start'}, {id: 'end', title: 'Session End'}],
+        dayOptions: [{id: 'all', title: 'All'}, {id: 'weekdays', title: 'Weekdays Only'}, {id: 'weekends', title: 'Weekends Only'}],
+        sessionOptions: [{id: 'false', title: 'No'}, {id: 'true', title: 'Yes'}]
+      },
+      formDefaults: {
+        count: 'countOptions',
+        daygroup: 'dayOptions',
+        session_filter: 'sessionOptions'
+      },
+      dataSource: 'getData',
+      dataProcessor: 'processTimeSeriesData',
+      suppWatch: true
+    };
+
     $routeProvider
       .when('/', {
         templateUrl: 'views/home.html'
@@ -14,21 +30,7 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
         controller: 'ReportCtrl',
         resolve: {
           sumaConfig: function () {
-            return {
-              formData: {
-                countOptions: [{id: 'count', title: 'Count Date'}, {id: 'start', title: 'Session Start'}, {id: 'end', title: 'Session End'}],
-                dayOptions: [{id: 'all', title: 'All'}, {id: 'weekdays', title: 'Weekdays Only'}, {id: 'weekends', title: 'Weekends Only'}],
-                sessionOptions: [{id: 'false', title: 'No'}, {id: 'true', title: 'Yes'}]
-              },
-              formDefaults: {
-                count: 'countOptions',
-                daygroup: 'dayOptions',
-                session_filter: 'sessionOptions'
-              },
-              dataSource: 'getData',
-              dataProcessor: 'processTimeSeriesData',
-              suppWatch: true
-            }
+            return sumaBaseConfig;
           }
         }
       })
@@ -37,21 +39,11 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
         controller: 'ReportCtrl',
         resolve: {
           sumaConfig: function () {
-            return {
-              formData: {
-                countOptions: [{id: 'count', title: 'Count Date'}, {id: 'start', title: 'Session Start'}, {id: 'end', title: 'Session End'}],
-                dayOptions: [{id: 'all', title: 'All'}, {id: 'weekdays', title: 'Weekdays Only'}, {id: 'weekends', title: 'Weekends Only'}],
-                sessionOptions: [{id: 'false', title: 'No'}, {id: 'true', title: 'Yes'}]
-              },
-              formDefaults: {
-                count: 'countOptions',
-                daygroup: 'dayOptions',
-                session_filter: 'sessionOptions'
-              },
-              dataSource: 'getData',
-              dataProcessor: 'processCalendarData',
-              suppWatch: false
-            }
+            var newConfig = angular.copy(sumaBaseConfig);
+            newConfig.dataProcessor = 'processCalendarData';
+            newConfig.suppWatch = false;
+
+            return newConfig;
           }
         }
       })
@@ -60,21 +52,11 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
         controller: 'ReportCtrl',
         resolve: {
           sumaConfig: function () {
-            return {
-              formData: {
-                countOptions: [{id: 'count', title: 'Count Date'}, {id: 'start', title: 'Session Start'}, {id: 'end', title: 'Session End'}],
-                dayOptions: [{id: 'all', title: 'All'}, {id: 'weekdays', title: 'Weekdays Only'}, {id: 'weekends', title: 'Weekends Only'}],
-                sessionOptions: [{id: 'false', title: 'No'}, {id: 'true', title: 'Yes'}]
-              },
-              formDefaults: {
-                count: 'countOptions',
-                daygroup: 'dayOptions',
-                session_filter: 'sessionOptions'
-              },
-              dataSource: 'getData',
-              dataProcessor: 'processHourlyData',
-              suppWatch: false
-            }
+            var newConfig = angular.copy(sumaBaseConfig);
+            newConfig.dataProcessor = 'processHourlyData';
+            newConfig.suppWatch = false;
+
+            return newConfig;
           }
         }
       })
@@ -83,21 +65,14 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
         controller: 'ReportCtrl',
         resolve: {
           sumaConfig: function () {
-            return {
-              formData: {
-                countOptions: [{id: 'count', title: 'Count Date'}, {id: 'start', title: 'Session Start'}, {id: 'end', title: 'Session End'}],
-                dayOptions: [{id: 'all', title: 'All'}, {id: 'weekdays', title: 'Weekdays Only'}, {id: 'weekends', title: 'Weekends Only'}],
-                sessionOptions: [{id: 'false', title: 'No'}, {id: 'true', title: 'Yes'}]
-              },
-              formDefaults: {
-                count: 'countOptions',
-                daygroup: 'dayOptions',
-                session_filter: 'sessionOptions'
-              },
-              dataSource: 'getSessionsData',
-              dataProcessor: 'processHourlyData',
-              suppWatch: false
-            }
+            var newConfig = angular.copy(sumaBaseConfig);
+            newConfig.formData = null;
+            newConfig.formDefaults = null;
+            newConfig.dataSource = 'getSessionsData';
+            newConfig.dataProcessor = null;
+            newConfig.suppWatch = false;
+
+            return newConfig;
           }
         }
       })
