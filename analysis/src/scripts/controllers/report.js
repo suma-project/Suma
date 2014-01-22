@@ -2,7 +2,6 @@
 
 angular.module('sumaAnalysis')
   .controller('ReportCtrl', function ($scope, $http, $location, $anchorScroll, $timeout, initiatives, actsLocs, data, promiseTracker, uiStates, errorDispatcher, sumaConfig) {
-    console.log('sumaConfig', sumaConfig)
     $scope.initialize = function () {
       // UI State
       uiStates.setUIState('initial', $scope);
