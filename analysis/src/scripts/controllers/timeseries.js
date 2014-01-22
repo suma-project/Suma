@@ -1,21 +1,22 @@
 'use strict';
 
 angular.module('sumaAnalysis')
-  .controller('TimeSeriesCtrl', function ($scope, $http, $location, $anchorScroll, $timeout, initiatives, actsLocs, data, promiseTracker, uiStates, errorDispatcher) {
+  .controller('TimeSeriesCtrl', function ($scope, $http, $location, $anchorScroll, $timeout, initiatives, actsLocs, data, promiseTracker, uiStates, errorDispatcher, sumaConfig) {
+    console.log('sumaConfig', sumaConfig)
     $scope.initialize = function () {
       // UI State
       uiStates.setUIState('initial', $scope);
 
       // Form data
-      $scope.params = {};
-      $scope.countOptions = [{id: 'count', title: 'Count Date'}, {id: 'start', title: 'Session Start'}, {id: 'end', title: 'Session End'}];
-      $scope.dayOptions = [{id: 'all', title: 'All'}, {id: 'weekdays', title: 'Weekdays Only'}, {id: 'weekends', title: 'Weekends Only'}];
-      $scope.sessionOptions = [{id: 'false', title: 'No'}, {id: 'true', title: 'Yes'}];
+      _.each(sumaConfig.formData, function (e, i) {
+        $scope[i] = e;
+      });
 
       // Form defaults
-      $scope.params.count = $scope.countOptions[0];
-      $scope.params.daygroup = $scope.dayOptions[0];
-      $scope.params.session_filter = $scope.sessionOptions[0];
+      $scope.params = {};
+      _.each(sumaConfig.formDefaults, function (e, i) {
+        $scope.params[i] = $scope[e][0];
+      });
 
       // Date defaults
       $scope.params.sdate = moment().subtract('months', 6).add('days', 1).format('YYYY-MM-DD');
@@ -66,18 +67,20 @@ angular.module('sumaAnalysis')
       // UI State
       uiStates.setUIState('loading', $scope);
 
-      data.get($scope.params, $scope.activities, $scope.locations, 'processTimeSeriesData')
+      data[sumaConfig.dataSource]($scope.params, $scope.activities, $scope.locations, sumaConfig.dataProcessor)
         .then(function (processedData) {
           // Bind Data to Scope
           $scope.data = processedData;
 
-          $scope.$watch('data.actsLocsData', function () {
-            var index = _.findIndex($scope.data.actsLocsData.items, function (item) {
-              return item.title === $scope.data.barChartData.title;
-            });
+          if (sumaConfig.suppWatch) {
+            $scope.$watch('data.actsLocsData', function () {
+              var index = _.findIndex($scope.data.actsLocsData.items, function (item) {
+                return item.title === $scope.data.barChartData.title;
+              });
 
-            $scope.data.barChartData = $scope.data.actsLocsData.items[index];
-          });
+              $scope.data.barChartData = $scope.data.actsLocsData.items[index];
+            });
+          }
 
           // UI State
           uiStates.setUIState('success', $scope);

@@ -34,95 +34,95 @@ describe('Service: Data', function () {
     };
   }));
 
-  it('should make an AJAX call with processTimeSeriesData', function (done) {
-    $httpBackend.whenGET('lib/php/dataResults.php?activities=all&daygroup=all&edate=&etime=&id=1&locations=all&sdate=&session=count&session_filter=false&stime=')
-      .respond([{}, {}]);
+  // it('should make an AJAX call with processTimeSeriesData', function (done) {
+  //   $httpBackend.whenGET('lib/php/dataResults.php?activities=all&daygroup=all&edate=&etime=&id=1&locations=all&sdate=&session=count&session_filter=false&stime=')
+  //     .respond([{}, {}]);
 
-    timeseriesStub = sinon.stub(Processtimeseriesdata, 'get');
-    timeseriesStub.returns(okResponse());
-    Data.get(params, [], [], 'processTimeSeriesData').then(function (result) {
-      expect(result.success).to.equal(true);
-      done();
-    });
+  //   timeseriesStub = sinon.stub(Processtimeseriesdata, 'get');
+  //   timeseriesStub.returns(okResponse());
+  //   Data.get(params, [], [], 'processTimeSeriesData').then(function (result) {
+  //     expect(result.success).to.equal(true);
+  //     done();
+  //   });
 
-    $httpBackend.flush();
-    timeseriesStub.restore();
-  });
+  //   $httpBackend.flush();
+  //   timeseriesStub.restore();
+  // });
 
-  it('should make an AJAX call with processCalendarData', function (done) {
-    $httpBackend.whenGET('lib/php/dataResults.php?activities=all&daygroup=all&edate=&etime=&id=1&locations=all&sdate=&session=count&session_filter=false&stime=')
-      .respond([{}, {}]);
+  // it('should make an AJAX call with processCalendarData', function (done) {
+  //   $httpBackend.whenGET('lib/php/dataResults.php?activities=all&daygroup=all&edate=&etime=&id=1&locations=all&sdate=&session=count&session_filter=false&stime=')
+  //     .respond([{}, {}]);
 
-    calendarStub = sinon.stub(Processcalendardata, 'get');
-    calendarStub.returns(okResponse());
+  //   calendarStub = sinon.stub(Processcalendardata, 'get');
+  //   calendarStub.returns(okResponse());
 
-    Data.get(params, [], [], 'processCalendarData').then(function (result) {
-      expect(result.success).to.equal(true);
-      done();
-    });
+  //   Data.get(params, [], [], 'processCalendarData').then(function (result) {
+  //     expect(result.success).to.equal(true);
+  //     done();
+  //   });
 
-    $httpBackend.flush();
-    calendarStub.restore();
-  });
+  //   $httpBackend.flush();
+  //   calendarStub.restore();
+  // });
 
-  it('should make an AJAX call with processHourlyData', function (done) {
-    $httpBackend.whenGET('lib/php/dataResults.php?activities=all&daygroup=all&edate=&etime=&id=1&locations=all&sdate=&session=count&session_filter=false&stime=')
-      .respond([{}, {}]);
+  // it('should make an AJAX call with processHourlyData', function (done) {
+  //   $httpBackend.whenGET('lib/php/dataResults.php?activities=all&daygroup=all&edate=&etime=&id=1&locations=all&sdate=&session=count&session_filter=false&stime=')
+  //     .respond([{}, {}]);
 
-    hourlyStub = sinon.stub(Processhourlydata, 'get');
-    hourlyStub.returns(okResponse());
+  //   hourlyStub = sinon.stub(Processhourlydata, 'get');
+  //   hourlyStub.returns(okResponse());
 
-    Data.get(params, [], [], 'processHourlyData').then(function (result) {
-      expect(result.success).to.equal(true);
-      done();
-    });
+  //   Data.get(params, [], [], 'processHourlyData').then(function (result) {
+  //     expect(result.success).to.equal(true);
+  //     done();
+  //   });
 
-    $httpBackend.flush();
-    hourlyStub.restore();
-  });
+  //   $httpBackend.flush();
+  //   hourlyStub.restore();
+  // });
 
-  it('should format activityType and activityId into string', function (done) {
-    $httpBackend.whenGET('lib/php/dataResults.php?activities=activity-4&daygroup=all&edate=&etime=&id=1&locations=all&sdate=&session=count&session_filter=false&stime=')
-      .respond([{}, {}]);
+  // it('should format activityType and activityId into string', function (done) {
+  //   $httpBackend.whenGET('lib/php/dataResults.php?activities=activity-4&daygroup=all&edate=&etime=&id=1&locations=all&sdate=&session=count&session_filter=false&stime=')
+  //     .respond([{}, {}]);
 
-    timeseriesStub = sinon.stub(Processtimeseriesdata, 'get');
-    timeseriesStub.returns(okResponse());
+  //   timeseriesStub = sinon.stub(Processtimeseriesdata, 'get');
+  //   timeseriesStub.returns(okResponse());
 
-    // Note use of params2 object
-    Data.get(params2, [], [], 'processTimeSeriesData').then(function (result) {
-      expect(result.success).to.equal(true);
-      done();
-    });
+  //   // Note use of params2 object
+  //   Data.get(params2, [], [], 'processTimeSeriesData').then(function (result) {
+  //     expect(result.success).to.equal(true);
+  //     done();
+  //   });
 
-    $httpBackend.flush();
-    timeseriesStub.restore();
-  });
+  //   $httpBackend.flush();
+  //   timeseriesStub.restore();
+  // });
 
-  it('should return an error if no processor is passed', function (done) {
-    $httpBackend.whenGET('lib/php/dataResults.php?activities=all&daygroup=all&edate=&etime=&id=1&locations=all&sdate=&session=count&session_filter=false&stime=')
-      .respond([{}, {}]);
+  // it('should return an error if no processor is passed', function (done) {
+  //   $httpBackend.whenGET('lib/php/dataResults.php?activities=all&daygroup=all&edate=&etime=&id=1&locations=all&sdate=&session=count&session_filter=false&stime=')
+  //     .respond([{}, {}]);
 
-    Data.get(params, [], []).then(function (result) {
+  //   Data.get(params, [], []).then(function (result) {
 
-    }, function(result) {
-      expect(result).to.deep.equal({message: 'Data processor not found.', code: 'None found.'})
-      done();
-    });
+  //   }, function(result) {
+  //     expect(result).to.deep.equal({message: 'Data processor not found.', code: 'None found.'})
+  //     done();
+  //   });
 
-    $httpBackend.flush();
-  });
+  //   $httpBackend.flush();
+  // });
 
-  it('should return an error if AJAX fails', function (done) {
-    $httpBackend.whenGET('lib/php/dataResults.php?activities=all&daygroup=all&edate=&etime=&id=1&locations=all&sdate=&session=count&session_filter=false&stime=')
-      .respond(500, {message: 'Error'});
+  // it('should return an error if AJAX fails', function (done) {
+  //   $httpBackend.whenGET('lib/php/dataResults.php?activities=all&daygroup=all&edate=&etime=&id=1&locations=all&sdate=&session=count&session_filter=false&stime=')
+  //     .respond(500, {message: 'Error'});
 
-    Data.get(params, [], [], 'processTimeSeriesData').then(function (result) {
+  //   Data.get(params, [], [], 'processTimeSeriesData').then(function (result) {
 
-    }, function(result) {
-      expect(result).to.deep.equal({message: 'Error', code: 500})
-      done();
-    });
+  //   }, function(result) {
+  //     expect(result).to.deep.equal({message: 'Error', code: 500})
+  //     done();
+  //   });
 
-    $httpBackend.flush();
-  });
+  //   $httpBackend.flush();
+  // });
 });

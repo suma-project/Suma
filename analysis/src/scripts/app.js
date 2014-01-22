@@ -11,19 +11,95 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
       })
       .when('/timeseries', {
         templateUrl: 'views/timeSeries.html',
-        controller: 'TimeSeriesCtrl'
+        controller: 'TimeSeriesCtrl',
+        resolve: {
+          sumaConfig: function () {
+            return {
+              formData: {
+                countOptions: [{id: 'count', title: 'Count Date'}, {id: 'start', title: 'Session Start'}, {id: 'end', title: 'Session End'}],
+                dayOptions: [{id: 'all', title: 'All'}, {id: 'weekdays', title: 'Weekdays Only'}, {id: 'weekends', title: 'Weekends Only'}],
+                sessionOptions: [{id: 'false', title: 'No'}, {id: 'true', title: 'Yes'}]
+              },
+              formDefaults: {
+                count: 'countOptions',
+                daygroup: 'dayOptions',
+                session_filter: 'sessionOptions'
+              },
+              dataSource: 'getData',
+              dataProcessor: 'processTimeSeriesData',
+              suppWatch: true
+            }
+          }
+        }
       })
       .when('/calendar', {
         templateUrl: 'views/calendar.html',
-        controller: 'CalendarCtrl'
+        controller: 'TimeSeriesCtrl',
+        resolve: {
+          sumaConfig: function () {
+            return {
+              formData: {
+                countOptions: [{id: 'count', title: 'Count Date'}, {id: 'start', title: 'Session Start'}, {id: 'end', title: 'Session End'}],
+                dayOptions: [{id: 'all', title: 'All'}, {id: 'weekdays', title: 'Weekdays Only'}, {id: 'weekends', title: 'Weekends Only'}],
+                sessionOptions: [{id: 'false', title: 'No'}, {id: 'true', title: 'Yes'}]
+              },
+              formDefaults: {
+                count: 'countOptions',
+                daygroup: 'dayOptions',
+                session_filter: 'sessionOptions'
+              },
+              dataSource: 'getData',
+              dataProcessor: 'processCalendarData',
+              suppWatch: false
+            }
+          }
+        }
       })
       .when('/hourly', {
         templateUrl: 'views/hourly.html',
-        controller: 'HourlyCtrl'
+        controller: 'TimeSeriesCtrl',
+        resolve: {
+          sumaConfig: function () {
+            return {
+              formData: {
+                countOptions: [{id: 'count', title: 'Count Date'}, {id: 'start', title: 'Session Start'}, {id: 'end', title: 'Session End'}],
+                dayOptions: [{id: 'all', title: 'All'}, {id: 'weekdays', title: 'Weekdays Only'}, {id: 'weekends', title: 'Weekends Only'}],
+                sessionOptions: [{id: 'false', title: 'No'}, {id: 'true', title: 'Yes'}]
+              },
+              formDefaults: {
+                count: 'countOptions',
+                daygroup: 'dayOptions',
+                session_filter: 'sessionOptions'
+              },
+              dataSource: 'getData',
+              dataProcessor: 'processHourlyData',
+              suppWatch: false
+            }
+          }
+        }
       })
       .when('/sessions', {
         templateUrl: 'views/sessions.html',
-        controller: 'SessionsCtrl'
+        controller: 'TimeSeriesCtrl',
+        resolve: {
+          sumaConfig: function () {
+            return {
+              formData: {
+                countOptions: [{id: 'count', title: 'Count Date'}, {id: 'start', title: 'Session Start'}, {id: 'end', title: 'Session End'}],
+                dayOptions: [{id: 'all', title: 'All'}, {id: 'weekdays', title: 'Weekdays Only'}, {id: 'weekends', title: 'Weekends Only'}],
+                sessionOptions: [{id: 'false', title: 'No'}, {id: 'true', title: 'Yes'}]
+              },
+              formDefaults: {
+                count: 'countOptions',
+                daygroup: 'dayOptions',
+                session_filter: 'sessionOptions'
+              },
+              dataSource: 'getSessionsData',
+              dataProcessor: 'processHourlyData',
+              suppWatch: false
+            }
+          }
+        }
       })
       .when('/about', {
         templateUrl: 'views/about.html'
