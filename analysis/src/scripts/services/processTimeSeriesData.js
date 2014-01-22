@@ -254,10 +254,8 @@ angular.module('sumaAnalysis')
       counts.actsLocsData = counts.actsLocsOptions[1];
 
       counts.barChartData = counts.actsLocsData.items[2];
-      return counts;
-      // dfd.resolve(counts);
 
-      // return dfd.promise;
+      return counts;
     }
 
     return {
