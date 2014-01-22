@@ -48,7 +48,7 @@ module.exports = function(config) {
     // config for directive testing
     preprocessors: {
       'src/views/directives/**/*.html': 'ng-html2js',
-      'src/scripts/**/*.js': ['coverage']
+      'src/scripts/**/!(app).js': ['coverage']
     },
 
     ngHtml2JsPreprocessor: {
