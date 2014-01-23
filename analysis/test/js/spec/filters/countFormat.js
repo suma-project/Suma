@@ -9,16 +9,16 @@ describe('Filter: countFormat', function () {
 
   // initialize a new instance of the filter before each test
   var countFormat,
-      numbers;
+      Numbers;
 
   beforeEach(inject(function ($filter, numbers) {
     countFormat = $filter('countFormat');
-    numbers = numbers;
+    Numbers = numbers;
   }));
 
   it('should format numbers with thousands separator:"', function () {
-    for (var num in numbers) {
-      expect(countFormat(num)).to.equal(numbers[num]);
+    for (var num in Numbers) {
+      expect(countFormat(num)).to.equal(Numbers[num]);
     }
   });
 });
