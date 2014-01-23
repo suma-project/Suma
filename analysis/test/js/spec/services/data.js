@@ -5,26 +5,14 @@ describe('Service: Data', function () {
   // load the service's module
   beforeEach(module('sumaAnalysis'));
 
+  beforeEach(module('dataMock'));
+
   // instantiate service
   var $httpBackend,
     $rootScope,
     okResponse,
-    params = {
-      init: {id: 1},
-      count: {},
-      session_filter: 'false',
-      daygroup: {},
-      location: {id: 'all'},
-      activity: {id: 'all'}
-    },
-    params2 = {
-      init: {id: 1},
-      count: {},
-      session_filter: 'false',
-      daygroup: {},
-      location: {},
-      activity: {type: 'activity', id: 4}
-    },
+    Params1,
+    Params2,
     Processtimeseriesdata,
     Processcalendardata,
     Processhourlydata,
@@ -33,13 +21,25 @@ describe('Service: Data', function () {
     hourlyStub,
     Data;
 
-  beforeEach(inject(function (_data_, _$rootScope_, _$httpBackend_, _processTimeSeriesData_, _processCalendarData_, _processHourlyData_, $q) {
+  beforeEach(inject(function (
+    _data_,
+    _$rootScope_,
+    _$httpBackend_,
+    _processTimeSeriesData_,
+    _processCalendarData_,
+    _processHourlyData_,
+    $q,
+    mockParams1,
+    mockParams2) {
+
     Data = _data_;
     Processtimeseriesdata = _processTimeSeriesData_;
     Processcalendardata = _processCalendarData_;
     Processhourlydata = _processHourlyData_;
     $rootScope = _$rootScope_;
     $httpBackend = _$httpBackend_;
+    Params1 = mockParams1;
+    Params2 = mockParams2;
 
     okResponse = function () {
       var dfd = $q.defer();
@@ -54,7 +54,7 @@ describe('Service: Data', function () {
 
     timeseriesStub = sinon.stub(Processtimeseriesdata, 'get');
     timeseriesStub.returns(okResponse());
-    Data.getData(params, [], [], 'processTimeSeriesData').then(function (result) {
+    Data.getData(Params1, [], [], 'processTimeSeriesData').then(function (result) {
       expect(result.success).to.equal(true);
       done();
     });
@@ -70,7 +70,7 @@ describe('Service: Data', function () {
     calendarStub = sinon.stub(Processcalendardata, 'get');
     calendarStub.returns(okResponse());
 
-    Data.getData(params, [], [], 'processCalendarData').then(function (result) {
+    Data.getData(Params1, [], [], 'processCalendarData').then(function (result) {
       expect(result.success).to.equal(true);
       done();
     });
@@ -86,7 +86,7 @@ describe('Service: Data', function () {
     hourlyStub = sinon.stub(Processhourlydata, 'get');
     hourlyStub.returns(okResponse());
 
-    Data.getData(params, [], [], 'processHourlyData').then(function (result) {
+    Data.getData(Params1, [], [], 'processHourlyData').then(function (result) {
       expect(result.success).to.equal(true);
       done();
     });
@@ -103,7 +103,7 @@ describe('Service: Data', function () {
     timeseriesStub.returns(okResponse());
 
     // Note use of params2 object
-    Data.getData(params2, [], [], 'processTimeSeriesData').then(function (result) {
+    Data.getData(Params2, [], [], 'processTimeSeriesData').then(function (result) {
       expect(result.success).to.equal(true);
       done();
     });
@@ -116,7 +116,7 @@ describe('Service: Data', function () {
     $httpBackend.whenGET('lib/php/dataResults.php?activities=all&daygroup=all&edate=&etime=&id=1&locations=all&sdate=&session=count&session_filter=false&stime=')
       .respond([{}, {}]);
 
-    Data.getData(params, [], []).then(function (result) {
+    Data.getData(Params1, [], []).then(function (result) {
 
     }, function(result) {
       expect(result).to.deep.equal({message: 'Data processor not found.', code: 'None found.'});
@@ -130,7 +130,7 @@ describe('Service: Data', function () {
     $httpBackend.whenGET('lib/php/dataResults.php?activities=all&daygroup=all&edate=&etime=&id=1&locations=all&sdate=&session=count&session_filter=false&stime=')
       .respond(500, {message: 'Error'});
 
-    Data.getData(params, [], [], 'processTimeSeriesData').then(function (result) {
+    Data.getData(Params1, [], [], 'processTimeSeriesData').then(function (result) {
 
     }, function(result) {
       expect(result).to.deep.equal({message: 'Error', code: 500});
@@ -143,7 +143,7 @@ describe('Service: Data', function () {
   it(':getSessionsData should make an AJAX call', function (done) {
     $httpBackend.whenGET('lib/php/sessionsResults.php?activities=all&daygroup=all&edate=&etime=&id=1&locations=all&sdate=&session=session&session_filter=true&stime=').respond([{}, {}]);
 
-    Data.getSessionsData(params).then(function (result) {
+    Data.getSessionsData(Params1).then(function (result) {
       expect(result.length).to.equal(2);
       done();
     });
@@ -154,7 +154,7 @@ describe('Service: Data', function () {
   it(':getSessionsData should return an error if AJAX fails', function (done) {
     $httpBackend.whenGET('lib/php/sessionsResults.php?activities=all&daygroup=all&edate=&etime=&id=1&locations=all&sdate=&session=session&session_filter=true&stime=').respond(500, {message: 'Error'});
 
-    Data.getSessionsData(params).then(function (result) {
+    Data.getSessionsData(Params1).then(function (result) {
 
     }, function (result) {
       expect(result).to.deep.equal({message: 'Error', code: 500});
