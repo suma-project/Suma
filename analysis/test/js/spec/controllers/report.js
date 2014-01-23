@@ -37,9 +37,20 @@ describe('Controller: ReportCtrl', function () {
 
     sumaConfig = {
       formData: {
-        countOptions: [{id: 'count', title: 'Count Date'}, {id: 'start', title: 'Session Start'}, {id: 'end', title: 'Session End'}],
-        dayOptions: [{id: 'all', title: 'All'}, {id: 'weekdays', title: 'Weekdays Only'}, {id: 'weekends', title: 'Weekends Only'}],
-        sessionOptions: [{id: 'false', title: 'No'}, {id: 'true', title: 'Yes'}]
+        countOptions: [
+          {id: 'count', title: 'Count Date'},
+          {id: 'start', title: 'Session Start'},
+          {id: 'end', title: 'Session End'}
+        ],
+        dayOptions: [
+          {id: 'all', title: 'All'},
+          {id: 'weekdays', title: 'Weekdays Only'},
+          {id: 'weekends', title: 'Weekends Only'}
+        ],
+        sessionOptions: [
+          {id: 'false', title: 'No'},
+          {id: 'true', title: 'Yes'}
+        ]
       },
       formDefaults: {
         count: 'countOptions',
@@ -53,9 +64,20 @@ describe('Controller: ReportCtrl', function () {
 
     sumaConfig2 = {
       formData: {
-        countOptions: [{id: 'count', title: 'Count Date'}, {id: 'start', title: 'Session Start'}, {id: 'end', title: 'Session End'}],
-        dayOptions: [{id: 'all', title: 'All'}, {id: 'weekdays', title: 'Weekdays Only'}, {id: 'weekends', title: 'Weekends Only'}],
-        sessionOptions: [{id: 'false', title: 'No'}, {id: 'true', title: 'Yes'}]
+        countOptions: [
+          {id: 'count', title: 'Count Date'},
+          {id: 'start', title: 'Session Start'},
+          {id: 'end', title: 'Session End'}
+        ],
+        dayOptions: [
+          {id: 'all', title: 'All'},
+          {id: 'weekdays', title: 'Weekdays Only'},
+          {id: 'weekends', title: 'Weekends Only'}
+        ],
+        sessionOptions: [
+          {id: 'false', title: 'No'},
+          {id: 'true', title: 'Yes'}
+        ]
       },
       formDefaults: {
         count: 'countOptions',
@@ -81,7 +103,15 @@ describe('Controller: ReportCtrl', function () {
 
     dataResponse = function () {
       var dfd = $q.defer();
-      dfd.resolve({success: true, barChartData: {title:'title'}, actsLocsData: {items:[{title: 'title'}, {title: 'title'}, {title: 'title'}]}});
+      dfd.resolve({
+        success: true,
+        barChartData: {title:'title'},
+        actsLocsData: {items:[
+          {title: 'title'},
+          {title: 'title'},
+          {title: 'title'}
+        ]}
+      });
       return dfd.promise;
     };
 
@@ -110,6 +140,26 @@ describe('Controller: ReportCtrl', function () {
   });
 
   it(':initialize should set default values', function () {
+    var mockCountOptions = [
+      {id: 'count', title: 'Count Date'},
+      {id: 'start', title: 'Session Start'},
+      {id: 'end', title: 'Session End'}
+    ],
+    mockDayOptions = [
+      {id: 'all', title: 'All'},
+      {id: 'weekdays', title: 'Weekdays Only'},
+      {id: 'weekends', title: 'Weekends Only'}
+    ],
+    mockSessionOptions = [
+      {id: 'false', title: 'No'},
+      {id: 'true', title: 'Yes'}
+    ],
+    mockParamsCount = {id: 'count', title: 'Count Date'},
+    mockParamsDaygroup = {id: 'all', title: 'All'},
+    mockParamsSessionsFilter = {id: 'false', title: 'No'},
+    mocksDate = moment().subtract('months', 6).add('days', 1).format('YYYY-MM-DD'),
+    mockeDate = moment().add('days', 1).format('YYYY-MM-DD');
+
     initiativesStub.returns(okResponse());
 
     ReportCtrl = Controller('ReportCtrl', {
@@ -118,14 +168,14 @@ describe('Controller: ReportCtrl', function () {
     });
 
     expect(scope.params).to.be.an('object');
-    expect(scope.countOptions).to.deep.equal([{id: 'count', title: 'Count Date'}, {id: 'start', title: 'Session Start'}, {id: 'end', title: 'Session End'}]);
-    expect(scope.dayOptions).to.deep.equal([{id: 'all', title: 'All'}, {id: 'weekdays', title: 'Weekdays Only'}, {id: 'weekends', title: 'Weekends Only'}]);
-    expect(scope.sessionOptions).to.deep.equal([{id: 'false', title: 'No'}, {id: 'true', title: 'Yes'}]);
-    expect(scope.params.count).to.deep.equal({id: 'count', title: 'Count Date'});
-    expect(scope.params.daygroup).to.deep.equal({id: 'all', title: 'All'});
-    expect(scope.params.session_filter).to.deep.equal({id: 'false', title: 'No'});
-    expect(scope.params.sdate).to.equal(moment().subtract('months', 6).add('days', 1).format('YYYY-MM-DD'));
-    expect(scope.params.edate).to.equal(moment().add('days', 1).format('YYYY-MM-DD'));
+    expect(scope.countOptions).to.deep.equal(mockCountOptions);
+    expect(scope.dayOptions).to.deep.equal(mockDayOptions);
+    expect(scope.sessionOptions).to.deep.equal(mockSessionOptions);
+    expect(scope.params.count).to.deep.equal(mockParamsCount);
+    expect(scope.params.daygroup).to.deep.equal(mockParamsDaygroup);
+    expect(scope.params.session_filter).to.deep.equal(mockParamsSessionsFilter);
+    expect(scope.params.sdate).to.equal(mocksDate);
+    expect(scope.params.edate).to.equal(mockeDate);
   });
 
   it(':initialize should assign initiaives to scope', function () {
@@ -173,7 +223,7 @@ describe('Controller: ReportCtrl', function () {
   it(':submit should assign data to scope, set state to success, and assign watch', function() {
     var watchStub = sinon.stub(scope, '$watch');
 
-    watchStub.returns(true)
+    watchStub.returns(true);
     initiativesStub.returns(okResponse());
     dataStub.returns(dataResponse());
 
@@ -186,7 +236,7 @@ describe('Controller: ReportCtrl', function () {
     });
 
     scope.submit();
-    scope.$digest()
+    scope.$digest();
 
     expect(scope.$watch).to.not.be.called();
     watchStub.restore();
