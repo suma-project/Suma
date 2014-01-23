@@ -1,27 +1,6 @@
 .time-series {
-  .time-series-chart-wrapper {
-    width: 940px;
-    min-height: 150px;
-    margin-bottom: 20px;
-  }
-
   .bar-chart-wrapper {
     margin-top: 20px;
-  }
-
-  .supp-wrapper {
-    height: 110px;
-  }
-
-  .filter-row {
-    min-height: 260px
-  }
-
-  .loading {
-    position: absolute;
-    width: 50%;
-    top: 50%;
-    left: 50%;
   }
 
   svg {
