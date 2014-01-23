@@ -13,6 +13,9 @@ describe('Service: Data', function () {
     okResponse,
     Params1,
     Params2,
+    MockUrl1,
+    MockUrl2,
+    MockUrl3,
     Processtimeseriesdata,
     Processcalendardata,
     Processhourlydata,
@@ -30,7 +33,10 @@ describe('Service: Data', function () {
     _processHourlyData_,
     $q,
     mockParams1,
-    mockParams2) {
+    mockParams2,
+    mockUrl1,
+    mockUrl2,
+    mockUrl3) {
 
     Data = _data_;
     Processtimeseriesdata = _processTimeSeriesData_;
@@ -40,6 +46,9 @@ describe('Service: Data', function () {
     $httpBackend = _$httpBackend_;
     Params1 = mockParams1;
     Params2 = mockParams2;
+    MockUrl1 = mockUrl1;
+    MockUrl2 = mockUrl2;
+    MockUrl3 = mockUrl3;
 
     okResponse = function () {
       var dfd = $q.defer();
@@ -49,7 +58,7 @@ describe('Service: Data', function () {
   }));
 
   it(':getData should make an AJAX call with processTimeSeriesData', function (done) {
-    $httpBackend.whenGET('lib/php/dataResults.php?activities=all&daygroup=all&edate=&etime=&id=1&locations=all&sdate=&session=count&session_filter=false&stime=')
+    $httpBackend.whenGET(MockUrl1)
       .respond([{}, {}]);
 
     timeseriesStub = sinon.stub(Processtimeseriesdata, 'get');
@@ -64,7 +73,7 @@ describe('Service: Data', function () {
   });
 
   it(':getData should make an AJAX call with processCalendarData', function (done) {
-    $httpBackend.whenGET('lib/php/dataResults.php?activities=all&daygroup=all&edate=&etime=&id=1&locations=all&sdate=&session=count&session_filter=false&stime=')
+    $httpBackend.whenGET(MockUrl1)
       .respond([{}, {}]);
 
     calendarStub = sinon.stub(Processcalendardata, 'get');
@@ -80,7 +89,7 @@ describe('Service: Data', function () {
   });
 
   it(':getData should make an AJAX call with processHourlyData', function (done) {
-    $httpBackend.whenGET('lib/php/dataResults.php?activities=all&daygroup=all&edate=&etime=&id=1&locations=all&sdate=&session=count&session_filter=false&stime=')
+    $httpBackend.whenGET(MockUrl1)
       .respond([{}, {}]);
 
     hourlyStub = sinon.stub(Processhourlydata, 'get');
@@ -96,7 +105,7 @@ describe('Service: Data', function () {
   });
 
   it(':getData should format activityType and activityId into string', function (done) {
-    $httpBackend.whenGET('lib/php/dataResults.php?activities=activity-4&daygroup=all&edate=&etime=&id=1&locations=all&sdate=&session=count&session_filter=false&stime=')
+    $httpBackend.whenGET(MockUrl2)
       .respond([{}, {}]);
 
     timeseriesStub = sinon.stub(Processtimeseriesdata, 'get');
@@ -113,7 +122,7 @@ describe('Service: Data', function () {
   });
 
   it(':getData should return an error if no processor is passed', function (done) {
-    $httpBackend.whenGET('lib/php/dataResults.php?activities=all&daygroup=all&edate=&etime=&id=1&locations=all&sdate=&session=count&session_filter=false&stime=')
+    $httpBackend.whenGET(MockUrl1)
       .respond([{}, {}]);
 
     Data.getData(Params1, [], []).then(function (result) {
@@ -127,7 +136,7 @@ describe('Service: Data', function () {
   });
 
   it(':getData should return an error if AJAX fails', function (done) {
-    $httpBackend.whenGET('lib/php/dataResults.php?activities=all&daygroup=all&edate=&etime=&id=1&locations=all&sdate=&session=count&session_filter=false&stime=')
+    $httpBackend.whenGET(MockUrl1)
       .respond(500, {message: 'Error'});
 
     Data.getData(Params1, [], [], 'processTimeSeriesData').then(function (result) {
@@ -141,7 +150,8 @@ describe('Service: Data', function () {
   });
 
   it(':getSessionsData should make an AJAX call', function (done) {
-    $httpBackend.whenGET('lib/php/sessionsResults.php?activities=all&daygroup=all&edate=&etime=&id=1&locations=all&sdate=&session=session&session_filter=true&stime=').respond([{}, {}]);
+    $httpBackend.whenGET(MockUrl3)
+      .respond([{}, {}]);
 
     Data.getSessionsData(Params1).then(function (result) {
       expect(result.length).to.equal(2);
@@ -152,7 +162,8 @@ describe('Service: Data', function () {
   });
 
   it(':getSessionsData should return an error if AJAX fails', function (done) {
-    $httpBackend.whenGET('lib/php/sessionsResults.php?activities=all&daygroup=all&edate=&etime=&id=1&locations=all&sdate=&session=session&session_filter=true&stime=').respond(500, {message: 'Error'});
+    $httpBackend.whenGET(MockUrl3)
+      .respond(500, {message: 'Error'});
 
     Data.getSessionsData(Params1).then(function (result) {
 
