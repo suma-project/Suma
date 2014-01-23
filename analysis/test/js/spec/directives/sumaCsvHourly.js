@@ -5,7 +5,7 @@ describe('Directive: sumaCsvHourly', function () {
   // load the directive's module
   beforeEach(module('sumaAnalysis'));
 
-  beforeEach(module('csvHourlyMock'))
+  beforeEach(module('csvHourlyMock'));
 
   // load the directive's template
   beforeEach(module('views/directives/csv.html'));
