@@ -25,7 +25,7 @@ describe('Filter: depth', function () {
 
     objs.forEach(function (obj, i) {
       title = '—' + title;
-      expect(depth(obj)).to.equal(title)
+      expect(depth(obj)).to.equal(title);
     });
   });
 });

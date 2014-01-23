@@ -22,7 +22,7 @@ describe('Filter: countFormat', function () {
     };
 
     for (var num in numbers) {
-      expect(countFormat(num)).to.equal(numbers[num])
+      expect(countFormat(num)).to.equal(numbers[num]);
     }
   });
 });

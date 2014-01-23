@@ -37,7 +37,7 @@ describe('Directive: sumaTimepicker', function () {
   it('should attach timepicker listener to element', inject(function ($compile) {
     expect($.fn.datetimepicker).to.be.calledOnce;
     expect($.fn.datetimepicker).to.be.calledWith({
-      defaultDate: moment("00:00", 'HH:mm'),
+      defaultDate: moment('00:00', 'HH:mm'),
       pickDate: false,
       pickTime: true,
       icons: {

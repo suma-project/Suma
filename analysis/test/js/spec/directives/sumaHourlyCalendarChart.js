@@ -44,4 +44,4 @@ describe('Directive: sumaHourlyCalendarChart', function () {
       renderStub.restore();
       statsStub.restore();
     }));
-});
+  });

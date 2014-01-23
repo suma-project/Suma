@@ -15,7 +15,7 @@ describe('Directive: sumaButtonsRadio', function () {
     // instantiate directive
     element = angular.element(
       '<div data-suma-buttons-radio data-model="data" data-options="options"></div>'
-    )
+    );
 
     scope = $rootScope.$new();
 

@@ -24,7 +24,7 @@ describe('Directive: sumaDatepicker', function () {
 
     scope.$apply(function() {
       scope.params = {};
-      scope.params.sdate = moment().subtract('months', 6).add('days', 1).format('YYYY-MM-DD');;
+      scope.params.sdate = moment().subtract('months', 6).add('days', 1).format('YYYY-MM-DD');
     });
 
     linkScope = element.isolateScope();
@@ -32,7 +32,7 @@ describe('Directive: sumaDatepicker', function () {
 
   afterEach(function () {
     stub.restore();
-  })
+  });
 
   it('should initialize a datetimepicker', inject(function ($compile) {
     expect($.fn.datetimepicker).to.be.calledOnce;

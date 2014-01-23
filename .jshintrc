@@ -6,10 +6,11 @@
   "camelcase": false,
   "curly": true,
   "eqeqeq": true,
+  "expr": true,
   "immed": true,
   "indent": 2,
   "latedef": true,
-  "newcap": true,
+  "newcap": false,
   "noarg": true,
   "quotmark": "single",
   "regexp": true,
@@ -27,6 +28,13 @@
     "_": true,
     "$": true,
     "inputId": true,
-    "canvg": true
+    "canvg": true,
+    "describe": true,
+    "beforeEach": true,
+    "afterEach": true,
+    "inject": true,
+    "sinon": true,
+    "it": true,
+    "expect":true
   }
 }

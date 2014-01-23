@@ -7,17 +7,31 @@ describe('Service: Data', function () {
 
   // instantiate service
   var $httpBackend,
-      $rootScope,
-      okResponse,
-      params = {init: {id: 1}, count: {}, session_filter: 'false', daygroup: {}, location: {id: 'all'}, activity: {id: 'all'}},
-      params2 = {init: {id: 1}, count: {}, session_filter: 'false', daygroup: {}, location: {}, activity: {type: 'activity', id: 4}},
-      Processtimeseriesdata,
-      Processcalendardata,
-      Processhourlydata,
-      timeseriesStub,
-      calendarStub,
-      hourlyStub,
-      Data;
+    $rootScope,
+    okResponse,
+    params = {
+      init: {id: 1},
+      count: {},
+      session_filter: 'false',
+      daygroup: {},
+      location: {id: 'all'},
+      activity: {id: 'all'}
+    },
+    params2 = {
+      init: {id: 1},
+      count: {},
+      session_filter: 'false',
+      daygroup: {},
+      location: {},
+      activity: {type: 'activity', id: 4}
+    },
+    Processtimeseriesdata,
+    Processcalendardata,
+    Processhourlydata,
+    timeseriesStub,
+    calendarStub,
+    hourlyStub,
+    Data;
 
   beforeEach(inject(function (_data_, _$rootScope_, _$httpBackend_, _processTimeSeriesData_, _processCalendarData_, _processHourlyData_, $q) {
     Data = _data_;
@@ -28,7 +42,7 @@ describe('Service: Data', function () {
     $httpBackend = _$httpBackend_;
 
     okResponse = function () {
-      var dfd = $q.defer();;
+      var dfd = $q.defer();
       dfd.resolve({success: true});
       return dfd.promise;
     };
@@ -105,7 +119,7 @@ describe('Service: Data', function () {
     Data.getData(params, [], []).then(function (result) {
 
     }, function(result) {
-      expect(result).to.deep.equal({message: 'Data processor not found.', code: 'None found.'})
+      expect(result).to.deep.equal({message: 'Data processor not found.', code: 'None found.'});
       done();
     });
 
@@ -119,7 +133,7 @@ describe('Service: Data', function () {
     Data.getData(params, [], [], 'processTimeSeriesData').then(function (result) {
 
     }, function(result) {
-      expect(result).to.deep.equal({message: 'Error', code: 500})
+      expect(result).to.deep.equal({message: 'Error', code: 500});
       done();
     });
 
@@ -143,7 +157,7 @@ describe('Service: Data', function () {
     Data.getSessionsData(params).then(function (result) {
 
     }, function (result) {
-      expect(result).to.deep.equal({message: 'Error', code: 500})
+      expect(result).to.deep.equal({message: 'Error', code: 500});
       done();
     });
 

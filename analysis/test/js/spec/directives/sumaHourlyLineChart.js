@@ -38,4 +38,4 @@ describe('Directive: sumaHourlyLineChart', function () {
 
       renderStub.restore();
     }));
-});
+  });

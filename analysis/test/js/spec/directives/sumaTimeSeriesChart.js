@@ -37,4 +37,4 @@ describe('Directive: sumaTimeSeriesChart', function () {
 
       renderStub.restore();
     }));
-});
+  });
