@@ -5,6 +5,8 @@ describe('Controller: ReportCtrl', function () {
   // load the controller's module
   beforeEach(module('sumaAnalysis'));
 
+  beforeEach(module('reportMock'));
+
   var ReportCtrl,
     Controller,
     Timeout,
@@ -21,11 +23,25 @@ describe('Controller: ReportCtrl', function () {
     errorResponse,
     dataResponse,
     location,
-    sumaConfig,
-    sumaConfig2;
+    SumaConfig,
+    SumaConfig2,
+    Defaults;
 
   // Initialize the controller and a mock scope
-  beforeEach(inject(function ($controller, $rootScope, initiatives, uiStates, data, $q, $location, actsLocs, $timeout) {
+  beforeEach(inject(function (
+    $controller,
+    $rootScope,
+    initiatives,
+    uiStates,
+    data,
+    $q,
+    $location,
+    actsLocs,
+    $timeout,
+    sumaConfig,
+    sumaConfig2,
+    defaults) {
+
     scope = $rootScope.$new();
     Controller = $controller;
     Timeout = $timeout;
@@ -35,59 +51,9 @@ describe('Controller: ReportCtrl', function () {
     location = $location;
     ActsLocs = actsLocs;
 
-    sumaConfig = {
-      formData: {
-        countOptions: [
-          {id: 'count', title: 'Count Date'},
-          {id: 'start', title: 'Session Start'},
-          {id: 'end', title: 'Session End'}
-        ],
-        dayOptions: [
-          {id: 'all', title: 'All'},
-          {id: 'weekdays', title: 'Weekdays Only'},
-          {id: 'weekends', title: 'Weekends Only'}
-        ],
-        sessionOptions: [
-          {id: 'false', title: 'No'},
-          {id: 'true', title: 'Yes'}
-        ]
-      },
-      formDefaults: {
-        count: 'countOptions',
-        daygroup: 'dayOptions',
-        session_filter: 'sessionOptions'
-      },
-      dataSource: 'getData',
-      dataProcessor: 'processTimeSeriesData',
-      suppWatch: true
-    };
-
-    sumaConfig2 = {
-      formData: {
-        countOptions: [
-          {id: 'count', title: 'Count Date'},
-          {id: 'start', title: 'Session Start'},
-          {id: 'end', title: 'Session End'}
-        ],
-        dayOptions: [
-          {id: 'all', title: 'All'},
-          {id: 'weekdays', title: 'Weekdays Only'},
-          {id: 'weekends', title: 'Weekends Only'}
-        ],
-        sessionOptions: [
-          {id: 'false', title: 'No'},
-          {id: 'true', title: 'Yes'}
-        ]
-      },
-      formDefaults: {
-        count: 'countOptions',
-        daygroup: 'dayOptions',
-        session_filter: 'sessionOptions'
-      },
-      dataSource: 'getData',
-      dataProcessor: 'processTimeSeriesData',
-      suppWatch: false
-    };
+    SumaConfig = sumaConfig;
+    SumaConfig2 = sumaConfig2;
+    Defaults = defaults;
 
     okResponse = function () {
       var dfd = $q.defer();
@@ -133,49 +99,28 @@ describe('Controller: ReportCtrl', function () {
 
     ReportCtrl = Controller('ReportCtrl', {
       $scope: scope,
-      sumaConfig: sumaConfig
+      sumaConfig: SumaConfig
     });
 
     expect(UIStates.setUIState).to.be.calledWithExactly('initial');
   });
 
   it(':initialize should set default values', function () {
-    var mockCountOptions = [
-      {id: 'count', title: 'Count Date'},
-      {id: 'start', title: 'Session Start'},
-      {id: 'end', title: 'Session End'}
-    ],
-    mockDayOptions = [
-      {id: 'all', title: 'All'},
-      {id: 'weekdays', title: 'Weekdays Only'},
-      {id: 'weekends', title: 'Weekends Only'}
-    ],
-    mockSessionOptions = [
-      {id: 'false', title: 'No'},
-      {id: 'true', title: 'Yes'}
-    ],
-    mockParamsCount = {id: 'count', title: 'Count Date'},
-    mockParamsDaygroup = {id: 'all', title: 'All'},
-    mockParamsSessionsFilter = {id: 'false', title: 'No'},
-    mocksDate = moment().subtract('months', 6).add('days', 1).format('YYYY-MM-DD'),
-    mockeDate = moment().add('days', 1).format('YYYY-MM-DD');
-
     initiativesStub.returns(okResponse());
 
     ReportCtrl = Controller('ReportCtrl', {
       $scope: scope,
-      sumaConfig: sumaConfig
+      sumaConfig: SumaConfig
     });
 
-    expect(scope.params).to.be.an('object');
-    expect(scope.countOptions).to.deep.equal(mockCountOptions);
-    expect(scope.dayOptions).to.deep.equal(mockDayOptions);
-    expect(scope.sessionOptions).to.deep.equal(mockSessionOptions);
-    expect(scope.params.count).to.deep.equal(mockParamsCount);
-    expect(scope.params.daygroup).to.deep.equal(mockParamsDaygroup);
-    expect(scope.params.session_filter).to.deep.equal(mockParamsSessionsFilter);
-    expect(scope.params.sdate).to.equal(mocksDate);
-    expect(scope.params.edate).to.equal(mockeDate);
+    expect(scope.countOptions).to.deep.equal(Defaults.countOptions);
+    expect(scope.dayOptions).to.deep.equal(Defaults.dayOptions);
+    expect(scope.sessionOptions).to.deep.equal(Defaults.sessionOptions);
+    expect(scope.params.count).to.deep.equal(Defaults.count);
+    expect(scope.params.daygroup).to.deep.equal(Defaults.daygroup);
+    expect(scope.params.session_filter).to.deep.equal(Defaults.sessionFilter);
+    expect(scope.params.sdate).to.equal(Defaults.sDate);
+    expect(scope.params.edate).to.equal(Defaults.eDate);
   });
 
   it(':initialize should assign initiaives to scope', function () {
@@ -183,7 +128,7 @@ describe('Controller: ReportCtrl', function () {
 
     ReportCtrl = Controller('ReportCtrl', {
       $scope: scope,
-      sumaConfig: sumaConfig
+      sumaConfig: SumaConfig
     });
 
     scope.$digest();
@@ -195,7 +140,7 @@ describe('Controller: ReportCtrl', function () {
 
     ReportCtrl = Controller('ReportCtrl', {
       $scope: scope,
-      sumaConfig: sumaConfig
+      sumaConfig: SumaConfig
     });
 
     scope.$digest();
@@ -204,13 +149,13 @@ describe('Controller: ReportCtrl', function () {
     expect(scope.errorCode).to.equal(500);
   });
 
-  it(':submit should assign data to scope and set state to success', function() {
+  it(':submit should assign data and set success', function() {
     initiativesStub.returns(okResponse());
     dataStub.returns(dataResponse());
 
     ReportCtrl = Controller('ReportCtrl', {
       $scope: scope,
-      sumaConfig: sumaConfig
+      sumaConfig: SumaConfig
     });
 
     scope.submit();
@@ -220,7 +165,7 @@ describe('Controller: ReportCtrl', function () {
     expect(scope.data.success).to.equal(true);
   });
 
-  it(':submit should assign data to scope, set state to success, and assign watch', function() {
+  it(':submit should assign data, set success, and assign watch', function() {
     var watchStub = sinon.stub(scope, '$watch');
 
     watchStub.returns(true);
@@ -232,7 +177,7 @@ describe('Controller: ReportCtrl', function () {
 
     ReportCtrl = Controller('ReportCtrl', {
       $scope: scope,
-      sumaConfig: sumaConfig2
+      sumaConfig: SumaConfig2
     });
 
     scope.submit();
@@ -248,7 +193,7 @@ describe('Controller: ReportCtrl', function () {
 
     ReportCtrl = Controller('ReportCtrl', {
       $scope: scope,
-      sumaConfig: sumaConfig
+      sumaConfig: SumaConfig
     });
 
     scope.submit();
@@ -264,7 +209,7 @@ describe('Controller: ReportCtrl', function () {
 
     ReportCtrl = Controller('ReportCtrl', {
       $scope: scope,
-      sumaConfig: sumaConfig
+      sumaConfig: SumaConfig
     });
 
     scope.scrollTo(12345);
@@ -275,14 +220,17 @@ describe('Controller: ReportCtrl', function () {
 
   it(':updateMetadata should respond to init changes', function () {
     var actsLocsStub = sinon.stub(ActsLocs, 'get'),
-        response = {activities: ['first', 'second'], locations: ['third', 'fourth']};
+      response = {
+        activities: ['first', 'second'],
+        locations: ['third', 'fourth']
+      };
 
     actsLocsStub.returns(response);
     initiativesStub.returns(okResponse());
 
     ReportCtrl = Controller('ReportCtrl', {
       $scope: scope,
-      sumaConfig: sumaConfig
+      sumaConfig: SumaConfig
     });
 
     // Check branch if params.init is undefined
@@ -295,6 +243,7 @@ describe('Controller: ReportCtrl', function () {
     scope.params.init = {};
     scope.updateMetadata();
     scope.$digest();
+
     expect(scope.processMetadata).to.equal(true);
     expect(scope.activities).to.equal(response.activities);
     expect(scope.locations).to.equal(response.locations);
