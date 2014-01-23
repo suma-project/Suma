@@ -28,4 +28,9 @@ describe('Filter: depth', function () {
       expect(depth(obj)).to.equal(title);
     });
   });
+
+  it('should handle items with name instead of title', function () {
+    var input = {'name': 'No Activity', 'depth': 0,'percent': '100.00','count': 3707};
+    expect(depth(input)).to.equal('No Activity');
+  });
 });
