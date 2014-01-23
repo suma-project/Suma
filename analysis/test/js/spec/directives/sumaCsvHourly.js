@@ -12,12 +12,12 @@ describe('Directive: sumaCsvHourly', function () {
 
   var element,
       scope,
-      testLink,
+      MockLink,
       Ctrlscope;
 
   beforeEach(inject(function ($rootScope, $compile, mockData, mockLink) {
     element = angular.element('<span data-suma-csv-hourly data-data="data"></span>');
-    testLink = mockLink;
+    MockLink = mockLink;
 
     scope = $rootScope.$new();
     scope.data = mockData;
@@ -30,6 +30,6 @@ describe('Directive: sumaCsvHourly', function () {
 
   it('should attach a data url to the element', function () {
     Ctrlscope.download(scope.data);
-    expect(Ctrlscope.href).to.equal(testLink);
+    expect(Ctrlscope.href).to.equal(MockLink);
   });
 });
