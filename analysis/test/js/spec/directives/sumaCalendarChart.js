@@ -12,7 +12,7 @@ describe('Directive: sumaCalendarChart', function () {
       statsStub;
 
   beforeEach(inject(function ($rootScope, $compile) {
-    element = angular.element('<div data-suma-calendar-chart id="chart-1" data-data="data.data" data-stats="stats" ng-show="success"></div>');
+    element = angular.element('<div suma-calendar-chart id="chart-1" data="data.data" stats="stats" ng-show="success"></div>');
 
     scope = $rootScope.$new();
 

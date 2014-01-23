@@ -16,7 +16,7 @@ describe('Directive: sumaCsv', function () {
       MockLink;
 
   beforeEach(inject(function ($rootScope, $compile, mockData, mockLink) {
-    element = angular.element('<div data-suma-csv data-data="data"></div>');
+    element = angular.element('<div suma-csv data="data"></div>');
 
     scope = $rootScope.$new();
     scope.data = mockData;

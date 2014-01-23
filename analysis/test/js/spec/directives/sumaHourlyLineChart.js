@@ -11,7 +11,7 @@ describe('Directive: sumaHourlyLineChart', function () {
         renderStub;
 
     beforeEach(inject(function ($rootScope, $compile) {
-      element = angular.element('<div data-suma-hourly-line-chart id="chart-1" data-data="data.data" ng-show="success"></div>');
+      element = angular.element('<div suma-hourly-line-chart id="chart-1" data="data.data" ng-show="success"></div>');
 
       scope = $rootScope.$new();
 

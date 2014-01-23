@@ -11,7 +11,7 @@ describe('Directive: sumaBarChart', function () {
       stub;
 
   beforeEach(inject(function ($rootScope, $compile) {
-    element = angular.element('<div data-suma-bar-chart id="chart-2" data="data.barChartData"></div>'),
+    element = angular.element('<div suma-bar-chart id="chart-2" data="data.barChartData"></div>'),
     scope = $rootScope.$new();
 
     element = $compile(element)(scope);
