@@ -194,7 +194,7 @@ angular.module('sumaAnalysis')
       });
 
       // Day of Week Summary
-      counts.dayOfWeekSummary = _.sortBy(_.map(response.dayOfWeekSummary, function (element, index) {
+      counts.dayOfWeekSummary = _.sortBy(_.map(response.weekdaySummary, function (element, index) {
         return {
           name: index,
           count: element,
