@@ -38,6 +38,7 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
       })
       .when('/timeseries', {
         templateUrl: 'views/timeSeries.html',
+        reloadOnSearch: false,
         controller: 'ReportCtrl',
         resolve: {
           sumaConfig: function () {

@@ -34,7 +34,7 @@ angular.module('sumaAnalysis')
 
         return dfd.promise;
       },
-      getData: function (params, acts, locs, dataProcessor) {
+      getData: function (params, acts, locs, dataProcessor, tPromise) {
         var dfd,
             options,
             processor,
@@ -65,15 +65,22 @@ angular.module('sumaAnalysis')
             'daygroup': params.daygroup.id || 'all' ,
             'locations': params.location.id || 'all',
             'activities': params.activity.type ? (params.activity.type + '-' + params.activity.id) : 'all'
-          }
+          },
+          timeout: tPromise.promise
         };
 
         $http.get(url, options).success(function(data) {
           processor.get(data, acts, locs).then(function (processedData) {
             dfd.resolve(processedData);
+          }, function (data) {
+            dfd.reject(data)
           });
         }).error(function(data, status, headers, config){
-          dfd.reject({message: data.message, code: status});
+          if (status === 0) {
+            console.log('do nothing')
+          } else {
+            dfd.reject({message: data.message, code: status});
+          }
         });
 
         return dfd.promise;
