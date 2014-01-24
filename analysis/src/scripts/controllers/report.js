@@ -66,13 +66,13 @@ angular.module('sumaAnalysis')
         id: $scope.params.init.id,
         edate: $scope.params.edate,
         sdate: $scope.params.sdate,
-        count: $scope.params.count.id,
-        session_filter: $scope.params.session_filter.id,
+        count: $scope.params.count ? $scope.params.count.id : null,
+        session_filter: $scope.params.session_filter ? $scope.params.session_filter.id : null,
         stime: $scope.params.stime || '',
         etime: $scope.params.etime || '',
-        activity: $scope.params.activity.id,
-        location: $scope.params.location.id,
-        daygroup: $scope.params.daygroup.id
+        activity: $scope.params.activity ? $scope.params.activity.id : null,
+        location: $scope.params.location ? $scope.params.location.id : null,
+        daygroup: $scope.params.daygroup ? $scope.params.daygroup.id : null
       });
     };
 
