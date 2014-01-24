@@ -3,7 +3,7 @@
 angular.module('sumaAnalysis')
   .factory('data', function ($http, $q, processTimeSeriesData, processCalendarData, processHourlyData) {
     return {
-      getSessionsData: function (params) {
+      getSessionsData: function (params, acts, locs, dataProcessor, tPromise) {
         var dfd,
             options,
             url;
@@ -23,13 +23,16 @@ angular.module('sumaAnalysis')
             'daygroup': 'all' ,
             'locations': 'all',
             'activities': 'all'
-          }
+          },
+          timeout: tPromise.promise
         };
 
         $http.get(url, options).success(function(data) {
           dfd.resolve(data);
-        }).error(function(data, status, headers, config){
-          dfd.reject({message: data.message, code: status});
+        }).error(function(data, status, headers, config) {
+          if (status !== 0) {
+            dfd.reject({message: data.message, code: status});
+          }
         });
 
         return dfd.promise;

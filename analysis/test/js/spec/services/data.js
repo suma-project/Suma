@@ -22,6 +22,7 @@ describe('Service: Data', function () {
     timeseriesStub,
     calendarStub,
     hourlyStub,
+    tPromise,
     Data;
 
   beforeEach(inject(function (
@@ -50,6 +51,8 @@ describe('Service: Data', function () {
     MockUrl2 = mockUrl2;
     MockUrl3 = mockUrl3;
 
+    tPromise = $q.defer();
+
     okResponse = function () {
       var dfd = $q.defer();
       dfd.resolve({success: true});
@@ -63,7 +66,7 @@ describe('Service: Data', function () {
 
     timeseriesStub = sinon.stub(Processtimeseriesdata, 'get');
     timeseriesStub.returns(okResponse());
-    Data.getData(Params1, [], [], 'processTimeSeriesData').then(function (result) {
+    Data.getData(Params1, [], [], 'processTimeSeriesData', tPromise).then(function (result) {
       expect(result.success).to.equal(true);
       done();
     });
@@ -79,7 +82,7 @@ describe('Service: Data', function () {
     calendarStub = sinon.stub(Processcalendardata, 'get');
     calendarStub.returns(okResponse());
 
-    Data.getData(Params1, [], [], 'processCalendarData').then(function (result) {
+    Data.getData(Params1, [], [], 'processCalendarData', tPromise).then(function (result) {
       expect(result.success).to.equal(true);
       done();
     });
@@ -95,7 +98,7 @@ describe('Service: Data', function () {
     hourlyStub = sinon.stub(Processhourlydata, 'get');
     hourlyStub.returns(okResponse());
 
-    Data.getData(Params1, [], [], 'processHourlyData').then(function (result) {
+    Data.getData(Params1, [], [], 'processHourlyData', tPromise).then(function (result) {
       expect(result.success).to.equal(true);
       done();
     });
@@ -112,7 +115,7 @@ describe('Service: Data', function () {
     timeseriesStub.returns(okResponse());
 
     // Note use of params2 object
-    Data.getData(Params2, [], [], 'processTimeSeriesData').then(function (result) {
+    Data.getData(Params2, [], [], 'processTimeSeriesData', tPromise).then(function (result) {
       expect(result.success).to.equal(true);
       done();
     });
@@ -125,7 +128,7 @@ describe('Service: Data', function () {
     $httpBackend.whenGET(MockUrl1)
       .respond([{}, {}]);
 
-    Data.getData(Params1, [], []).then(function (result) {
+    Data.getData(Params1, [], [], '', tPromise).then(function (result) {
 
     }, function(result) {
       expect(result).to.deep.equal({message: 'Data processor not found.', code: 'None found.'});
@@ -139,7 +142,7 @@ describe('Service: Data', function () {
     $httpBackend.whenGET(MockUrl1)
       .respond(500, {message: 'Error'});
 
-    Data.getData(Params1, [], [], 'processTimeSeriesData').then(function (result) {
+    Data.getData(Params1, [], [], 'processTimeSeriesData', tPromise).then(function (result) {
 
     }, function(result) {
       expect(result).to.deep.equal({message: 'Error', code: 500});
@@ -153,7 +156,7 @@ describe('Service: Data', function () {
     $httpBackend.whenGET(MockUrl3)
       .respond([{}, {}]);
 
-    Data.getSessionsData(Params1).then(function (result) {
+    Data.getSessionsData(Params1, [], [], '', tPromise).then(function (result) {
       expect(result.length).to.equal(2);
       done();
     });
@@ -165,7 +168,7 @@ describe('Service: Data', function () {
     $httpBackend.whenGET(MockUrl3)
       .respond(500, {message: 'Error'});
 
-    Data.getSessionsData(Params1).then(function (result) {
+    Data.getSessionsData(Params1, [], [], '', tPromise).then(function (result) {
 
     }, function (result) {
       expect(result).to.deep.equal({message: 'Error', code: 500});
