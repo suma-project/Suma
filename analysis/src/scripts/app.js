@@ -49,6 +49,7 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
       .when('/calendar', {
         templateUrl: 'views/calendar.html',
         controller: 'ReportCtrl',
+        reloadOnSearch: false,
         resolve: {
           sumaConfig: function () {
             var newConfig = angular.copy(sumaBaseConfig);
@@ -62,6 +63,7 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
       .when('/hourly', {
         templateUrl: 'views/hourly.html',
         controller: 'ReportCtrl',
+        reloadOnSearch: false,
         resolve: {
           sumaConfig: function () {
             var newConfig = angular.copy(sumaBaseConfig);
@@ -75,6 +77,7 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
       .when('/sessions', {
         templateUrl: 'views/sessions.html',
         controller: 'ReportCtrl',
+        reloadOnSearch: false,
         resolve: {
           sumaConfig: function () {
             var newConfig = angular.copy(sumaBaseConfig);
