@@ -73,12 +73,10 @@ angular.module('sumaAnalysis')
           processor.get(data, acts, locs).then(function (processedData) {
             dfd.resolve(processedData);
           }, function (data) {
-            dfd.reject(data)
+            dfd.reject(data);
           });
         }).error(function(data, status, headers, config){
-          if (status === 0) {
-            console.log('do nothing')
-          } else {
+          if (status !== 0) {
             dfd.reject({message: data.message, code: status});
           }
         });

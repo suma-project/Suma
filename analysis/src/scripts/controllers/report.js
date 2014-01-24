@@ -28,29 +28,29 @@ angular.module('sumaAnalysis')
 
     $scope.setParams = function (p) {
       $scope.params.init = _.find($scope.inits, function (e, i) {
-        return e.id == p.id;
+        return String(e.id) === String(p.id);
       });
 
       $scope.params.count = _.find($scope.countOptions, function (e, i) {
-        return e.id == p.count;
+        return String(e.id) === String(p.count);
       });
 
       $scope.params.session_filter = _.find($scope.sessionOptions, function (e, i) {
-        return e.id == p.session_filter;
+        return String(e.id) === String(p.session_filter);
       });
 
       $scope.params.daygroup = _.find($scope.dayOptions, function (e, i) {
-        return e.id == p.daygroup;
+        return String(e.id) === String(p.daygroup);
       });
 
       $scope.getMetadata();
 
       $scope.params.activity = _.find($scope.activities, function (e, i) {
-        return e.id == p.activity;
+        return String(e.id) === String(p.activity);
       });
 
       $scope.params.location = _.find($scope.locations, function (e, i) {
-        return e.id == p.location;
+        return String(e.id) === String(p.location);
       });
 
       $scope.params.sdate = p.sdate;
@@ -87,7 +87,7 @@ angular.module('sumaAnalysis')
         $scope.inits = data;
 
         if (!_.isEmpty(p1)) {
-          $scope.setParams(p1)
+          $scope.setParams(p1);
         }
       }, $scope.error);
 
@@ -98,17 +98,14 @@ angular.module('sumaAnalysis')
       }
 
       $scope.$on('$routeUpdate', function() {
-
-        console.log('routeUpdated')
-        // tPromise.resolve();
         var p = $location.search();
-        if (_.isEmpty(p)) {
-          console.log('empty')
-          $scope.initial()
-        } else {
-          console.log('not empty')
-          tPromise.resolve({message: 'Hello'})
 
+        if (_.isEmpty(p)) {
+          $scope.initial();
+        } else {
+          if (tPromise) {
+            tPromise.resolve();
+          }
           $scope.setParams(p);
         }
       });
@@ -131,7 +128,7 @@ angular.module('sumaAnalysis')
 
       $scope.params.activity = $scope.actsLocs.activities[0];
       $scope.params.location = $scope.actsLocs.locations[0];
-    }
+    };
 
     // Get Initiative Metadata
     $scope.updateMetadata = function () {
