@@ -150,6 +150,8 @@ describe('Controller: ReportCtrl', function () {
   });
 
   it(':submit should assign data and set success', function() {
+    var setUrlStub;
+
     initiativesStub.returns(okResponse());
     dataStub.returns(dataResponse());
 
@@ -158,15 +160,22 @@ describe('Controller: ReportCtrl', function () {
       sumaConfig: SumaConfig
     });
 
+    setUrlStub = sinon.stub(scope, 'setUrl');
+    setUrlStub.returns(true);
+
     scope.submit();
     scope.$digest();
 
     expect(UIStates.setUIState).to.be.calledWith('success');
     expect(scope.data.success).to.equal(true);
+    expect(setUrlStub).to.be.calledOnce;
+
+    setUrlStub.restore();
   });
 
   it(':submit should assign data, set success, and assign watch', function() {
-    var watchStub = sinon.stub(scope, '$watch');
+    var watchStub = sinon.stub(scope, '$watch'),
+        setUrlStub;
 
     watchStub.returns(true);
     initiativesStub.returns(okResponse());
@@ -180,11 +189,17 @@ describe('Controller: ReportCtrl', function () {
       sumaConfig: SumaConfig2
     });
 
+    setUrlStub = sinon.stub(scope, 'setUrl');
+    setUrlStub.returns(true);
+
     scope.submit();
     scope.$digest();
 
     expect(scope.$watch).to.not.be.called();
+    expect(setUrlStub).to.be.calledOnce;
+
     watchStub.restore();
+    setUrlStub.restore();
   });
 
   it(':submit should dispatch an error if Data.get fails', function() {

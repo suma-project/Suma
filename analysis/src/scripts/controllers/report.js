@@ -4,12 +4,7 @@ angular.module('sumaAnalysis')
   .controller('ReportCtrl', function ($scope, $rootScope, $http, $location, $anchorScroll, $timeout, initiatives, actsLocs, data, promiseTracker, uiStates, sumaConfig, $routeParams, $q) {
     var tPromise;
 
-    $scope.initial = function () {
-      // UI State
-      if (_.isEmpty($location.search())) {
-        $scope.state = uiStates.setUIState('initial');
-      }
-
+    $scope.setDefaults = function () {
       // Form data
       _.each(sumaConfig.formData, function (e, i) {
         $scope[i] = e;
@@ -57,8 +52,6 @@ angular.module('sumaAnalysis')
       $scope.params.edate = p.edate;
       $scope.params.stime = p.stime ? p.stime : '';
       $scope.params.etime = p.etime ? p.etime : '';
-
-      $scope.submit();
     };
 
     $scope.setUrl = function () {
@@ -79,8 +72,13 @@ angular.module('sumaAnalysis')
     $scope.initialize = function () {
       var p1 = $location.search();
 
-      // Initialize defaults
-      $scope.initial();
+      // UI State
+      if (_.isEmpty(p1)) {
+        $scope.state = uiStates.setUIState('initial');
+      }
+
+      // Set defaults
+      $scope.setDefaults();
 
       // Get inits on load
       $scope.loadInits = initiatives.get().then(function (data) {
@@ -88,27 +86,35 @@ angular.module('sumaAnalysis')
 
         if (!_.isEmpty(p1)) {
           $scope.setParams(p1);
+          $scope.submit()
         }
       }, $scope.error);
 
       // Setup promise tracker for spinner on initial load
-      if (_.isEmpty(p1)) {
-        $scope.finder = promiseTracker('initTracker');
-        $scope.finder.addPromise($scope.loadInits);
+      // $scope.finder = promiseTracker('initTracker');
+      // $scope.finder.addPromise($scope.loadInits);
+
+      // Attach listener for routeUpdate
+      $scope.$on('$routeUpdate', $scope.routeUpdate);
+    };
+
+    $scope.routeUpdate = function () {
+      var p = $location.search();
+
+      if (tPromise) {
+        tPromise.resolve();
       }
+      // Check for no params. Occurs when going back in history
+      // to original page with no params in URL. Initial page
+      // load with no params doesn't call routeUpdate
 
-      $scope.$on('$routeUpdate', function() {
-        var p = $location.search();
-
-        if (_.isEmpty(p)) {
-          $scope.initial();
-        } else {
-          if (tPromise) {
-            tPromise.resolve();
-          }
-          $scope.setParams(p);
-        }
-      });
+      if (_.isEmpty(p)) {
+        $scope.state = uiStates.setUIState('initial');
+        $scope.setDefaults();
+      } else {
+        $scope.setParams(p);
+        $scope.submit();
+      }
     };
 
     // Handle anchor links
@@ -165,9 +171,7 @@ angular.module('sumaAnalysis')
 
       $scope.state = uiStates.setUIState('success');
 
-      if ($scope.params.init) {
-        $scope.setUrl();
-      }
+      $scope.setUrl();
     };
 
     // Submit Form and Draw Chart
