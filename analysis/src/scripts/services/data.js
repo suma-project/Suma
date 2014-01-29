@@ -32,6 +32,8 @@ angular.module('sumaAnalysis')
         }).error(function(data, status, headers, config) {
           if (status !== 0) {
             dfd.reject({message: data.message, code: status});
+          } else {
+            dfd.reject();
           }
         });
 
@@ -81,6 +83,8 @@ angular.module('sumaAnalysis')
         }).error(function(data, status, headers, config){
           if (status !== 0) {
             dfd.reject({message: data.message, code: status});
+          } else {
+            dfd.reject();
           }
         });
 

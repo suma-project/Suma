@@ -105,6 +105,22 @@ describe('Controller: ReportCtrl', function () {
     expect(UIStates.setUIState).to.be.calledWithExactly('initial');
   });
 
+  it(':initialize should not set UI state to initial if urlParams exist', function () {
+    var locationSearchStub = sinon.stub(location, 'search');
+    locationSearchStub.returns({id: 4});
+
+    initiativesStub.returns(okResponse());
+
+    ReportCtrl = Controller('ReportCtrl', {
+      $scope: scope,
+      sumaConfig: SumaConfig
+    });
+
+    expect(UIStates.setUIState).to.not.be.called;
+
+    locationSearchStub.restore();
+  });
+
   it(':initialize should set default values', function () {
     initiativesStub.returns(okResponse());
 
@@ -123,7 +139,7 @@ describe('Controller: ReportCtrl', function () {
     expect(scope.params.edate).to.equal(Defaults.eDate);
   });
 
-  it(':initialize should assign initiaives to scope', function () {
+  it(':initialize should assign initiatives to scope', function () {
     initiativesStub.returns(okResponse());
 
     ReportCtrl = Controller('ReportCtrl', {
@@ -133,6 +149,37 @@ describe('Controller: ReportCtrl', function () {
 
     scope.$digest();
     expect(scope.inits).to.deep.equal({success: true});
+  });
+
+  it(':getInitiatives should call setParams and submit if urlParams exist', function () {
+    var locationSearchStub,
+        submitStub,
+        setParamsStub;
+
+    locationSearchStub = sinon.stub(location, 'search');
+    locationSearchStub.returns({id: 4});
+
+    initiativesStub.returns(okResponse());
+
+    ReportCtrl = Controller('ReportCtrl', {
+      $scope: scope,
+      sumaConfig: SumaConfig
+    });
+
+    setParamsStub = sinon.stub(scope, 'setParams');
+    setParamsStub.returns(true);
+
+    submitStub = sinon.stub(scope, 'submit');
+    submitStub.returns(true);
+
+    scope.$digest();
+    expect(scope.inits).to.deep.equal({success: true});
+    expect(setParamsStub).to.be.calledOnce;
+    expect(submitStub).to.be.calledOnce;
+
+    locationSearchStub.restore();
+    setParamsStub.restore();
+    submitStub.restore();
   });
 
   it(':initialize should dispatch an error if Initiatives.get fails', function () {
@@ -150,8 +197,6 @@ describe('Controller: ReportCtrl', function () {
   });
 
   it(':submit should assign data and set success', function() {
-    var setUrlStub;
-
     initiativesStub.returns(okResponse());
     dataStub.returns(dataResponse());
 
@@ -160,46 +205,27 @@ describe('Controller: ReportCtrl', function () {
       sumaConfig: SumaConfig
     });
 
-    setUrlStub = sinon.stub(scope, 'setUrl');
-    setUrlStub.returns(true);
-
     scope.submit();
     scope.$digest();
 
     expect(UIStates.setUIState).to.be.calledWith('success');
     expect(scope.data.success).to.equal(true);
-    expect(setUrlStub).to.be.calledOnce;
-
-    setUrlStub.restore();
   });
 
-  it(':submit should assign data, set success, and assign watch', function() {
-    var watchStub = sinon.stub(scope, '$watch'),
-        setUrlStub;
-
-    watchStub.returns(true);
+  it(':submit should assign data and set success', function() {
     initiativesStub.returns(okResponse());
     dataStub.returns(dataResponse());
-
-    scope.data = {};
-    scope.data.actsLocsData = {hello: 'hi'};
 
     ReportCtrl = Controller('ReportCtrl', {
       $scope: scope,
       sumaConfig: SumaConfig2
     });
 
-    setUrlStub = sinon.stub(scope, 'setUrl');
-    setUrlStub.returns(true);
-
     scope.submit();
     scope.$digest();
 
-    expect(scope.$watch).to.not.be.called();
-    expect(setUrlStub).to.be.calledOnce;
-
-    watchStub.restore();
-    setUrlStub.restore();
+    expect(UIStates.setUIState).to.be.calledWith('success');
+    expect(scope.data.success).to.equal(true);
   });
 
   it(':submit should dispatch an error if Data.get fails', function() {
@@ -269,5 +295,66 @@ describe('Controller: ReportCtrl', function () {
     expect(scope.processMetadata).to.equal(false);
 
     actsLocsStub.restore();
+  });
+
+  it(':setUrl should call locationSearch with params', function () {
+    var locationSearchStub = sinon.stub(location, 'search');
+    locationSearchStub.returns({});
+
+    initiativesStub.returns(okResponse());
+    dataStub.returns(dataResponse());
+
+    ReportCtrl = Controller('ReportCtrl', {
+      $scope: scope,
+      sumaConfig: SumaConfig
+    });
+
+    expect(locationSearchStub).to.be.calledOnce;
+
+    scope.params = {};
+    scope.params.init = {id: 4};
+    scope.params.sdate = '20140101';
+    scope.params.edate = '20140104';
+    scope.setUrl();
+
+    expect(locationSearchStub).to.be.calledTwice;
+    expect(locationSearchStub).to.be.calledWith({
+      id: 4,
+      sdate: '20140101',
+      edate: '20140104',
+      stime: '',
+      etime: '',
+      count: null,
+      session_filter: null,
+      activity: null,
+      location: null,
+      daygroup: null
+    });
+
+    scope.params.stime = '0800';
+    scope.params.etime = '1000';
+    scope.params.count = {id: 4};
+    scope.params.session_filter = {id: 4};
+    scope.params.activity = {id: 4};
+    scope.params.location = {id: 4};
+    scope.params.daygroup = {id: 4};
+
+    scope.setUrl();
+
+    expect(locationSearchStub).to.be.calledThrice;
+    expect(locationSearchStub).to.be.calledWith({
+      id: 4,
+      sdate: '20140101',
+      edate: '20140104',
+      stime: '0800',
+      etime: '1000',
+      count: 4,
+      session_filter: 4,
+      activity: 4,
+      location: 4,
+      daygroup: 4
+    });
+
+    locationSearchStub.restore();
   });
 });

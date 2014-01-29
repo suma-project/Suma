@@ -32609,6 +32609,7 @@ angular.module('sumaAnalysis', [
       };
     $routeProvider.when('/', { templateUrl: 'views/home.html' }).when('/home', { redirectTo: '/' }).when('/timeseries', {
       templateUrl: 'views/timeSeries.html',
+      reloadOnSearch: false,
       controller: 'ReportCtrl',
       resolve: {
         sumaConfig: function () {
@@ -32618,6 +32619,7 @@ angular.module('sumaAnalysis', [
     }).when('/calendar', {
       templateUrl: 'views/calendar.html',
       controller: 'ReportCtrl',
+      reloadOnSearch: false,
       resolve: {
         sumaConfig: function () {
           var newConfig = angular.copy(sumaBaseConfig);
@@ -32629,6 +32631,7 @@ angular.module('sumaAnalysis', [
     }).when('/hourly', {
       templateUrl: 'views/hourly.html',
       controller: 'ReportCtrl',
+      reloadOnSearch: false,
       resolve: {
         sumaConfig: function () {
           var newConfig = angular.copy(sumaBaseConfig);
@@ -32640,6 +32643,7 @@ angular.module('sumaAnalysis', [
     }).when('/sessions', {
       templateUrl: 'views/sessions.html',
       controller: 'ReportCtrl',
+      reloadOnSearch: false,
       resolve: {
         sumaConfig: function () {
           var newConfig = angular.copy(sumaBaseConfig);
@@ -32658,6 +32662,7 @@ angular.module('sumaAnalysis', [
 'use strict';
 angular.module('sumaAnalysis').controller('ReportCtrl', [
   '$scope',
+  '$rootScope',
   '$http',
   '$location',
   '$anchorScroll',
@@ -32668,9 +32673,20 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
   'promiseTracker',
   'uiStates',
   'sumaConfig',
-  function ($scope, $http, $location, $anchorScroll, $timeout, initiatives, actsLocs, data, promiseTracker, uiStates, sumaConfig) {
+  '$routeParams',
+  '$q',
+  function ($scope, $rootScope, $http, $location, $anchorScroll, $timeout, initiatives, actsLocs, data, promiseTracker, uiStates, sumaConfig, $routeParams, $q) {
+    var dataTimeoutPromise, initTimeoutPromise;
     $scope.initialize = function () {
-      $scope.state = uiStates.setUIState('initial');
+      var urlParams = $location.search();
+      if (_.isEmpty(urlParams)) {
+        $scope.state = uiStates.setUIState('initial');
+      }
+      $scope.setDefaults();
+      $scope.getInitiatives(urlParams);
+      $scope.$on('$routeUpdate', $scope.routeUpdate);
+    };
+    $scope.setDefaults = function () {
       _.each(sumaConfig.formData, function (e, i) {
         $scope[i] = e;
       });
@@ -32680,30 +32696,97 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
       });
       $scope.params.sdate = moment().subtract('months', 6).add('days', 1).format('YYYY-MM-DD');
       $scope.params.edate = moment().add('days', 1).format('YYYY-MM-DD');
-      $scope.loadInits = initiatives.get().then(function (data) {
+    };
+    $scope.setParams = function (p) {
+      $scope.params.init = _.find($scope.inits, function (e, i) {
+        return String(e.id) === String(p.id);
+      });
+      $scope.params.count = _.find($scope.countOptions, function (e, i) {
+        return String(e.id) === String(p.count);
+      });
+      $scope.params.session_filter = _.find($scope.sessionOptions, function (e, i) {
+        return String(e.id) === String(p.session_filter);
+      });
+      $scope.params.daygroup = _.find($scope.dayOptions, function (e, i) {
+        return String(e.id) === String(p.daygroup);
+      });
+      $scope.getMetadata();
+      $scope.params.activity = _.find($scope.activities, function (e, i) {
+        return String(e.id) === String(p.activity);
+      });
+      $scope.params.location = _.find($scope.locations, function (e, i) {
+        return String(e.id) === String(p.location);
+      });
+      $scope.params.sdate = p.sdate;
+      $scope.params.edate = p.edate;
+      $scope.params.stime = p.stime ? p.stime : '';
+      $scope.params.etime = p.etime ? p.etime : '';
+    };
+    $scope.setUrl = function () {
+      $location.search({
+        id: $scope.params.init.id,
+        sdate: $scope.params.sdate,
+        edate: $scope.params.edate,
+        stime: $scope.params.stime || '',
+        etime: $scope.params.etime || '',
+        count: $scope.params.count ? $scope.params.count.id : null,
+        session_filter: $scope.params.session_filter ? $scope.params.session_filter.id : null,
+        activity: $scope.params.activity ? $scope.params.activity.id : null,
+        location: $scope.params.location ? $scope.params.location.id : null,
+        daygroup: $scope.params.daygroup ? $scope.params.daygroup.id : null
+      });
+    };
+    $scope.getInitiatives = function (urlParams) {
+      initTimeoutPromise = $q.defer();
+      $scope.loadInits = initiatives.get(initTimeoutPromise).then(function (data) {
         $scope.inits = data;
+        if (!_.isEmpty(urlParams)) {
+          $scope.setParams(urlParams);
+          $scope.submit();
+        }
       }, $scope.error);
       $scope.finder = promiseTracker('initTracker');
       $scope.finder.addPromise($scope.loadInits);
     };
-    $scope.scrollTo = function (id) {
-      var old = $location.hash();
-      $location.hash(id);
-      $anchorScroll();
-      $location.hash(old);
+    $scope.routeUpdate = function () {
+      var urlParams = $location.search();
+      if (dataTimeoutPromise) {
+        dataTimeoutPromise.resolve();
+      }
+      if (initTimeoutPromise) {
+        initTimeoutPromise.resolve();
+        $scope.finder.cancel();
+      }
+      if (_.isEmpty(urlParams)) {
+        $scope.state = uiStates.setUIState('initial');
+        $scope.setDefaults();
+      } else if ($scope.params.init) {
+        $scope.setParams(urlParams);
+        $scope.submit();
+      } else {
+        $scope.getInitiatives(urlParams);
+      }
+    };
+    $scope.getMetadata = function () {
+      $scope.actsLocs = actsLocs.get($scope.params.init);
+      $scope.activities = $scope.actsLocs.activities;
+      $scope.locations = $scope.actsLocs.locations;
+      $scope.params.activity = $scope.actsLocs.activities[0];
+      $scope.params.location = $scope.actsLocs.locations[0];
     };
     $scope.updateMetadata = function () {
       if ($scope.params.init) {
         $scope.processMetadata = true;
-        $scope.actsLocs = actsLocs.get($scope.params.init);
-        $scope.activities = $scope.actsLocs.activities;
-        $scope.locations = $scope.actsLocs.locations;
-        $scope.params.activity = $scope.actsLocs.activities[0];
-        $scope.params.location = $scope.actsLocs.locations[0];
+        $scope.getMetadata();
         $timeout(function () {
           $scope.processMetadata = false;
         }, 400);
       }
+    };
+    $scope.submit = function () {
+      dataTimeoutPromise = $q.defer();
+      $scope.state = uiStates.setUIState('loading');
+      data[sumaConfig.dataSource]($scope.params, $scope.activities, $scope.locations, sumaConfig.dataProcessor, dataTimeoutPromise).then($scope.success, $scope.error);
     };
     $scope.error = function (data) {
       $scope.state = uiStates.setUIState('error');
@@ -32711,6 +32794,7 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
       $scope.errorCode = data.code;
     };
     $scope.success = function (processedData) {
+      $scope.state = uiStates.setUIState('success');
       $scope.data = processedData;
       if (sumaConfig.suppWatch) {
         $scope.$watch('data.actsLocsData', function () {
@@ -32720,11 +32804,12 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
           $scope.data.barChartData = $scope.data.actsLocsData.items[index];
         });
       }
-      $scope.state = uiStates.setUIState('success');
     };
-    $scope.submit = function () {
-      $scope.state = uiStates.setUIState('loading');
-      data[sumaConfig.dataSource]($scope.params, $scope.activities, $scope.locations, sumaConfig.dataProcessor).then($scope.success, $scope.error);
+    $scope.scrollTo = function (id) {
+      var old = $location.hash();
+      $location.hash(id);
+      $anchorScroll();
+      $location.hash(old);
     };
     $scope.initialize();
   }
@@ -32735,17 +32820,21 @@ angular.module('sumaAnalysis').factory('initiatives', [
   '$q',
   function ($http, $q) {
     return {
-      get: function () {
+      get: function (timeoutPromise) {
         var dfd, url;
         dfd = $q.defer();
         url = 'lib/php/initiatives.php';
-        $http.get(url).success(function (data, status, headers, config) {
+        $http.get(url, { timeout: timeoutPromise.promise }).success(function (data, status, headers, config) {
           dfd.resolve(data);
         }).error(function (data, status, headers, config) {
-          dfd.reject({
-            message: data.message,
-            code: status
-          });
+          if (status !== 0) {
+            dfd.reject({
+              message: data.message,
+              code: status
+            });
+          } else {
+            dfd.reject();
+          }
         });
         return dfd.promise;
       }
@@ -32821,7 +32910,7 @@ angular.module('sumaAnalysis').factory('data', [
   'processHourlyData',
   function ($http, $q, processTimeSeriesData, processCalendarData, processHourlyData) {
     return {
-      getSessionsData: function (params) {
+      getSessionsData: function (params, acts, locs, dataProcessor, tPromise) {
         var dfd, options, url;
         dfd = $q.defer();
         url = 'lib/php/sessionsResults.php';
@@ -32837,19 +32926,24 @@ angular.module('sumaAnalysis').factory('data', [
             'daygroup': 'all',
             'locations': 'all',
             'activities': 'all'
-          }
+          },
+          timeout: tPromise.promise
         };
         $http.get(url, options).success(function (data) {
           dfd.resolve(data);
         }).error(function (data, status, headers, config) {
-          dfd.reject({
-            message: data.message,
-            code: status
-          });
+          if (status !== 0) {
+            dfd.reject({
+              message: data.message,
+              code: status
+            });
+          } else {
+            dfd.reject();
+          }
         });
         return dfd.promise;
       },
-      getData: function (params, acts, locs, dataProcessor) {
+      getData: function (params, acts, locs, dataProcessor, tPromise) {
         var dfd, options, processor, url;
         dfd = $q.defer();
         url = 'lib/php/dataResults.php';
@@ -32877,17 +32971,24 @@ angular.module('sumaAnalysis').factory('data', [
             'daygroup': params.daygroup.id || 'all',
             'locations': params.location.id || 'all',
             'activities': params.activity.type ? params.activity.type + '-' + params.activity.id : 'all'
-          }
+          },
+          timeout: tPromise.promise
         };
         $http.get(url, options).success(function (data) {
           processor.get(data, acts, locs).then(function (processedData) {
             dfd.resolve(processedData);
+          }, function (data) {
+            dfd.reject(data);
           });
         }).error(function (data, status, headers, config) {
-          dfd.reject({
-            message: data.message,
-            code: status
-          });
+          if (status !== 0) {
+            dfd.reject({
+              message: data.message,
+              code: status
+            });
+          } else {
+            dfd.reject();
+          }
         });
         return dfd.promise;
       }

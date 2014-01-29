@@ -27,7 +27,7 @@
   <div class="row">
     <div class="col-xs-12 chart-wrapper">
       <div class="loading" data-ng-show="state.loading"><img src="images/spinner.gif" alt="Spinner"></div>
-      <div class="alert alert-info alert-block" data-ng-show="state.initial">
+      <div class="alert alert-info alert-block" data-ng-show="state.initial && !finder.active()">
         <h4>Welcome!</h4>
         Please select an initiative from the select menu below. Once you have chosen an initiative, additional filter options will appear. You can also limit your search by date or time.
       </div>
@@ -56,7 +56,7 @@
   </div>
 
   <div class="row filter-row" data-ng-hide="finder.active()">
-    <form data-ng-submit="submit()">
+    <form data-ng-submit="setUrl()">
       <fieldset data-ng-disabled="state.loading">
         <div class="col-xs-3">
           <div class="form-group">

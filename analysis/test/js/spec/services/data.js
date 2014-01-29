@@ -11,6 +11,7 @@ describe('Service: Data', function () {
   var $httpBackend,
     $rootScope,
     okResponse,
+    errorResponse,
     Params1,
     Params2,
     MockUrl1,
@@ -56,6 +57,12 @@ describe('Service: Data', function () {
     okResponse = function () {
       var dfd = $q.defer();
       dfd.resolve({success: true});
+      return dfd.promise;
+    };
+
+    errorResponse = function () {
+      var dfd = $q.defer();
+      dfd.reject({message: 'Error', code: 500});
       return dfd.promise;
     };
   }));
@@ -107,6 +114,23 @@ describe('Service: Data', function () {
     hourlyStub.restore();
   });
 
+  it(':getData should return an error is processor fails', function (done) {
+    $httpBackend.whenGET(MockUrl1)
+      .respond([{}, {}]);
+
+    timeseriesStub = sinon.stub(Processtimeseriesdata, 'get');
+    timeseriesStub.returns(errorResponse());
+    Data.getData(Params1, [], [], 'processTimeSeriesData', tPromise).then(function (result) {
+
+    }, function (result) {
+      expect(result).to.deep.equal({message: 'Error', code: 500});
+      done();
+    });
+
+    $httpBackend.flush();
+    timeseriesStub.restore();
+  });
+
   it(':getData should format activityType and activityId into string', function (done) {
     $httpBackend.whenGET(MockUrl2)
       .respond([{}, {}]);
@@ -152,6 +176,20 @@ describe('Service: Data', function () {
     $httpBackend.flush();
   });
 
+  it(':getData should fail silently on timeout', function (done) {
+    $httpBackend.whenGET(MockUrl1)
+      .respond(0, {message: 'Error'});
+
+    Data.getData(Params1, [], [], 'processTimeSeriesData', tPromise).then(function (result) {
+
+    }, function(result) {
+      expect(result).to.equal(undefined);
+      done();
+    });
+
+    $httpBackend.flush();
+  });
+
   it(':getSessionsData should make an AJAX call', function (done) {
     $httpBackend.whenGET(MockUrl3)
       .respond([{}, {}]);
@@ -172,6 +210,19 @@ describe('Service: Data', function () {
 
     }, function (result) {
       expect(result).to.deep.equal({message: 'Error', code: 500});
+      done();
+    });
+
+    $httpBackend.flush();
+  });
+
+  it(':getSessionsData should fail silently on timeout', function (done) {
+    $httpBackend.whenGET(MockUrl3).respond(0, {message: 'Error'});
+
+    Data.getSessionsData(Params1, [], [], '', tPromise).then(function (result) {
+
+    }, function (result) {
+      expect(result).to.equal(undefined);
       done();
     });
 

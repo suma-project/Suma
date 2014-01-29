@@ -2,8 +2,29 @@
 
 angular.module('sumaAnalysis')
   .controller('ReportCtrl', function ($scope, $rootScope, $http, $location, $anchorScroll, $timeout, initiatives, actsLocs, data, promiseTracker, uiStates, sumaConfig, $routeParams, $q) {
-    var tPromise;
+    var dataTimeoutPromise,
+        initTimeoutPromise;
 
+    // Initialize controller
+    $scope.initialize = function () {
+      var urlParams = $location.search();
+
+      // UI State
+      if (_.isEmpty(urlParams)) {
+        $scope.state = uiStates.setUIState('initial');
+      }
+
+      // Set defaults
+      $scope.setDefaults();
+
+      // Fetch inits
+      $scope.getInitiatives(urlParams);
+
+      // Attach listener for routeUpdate
+      $scope.$on('$routeUpdate', $scope.routeUpdate);
+    };
+
+    // Set default form values
     $scope.setDefaults = function () {
       // Form data
       _.each(sumaConfig.formData, function (e, i) {
@@ -21,6 +42,7 @@ angular.module('sumaAnalysis')
       $scope.params.edate = moment().add('days', 1).format('YYYY-MM-DD');
     };
 
+    // Set scope.params based on urlParams
     $scope.setParams = function (p) {
       $scope.params.init = _.find($scope.inits, function (e, i) {
         return String(e.id) === String(p.id);
@@ -54,78 +76,66 @@ angular.module('sumaAnalysis')
       $scope.params.etime = p.etime ? p.etime : '';
     };
 
+    // Attach params to URL
     $scope.setUrl = function () {
       $location.search({
         id: $scope.params.init.id,
-        edate: $scope.params.edate,
         sdate: $scope.params.sdate,
-        count: $scope.params.count ? $scope.params.count.id : null,
-        session_filter: $scope.params.session_filter ? $scope.params.session_filter.id : null,
+        edate: $scope.params.edate,
         stime: $scope.params.stime || '',
         etime: $scope.params.etime || '',
+        count: $scope.params.count ? $scope.params.count.id : null,
+        session_filter: $scope.params.session_filter ? $scope.params.session_filter.id : null,
         activity: $scope.params.activity ? $scope.params.activity.id : null,
         location: $scope.params.location ? $scope.params.location.id : null,
         daygroup: $scope.params.daygroup ? $scope.params.daygroup.id : null
       });
     };
 
-    $scope.initialize = function () {
-      var p1 = $location.search();
+    // Get initiatives
+    $scope.getInitiatives = function (urlParams) {
+      initTimeoutPromise = $q.defer();
 
-      // UI State
-      if (_.isEmpty(p1)) {
-        $scope.state = uiStates.setUIState('initial');
-      }
-
-      // Set defaults
-      $scope.setDefaults();
-
-      // Get inits on load
-      $scope.loadInits = initiatives.get().then(function (data) {
+      $scope.loadInits = initiatives.get(initTimeoutPromise).then(function (data) {
         $scope.inits = data;
 
-        if (!_.isEmpty(p1)) {
-          $scope.setParams(p1);
-          $scope.submit()
+        if (!_.isEmpty(urlParams)) {
+          $scope.setParams(urlParams);
+          $scope.submit();
         }
       }, $scope.error);
 
       // Setup promise tracker for spinner on initial load
-      // $scope.finder = promiseTracker('initTracker');
-      // $scope.finder.addPromise($scope.loadInits);
-
-      // Attach listener for routeUpdate
-      $scope.$on('$routeUpdate', $scope.routeUpdate);
+      $scope.finder = promiseTracker('initTracker');
+      $scope.finder.addPromise($scope.loadInits);
     };
 
+    // Respond to routeUpdate event
     $scope.routeUpdate = function () {
-      var p = $location.search();
+      var urlParams = $location.search();
 
-      if (tPromise) {
-        tPromise.resolve();
+      // Resolve active requests
+      if (dataTimeoutPromise) {
+        dataTimeoutPromise.resolve();
       }
-      // Check for no params. Occurs when going back in history
-      // to original page with no params in URL. Initial page
-      // load with no params doesn't call routeUpdate
 
-      if (_.isEmpty(p)) {
+      if (initTimeoutPromise) {
+        initTimeoutPromise.resolve();
+        $scope.finder.cancel();
+      }
+
+      if (_.isEmpty(urlParams)) { // True when navigating back to initial
         $scope.state = uiStates.setUIState('initial');
         $scope.setDefaults();
-      } else {
-        $scope.setParams(p);
+      } else if ($scope.params.init){ // Typical navigation between reports
+        $scope.setParams(urlParams);
         $scope.submit();
+      } else { // Navigation from initial to completed report
+        $scope.getInitiatives(urlParams);
       }
     };
 
-    // Handle anchor links
-    $scope.scrollTo = function (id) {
-      var old = $location.hash();
-      $location.hash(id);
-      $anchorScroll();
-      // Reset to old to suppress routing logic
-      $location.hash(old);
-    };
-
+    // Get initiative metadata
     $scope.getMetadata = function () {
       $scope.actsLocs = actsLocs.get($scope.params.init);
 
@@ -136,7 +146,7 @@ angular.module('sumaAnalysis')
       $scope.params.location = $scope.actsLocs.locations[0];
     };
 
-    // Get Initiative Metadata
+    // Update metadata UI wrapper
     $scope.updateMetadata = function () {
       if ($scope.params.init) {
         $scope.processMetadata = true;
@@ -150,13 +160,25 @@ angular.module('sumaAnalysis')
       }
     };
 
+    // Submit form and draw chart
+    $scope.submit = function () {
+      dataTimeoutPromise = $q.defer();
+
+      $scope.state = uiStates.setUIState('loading');
+      data[sumaConfig.dataSource]($scope.params, $scope.activities, $scope.locations, sumaConfig.dataProcessor, dataTimeoutPromise)
+        .then($scope.success, $scope.error);
+    };
+
+    // Display error message
     $scope.error = function (data) {
       $scope.state = uiStates.setUIState('error');
       $scope.errorMessage = data.message;
       $scope.errorCode = data.code;
     };
 
+    // Assign data to scope and set state
     $scope.success = function (processedData) {
+      $scope.state = uiStates.setUIState('success');
       $scope.data = processedData;
 
       if (sumaConfig.suppWatch) {
@@ -168,19 +190,16 @@ angular.module('sumaAnalysis')
           $scope.data.barChartData = $scope.data.actsLocsData.items[index];
         });
       }
-
-      $scope.state = uiStates.setUIState('success');
-
-      $scope.setUrl();
     };
 
-    // Submit Form and Draw Chart
-    $scope.submit = function () {
-      tPromise = $q.defer();
+    // Handle anchor links
+    $scope.scrollTo = function (id) {
+      var old = $location.hash();
+      $location.hash(id);
+      $anchorScroll();
 
-      $scope.state = uiStates.setUIState('loading');
-      data[sumaConfig.dataSource]($scope.params, $scope.activities, $scope.locations, sumaConfig.dataProcessor, tPromise)
-        .then($scope.success, $scope.error);
+      // Reset to old to suppress routing logic
+      $location.hash(old);
     };
 
     $scope.initialize();

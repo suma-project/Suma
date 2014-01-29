@@ -3,17 +3,21 @@
 angular.module('sumaAnalysis')
   .factory('initiatives', function ($http, $q) {
     return {
-      get: function () {
+      get: function (timeoutPromise) {
         var dfd,
             url;
 
         dfd = $q.defer();
         url = 'lib/php/initiatives.php';
 
-        $http.get(url).success(function (data, status, headers, config) {
+        $http.get(url, {timeout: timeoutPromise.promise}).success(function (data, status, headers, config) {
           dfd.resolve(data);
         }).error(function (data, status, headers, config) {
-          dfd.reject({message: data.message, code: status});
+          if (status !== 0) {
+            dfd.reject({message: data.message, code: status});
+          } else {
+            dfd.reject();
+          }
         });
 
         return dfd.promise;
