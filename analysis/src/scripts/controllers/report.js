@@ -2,8 +2,9 @@
 
 angular.module('sumaAnalysis')
   .controller('ReportCtrl', function ($scope, $rootScope, $http, $location, $anchorScroll, $timeout, initiatives, actsLocs, data, promiseTracker, uiStates, sumaConfig, $routeParams, $q) {
-    var dataTimeoutPromise,
-        initTimeoutPromise;
+    $scope.dataTimeoutPromise;
+    $scope.initTimeoutPromise;
+    $scope.paramsSet = false;
 
     // Initialize controller
     $scope.initialize = function () {
@@ -50,7 +51,7 @@ angular.module('sumaAnalysis')
 
       $scope.params.count = _.find($scope.countOptions, function (e, i) {
         return String(e.id) === String(p.count);
-      });
+      }) || $scope.countOptions[0];
 
       $scope.params.session_filter = _.find($scope.sessionOptions, function (e, i) {
         return String(e.id) === String(p.session_filter);
@@ -78,6 +79,8 @@ angular.module('sumaAnalysis')
 
     // Attach params to URL
     $scope.setUrl = function () {
+      $scope.paramsSet = true;
+
       $location.search({
         id: $scope.params.init.id,
         sdate: $scope.params.sdate,
@@ -94,45 +97,20 @@ angular.module('sumaAnalysis')
 
     // Get initiatives
     $scope.getInitiatives = function (urlParams) {
-      initTimeoutPromise = $q.defer();
+      $scope.initTimeoutPromise = $q.defer();
 
-      $scope.loadInits = initiatives.get(initTimeoutPromise).then(function (data) {
+      $scope.loadInits = initiatives.get($scope.initTimeoutPromise).then(function (data) {
         $scope.inits = data;
 
         if (!_.isEmpty(urlParams)) {
           $scope.setParams(urlParams);
-          $scope.submit();
+          $scope.getData();
         }
       }, $scope.error);
 
       // Setup promise tracker for spinner on initial load
       $scope.finder = promiseTracker('initTracker');
       $scope.finder.addPromise($scope.loadInits);
-    };
-
-    // Respond to routeUpdate event
-    $scope.routeUpdate = function () {
-      var urlParams = $location.search();
-
-      // Resolve active requests
-      if (dataTimeoutPromise) {
-        dataTimeoutPromise.resolve();
-      }
-
-      if (initTimeoutPromise) {
-        initTimeoutPromise.resolve();
-        $scope.finder.cancel();
-      }
-
-      if (_.isEmpty(urlParams)) { // True when navigating back to initial
-        $scope.state = uiStates.setUIState('initial');
-        $scope.setDefaults();
-      } else if ($scope.params.init){ // Typical navigation between reports
-        $scope.setParams(urlParams);
-        $scope.submit();
-      } else { // Navigation from initial to completed report
-        $scope.getInitiatives(urlParams);
-      }
     };
 
     // Get initiative metadata
@@ -160,20 +138,50 @@ angular.module('sumaAnalysis')
       }
     };
 
-    // Submit form and draw chart
-    $scope.submit = function () {
-      dataTimeoutPromise = $q.defer();
-
+    // Submit request and draw chart
+    $scope.getData = function () {
+      $scope.dataTimeoutPromise = $q.defer();
       $scope.state = uiStates.setUIState('loading');
-      data[sumaConfig.dataSource]($scope.params, $scope.activities, $scope.locations, sumaConfig.dataProcessor, dataTimeoutPromise)
+
+      data[sumaConfig.dataSource]($scope.params, $scope.activities, $scope.locations, sumaConfig.dataProcessor, $scope.dataTimeoutPromise)
         .then($scope.success, $scope.error);
+    };
+
+    // Respond to routeUpdate event
+    $scope.routeUpdate = function () {
+      var urlParams = $location.search();
+
+      // Resolve active requests
+      if ($scope.dataTimeoutPromise) {
+        $scope.dataTimeoutPromise.resolve();
+      }
+
+      if ($scope.initTimeoutPromise) {
+        $scope.initTimeoutPromise.resolve();
+        $scope.finder.cancel();
+      }
+
+      if (_.isEmpty(urlParams)) { // True when navigating back to initial
+        $scope.state = uiStates.setUIState('initial');
+        $scope.setDefaults();
+      } else if ($scope.params.init){ // Typical navigation between reports and default "submit"
+        if (!$scope.paramsSet) {
+          $scope.setParams(urlParams);
+        }
+        $scope.paramsSet = false;
+        $scope.getData();
+      } else { // Navigation from initial to completed report
+        $scope.getInitiatives(urlParams);
+      }
     };
 
     // Display error message
     $scope.error = function (data) {
-      $scope.state = uiStates.setUIState('error');
-      $scope.errorMessage = data.message;
-      $scope.errorCode = data.code;
+      if (!data.timeout) {
+        $scope.state = uiStates.setUIState('error');
+        $scope.errorMessage = data.message;
+        $scope.errorCode = data.code;
+      }
     };
 
     // Assign data to scope and set state
