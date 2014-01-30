@@ -14,9 +14,9 @@ angular.module('sumaAnalysis')
           dfd.resolve(data);
         }).error(function (data, status, headers, config) {
           if (status !== 0) {
-            dfd.reject({message: data.message, code: status});
+            dfd.reject({message: data.message, code: status, timeout: false});
           } else {
-            dfd.reject();
+            dfd.reject({message: 'Initiatives.get Timeout', code: status, timeout: true});
           }
         });
 

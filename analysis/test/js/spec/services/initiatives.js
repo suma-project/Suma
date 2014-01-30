@@ -34,7 +34,7 @@ describe('Service: Initiatives', function () {
     Initiatives.get(tPromise).then(function (result) {
 
     }, function (result) {
-      expect(result).to.deep.equal({message: 'Error', code: 500});
+      expect(result).to.deep.equal({message: 'Error', code: 500, timeout: false});
       done();
     });
 
@@ -47,7 +47,7 @@ describe('Service: Initiatives', function () {
     var request = Initiatives.get(tPromise).then(function (result) {
 
     }, function (result) {
-      expect(result).to.equal(undefined);
+      expect(result).to.deep.equal({message: 'Initiatives.get Timeout', code: 0, timeout: true});
       done();
     });
 

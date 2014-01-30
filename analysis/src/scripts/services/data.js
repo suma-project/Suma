@@ -31,9 +31,9 @@ angular.module('sumaAnalysis')
           dfd.resolve(data);
         }).error(function(data, status, headers, config) {
           if (status !== 0) {
-            dfd.reject({message: data.message, code: status});
+            dfd.reject({message: data.message, code: status, timeout: false});
           } else {
-            dfd.reject();
+            dfd.reject({message: 'Data.getSessionsData Timeout', code: status, timeout: true});
           }
         });
 
@@ -82,9 +82,9 @@ angular.module('sumaAnalysis')
           });
         }).error(function(data, status, headers, config){
           if (status !== 0) {
-            dfd.reject({message: data.message, code: status});
+            dfd.reject({message: data.message, code: status, timeout: false});
           } else {
-            dfd.reject();
+            dfd.reject({message: 'Data.getData Timeout', code: status, timeout: true});
           }
         });
 

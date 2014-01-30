@@ -169,7 +169,7 @@ describe('Service: Data', function () {
     Data.getData(Params1, [], [], 'processTimeSeriesData', tPromise).then(function (result) {
 
     }, function(result) {
-      expect(result).to.deep.equal({message: 'Error', code: 500});
+      expect(result).to.deep.equal({message: 'Error', code: 500, timeout: false});
       done();
     });
 
@@ -183,7 +183,7 @@ describe('Service: Data', function () {
     Data.getData(Params1, [], [], 'processTimeSeriesData', tPromise).then(function (result) {
 
     }, function(result) {
-      expect(result).to.equal(undefined);
+      expect(result).to.deep.equal({message: 'Data.getData Timeout', code: 0, timeout: true});
       done();
     });
 
@@ -209,7 +209,7 @@ describe('Service: Data', function () {
     Data.getSessionsData(Params1, [], [], '', tPromise).then(function (result) {
 
     }, function (result) {
-      expect(result).to.deep.equal({message: 'Error', code: 500});
+      expect(result).to.deep.equal({message: 'Error', code: 500, timeout: false});
       done();
     });
 
@@ -222,7 +222,11 @@ describe('Service: Data', function () {
     Data.getSessionsData(Params1, [], [], '', tPromise).then(function (result) {
 
     }, function (result) {
-      expect(result).to.equal(undefined);
+      expect(result).to.deep.equal({
+        message: 'Data.getSessionsData Timeout',
+        code: 0,
+        timeout: true
+      });
       done();
     });
 
