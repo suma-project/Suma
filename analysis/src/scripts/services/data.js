@@ -61,14 +61,14 @@ angular.module('sumaAnalysis')
         options = {
           'params': {
             'id': params.init.id,
-            'session': params.count.id || 'count',
-            'session_filter': params.session_filter.id || 'false',
+            'session': params.count ? params.count.id : 'count',
+            'session_filter': params.session_filter ? params.session_filter.id : 'false',
             'sdate': params.sdate || '',
             'edate': params.edate || '',
             'stime': params.stime || '',
             'etime': params.etime || '',
-            'daygroup': params.daygroup.id || 'all' ,
-            'locations': params.location.id || 'all',
+            'daygroup': params.daygroup ? params.daygroup.id : 'all' ,
+            'locations': params.location ? params.location.id : 'all',
             'activities': params.activity.type ? (params.activity.type + '-' + params.activity.id) : 'all'
           },
           timeout: tPromise.promise

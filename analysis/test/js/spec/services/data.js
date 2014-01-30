@@ -14,9 +14,11 @@ describe('Service: Data', function () {
     errorResponse,
     Params1,
     Params2,
+    Params3,
     MockUrl1,
     MockUrl2,
     MockUrl3,
+    MockUrl4,
     Processtimeseriesdata,
     Processcalendardata,
     Processhourlydata,
@@ -36,9 +38,11 @@ describe('Service: Data', function () {
     $q,
     mockParams1,
     mockParams2,
+    mockParams3,
     mockUrl1,
     mockUrl2,
-    mockUrl3) {
+    mockUrl3,
+    mockUrl4) {
 
     Data = _data_;
     Processtimeseriesdata = _processTimeSeriesData_;
@@ -48,9 +52,11 @@ describe('Service: Data', function () {
     $httpBackend = _$httpBackend_;
     Params1 = mockParams1;
     Params2 = mockParams2;
+    Params3 = mockParams3;
     MockUrl1 = mockUrl1;
     MockUrl2 = mockUrl2;
     MockUrl3 = mockUrl3;
+    MockUrl4 = mockUrl4;
 
     tPromise = $q.defer();
 
@@ -73,6 +79,7 @@ describe('Service: Data', function () {
 
     timeseriesStub = sinon.stub(Processtimeseriesdata, 'get');
     timeseriesStub.returns(okResponse());
+
     Data.getData(Params1, [], [], 'processTimeSeriesData', tPromise).then(function (result) {
       expect(result.success).to.equal(true);
       done();
@@ -140,6 +147,23 @@ describe('Service: Data', function () {
 
     // Note use of params2 object
     Data.getData(Params2, [], [], 'processTimeSeriesData', tPromise).then(function (result) {
+      expect(result.success).to.equal(true);
+      done();
+    });
+
+    $httpBackend.flush();
+    timeseriesStub.restore();
+  });
+
+  it(':getData should fall back if params are missing', function (done) {
+    $httpBackend.whenGET(MockUrl4)
+      .respond([{}, {}]);
+
+    timeseriesStub = sinon.stub(Processtimeseriesdata, 'get');
+    timeseriesStub.returns(okResponse());
+
+    // Note use of params2 object
+    Data.getData(Params3, [], [], 'processTimeSeriesData', tPromise).then(function (result) {
       expect(result.success).to.equal(true);
       done();
     });
