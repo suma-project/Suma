@@ -28,7 +28,7 @@ describe('Directive: sumaChartDownload', function () {
 
     Ctrlscope.download('#chart-1');
 
-    expect(Ctrlscope.href.split(";")[0]).to.equal('data:image/png');
+    expect(Ctrlscope.href.split(';')[0]).to.equal('data:image/png');
   }));
 
   it('should add data:image to scope.href', inject(function ($rootScope, $compile, mockChart2) {
@@ -51,6 +51,6 @@ describe('Directive: sumaChartDownload', function () {
 
     Ctrlscope.download('#chart-2', '.sub-graph');
 
-    expect(Ctrlscope.href.split(";")[0]).to.equal('data:image/png');
+    expect(Ctrlscope.href.split(';')[0]).to.equal('data:image/png');
   }));
 });
