@@ -1,7 +1,6 @@
 'use strict';
 
 describe('Directive: sumaCalendarChart', function () {
-
   // load the directive's module
   beforeEach(module('sumaAnalysis'));
 
