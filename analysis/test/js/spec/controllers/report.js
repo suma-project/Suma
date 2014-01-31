@@ -313,7 +313,7 @@ describe('Controller: ReportCtrl', function () {
     actsLocsStub.restore();
   });
 
-  it(':setUrl should call locationSearch with params', function () {
+  it(':submit should call locationSearch with params', function () {
     var locationSearchStub = sinon.stub(location, 'search');
     locationSearchStub.returns({});
 
@@ -331,7 +331,7 @@ describe('Controller: ReportCtrl', function () {
     scope.params.init = {id: 4};
     scope.params.sdate = '20140101';
     scope.params.edate = '20140104';
-    scope.setUrl();
+    scope.submit();
 
     expect(locationSearchStub).to.be.calledTwice;
     expect(locationSearchStub).to.be.calledWith({
@@ -355,7 +355,7 @@ describe('Controller: ReportCtrl', function () {
     scope.params.location = {id: 4};
     scope.params.daygroup = {id: 4};
 
-    scope.setUrl();
+    scope.submit();
 
     expect(locationSearchStub).to.be.calledThrice;
     expect(locationSearchStub).to.be.calledWith({
