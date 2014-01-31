@@ -254,7 +254,7 @@ describe('Controller: ReportCtrl', function () {
     });
 
     scope.state = 'not error';
-    scope.error({timeout: true});
+    scope.error({promiseTimeout: true});
 
     expect(scope.state).to.equal('not error');
     expect(scope.errorMessage).to.equal(undefined);
