@@ -32676,9 +32676,6 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
   '$routeParams',
   '$q',
   function ($scope, $rootScope, $http, $location, $anchorScroll, $timeout, initiatives, actsLocs, data, promiseTracker, uiStates, sumaConfig, $routeParams, $q) {
-    $scope.dataTimeoutPromise;
-    $scope.initTimeoutPromise;
-    $scope.paramsSet = false;
     $scope.initialize = function () {
       var urlParams = $location.search();
       if (_.isEmpty(urlParams)) {
@@ -32724,10 +32721,11 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
       $scope.params.stime = p.stime ? p.stime : '';
       $scope.params.etime = p.etime ? p.etime : '';
     };
-    $scope.setUrl = function () {
-      $scope.paramsSet = true;
-      $location.search({
-        id: $scope.params.init.id,
+    $scope.submit = function () {
+      var currentUrl, currentScope;
+      currentUrl = $location.search();
+      currentScope = {
+        id: String($scope.params.init.id),
         sdate: $scope.params.sdate,
         edate: $scope.params.edate,
         stime: $scope.params.stime || '',
@@ -32737,7 +32735,12 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
         activity: $scope.params.activity ? $scope.params.activity.id : null,
         location: $scope.params.location ? $scope.params.location.id : null,
         daygroup: $scope.params.daygroup ? $scope.params.daygroup.id : null
-      });
+      };
+      if (_.isEqual(currentUrl, currentScope)) {
+        $scope.getData();
+      } else {
+        $location.search(currentScope);
+      }
     };
     $scope.getInitiatives = function (urlParams) {
       var cfg;
@@ -32799,10 +32802,7 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
         $scope.state = uiStates.setUIState('initial');
         $scope.setDefaults();
       } else if ($scope.params.init) {
-        if (!$scope.paramsSet) {
-          $scope.setParams(urlParams);
-        }
-        $scope.paramsSet = false;
+        $scope.setParams(urlParams);
         $scope.getData();
       } else {
         $scope.getInitiatives(urlParams);
