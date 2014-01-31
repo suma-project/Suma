@@ -1,7 +1,6 @@
 'use strict';
 
 describe('Directive: sumaChartDownload', function () {
-
   // load the directive's module
   beforeEach(module('sumaAnalysis'));
 
@@ -10,7 +9,7 @@ describe('Directive: sumaChartDownload', function () {
   // load the directive's template
   beforeEach(module('views/directives/chartDownload.html'));
 
-  it('should add data:image to scope.href', inject(function ($rootScope, $compile, mockLink1, mockChart1) {
+  it('should add data:image to scope.href', inject(function ($rootScope, $compile, mockChart1) {
     var element,
       Ctrlscope,
       scope;
@@ -28,10 +27,11 @@ describe('Directive: sumaChartDownload', function () {
     Ctrlscope = element.isolateScope();
 
     Ctrlscope.download('#chart-1');
-    expect(Ctrlscope.href).to.equal(mockLink1);
+
+    expect(Ctrlscope.href.split(";")[0]).to.equal('data:image/png');
   }));
 
-  it('should add data:image to scope.href', inject(function ($rootScope, $compile, mockLink2, mockChart2) {
+  it('should add data:image to scope.href', inject(function ($rootScope, $compile, mockChart2) {
     var element,
       Ctrlscope,
       scope;
@@ -50,6 +50,7 @@ describe('Directive: sumaChartDownload', function () {
     Ctrlscope = element.isolateScope();
 
     Ctrlscope.download('#chart-2', '.sub-graph');
-    expect(Ctrlscope.href).to.equal(mockLink2);
+
+    expect(Ctrlscope.href.split(";")[0]).to.equal('data:image/png');
   }));
 });
