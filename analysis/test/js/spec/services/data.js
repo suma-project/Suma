@@ -26,7 +26,8 @@ describe('Service: Data', function () {
     calendarStub,
     hourlyStub,
     tPromise,
-    Data;
+    Data,
+    Timeout;
 
   beforeEach(inject(function (
     _data_,
@@ -36,6 +37,7 @@ describe('Service: Data', function () {
     _processCalendarData_,
     _processHourlyData_,
     $q,
+    $timeout,
     mockParams1,
     mockParams2,
     mockParams3,
@@ -57,6 +59,7 @@ describe('Service: Data', function () {
     MockUrl2 = mockUrl2;
     MockUrl3 = mockUrl3;
     MockUrl4 = mockUrl4;
+    Timeout = $timeout;
 
     tPromise = $q.defer();
 
@@ -74,13 +77,22 @@ describe('Service: Data', function () {
   }));
 
   it(':getData should make an AJAX call with processTimeSeriesData', function (done) {
+    var cfg = {
+      params: Params1,
+      acts: [],
+      locs: [],
+      dataProcessor: 'processTimeSeriesData',
+      timeoutPromise: tPromise,
+      timeout: 180000
+    };
+
     $httpBackend.whenGET(MockUrl1)
       .respond([{}, {}]);
 
     timeseriesStub = sinon.stub(Processtimeseriesdata, 'get');
     timeseriesStub.returns(okResponse());
 
-    Data.getData(Params1, [], [], 'processTimeSeriesData', tPromise).then(function (result) {
+    Data.getData(cfg).then(function (result) {
       expect(result.success).to.equal(true);
       done();
     });
@@ -90,13 +102,22 @@ describe('Service: Data', function () {
   });
 
   it(':getData should make an AJAX call with processCalendarData', function (done) {
+    var cfg = {
+      params: Params1,
+      acts: [],
+      locs: [],
+      dataProcessor: 'processCalendarData',
+      timeoutPromise: tPromise,
+      timeout: 180000
+    };
+
     $httpBackend.whenGET(MockUrl1)
       .respond([{}, {}]);
 
     calendarStub = sinon.stub(Processcalendardata, 'get');
     calendarStub.returns(okResponse());
 
-    Data.getData(Params1, [], [], 'processCalendarData', tPromise).then(function (result) {
+    Data.getData(cfg).then(function (result) {
       expect(result.success).to.equal(true);
       done();
     });
@@ -106,13 +127,22 @@ describe('Service: Data', function () {
   });
 
   it(':getData should make an AJAX call with processHourlyData', function (done) {
+    var cfg = {
+      params: Params1,
+      acts: [],
+      locs: [],
+      dataProcessor: 'processHourlyData',
+      timeoutPromise: tPromise,
+      timeout: 180000
+    };
+
     $httpBackend.whenGET(MockUrl1)
       .respond([{}, {}]);
 
     hourlyStub = sinon.stub(Processhourlydata, 'get');
     hourlyStub.returns(okResponse());
 
-    Data.getData(Params1, [], [], 'processHourlyData', tPromise).then(function (result) {
+    Data.getData(cfg).then(function (result) {
       expect(result.success).to.equal(true);
       done();
     });
@@ -121,13 +151,45 @@ describe('Service: Data', function () {
     hourlyStub.restore();
   });
 
-  it(':getData should return an error is processor fails', function (done) {
+  it(':getData should return an error if no processor is passed', function (done) {
+    var cfg = {
+      params: Params1,
+      acts: [],
+      locs: [],
+      dataProcessor: '',
+      timeoutPromise: tPromise,
+      timeout: 180000
+    };
+
+    $httpBackend.whenGET(MockUrl1)
+      .respond([{}, {}]);
+
+    Data.getData(cfg).then(function (result) {
+
+    }, function(result) {
+      expect(result).to.deep.equal({message: 'Data processor not found.', code: 'None found.'});
+      done();
+    });
+
+    $httpBackend.flush();
+  });
+
+  it(':getData should return an error if processor fails', function (done) {
+    var cfg = {
+      params: Params1,
+      acts: [],
+      locs: [],
+      dataProcessor: 'processTimeSeriesData',
+      timeoutPromise: tPromise,
+      timeout: 180000
+    };
+
     $httpBackend.whenGET(MockUrl1)
       .respond([{}, {}]);
 
     timeseriesStub = sinon.stub(Processtimeseriesdata, 'get');
     timeseriesStub.returns(errorResponse());
-    Data.getData(Params1, [], [], 'processTimeSeriesData', tPromise).then(function (result) {
+    Data.getData(cfg).then(function (result) {
 
     }, function (result) {
       expect(result).to.deep.equal({message: 'Error', code: 500});
@@ -139,14 +201,23 @@ describe('Service: Data', function () {
   });
 
   it(':getData should format activityType and activityId into string', function (done) {
+    // Note use of Params2
+    var cfg = {
+      params: Params2,
+      acts: [],
+      locs: [],
+      dataProcessor: 'processTimeSeriesData',
+      timeoutPromise: tPromise,
+      timeout: 180000
+    };
+
     $httpBackend.whenGET(MockUrl2)
       .respond([{}, {}]);
 
     timeseriesStub = sinon.stub(Processtimeseriesdata, 'get');
     timeseriesStub.returns(okResponse());
 
-    // Note use of params2 object
-    Data.getData(Params2, [], [], 'processTimeSeriesData', tPromise).then(function (result) {
+    Data.getData(cfg).then(function (result) {
       expect(result.success).to.equal(true);
       done();
     });
@@ -156,14 +227,23 @@ describe('Service: Data', function () {
   });
 
   it(':getData should fall back if params are missing', function (done) {
+    // Note use of Params3
+    var cfg = {
+      params: Params3,
+      acts: [],
+      locs: [],
+      dataProcessor: 'processTimeSeriesData',
+      timeoutPromise: tPromise,
+      timeout: 180000
+    };
+
     $httpBackend.whenGET(MockUrl4)
       .respond([{}, {}]);
 
     timeseriesStub = sinon.stub(Processtimeseriesdata, 'get');
     timeseriesStub.returns(okResponse());
 
-    // Note use of params2 object
-    Data.getData(Params3, [], [], 'processTimeSeriesData', tPromise).then(function (result) {
+    Data.getData(cfg).then(function (result) {
       expect(result.success).to.equal(true);
       done();
     });
@@ -172,53 +252,103 @@ describe('Service: Data', function () {
     timeseriesStub.restore();
   });
 
-  it(':getData should return an error if no processor is passed', function (done) {
-    $httpBackend.whenGET(MockUrl1)
-      .respond([{}, {}]);
-
-    Data.getData(Params1, [], [], '', tPromise).then(function (result) {
-
-    }, function(result) {
-      expect(result).to.deep.equal({message: 'Data processor not found.', code: 'None found.'});
-      done();
-    });
-
-    $httpBackend.flush();
-  });
-
   it(':getData should return an error if AJAX fails', function (done) {
+    var cfg = {
+      params: Params1,
+      acts: [],
+      locs: [],
+      dataProcessor: 'processTimeSeriesData',
+      timeoutPromise: tPromise,
+      timeout: 180000
+    };
+
     $httpBackend.whenGET(MockUrl1)
       .respond(500, {message: 'Error'});
 
-    Data.getData(Params1, [], [], 'processTimeSeriesData', tPromise).then(function (result) {
+    Data.getData(cfg).then(function (result) {
 
     }, function(result) {
-      expect(result).to.deep.equal({message: 'Error', code: 500, timeout: false});
+      expect(result).to.deep.equal({
+        message: 'Error',
+        code: 500
+      });
+
       done();
     });
 
     $httpBackend.flush();
   });
 
-  it(':getData should fail silently on timeout', function (done) {
+  it(':getData should return error with promiseTimeout true on aborted http request', function (done) {
+    var cfg = {
+      params: Params1,
+      acts: [],
+      locs: [],
+      dataProcessor: 'processTimeSeriesData',
+      timeoutPromise: tPromise,
+      timeout: 180000
+    };
+
+    // simulate aborted request
     $httpBackend.whenGET(MockUrl1)
       .respond(0, {message: 'Error'});
 
-    Data.getData(Params1, [], [], 'processTimeSeriesData', tPromise).then(function (result) {
+    Data.getData(cfg).then(function (result) {
 
     }, function(result) {
-      expect(result).to.deep.equal({message: 'Data.getData Timeout', code: 0, timeout: true});
+      expect(result).to.deep.equal({
+        message: 'Data.getData Timeout',
+        code: 0,
+        promiseTimeout: true
+      });
+
       done();
     });
 
     $httpBackend.flush();
   });
 
+  it('should return error without promiseTimeout on http timeout', function (done) {
+    var cfg = {
+      params: Params1,
+      acts: [],
+      locs: [],
+      dataProcessor: 'processTimeSeriesData',
+      timeoutPromise: tPromise,
+      timeout: 180000
+    };
+
+    $httpBackend.whenGET(MockUrl1)
+          .respond([{}, {}]);
+
+    Data.getData(cfg).then(function (result) {
+
+    }, function (result) {
+      expect(result).to.deep.equal({
+        message: 'Data.getData Timeout',
+        code: 0
+      });
+
+      done();
+    });
+
+    Timeout.flush();
+  });
+
   it(':getSessionsData should make an AJAX call', function (done) {
+    var cfg = {
+      params: Params1,
+      acts: [],
+      locs: [],
+      dataProcessor: '',
+      timeoutPromise: tPromise,
+      timeout: 180000
+    };
+
     $httpBackend.whenGET(MockUrl3)
       .respond([{}, {}]);
 
-    Data.getSessionsData(Params1, [], [], '', tPromise).then(function (result) {
+    Data.getSessionsData(cfg).then(function (result) {
       expect(result.length).to.equal(2);
       done();
     });
@@ -227,33 +357,85 @@ describe('Service: Data', function () {
   });
 
   it(':getSessionsData should return an error if AJAX fails', function (done) {
+    var cfg = {
+      params: Params1,
+      acts: [],
+      locs: [],
+      dataProcessor: '',
+      timeoutPromise: tPromise,
+      timeout: 180000
+    };
+
     $httpBackend.whenGET(MockUrl3)
       .respond(500, {message: 'Error'});
 
-    Data.getSessionsData(Params1, [], [], '', tPromise).then(function (result) {
+    Data.getSessionsData(cfg).then(function (result) {
 
     }, function (result) {
-      expect(result).to.deep.equal({message: 'Error', code: 500, timeout: false});
+      expect(result).to.deep.equal({
+        message: 'Error',
+        code: 500
+      });
+
       done();
     });
 
     $httpBackend.flush();
   });
 
-  it(':getSessionsData should fail silently on timeout', function (done) {
-    $httpBackend.whenGET(MockUrl3).respond(0, {message: 'Error'});
+  it(':getData should return error with promiseTimeout true on aborted http request', function (done) {
+    var cfg = {
+      params: Params1,
+      acts: [],
+      locs: [],
+      dataProcessor: 'processTimeSeriesData',
+      timeoutPromise: tPromise,
+      timeout: 180000
+    };
 
-    Data.getSessionsData(Params1, [], [], '', tPromise).then(function (result) {
+    // simulate aborted request
+    $httpBackend.whenGET(MockUrl3)
+      .respond(0, {message: 'Error'});
 
-    }, function (result) {
+    Data.getSessionsData(cfg).then(function (result) {
+
+    }, function(result) {
       expect(result).to.deep.equal({
         message: 'Data.getSessionsData Timeout',
         code: 0,
-        timeout: true
+        promiseTimeout: true
       });
+
       done();
     });
 
     $httpBackend.flush();
+  });
+
+  it('should return error without promiseTimeout on http timeout', function (done) {
+    var cfg = {
+      params: Params1,
+      acts: [],
+      locs: [],
+      dataProcessor: 'processTimeSeriesData',
+      timeoutPromise: tPromise,
+      timeout: 180000
+    };
+
+    $httpBackend.whenGET(MockUrl3)
+          .respond([{}, {}]);
+
+    Data.getSessionsData(cfg).then(function (result) {
+
+    }, function (result) {
+      expect(result).to.deep.equal({
+        message: 'Data.getData Timeout',
+        code: 0
+      });
+
+      done();
+    });
+
+    Timeout.flush();
   });
 });

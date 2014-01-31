@@ -51,7 +51,7 @@ angular.module('sumaAnalysis')
 
       $scope.params.count = _.find($scope.countOptions, function (e, i) {
         return String(e.id) === String(p.count);
-      }) || $scope.countOptions[0];
+      });
 
       $scope.params.session_filter = _.find($scope.sessionOptions, function (e, i) {
         return String(e.id) === String(p.session_filter);
@@ -97,9 +97,16 @@ angular.module('sumaAnalysis')
 
     // Get initiatives
     $scope.getInitiatives = function (urlParams) {
+      var cfg;
+
       $scope.initTimeoutPromise = $q.defer();
 
-      $scope.loadInits = initiatives.get($scope.initTimeoutPromise).then(function (data) {
+      cfg = {
+        timeoutPromise: $scope.initTimeoutPromise,
+        timeout: 180000
+      };
+
+      $scope.loadInits = initiatives.get(cfg).then(function (data) {
         $scope.inits = data;
 
         if (!_.isEmpty(urlParams)) {
@@ -140,10 +147,21 @@ angular.module('sumaAnalysis')
 
     // Submit request and draw chart
     $scope.getData = function () {
+      var cfg;
+
       $scope.dataTimeoutPromise = $q.defer();
       $scope.state = uiStates.setUIState('loading');
 
-      data[sumaConfig.dataSource]($scope.params, $scope.activities, $scope.locations, sumaConfig.dataProcessor, $scope.dataTimeoutPromise)
+      cfg = {
+        params: $scope.params,
+        acts: $scope.activities,
+        locs: $scope.locations,
+        dataProcessor: sumaConfig.dataProcessor,
+        timeoutPromise: $scope.dataTimeoutPromise,
+        timeout: 180000
+      };
+
+      data[sumaConfig.dataSource](cfg)
         .then($scope.success, $scope.error);
     };
 
@@ -177,7 +195,7 @@ angular.module('sumaAnalysis')
 
     // Display error message
     $scope.error = function (data) {
-      if (!data.timeout) {
+      if (!data.promiseTimeout) {
         $scope.state = uiStates.setUIState('error');
         $scope.errorMessage = data.message;
         $scope.errorCode = data.code;
