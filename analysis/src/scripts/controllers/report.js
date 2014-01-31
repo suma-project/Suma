@@ -2,10 +2,6 @@
 
 angular.module('sumaAnalysis')
   .controller('ReportCtrl', function ($scope, $rootScope, $http, $location, $anchorScroll, $timeout, initiatives, actsLocs, data, promiseTracker, uiStates, sumaConfig, $routeParams, $q) {
-    $scope.dataTimeoutPromise;
-    $scope.initTimeoutPromise;
-    $scope.paramsSet = false;
-
     // Initialize controller
     $scope.initialize = function () {
       var urlParams = $location.search();
@@ -78,11 +74,14 @@ angular.module('sumaAnalysis')
     };
 
     // Attach params to URL
-    $scope.setUrl = function () {
-      $scope.paramsSet = true;
+    $scope.submit = function () {
+      var currentUrl,
+          currentScope;
 
-      $location.search({
-        id: $scope.params.init.id,
+      currentUrl = $location.search();
+
+      currentScope = {
+        id: String($scope.params.init.id),
         sdate: $scope.params.sdate,
         edate: $scope.params.edate,
         stime: $scope.params.stime || '',
@@ -92,7 +91,13 @@ angular.module('sumaAnalysis')
         activity: $scope.params.activity ? $scope.params.activity.id : null,
         location: $scope.params.location ? $scope.params.location.id : null,
         daygroup: $scope.params.daygroup ? $scope.params.daygroup.id : null
-      });
+      };
+
+      if (_.isEqual(currentUrl, currentScope)) {
+        $scope.getData();
+      } else {
+        $location.search(currentScope);
+      }
     };
 
     // Get initiatives
@@ -182,11 +187,8 @@ angular.module('sumaAnalysis')
       if (_.isEmpty(urlParams)) { // True when navigating back to initial
         $scope.state = uiStates.setUIState('initial');
         $scope.setDefaults();
-      } else if ($scope.params.init){ // Typical navigation between reports and default "submit"
-        if (!$scope.paramsSet) {
-          $scope.setParams(urlParams);
-        }
-        $scope.paramsSet = false;
+      } else if ($scope.params.init){ // Typical navigation between reports
+        $scope.setParams(urlParams);
         $scope.getData();
       } else { // Navigation from initial to completed report
         $scope.getInitiatives(urlParams);

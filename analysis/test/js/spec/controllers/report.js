@@ -313,66 +313,66 @@ describe('Controller: ReportCtrl', function () {
     actsLocsStub.restore();
   });
 
-  it(':submit should call locationSearch with params', function () {
-    var locationSearchStub = sinon.stub(location, 'search');
-    locationSearchStub.returns({});
+  // it(':submit should call locationSearch with params', function () {
+  //   var locationSearchStub = sinon.stub(location, 'search');
+  //   locationSearchStub.returns({});
 
-    initiativesStub.returns(okResponse());
-    dataStub.returns(dataResponse());
+  //   initiativesStub.returns(okResponse());
+  //   dataStub.returns(dataResponse());
 
-    ReportCtrl = Controller('ReportCtrl', {
-      $scope: scope,
-      sumaConfig: SumaConfig
-    });
+  //   ReportCtrl = Controller('ReportCtrl', {
+  //     $scope: scope,
+  //     sumaConfig: SumaConfig
+  //   });
 
-    expect(locationSearchStub).to.be.calledOnce;
+  //   expect(locationSearchStub).to.be.calledOnce;
 
-    scope.params = {};
-    scope.params.init = {id: 4};
-    scope.params.sdate = '20140101';
-    scope.params.edate = '20140104';
-    scope.submit();
+  //   scope.params = {};
+  //   scope.params.init = {id: 4};
+  //   scope.params.sdate = '20140101';
+  //   scope.params.edate = '20140104';
+  //   scope.submit();
 
-    expect(locationSearchStub).to.be.calledTwice;
-    expect(locationSearchStub).to.be.calledWith({
-      id: 4,
-      sdate: '20140101',
-      edate: '20140104',
-      stime: '',
-      etime: '',
-      count: null,
-      session_filter: null,
-      activity: null,
-      location: null,
-      daygroup: null
-    });
+  //   expect(locationSearchStub).to.be.calledTwice;
+  //   expect(locationSearchStub).to.be.calledWith({
+  //     id: 4,
+  //     sdate: '20140101',
+  //     edate: '20140104',
+  //     stime: '',
+  //     etime: '',
+  //     count: null,
+  //     session_filter: null,
+  //     activity: null,
+  //     location: null,
+  //     daygroup: null
+  //   });
 
-    scope.params.stime = '0800';
-    scope.params.etime = '1000';
-    scope.params.count = {id: 4};
-    scope.params.session_filter = {id: 4};
-    scope.params.activity = {id: 4};
-    scope.params.location = {id: 4};
-    scope.params.daygroup = {id: 4};
+  //   scope.params.stime = '0800';
+  //   scope.params.etime = '1000';
+  //   scope.params.count = {id: 4};
+  //   scope.params.session_filter = {id: 4};
+  //   scope.params.activity = {id: 4};
+  //   scope.params.location = {id: 4};
+  //   scope.params.daygroup = {id: 4};
 
-    scope.submit();
+  //   scope.submit();
 
-    expect(locationSearchStub).to.be.calledThrice;
-    expect(locationSearchStub).to.be.calledWith({
-      id: 4,
-      sdate: '20140101',
-      edate: '20140104',
-      stime: '0800',
-      etime: '1000',
-      count: 4,
-      session_filter: 4,
-      activity: 4,
-      location: 4,
-      daygroup: 4
-    });
+  //   expect(locationSearchStub).to.be.calledThrice;
+  //   expect(locationSearchStub).to.be.calledWith({
+  //     id: 4,
+  //     sdate: '20140101',
+  //     edate: '20140104',
+  //     stime: '0800',
+  //     etime: '1000',
+  //     count: 4,
+  //     session_filter: 4,
+  //     activity: 4,
+  //     location: 4,
+  //     daygroup: 4
+  //   });
 
-    locationSearchStub.restore();
-  });
+  //   locationSearchStub.restore();
+  // });
 
   it(':setParams should set scope.params based on URL', function () {
     initiativesStub.returns(okResponse());
