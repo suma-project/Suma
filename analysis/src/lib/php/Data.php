@@ -269,19 +269,6 @@ class Data
         return $array;
     }
     /**
-     * Error Message
-     *
-     * @access  private
-     * @param  array $e Event array
-     */
-    private function echo500($e)
-    {
-        header("HTTP/1.1 500 Internal Server Error");
-        echo "<h1>500 Internal Server Error</h1>";
-        echo "<p>An error occurred on the server which prevented your request from being completed: <strong>" . $e->getMessage() . "</strong></p>";
-        die;
-    }
-    /**
      * Validates form input from client
      *
      * @access  private
@@ -298,19 +285,30 @@ class Data
 
         // Define filters
         $filters = array(
-            'daygroup'   => 'trim',
             'id'         => 'trim',
             'sdate'      => 'trim|sanitize_numbers|rmhyphen',
             'edate'      => 'trim|sanitize_numbers|rmhyphen',
             'stime'      => 'trim|sanitize_numbers',
             'etime'      => 'trim|sanitize_numbers',
-            'session'    => 'trim'
+            'session'    => 'trim',
+            'session_filter' => 'trim',
+            'daygroup'   => 'trim',
+            'locations'  => 'trim',
+            'activities' => 'trim'
         );
 
         // Define validation rules
         $rules = array(
-            'daygroup'   => 'alpha',
-            'id'         => 'required|numeric'
+            'id'         => 'required|numeric',
+            'sdate'      => 'numeric|multi_exact_len, 0 8',
+            'edate'      => 'numeric|multi_exact_len, 0 8',
+            'stime'      => 'numeric|multi_exact_len, 0 4',
+            'etime'      => 'numeric|multi_exact_len, 0 4',
+            'session'    => 'alpha|contains, count start end',
+            'session_filter' => 'alpha|contains, true false',
+            'daygroup'   => 'alpha|contains, all weekdays weekends',
+            'locations'  => 'alpha_numeric',
+            'activities' => 'alpha_dash'
         );
 
         // Filter input
@@ -323,16 +321,16 @@ class Data
         if ($validated === TRUE)
         {
             $params = array(
-                    'activities' => $input['activities'],
-                    'daygroup'   => $input['daygroup'],
-                    'id'         => $input['id'],
-                    'locations'  => $input['locations'],
-                    'sdate'      => $input['sdate'],
-                    'edate'      => $input['edate'],
-                    'stime'      => $input['stime'],
-                    'etime'      => $input['etime'],
-                    'session'    => $input['session'],
-                    'session_filter' => $input['session_filter']
+                'id'         => $input['id'],
+                'sdate'      => $input['sdate'],
+                'edate'      => $input['edate'],
+                'stime'      => $input['stime'],
+                'etime'      => $input['etime'],
+                'session'    => $input['session'],
+                'session_filter' => $input['session_filter'],
+                'daygroup'   => $input['daygroup'],
+                'locations'  => $input['locations'],
+                'activities' => $input['activities']
             );
 
             // Manipulate activities field, maybe not the best place for this
@@ -365,9 +363,14 @@ class Data
         }
         else
         {
-            throw new Exception('Input Error.');
-        }
+            $message = 'Query Parameter Input Error. Gump rejected parameters.';
 
+            foreach ($validator->get_readable_errors() as $error) {
+                $message = $message . " " . strip_tags($error);
+            }
+
+            throw new Exception($message, 500);
+        }
     }
     /**
      * Builds params to pass to Suma server
@@ -1147,7 +1150,7 @@ class Data
         }
         catch (Exception $e)
         {
-            $this->echo500($e);
+            throw new Exception($e);
         }
     }
     public function getData($params)
