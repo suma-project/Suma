@@ -187,7 +187,7 @@ angular.module('sumaAnalysis')
       if (_.isEmpty(urlParams)) { // True when navigating back to initial
         $scope.state = uiStates.setUIState('initial');
         $scope.setDefaults();
-      } else if ($scope.params.init){ // Typical navigation between reports
+      } else if ($scope.inits){ // Typical navigation between reports (most common case)
         $scope.setParams(urlParams);
         $scope.getData();
       } else { // Navigation from initial to completed report
