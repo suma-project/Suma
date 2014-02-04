@@ -16,8 +16,27 @@ class SumaGump extends GUMP
         return $value = str_replace("-", "", $value);
     }
 
-    // Placeholder for custom validation rules
-    // public function validate_myvalidator($field, $input, $param = NULL)
-    // {
-    // }
+    // Validate multiple exact lengths
+    public function validate_multi_exact_len($field, $input, $param = NULL)
+    {
+      $param = trim(strtolower($param));
+      $len = (string)mb_strlen(trim(strtolower($input[$field])));
+
+      if (preg_match_all('#\'(.+?)\'#', $param, $matches, PREG_PATTERN_ORDER)) {
+          $param = $matches[1];
+      } else  {
+          $param = explode(chr(32), $param);
+      }
+
+      if(in_array($len, $param)) { // valid, return nothing
+          return;
+      } else {
+          return array(
+              'field' => $field,
+              'value' => $value,
+              'rule'  => __FUNCTION__,
+              'param' => $param
+          );
+      }
+    }
 }
