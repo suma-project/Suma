@@ -99,7 +99,7 @@ angular.module('sumaAnalysis')
           processor.get(response.data, cfg.acts, cfg.locs).then(function (processedData) {
             dfd.resolve(processedData);
           }, self.processorError);
-        }
+        };
 
         this.httpError = function (response) {
           if (response.status === 0) {
