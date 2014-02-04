@@ -37,16 +37,20 @@ class SessionsData
 
         // Define filters
         $filters = array(
-            'id'         => 'trim',
-            'sdate'      => 'trim|sanitize_numbers|rmhyphen',
-            'edate'      => 'trim|sanitize_numbers|rmhyphen',
-            'stime'      => 'trim|sanitize_numbers',
-            'etime'      => 'trim|sanitize_numbers'
+            'id'    => 'trim',
+            'sdate' => 'trim|sanitize_numbers|rmhyphen',
+            'edate' => 'trim|sanitize_numbers|rmhyphen',
+            'stime' => 'trim|sanitize_numbers',
+            'etime' => 'trim|sanitize_numbers'
         );
 
         // Define validation rules
         $rules = array(
-            'id' => 'required|numeric'
+            'id'    => 'required|numeric',
+            'sdate' => 'numeric|multi_exact_len, 0 8',
+            'edate' => 'numeric|multi_exact_len, 0 8',
+            'stime' => 'numeric|multi_exact_len, 0 4',
+            'etime' => 'numeric|multi_exact_len, 0 4'
         );
 
         // Filter input
@@ -79,7 +83,13 @@ class SessionsData
         }
         else
         {
-            throw new Exception('Input Error.');
+            $message = 'Query Parameter Input Error. Gump rejected parameters.';
+
+            foreach ($validator->get_readable_errors() as $error) {
+                $message = $message . " " . strip_tags($error);
+            }
+
+            throw new Exception($message, 500);
         }
 
     }

@@ -269,19 +269,6 @@ class Data
         return $array;
     }
     /**
-     * Error Message
-     *
-     * @access  private
-     * @param  array $e Event array
-     */
-    private function echo500($e)
-    {
-        header("HTTP/1.1 500 Internal Server Error");
-        echo "<h1>500 Internal Server Error</h1>";
-        echo "<p>An error occurred on the server which prevented your request from being completed: <strong>" . $e->getMessage() . "</strong></p>";
-        die;
-    }
-    /**
      * Validates form input from client
      *
      * @access  private
@@ -298,19 +285,30 @@ class Data
 
         // Define filters
         $filters = array(
-            'daygroup'   => 'trim',
             'id'         => 'trim',
             'sdate'      => 'trim|sanitize_numbers|rmhyphen',
             'edate'      => 'trim|sanitize_numbers|rmhyphen',
             'stime'      => 'trim|sanitize_numbers',
             'etime'      => 'trim|sanitize_numbers',
-            'session'    => 'trim'
+            'classifyCounts'    => 'trim',
+            'wholeSession' => 'trim',
+            'daygroup'   => 'trim',
+            'locations'  => 'trim',
+            'activities' => 'trim'
         );
 
         // Define validation rules
         $rules = array(
-            'daygroup'   => 'alpha',
-            'id'         => 'required|numeric'
+            'id'         => 'required|numeric',
+            'sdate'      => 'numeric|multi_exact_len, 0 8',
+            'edate'      => 'numeric|multi_exact_len, 0 8',
+            'stime'      => 'numeric|multi_exact_len, 0 4',
+            'etime'      => 'numeric|multi_exact_len, 0 4',
+            'classifyCounts'    => 'alpha|contains, count start end',
+            'wholeSession' => 'alpha|contains, yes no',
+            'daygroup'   => 'alpha|contains, all weekdays weekends',
+            'locations'  => 'alpha_numeric',
+            'activities' => 'alpha_dash'
         );
 
         // Filter input
@@ -323,16 +321,16 @@ class Data
         if ($validated === TRUE)
         {
             $params = array(
-                    'activities' => $input['activities'],
-                    'daygroup'   => $input['daygroup'],
-                    'id'         => $input['id'],
-                    'locations'  => $input['locations'],
-                    'sdate'      => $input['sdate'],
-                    'edate'      => $input['edate'],
-                    'stime'      => $input['stime'],
-                    'etime'      => $input['etime'],
-                    'session'    => $input['session'],
-                    'session_filter' => $input['session_filter']
+                'id'         => $input['id'],
+                'sdate'      => $input['sdate'],
+                'edate'      => $input['edate'],
+                'stime'      => $input['stime'],
+                'etime'      => $input['etime'],
+                'classifyCounts'    => $input['classifyCounts'],
+                'wholeSession' => $input['wholeSession'],
+                'daygroup'   => $input['daygroup'],
+                'locations'  => $input['locations'],
+                'activities' => $input['activities']
             );
 
             // Manipulate activities field, maybe not the best place for this
@@ -365,9 +363,14 @@ class Data
         }
         else
         {
-            throw new Exception('Input Error.');
-        }
+            $message = 'Query Parameter Input Error. Gump rejected parameters.';
 
+            foreach ($validator->get_readable_errors() as $error) {
+                $message = $message . " " . strip_tags($error);
+            }
+
+            throw new Exception($message, 500);
+        }
     }
     /**
      * Builds params to pass to Suma server
@@ -498,7 +501,7 @@ class Data
             return true;
         }
 
-        if ($params['session_filter'] === 'false')
+        if ($params['wholeSession'] === 'no')
         {
             // Honor date filters and remove extra days pulled in by session
             $sDate = $params['sdate'];
@@ -572,18 +575,18 @@ class Data
 
         return false;
     }
-    private function setDay($count, $bin, $session)
+    private function setDay($count, $params, $sess)
     {
-        if ($bin === 'count')
+        if ($params['classifyCounts'] === 'count')
         {
             return substr($count['time'], 0, -9);
         }
-        elseif ($bin === 'start') {
-            return substr($session['start'], 0, -9);
+        elseif ($params['classifyCounts'] === 'start') {
+            return substr($sess['start'], 0, -9);
         }
-        elseif ($bin === 'end')
+        elseif ($params['classifyCounts'] === 'end')
         {
-            return substr($session['end'], 0, -9);
+            return substr($sess['end'], 0, -9);
         }
     }
     private function addCount($count, $day, $locId, $sessId, $weekday, $intersect)
@@ -838,8 +841,6 @@ class Data
         $locID   = $params['locations'];
         $actDict = $response['initiative']['dictionary']['activities'];
         $locDict = $response['initiative']['dictionary']['locations'];
-        $bin     = $params['session'];
-        $include_sessions = $params['session_filter'];
 
         // Check for sessions object
         if (!isset($response['initiative']['sessions']))
@@ -892,7 +893,7 @@ class Data
                     foreach ($loc['counts'] as $count)
                     {
                         // Get date based on count or session
-                        $day = $this->setDay($count, $bin, $sess);
+                        $day = $this->setDay($count, $params, $sess);
                         $weekday = date('l', strtotime($day));
                         $intersect = array_intersect($count['activities'], $this->actListIds);
 
@@ -1147,7 +1148,7 @@ class Data
         }
         catch (Exception $e)
         {
-            $this->echo500($e);
+            throw new Exception($e);
         }
     }
     public function getData($params)
@@ -1174,14 +1175,14 @@ class Data
         }
 
         // Defaults
-        if (!isset($params['session']))
+        if (!isset($params['classifyCounts']))
         {
-            $params['session'] = 'count';
+            $params['classifyCounts'] = 'count';
         }
 
-        if (!isset($params['session_filter']))
+        if (!isset($params['wholeSession']))
         {
-            $params['session_filter'] = 'false';
+            $params['wholeSession'] = 'no';
         }
 
         // Create params array for Suma server

@@ -3,8 +3,8 @@
     <div class="col-xs-5">
       <p class="text-muted">
         <strong>Initiative: </strong> {{params.init.title}} <br>
-        <strong>Classify By: </strong> {{params.count.title}}
-        <strong>Whole Session: </strong> {{params.session_filter.title}} <br>
+        <strong>Classify By: </strong> {{params.classifyCounts.title}}
+        <strong>Whole Session: </strong> {{params.wholeSession.title}} <br>
         <strong>Dates: </strong> {{params.sdate}} - {{params.edate}}
         <strong>Subset: </strong> {{params.stime || '00:00'}} - {{params.etime || '23:59'}} <br>
         <strong>Days: </strong> {{params.daygroup.title}}
@@ -66,13 +66,13 @@
 
           <div class="form-group">
             <label class="suma-popover" data-title="Classify Counts By" data-content="Choose the date to use for grouping counts by date. \"Count Date\" shows the actual date of the count, while \"Session Start\" and \"Session End\" use the respective date on the collection session containing each count." data-suma-popover="">Classify Counts By</label>
-            <select name="session" id="session" class="form-control" data-ng-model="params.count" data-ng-options="count.title for count in countOptions">
+            <select name="classifyCounts" id="classifyCounts" class="form-control" data-ng-model="params.classifyCounts" data-ng-options="opt.title for opt in countOptions">
             </select>
           </div>
 
           <div class="form-group">
             <label class="suma-popover" data-title="Always Include Whole Session" data-content="Select yes if you would like to include counts inside of sessions that may fall outside of your other filters." data-suma-popover="">Always Include Whole Session</label>
-            <select name="session_filter" id="session_filter" class="form-control" data-ng-model="params.session_filter" data-ng-options="opt.title for opt in sessionOptions">
+            <select name="wholeSession" id="wholeSession" class="form-control" data-ng-model="params.wholeSession" data-ng-options="opt.title for opt in sessionOptions">
             </select>
           </div>
         </div>

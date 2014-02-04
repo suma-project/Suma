@@ -1,6 +1,7 @@
 <?php
 
 header('Content-type: application/json');
+
 require_once 'ServerIO.php';
 require_once 'setHttpCode.php';
 
@@ -21,6 +22,5 @@ catch (Exception $e)
     header($header);
 
     // Return JSON with display data
-    echo json_encode(array('message' => $message));
-    die;
+    die(json_encode(array('message' => $message)));
 }
