@@ -6,6 +6,7 @@ angular.module('sumaAnalysis')
       getSessionsData: function (cfg) {
         var dfd,
             options,
+            self = this,
             url;
 
         dfd = $q.defer();
@@ -14,12 +15,12 @@ angular.module('sumaAnalysis')
         options = {
           'params': {
             'id': cfg.params.init.id,
-            'session': 'session',
-            'session_filter': 'true',
             'sdate': cfg.params.sdate || '',
             'edate': cfg.params.edate || '',
             'stime': cfg.params.stime || '',
             'etime': cfg.params.etime || '',
+            'classifyCounts': 'session',
+            'wholeSession': 'yes',
             'daygroup': 'all' ,
             'locations': 'all',
             'activities': 'all'
@@ -27,26 +28,30 @@ angular.module('sumaAnalysis')
           timeout: cfg.timeoutPromise.promise
         };
 
-        $http.get(url, options).success(function(data) {
-          dfd.resolve(data);
-        }).error(function(data, status, headers, config) {
-          if (status === 0) {
+        this.httpSuccess = function (response) {
+          dfd.resolve(response.data);
+        };
+
+        this.httpError = function (response) {
+          if (response.status === 0) {
             dfd.reject({
               message: 'Data.getSessionsData Timeout',
-              code: status,
+              code: response.status,
               promiseTimeout: true
             });
           } else {
             dfd.reject({
-              message: data.message,
-              code: status
+              message: response.data.message,
+              code: response.status
             });
           }
-        });
+        };
+
+        $http.get(url, options).then(self.httpSuccess, self.httpError);
 
         $timeout(function () {
           dfd.reject({
-            message: 'Data.getData Timeout',
+            message: 'Data.getSessionsData Timeout',
             code: 0
           });
           cfg.timeoutPromise.resolve();
@@ -58,6 +63,7 @@ angular.module('sumaAnalysis')
         var dfd,
             options,
             processor,
+            self = this,
             url;
 
         dfd = $q.defer();
@@ -80,8 +86,8 @@ angular.module('sumaAnalysis')
             edate: cfg.params.edate || '',
             stime: cfg.params.stime || '',
             etime: cfg.params.etime || '',
-            session: cfg.params.count ? cfg.params.count.id : 'count',
-            session_filter: cfg.params.session_filter ? cfg.params.session_filter.id : 'false',
+            classifyCounts: cfg.params.classifyCounts ? cfg.params.classifyCounts.id : 'count',
+            wholeSession: cfg.params.wholeSession ? cfg.params.wholeSession.id : 'no',
             daygroup: cfg.params.daygroup ? cfg.params.daygroup.id : 'all' ,
             locations: cfg.params.location ? cfg.params.location.id : 'all',
             activities: cfg.params.activity.type ? (cfg.params.activity.type + '-' + cfg.params.activity.id) : 'all'
@@ -89,26 +95,32 @@ angular.module('sumaAnalysis')
           timeout: cfg.timeoutPromise.promise
         };
 
-        $http.get(url, options).success(function(data) {
-          processor.get(data, cfg.acts, cfg.locs).then(function (processedData) {
+        this.httpSuccess = function (response) {
+          processor.get(response.data, cfg.acts, cfg.locs).then(function (processedData) {
             dfd.resolve(processedData);
-          }, function (data) {
-            dfd.reject(data);
-          });
-        }).error(function(data, status, headers, config){
-          if (status === 0) {
+          }, self.processorError);
+        }
+
+        this.httpError = function (response) {
+          if (response.status === 0) {
             dfd.reject({
               message: 'Data.getData Timeout',
-              code: status,
+              code: response.status,
               promiseTimeout: true
             });
           } else {
             dfd.reject({
-              message: data.message,
-              code: status
+              message: response.data.message,
+              code: response.status
             });
           }
-        });
+        };
+
+        this.processorError = function (response) {
+          dfd.reject(response);
+        };
+
+        $http.get(url, options).then(self.httpSuccess, self.httpError);
 
         $timeout(function () {
           dfd.reject({

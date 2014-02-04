@@ -6,6 +6,7 @@ angular.module('sumaAnalysis')
       get: function (cfg) {
         var dfd,
             options,
+            self = this,
             url;
 
         dfd = $q.defer();
@@ -15,22 +16,26 @@ angular.module('sumaAnalysis')
           timeout: cfg.timeoutPromise.promise
         };
 
-        $http.get(url, options).success(function (data, status, headers, config) {
-          dfd.resolve(data);
-        }).error(function (data, status, headers, config) {
-          if (status === 0) {
+        this.httpSuccess = function (response) {
+          dfd.resolve(response.data);
+        };
+
+        this.httpError = function (response) {
+          if (response.status === 0) {
             dfd.reject({
               message: 'Initiatives.get Timeout',
-              code: status,
+              code: response.status,
               promiseTimeout: true
             });
           } else {
             dfd.reject({
-              message: data.message,
-              code: status
+              message: response.data.message,
+              code: response.status
             });
           }
-        });
+        };
+
+        $http.get(url, options).then(self.httpSuccess, self.httpError);
 
         $timeout(function () {
           dfd.reject({

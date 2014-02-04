@@ -412,7 +412,7 @@ describe('Service: Data', function () {
     $httpBackend.flush();
   });
 
-  it('should return error without promiseTimeout on http timeout', function (done) {
+  it(':getData should return error without promiseTimeout on http timeout', function (done) {
     var cfg = {
       params: Params1,
       acts: [],
@@ -429,7 +429,7 @@ describe('Service: Data', function () {
 
     }, function (result) {
       expect(result).to.deep.equal({
-        message: 'Data.getData Timeout',
+        message: 'Data.getSessionsData Timeout',
         code: 0
       });
 

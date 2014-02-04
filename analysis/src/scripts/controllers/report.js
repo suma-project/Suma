@@ -45,12 +45,12 @@ angular.module('sumaAnalysis')
         return String(e.id) === String(p.id);
       });
 
-      $scope.params.count = _.find($scope.countOptions, function (e, i) {
-        return String(e.id) === String(p.count);
+      $scope.params.classifyCounts = _.find($scope.countOptions, function (e, i) {
+        return String(e.id) === String(p.classifyCounts);
       });
 
-      $scope.params.session_filter = _.find($scope.sessionOptions, function (e, i) {
-        return String(e.id) === String(p.session_filter);
+      $scope.params.wholeSession = _.find($scope.sessionOptions, function (e, i) {
+        return String(e.id) === String(p.wholeSession);
       });
 
       $scope.params.daygroup = _.find($scope.dayOptions, function (e, i) {
@@ -86,8 +86,8 @@ angular.module('sumaAnalysis')
         edate: $scope.params.edate,
         stime: $scope.params.stime || '',
         etime: $scope.params.etime || '',
-        count: $scope.params.count ? $scope.params.count.id : null,
-        session_filter: $scope.params.session_filter ? $scope.params.session_filter.id : null,
+        classifyCounts: $scope.params.classifyCounts ? $scope.params.classifyCounts.id : null,
+        wholeSession: $scope.params.wholeSession ? $scope.params.wholeSession.id : null,
         activity: $scope.params.activity ? $scope.params.activity.id : null,
         location: $scope.params.location ? $scope.params.location.id : null,
         daygroup: $scope.params.daygroup ? $scope.params.daygroup.id : null

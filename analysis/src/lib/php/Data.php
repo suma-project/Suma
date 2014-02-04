@@ -290,8 +290,8 @@ class Data
             'edate'      => 'trim|sanitize_numbers|rmhyphen',
             'stime'      => 'trim|sanitize_numbers',
             'etime'      => 'trim|sanitize_numbers',
-            'session'    => 'trim',
-            'session_filter' => 'trim',
+            'classifyCounts'    => 'trim',
+            'wholeSession' => 'trim',
             'daygroup'   => 'trim',
             'locations'  => 'trim',
             'activities' => 'trim'
@@ -304,8 +304,8 @@ class Data
             'edate'      => 'numeric|multi_exact_len, 0 8',
             'stime'      => 'numeric|multi_exact_len, 0 4',
             'etime'      => 'numeric|multi_exact_len, 0 4',
-            'session'    => 'alpha|contains, count start end',
-            'session_filter' => 'alpha|contains, true false',
+            'classifyCounts'    => 'alpha|contains, count start end',
+            'wholeSession' => 'alpha|contains, yes no',
             'daygroup'   => 'alpha|contains, all weekdays weekends',
             'locations'  => 'alpha_numeric',
             'activities' => 'alpha_dash'
@@ -326,8 +326,8 @@ class Data
                 'edate'      => $input['edate'],
                 'stime'      => $input['stime'],
                 'etime'      => $input['etime'],
-                'session'    => $input['session'],
-                'session_filter' => $input['session_filter'],
+                'classifyCounts'    => $input['classifyCounts'],
+                'wholeSession' => $input['wholeSession'],
                 'daygroup'   => $input['daygroup'],
                 'locations'  => $input['locations'],
                 'activities' => $input['activities']
@@ -501,7 +501,7 @@ class Data
             return true;
         }
 
-        if ($params['session_filter'] === 'false')
+        if ($params['wholeSession'] === 'no')
         {
             // Honor date filters and remove extra days pulled in by session
             $sDate = $params['sdate'];
@@ -575,18 +575,18 @@ class Data
 
         return false;
     }
-    private function setDay($count, $bin, $session)
+    private function setDay($count, $params, $sess)
     {
-        if ($bin === 'count')
+        if ($params['classifyCounts'] === 'count')
         {
             return substr($count['time'], 0, -9);
         }
-        elseif ($bin === 'start') {
-            return substr($session['start'], 0, -9);
+        elseif ($params['classifyCounts'] === 'start') {
+            return substr($sess['start'], 0, -9);
         }
-        elseif ($bin === 'end')
+        elseif ($params['classifyCounts'] === 'end')
         {
-            return substr($session['end'], 0, -9);
+            return substr($sess['end'], 0, -9);
         }
     }
     private function addCount($count, $day, $locId, $sessId, $weekday, $intersect)
@@ -841,8 +841,6 @@ class Data
         $locID   = $params['locations'];
         $actDict = $response['initiative']['dictionary']['activities'];
         $locDict = $response['initiative']['dictionary']['locations'];
-        $bin     = $params['session'];
-        $include_sessions = $params['session_filter'];
 
         // Check for sessions object
         if (!isset($response['initiative']['sessions']))
@@ -895,7 +893,7 @@ class Data
                     foreach ($loc['counts'] as $count)
                     {
                         // Get date based on count or session
-                        $day = $this->setDay($count, $bin, $sess);
+                        $day = $this->setDay($count, $params, $sess);
                         $weekday = date('l', strtotime($day));
                         $intersect = array_intersect($count['activities'], $this->actListIds);
 
@@ -1177,14 +1175,14 @@ class Data
         }
 
         // Defaults
-        if (!isset($params['session']))
+        if (!isset($params['classifyCounts']))
         {
-            $params['session'] = 'count';
+            $params['classifyCounts'] = 'count';
         }
 
-        if (!isset($params['session_filter']))
+        if (!isset($params['wholeSession']))
         {
-            $params['session_filter'] = 'false';
+            $params['wholeSession'] = 'no';
         }
 
         // Create params array for Suma server

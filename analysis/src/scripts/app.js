@@ -15,14 +15,14 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
           {id: 'weekends', title: 'Weekends Only'}
         ],
         sessionOptions: [
-          {id: 'false', title: 'No'},
-          {id: 'true', title: 'Yes'}
+          {id: 'no', title: 'No'},
+          {id: 'yes', title: 'Yes'}
         ]
       },
       formDefaults: {
-        count: 'countOptions',
+        classifyCounts: 'countOptions',
         daygroup: 'dayOptions',
-        session_filter: 'sessionOptions'
+        wholeSession: 'sessionOptions'
       },
       dataSource: 'getData',
       dataProcessor: 'processTimeSeriesData',
