@@ -96,8 +96,6 @@ angular.module('sumaAnalysis')
         daygroup: $scope.params.daygroup ? $scope.params.daygroup.id : null
       };
 
-      console.log('currentScope', currentScope)
-
       if (_.isEqual(currentUrl, currentScope)) {
         $scope.getData();
       } else {

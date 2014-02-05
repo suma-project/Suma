@@ -350,7 +350,7 @@ describe('Controller: ReportCtrl', function () {
     scope.submit();
 
     // Assertions
-    expect(getDataStub).to.be.calledOnce
+    expect(getDataStub).to.be.calledOnce;
 
     // Restore stubs
     getDataStub.restore();
