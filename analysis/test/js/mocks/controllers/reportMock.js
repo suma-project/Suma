@@ -19,9 +19,9 @@ angular.module('reportMock', [])
     ]
   },
   formDefaults: {
-    count: 'countOptions',
+    classifyCounts: 'countOptions',
     daygroup: 'dayOptions',
-    session_filter: 'sessionOptions'
+    wholeSession: 'sessionOptions'
   },
   dataSource: 'getData',
   dataProcessor: 'processTimeSeriesData',
@@ -44,9 +44,9 @@ angular.module('reportMock', [])
     ]
   },
   formDefaults: {
-    count: 'countOptions',
+    classifyCounts: 'countOptions',
     daygroup: 'dayOptions',
-    session_filter: 'sessionOptions'
+    wholeSession: 'sessionOptions'
   },
   dataSource: 'getData',
   dataProcessor: 'processTimeSeriesData',
@@ -66,9 +66,9 @@ angular.module('reportMock', [])
     {id: 'false', title: 'No'},
     {id: 'true', title: 'Yes'}
   ],
-  count : {id: 'count', title: 'Count Date'},
+  classifyCounts : {id: 'count', title: 'Count Date'},
   daygroup : {id: 'all', title: 'All'},
-  sessionFilter : {id: 'false', title: 'No'},
+  wholeSession : {id: 'false', title: 'No'},
   sDate : moment().subtract('months', 6).add('days', 1).format('YYYY-MM-DD'),
   eDate : moment().add('days', 1).format('YYYY-MM-DD')
 });

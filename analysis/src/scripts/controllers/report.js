@@ -2,23 +2,26 @@
 
 angular.module('sumaAnalysis')
   .controller('ReportCtrl', function ($scope, $rootScope, $http, $location, $anchorScroll, $timeout, initiatives, actsLocs, data, promiseTracker, uiStates, sumaConfig, $routeParams, $q) {
+
     // Initialize controller
     $scope.initialize = function () {
       var urlParams = $location.search();
 
-      // UI State
-      if (_.isEmpty(urlParams)) {
-        $scope.state = uiStates.setUIState('initial');
-      }
-
-      // Set defaults
+      // Set default scope values from config
       $scope.setDefaults();
 
-      // Fetch inits
-      $scope.getInitiatives(urlParams);
-
-      // Attach listener for routeUpdate
+      // Attach listener for URL changes
       $scope.$on('$routeUpdate', $scope.routeUpdate);
+
+      // Get initiatives
+      $scope.getInitiatives().then(function () {
+        if (_.isEmpty(urlParams)) {
+          $scope.state = uiStates.setUIState('initial');
+        } else {
+          $scope.setScope(urlParams);
+          $scope.getData();
+        }
+      });
     };
 
     // Set default form values
@@ -93,6 +96,8 @@ angular.module('sumaAnalysis')
         daygroup: $scope.params.daygroup ? $scope.params.daygroup.id : null
       };
 
+      console.log('currentScope', currentScope)
+
       if (_.isEqual(currentUrl, currentScope)) {
         $scope.getData();
       } else {
@@ -101,8 +106,9 @@ angular.module('sumaAnalysis')
     };
 
     // Get initiatives
-    $scope.getInitiatives = function (urlParams) {
-      var cfg;
+    $scope.getInitiatives = function () {
+      var cfg,
+          dfd = $q.defer();
 
       $scope.initTimeoutPromise = $q.defer();
 
@@ -113,16 +119,14 @@ angular.module('sumaAnalysis')
 
       $scope.loadInits = initiatives.get(cfg).then(function (data) {
         $scope.inits = data;
-
-        if (!_.isEmpty(urlParams)) {
-          $scope.setScope(urlParams);
-          $scope.getData();
-        }
+        dfd.resolve();
       }, $scope.error);
 
       // Setup promise tracker for spinner on initial load
       $scope.finder = promiseTracker('initTracker');
       $scope.finder.addPromise($scope.loadInits);
+
+      return dfd.promise;
     };
 
     // Get initiative metadata
@@ -187,11 +191,14 @@ angular.module('sumaAnalysis')
       if (_.isEmpty(urlParams)) { // True when navigating back to initial
         $scope.state = uiStates.setUIState('initial');
         $scope.setDefaults();
-      } else if ($scope.inits){ // Typical navigation between reports (most common case)
+      } else if ($scope.params.init){ // Typical navigation between reports (most common case)
         $scope.setScope(urlParams);
         $scope.getData();
       } else { // Navigation from initial to completed report
-        $scope.getInitiatives(urlParams);
+        $scope.getInitiatives().then(function () {
+          $scope.setScope(urlParams);
+          $scope.getData();
+        });
       }
     };
 
