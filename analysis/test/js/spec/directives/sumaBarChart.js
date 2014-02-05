@@ -19,7 +19,7 @@ describe('Directive: sumaBarChart', function () {
     linkScope = element.isolateScope();
   }));
 
-  it('should respond to data change and call render', inject(function ($compile) {
+  it('should respond to data change and call render', function () {
     var renderStub;
 
     // Stub render method
@@ -40,5 +40,5 @@ describe('Directive: sumaBarChart', function () {
 
     // Restore stubs
     renderStub.restore();
-  }));
+  });
 });

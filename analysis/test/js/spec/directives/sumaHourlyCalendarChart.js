@@ -20,7 +20,7 @@ describe('Directive: sumaHourlyCalendarChart', function () {
       linkScope = element.isolateScope();
     }));
 
-    it('should respond to data change and call render', inject(function ($compile) {
+    it('should respond to data change and call render', function () {
       var renderStub,
           statsStub;
 
@@ -48,5 +48,5 @@ describe('Directive: sumaHourlyCalendarChart', function () {
       // Restore stubs
       renderStub.restore();
       statsStub.restore();
-    }));
+    });
   });

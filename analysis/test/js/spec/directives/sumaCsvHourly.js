@@ -12,8 +12,8 @@ describe('Directive: sumaCsvHourly', function () {
 
   var element,
       scope,
-      MockLink,
-      Ctrlscope;
+      Ctrlscope,
+      MockLink;
 
   beforeEach(inject(function ($rootScope, $compile, mockData, mockLink) {
     element = angular.element('<span suma-csv-hourly data="data"></span>');

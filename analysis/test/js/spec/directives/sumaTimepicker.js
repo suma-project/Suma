@@ -10,7 +10,7 @@ describe('Directive: sumaTimepicker', function () {
   var element,
     linkScope,
     scope,
-    stub;
+    stub; // stub global required for Timepicker
 
   beforeEach(inject(function ($rootScope, $compile) {
     stub = sinon.stub($.fn, 'datetimepicker');
@@ -34,7 +34,7 @@ describe('Directive: sumaTimepicker', function () {
     stub.restore();
   });
 
-  it('should attach timepicker listener to element', inject(function ($compile) {
+  it('should attach timepicker listener to element', function () {
     expect($.fn.datetimepicker).to.be.calledOnce;
     expect($.fn.datetimepicker).to.be.calledWith({
       defaultDate: moment('00:00', 'HH:mm'),
@@ -46,12 +46,12 @@ describe('Directive: sumaTimepicker', function () {
         down: 'fa fa-arrow-down'
       }
     });
-  }));
+  });
 
-  it('should update scope.model on change', inject(function ($compile) {
+  it('should update scope.model on change', function () {
     element.find('input').val('updated value');
     element.find('.input-group').trigger('change.dp');
 
     expect(linkScope.model).to.equal('updated value');
-  }));
+  });
 });

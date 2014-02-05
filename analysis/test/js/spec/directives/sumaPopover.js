@@ -15,14 +15,14 @@ describe('Directive: sumaPopover', function () {
 
     // instantiate directive
     element = angular.element(
-      '<label for="initiatives" class="suma-popover" data-title="Select Initiative" data-content="Select an initiative to reveal additional filters." suma-popover>Select an Initiative</label>'
+      '<label suma-popover>Select an Initiative</label>'
     );
     scope = $rootScope.$new();
     $compile(element)(scope);
     scope.$digest();
   }));
 
-  it('should attach popover listener to element', inject(function ($compile) {
+  it('should attach popover listener to element', function () {
     expect($.fn.popover).to.be.calledOnce;
     expect($.fn.popover).to.be.calledWith({
       trigger: 'hover',
@@ -30,5 +30,5 @@ describe('Directive: sumaPopover', function () {
       placement: 'top'
     });
     stub.restore();
-  }));
+  });
 });

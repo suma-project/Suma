@@ -19,7 +19,7 @@ describe('Directive: sumaTimeSeriesChart', function () {
       linkScope = element.isolateScope();
     }));
 
-    it('should respond to data change and call render', inject(function ($compile) {
+    it('should respond to data change and call render', function () {
       var renderStub;
 
       // Sub render method
@@ -40,5 +40,5 @@ describe('Directive: sumaTimeSeriesChart', function () {
 
       // Restore stubs
       renderStub.restore();
-    }));
+    });
   });

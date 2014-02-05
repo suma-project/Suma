@@ -32,18 +32,19 @@ describe('Service: Processhourlydata', function () {
   }));
 
   it('should build object of data objects', function (done) {
-    Processhourlydata.get(MockResponse, MockActivities, MockLocations).then(function (data) {
-      expect(MockHourlyProcessedData).to.deep.equal(data);
-      done();
-    });
+    Processhourlydata.get(MockResponse, MockActivities, MockLocations)
+      .then(function (data) {
+        expect(MockHourlyProcessedData).to.deep.equal(data);
+        done();
+      });
 
     $httpBackend.flush();
   });
 
   it('should reject with a statusText error if no data', function (done) {
-    var locs = [];
-    var acts = [];
-    var response = [];
+    var locs = [],
+        acts = [],
+        response = [];
 
     Processhourlydata.get(response, acts, locs).then(function (data) {
 

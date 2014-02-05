@@ -10,7 +10,7 @@ describe('Directive: sumaDatepicker', function () {
   var element,
     linkScope,
     scope,
-    stub;
+    stub; // Stub global required for datepicker
 
   beforeEach(inject(function ($rootScope, $compile) {
     stub = sinon.stub($.fn, 'datetimepicker');
@@ -34,19 +34,19 @@ describe('Directive: sumaDatepicker', function () {
     stub.restore();
   });
 
-  it('should initialize a datetimepicker', inject(function ($compile) {
+  it('should initialize a datetimepicker', function () {
     expect($.fn.datetimepicker).to.be.calledOnce;
     expect($.fn.datetimepicker).to.be.calledWith({
       defaultDate: scope.model,
       pickDate: true,
       pickTime: false
     });
-  }));
+  });
 
-  it('should update scope.model on change', inject(function ($compile) {
+  it('should update scope.model on change', function () {
     element.find('input').val('updated value');
     element.find('.input-group').trigger('change.dp');
 
     expect(linkScope.model).to.equal('updated value');
-  }));
+  });
 });

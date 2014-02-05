@@ -20,12 +20,10 @@ describe('Directive: sumaChartDownload', function () {
     );
 
     scope = $rootScope.$new();
-
     $compile(element)(scope);
     scope.$digest();
 
     Ctrlscope = element.isolateScope();
-
     Ctrlscope.download('#chart-1');
 
     // Assertions
@@ -38,18 +36,15 @@ describe('Directive: sumaChartDownload', function () {
       scope;
 
     $('body').append(mockChart2);
-
     element = angular.element(
       '<span suma-chart-download chart="#chart-2" title="suma_timeseries_chart.png" filter=".sub-graph"></span>'
     );
 
     scope = $rootScope.$new();
-
     $compile(element)(scope);
     scope.$digest();
 
     Ctrlscope = element.isolateScope();
-
     Ctrlscope.download('#chart-2', '.sub-graph');
 
     // Assertions

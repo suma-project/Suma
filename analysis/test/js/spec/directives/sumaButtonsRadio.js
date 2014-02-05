@@ -32,12 +32,12 @@ describe('Directive: sumaButtonsRadio', function () {
     scope.$digest();
   }));
 
-  it('should create a button group', inject(function ($compile, $rootScope) {
+  it('should create a button group', function () {
     var buttons = element.find('button');
     expect(buttons.length).to.equal(2);
-  }));
+  });
 
-  it('should change active state when clicked', inject(function ($compile, $rootScope) {
+  it('should change active state when clicked', function () {
     var buttons = element.find('button');
     expect(buttons.eq(0)).not.to.have.class('active');
     expect(buttons.eq(1)).to.have.class('active');
@@ -59,5 +59,5 @@ describe('Directive: sumaButtonsRadio', function () {
 
     expect(buttons.eq(0)).not.to.have.class('active');
     expect(buttons.eq(1)).to.have.class('active');
-  }));
+  });
 });

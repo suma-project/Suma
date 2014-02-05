@@ -38,10 +38,11 @@ describe('Service: Processtimeseriesdata', function () {
   }));
 
   it('should build an object of data objects', function (done) {
-    Processtimeseriesdata.get(MockResponse, MockActivities, MockLocations).then(function (data) {
-      expect(MTSPD1).to.deep.equal(data);
-      done();
-    });
+    Processtimeseriesdata.get(MockResponse, MockActivities, MockLocations)
+      .then(function (data) {
+        expect(MTSPD1).to.deep.equal(data);
+        done();
+      });
 
     $httpBackend.flush();
   });

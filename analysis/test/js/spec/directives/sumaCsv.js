@@ -17,10 +17,10 @@ describe('Directive: sumaCsv', function () {
 
   beforeEach(inject(function ($rootScope, $compile, mockData, mockLink) {
     element = angular.element('<div suma-csv data="data"></div>');
+    MockLink = mockLink;
 
     scope = $rootScope.$new();
     scope.data = mockData;
-    MockLink = mockLink;
 
     element = $compile(element)(scope);
     scope.$digest();
@@ -28,8 +28,8 @@ describe('Directive: sumaCsv', function () {
     Ctrlscope = element.isolateScope();
   }));
 
-  it('should attach a data url to the element', inject(function ($compile) {
+  it('should attach a data url to the element', function () {
     Ctrlscope.download(scope.data);
     expect(Ctrlscope.href).to.equal(MockLink);
-  }));
+  });
 });

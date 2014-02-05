@@ -26,7 +26,8 @@ describe('Service: Initiatives', function () {
   }));
 
   it('should make an AJAX call', function (done) {
-    $httpBackend.whenGET('lib/php/initiatives.php').respond([{}, {}]);
+    $httpBackend.whenGET('lib/php/initiatives.php')
+      .respond([{}, {}]);
 
     Initiatives.get(cfg).then(function (result) {
       expect(result.length).to.equal(2);
@@ -37,7 +38,8 @@ describe('Service: Initiatives', function () {
   });
 
   it('should respond with error message on failure', function (done) {
-    $httpBackend.whenGET('lib/php/initiatives.php').respond(500, {message: 'Error'});
+    $httpBackend.whenGET('lib/php/initiatives.php')
+      .respond(500, {message: 'Error'});
 
     Initiatives.get(cfg).then(function (result) {
 
@@ -55,7 +57,8 @@ describe('Service: Initiatives', function () {
 
   it('should return error with promiseTimeout true on aborted http request', function (done) {
     // simulate aborted request
-    $httpBackend.whenGET('lib/php/initiatives.php').respond(0, {message: 'Error'});
+    $httpBackend.whenGET('lib/php/initiatives.php')
+      .respond(0, {message: 'Error'});
 
     Initiatives.get(cfg).then(function (result) {
 
@@ -73,7 +76,8 @@ describe('Service: Initiatives', function () {
   });
 
   it('should return error without promiseTimeout on http timeout', function (done) {
-    $httpBackend.whenGET('lib/php/initiatives.php').respond([{}, {}]);
+    $httpBackend.whenGET('lib/php/initiatives.php')
+      .respond([{}, {}]);
 
     Initiatives.get(cfg).then(function (result) {
 

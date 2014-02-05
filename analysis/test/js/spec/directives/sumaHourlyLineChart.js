@@ -20,7 +20,7 @@ describe('Directive: sumaHourlyLineChart', function () {
       linkScope = element.isolateScope();
     }));
 
-    it('should respond to data change and call render', inject(function ($compile) {
+    it('should respond to data change and call render', function () {
       var renderStub;
 
       // Stub render method
@@ -41,5 +41,5 @@ describe('Directive: sumaHourlyLineChart', function () {
 
       // Restore stubs
       renderStub.restore();
-    }));
+    });
   });
