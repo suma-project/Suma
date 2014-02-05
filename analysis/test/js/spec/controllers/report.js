@@ -404,6 +404,36 @@ describe('Controller: ReportCtrl', function () {
     locationSearchStub.restore();
   });
 
+  it(':getData should call data.getData', function() {
+    var dataStub,
+        initiativesStub;
+
+    // Stub initiatives service
+    initiativesStub = sinon.stub(Initiatives, 'get');
+    initiativesStub.returns(okResponse());
+
+    // Stub data service
+    dataStub = sinon.stub(Data, 'getData');
+    dataStub.returns(dataResponse());
+
+    // Initialize controller
+    ReportCtrl = Controller('ReportCtrl', {
+      $scope: scope,
+      sumaConfig: SumaConfig
+    });
+
+    // Call getData
+    scope.getData();
+    scope.$digest();
+
+    // Assertions
+    expect(Data.getData).to.be.calledOnce;
+
+    // Restore stubs
+    initiativesStub.restore();
+    dataStub.restore();
+  });
+
   it(':success should set scope.state and scope.data', function () {
     var initiativesStub,
         statesStub,
@@ -476,7 +506,7 @@ describe('Controller: ReportCtrl', function () {
     mockData = {
       message: 'Error',
       code: 500
-    }
+    };
 
     // Stub state service
     statesStub = sinon.stub(UIStates, 'setUIState');
@@ -508,7 +538,7 @@ describe('Controller: ReportCtrl', function () {
       message: 'Error',
       code: 500,
       promiseTimeout: true
-    }
+    };
 
     // Stub state service
     statesStub = sinon.stub(UIStates, 'setUIState');
