@@ -7,8 +7,7 @@ describe('Directive: sumaHourlyLineChart', function () {
 
     var element,
         scope,
-        linkScope,
-        renderStub;
+        linkScope;
 
     beforeEach(inject(function ($rootScope, $compile) {
       element = angular.element('<div suma-hourly-line-chart id="chart-1" data="data.data" ng-show="success"></div>');
@@ -22,6 +21,9 @@ describe('Directive: sumaHourlyLineChart', function () {
     }));
 
     it('should respond to data change and call render', inject(function ($compile) {
+      var renderStub;
+
+      // Stub render method
       renderStub = sinon.stub(linkScope, 'render');
       renderStub.returns(true);
 
@@ -34,8 +36,10 @@ describe('Directive: sumaHourlyLineChart', function () {
         scope.data.data = [5, 6, 7, 8];
       });
 
+      // Assertions
       expect(renderStub).to.be.calledTwice();
 
+      // Restore stubs
       renderStub.restore();
     }));
   });

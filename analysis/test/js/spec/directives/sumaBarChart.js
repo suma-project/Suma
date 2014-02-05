@@ -7,8 +7,7 @@ describe('Directive: sumaBarChart', function () {
 
   var element,
       scope,
-      linkScope,
-      stub;
+      linkScope;
 
   beforeEach(inject(function ($rootScope, $compile) {
     element = angular.element('<div suma-bar-chart id="chart-2" data="data.barChartData"></div>'),
@@ -21,8 +20,11 @@ describe('Directive: sumaBarChart', function () {
   }));
 
   it('should respond to data change and call render', inject(function ($compile) {
-    stub = sinon.stub(linkScope, 'render');
-    stub.returns(true);
+    var renderStub;
+
+    // Stub render method
+    renderStub = sinon.stub(linkScope, 'render');
+    renderStub.returns(true);
 
     scope.$apply(function() {
       scope.data = {};
@@ -33,7 +35,10 @@ describe('Directive: sumaBarChart', function () {
       scope.data.barChartData = [5, 6, 7, 8];
     });
 
-    expect(stub).to.be.calledTwice();
-    stub.restore();
+    // Assertions
+    expect(renderStub).to.be.calledTwice();
+
+    // Restore stubs
+    renderStub.restore();
   }));
 });

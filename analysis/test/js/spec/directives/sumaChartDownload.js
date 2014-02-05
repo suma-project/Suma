@@ -28,6 +28,7 @@ describe('Directive: sumaChartDownload', function () {
 
     Ctrlscope.download('#chart-1');
 
+    // Assertions
     expect(Ctrlscope.href.split(';')[0]).to.equal('data:image/png');
   }));
 
@@ -51,6 +52,7 @@ describe('Directive: sumaChartDownload', function () {
 
     Ctrlscope.download('#chart-2', '.sub-graph');
 
+    // Assertions
     expect(Ctrlscope.href.split(';')[0]).to.equal('data:image/png');
   }));
 });

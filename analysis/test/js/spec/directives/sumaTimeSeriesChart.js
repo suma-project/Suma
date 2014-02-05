@@ -6,8 +6,7 @@ describe('Directive: sumaTimeSeriesChart', function () {
 
     var element,
         scope,
-        linkScope,
-        renderStub;
+        linkScope;
 
     beforeEach(inject(function ($rootScope, $compile) {
       element = angular.element('<div suma-time-series-chart id="chart-1" data="data.timeSeriesData" ng-show="success"></div>');
@@ -21,6 +20,9 @@ describe('Directive: sumaTimeSeriesChart', function () {
     }));
 
     it('should respond to data change and call render', inject(function ($compile) {
+      var renderStub;
+
+      // Sub render method
       renderStub = sinon.stub(linkScope, 'render');
       renderStub.returns(true);
 
@@ -33,8 +35,10 @@ describe('Directive: sumaTimeSeriesChart', function () {
         scope.data.timeSeriesData = [5, 6, 7, 8];
       });
 
+      // Assertions
       expect(renderStub).to.be.calledTwice();
 
+      // Restore stubs
       renderStub.restore();
     }));
   });
