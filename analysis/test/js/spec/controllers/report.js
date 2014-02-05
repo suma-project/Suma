@@ -404,4 +404,131 @@ describe('Controller: ReportCtrl', function () {
     locationSearchStub.restore();
   });
 
+  it(':success should set scope.state and scope.data', function () {
+    var initiativesStub,
+        statesStub,
+        dataMock;
+
+    dataMock = {
+      actsLocsData: {
+        items: [{title: 'title'}]
+      },
+      barChartData: {
+        title: 'title'
+      }
+    };
+
+    // Stub initiatives service
+    initiativesStub = sinon.stub(Initiatives, 'get');
+    initiativesStub.returns(okResponse());
+
+    // Stub state service
+    statesStub = sinon.stub(UIStates, 'setUIState');
+    statesStub.returns(true);
+
+    // Instantiate controller
+    ReportCtrl = Controller('ReportCtrl', {
+      $scope: scope,
+      sumaConfig: SumaConfig
+    });
+
+    // Call success method
+    scope.success(dataMock);
+    scope.$digest();
+
+    // Assertions
+    expect(scope.state).to.equal(true);
+    expect(scope.data).to.equal(dataMock);
+
+    // Restore stubs
+    initiativesStub.restore();
+    statesStub.restore();
+  });
+
+  it(':success should set scope.state and scope.data', function () {
+    var statesStub;
+
+    // Stub state service
+    statesStub = sinon.stub(UIStates, 'setUIState');
+    statesStub.returns(true);
+
+    // Instantiate controller
+    ReportCtrl = Controller('ReportCtrl', {
+      $scope: scope,
+      sumaConfig: SumaConfig2
+    });
+
+    // Call success method
+    scope.success('test data');
+
+    // Assertions
+    expect(scope.state).to.equal(true);
+    expect(scope.data).to.equal('test data');
+
+    // Restore stubs
+    statesStub.restore();
+  });
+
+  it(':error should set state, errorMessage and errorCode', function () {
+    var mockData,
+        statesStub;
+
+    mockData = {
+      message: 'Error',
+      code: 500
+    }
+
+    // Stub state service
+    statesStub = sinon.stub(UIStates, 'setUIState');
+    statesStub.returns(true);
+
+    // Instantiate controller
+    ReportCtrl = Controller('ReportCtrl', {
+      $scope: scope,
+      sumaConfig: SumaConfig
+    });
+
+    // Call error method
+    scope.error(mockData);
+
+    // Assertions
+    expect(scope.state).to.equal(true);
+    expect(scope.errorMessage).to.equal('Error');
+    expect(scope.errorCode).to.equal(500);
+
+    // Restore stubs
+    statesStub.restore();
+  });
+
+  it(':error should fail silently if data.promiseTimeout is false', function () {
+    var mockData,
+        statesStub;
+
+    mockData = {
+      message: 'Error',
+      code: 500,
+      promiseTimeout: true
+    }
+
+    // Stub state service
+    statesStub = sinon.stub(UIStates, 'setUIState');
+    statesStub.returns(true);
+
+    // Instantiate controller
+    ReportCtrl = Controller('ReportCtrl', {
+      $scope: scope,
+      sumaConfig: SumaConfig
+    });
+
+    // Call error method
+    scope.error(mockData);
+
+    // Assertions
+    expect(scope.state).to.equal(undefined);
+    expect(scope.errorMessage).to.equal(undefined);
+    expect(scope.errorCode).to.equal(undefined);
+
+    // Restore stubs
+    statesStub.restore();
+  });
 });
