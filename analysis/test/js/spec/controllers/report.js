@@ -151,10 +151,10 @@ describe('Controller: ReportCtrl', function () {
     expect(scope.inits).to.deep.equal({success: true});
   });
 
-  it(':getInitiatives should call setParams and getData if urlParams exist', function () {
+  it(':getInitiatives should call setScope and getData if urlParams exist', function () {
     var locationSearchStub,
         getDataStub,
-        setParamsStub;
+        setScopeStub;
 
     locationSearchStub = sinon.stub(location, 'search');
     locationSearchStub.returns({id: 4});
@@ -166,19 +166,19 @@ describe('Controller: ReportCtrl', function () {
       sumaConfig: SumaConfig
     });
 
-    setParamsStub = sinon.stub(scope, 'setParams');
-    setParamsStub.returns(true);
+    setScopeStub = sinon.stub(scope, 'setScope');
+    setScopeStub.returns(true);
 
     getDataStub = sinon.stub(scope, 'getData');
     getDataStub.returns(true);
 
     scope.$digest();
     expect(scope.inits).to.deep.equal({success: true});
-    expect(setParamsStub).to.be.calledOnce;
+    expect(setScopeStub).to.be.calledOnce;
     expect(getDataStub).to.be.calledOnce;
 
     locationSearchStub.restore();
-    setParamsStub.restore();
+    setScopeStub.restore();
     getDataStub.restore();
   });
 
@@ -374,7 +374,7 @@ describe('Controller: ReportCtrl', function () {
   //   locationSearchStub.restore();
   // });
 
-  it(':setParams should set scope.params based on URL', function () {
+  it(':setScope should set scope.params based on URL', function () {
     initiativesStub.returns(okResponse());
 
     ReportCtrl = Controller('ReportCtrl', {
@@ -400,7 +400,7 @@ describe('Controller: ReportCtrl', function () {
       daygroup: 'all'
     };
 
-    scope.setParams(params);
+    scope.setScope(params);
 
     expect(scope.params.init.id).to.deep.equal(8);
     expect(scope.params.sdate).to.equal('2013-06-31');
@@ -426,7 +426,7 @@ describe('Controller: ReportCtrl', function () {
   //   });
 
   //   var setDefaultsStub = sinon.stub(scope, 'setDefaults');
-  //   var setParamsStub = sinon.stub(scope, 'setParams');
+  //   var setScopeStub = sinon.stub(scope, 'setScope');
   //   var submitStub = sinon.stub(scope, 'submit');
   //   var getInitiativesStub = sinon.stub(scope, 'getInitiatives');
 
@@ -441,7 +441,7 @@ describe('Controller: ReportCtrl', function () {
 
   //   locationSearchStub.restore();
   //   setDefaultsStub.restore();
-  //   setParamsStub.restore();
+  //   setScopeStub.restore();
   //   submitStub.restore();
   //   getInitiativesStub.restore();
   // });

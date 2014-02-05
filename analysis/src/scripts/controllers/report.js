@@ -40,7 +40,7 @@ angular.module('sumaAnalysis')
     };
 
     // Set scope.params based on urlParams
-    $scope.setParams = function (p) {
+    $scope.setScope = function (p) {
       $scope.params.init = _.find($scope.inits, function (e, i) {
         return String(e.id) === String(p.id);
       });
@@ -115,7 +115,7 @@ angular.module('sumaAnalysis')
         $scope.inits = data;
 
         if (!_.isEmpty(urlParams)) {
-          $scope.setParams(urlParams);
+          $scope.setScope(urlParams);
           $scope.getData();
         }
       }, $scope.error);
@@ -188,7 +188,7 @@ angular.module('sumaAnalysis')
         $scope.state = uiStates.setUIState('initial');
         $scope.setDefaults();
       } else if ($scope.inits){ // Typical navigation between reports (most common case)
-        $scope.setParams(urlParams);
+        $scope.setScope(urlParams);
         $scope.getData();
       } else { // Navigation from initial to completed report
         $scope.getInitiatives(urlParams);
