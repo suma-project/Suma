@@ -464,7 +464,7 @@ class GUMP
                     $resp[] = "The <span class=\"$field_class\">$field</span> field needs to be a numeric value, equal to, or lower than $param";
                     break;
                 case 'validate_multi_exact_len':
-                    $resp[] = "The <span class=\"$field_class\">$field</span> field needs to be the exact length of one of these values: ".implode(', ', $param);
+                    $resp[] = "The <span class=\"$field_class\">$field</span> field needs to be the exact length of one of these values (hyphens or colons are not counted): ".implode(', ', $param);
                     break;
             }
         }

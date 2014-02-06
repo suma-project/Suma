@@ -286,10 +286,10 @@ class Data
         // Define filters
         $filters = array(
             'id'         => 'trim',
-            'sdate'      => 'trim|sanitize_numbers|rmhyphen',
-            'edate'      => 'trim|sanitize_numbers|rmhyphen',
-            'stime'      => 'trim|sanitize_numbers',
-            'etime'      => 'trim|sanitize_numbers',
+            'sdate'      => 'trim|rmpunctuation|rmhyphen',
+            'edate'      => 'trim|rmpunctuation|rmhyphen',
+            'stime'      => 'trim|rmpunctuation|pad_time',
+            'etime'      => 'trim|rmpunctuation|pad_time',
             'classifyCounts'    => 'trim',
             'wholeSession' => 'trim',
             'daygroup'   => 'trim',
@@ -363,7 +363,7 @@ class Data
         }
         else
         {
-            $message = 'Query Parameter Input Error. Gump rejected parameters.';
+            $message = 'Query parameter input error.';
 
             foreach ($validator->get_readable_errors() as $error) {
                 $message = $message . " " . strip_tags($error);
