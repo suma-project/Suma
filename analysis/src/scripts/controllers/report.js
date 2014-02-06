@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('sumaAnalysis')
-  .controller('ReportCtrl', function ($scope, $rootScope, $http, $location, $anchorScroll, $timeout, initiatives, actsLocs, data, promiseTracker, uiStates, sumaConfig, $routeParams, $q) {
+  .controller('ReportCtrl', function ($scope, $rootScope, $http, $location, $anchorScroll, $timeout, initiatives, actsLocs, data, promiseTracker, uiStates, sumaConfig, $routeParams, $q, validation) {
 
     // Initialize controller
     $scope.initialize = function () {
@@ -18,8 +18,7 @@ angular.module('sumaAnalysis')
         if (_.isEmpty(urlParams)) {
           $scope.state = uiStates.setUIState('initial');
         } else {
-          $scope.setScope(urlParams);
-          $scope.getData();
+          $scope.setScope(urlParams).then($scope.getData, $scope.error);
         }
       });
     };
@@ -43,37 +42,109 @@ angular.module('sumaAnalysis')
     };
 
     // Set scope.params based on urlParams
-    $scope.setScope = function (p) {
+    $scope.setScope = function (urlParams) {
+      var dfd = $q.defer(),
+          errors = [];
+
       $scope.params.init = _.find($scope.inits, function (e, i) {
-        return String(e.id) === String(p.id);
+        return String(e.id) === String(urlParams.id);
       });
 
-      $scope.params.classifyCounts = _.find($scope.countOptions, function (e, i) {
-        return String(e.id) === String(p.classifyCounts);
-      });
+      if (!$scope.params.init) {
+        dfd.reject({message: 'Initiative ID Not Found.', code: 500});
+      } else {
+        $scope.params.classifyCounts = _.find($scope.countOptions, function (e, i) {
+          return String(e.id) === String(urlParams.classifyCounts);
+        });
 
-      $scope.params.wholeSession = _.find($scope.sessionOptions, function (e, i) {
-        return String(e.id) === String(p.wholeSession);
-      });
+        if (!$scope.params.classifyCounts) {
+          errors.push('Invalid value for classifyCounts. Valid values are "count", "start", or "end".');
+        }
 
-      $scope.params.daygroup = _.find($scope.dayOptions, function (e, i) {
-        return String(e.id) === String(p.daygroup);
-      });
+        $scope.params.wholeSession = _.find($scope.sessionOptions, function (e, i) {
+          return String(e.id) === String(urlParams.wholeSession);
+        });
 
-      $scope.getMetadata();
+        if (!$scope.params.wholeSession) {
+          errors.push('Invalid value for wholeSession. Valid values are "yes" or "no".');
+        }
 
-      $scope.params.activity = _.find($scope.activities, function (e, i) {
-        return String(e.id) === String(p.activity);
-      });
+        $scope.params.daygroup = _.find($scope.dayOptions, function (e, i) {
+          return String(e.id) === String(urlParams.daygroup);
+        });
 
-      $scope.params.location = _.find($scope.locations, function (e, i) {
-        return String(e.id) === String(p.location);
-      });
+        if (!$scope.params.daygroup) {
+          errors.push('Invalid value for daygroup. Valid values are "all", "weekends", or "weekdays".');
+        }
 
-      $scope.params.sdate = p.sdate;
-      $scope.params.edate = p.edate;
-      $scope.params.stime = p.stime ? p.stime : '';
-      $scope.params.etime = p.etime ? p.etime : '';
+        $scope.getMetadata();
+
+        $scope.params.activity = _.find($scope.activities, function (e, i) {
+          var type,
+              id;
+
+          if (urlParams.activity === 'all') {
+            return String(e.id) === String(urlParams.activity);
+          } else {
+            type = urlParams.activity.split('-')[0];
+            id = urlParams.activity.split('-')[1];
+            return String(e.id) === String(id) && String(e.type) === String(type);
+          }
+        });
+
+        if (!$scope.params.activity) {
+          errors.push('Invalid value for activity.');
+        }
+
+        $scope.params.location = _.find($scope.locations, function (e, i) {
+          return String(e.id) === String(urlParams.location);
+        });
+
+        if (!$scope.params.location) {
+          errors.push('Invalid value for location.');
+        }
+
+        // Validate sdate
+        if (validation.validateDateTime(urlParams.sdate, 8)) {
+          $scope.params.sdate = urlParams.sdate;
+        } else {
+          errors.push('Invalid value for sdate. Should be numeric and either 0 or 8 characters in length, not counting punctuation.');
+        }
+
+        // Validate edate
+        if (validation.validateDateTime(urlParams.edate, 8)) {
+          $scope.params.edate = urlParams.edate;
+        } else {
+          errors.push('Invalid value for edate. Should be numeric and either 0 or 8 characters in length, not counting punctuation.');
+        }
+
+        // Validate stime
+        if (validation.validateDateTime(urlParams.stime, 4, true)) {
+          $scope.params.stime = urlParams.stime;
+        } else {
+          errors.push('Invalid value for stime. Should be numeric and either 0 or 4 characters in length, not counting punctuation.');
+        }
+
+        // Validate etime
+        if (validation.validateDateTime(urlParams.etime, 4, true)) {
+          $scope.params.etime = urlParams.etime;
+        } else {
+          errors.push('Invalid value for etime. Should be numeric and either 0 or 4 characters in length, not counting punctuation.');
+        }
+
+        if (errors.length > 0) {
+          var msg = 'Query parameter input error. ';
+          _.each(errors, function (e) {
+            msg = msg + e + ' ';
+          });
+
+          dfd.reject({message: msg, code: 500});
+        }
+
+        dfd.resolve();
+      }
+
+      return dfd.promise;
     };
 
     // Attach params to URL
@@ -91,7 +162,7 @@ angular.module('sumaAnalysis')
         etime: $scope.params.etime || '',
         classifyCounts: $scope.params.classifyCounts ? $scope.params.classifyCounts.id : null,
         wholeSession: $scope.params.wholeSession ? $scope.params.wholeSession.id : null,
-        activity: $scope.params.activity ? $scope.params.activity.id : null,
+        activity: $scope.params.activity ? $scope.params.activity.type ? $scope.params.activity.type + '-' + $scope.params.activity.id : $scope.params.activity.id : null,
         location: $scope.params.location ? $scope.params.location.id : null,
         daygroup: $scope.params.daygroup ? $scope.params.daygroup.id : null
       };
@@ -190,12 +261,10 @@ angular.module('sumaAnalysis')
         $scope.state = uiStates.setUIState('initial');
         $scope.setDefaults();
       } else if ($scope.params.init){ // Typical navigation between reports (most common case)
-        $scope.setScope(urlParams);
-        $scope.getData();
+        $scope.setScope(urlParams).then($scope.getData, $scope.error);
       } else { // Navigation from initial to completed report
         $scope.getInitiatives().then(function () {
-          $scope.setScope(urlParams);
-          $scope.getData();
+          $scope.setScope(urlParams).then($scope.getData, $scope.error);
         });
       }
     };
