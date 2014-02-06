@@ -16,6 +16,16 @@ class SumaGump extends GUMP
         return $value = str_replace("-", "", $value);
     }
 
+    // Add leading zero to 3 digit string
+    public function filter_pad_time($value)
+    {
+      if (strlen($value) === 3) {
+        return '0' . $value;
+      } else {
+        return $value;
+      }
+    }
+
     // Validate multiple exact lengths
     public function validate_multi_exact_len($field, $input, $param = NULL)
     {
