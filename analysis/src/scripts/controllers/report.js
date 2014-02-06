@@ -88,6 +88,7 @@ angular.module('sumaAnalysis')
           } else {
             type = urlParams.activity.split('-')[0];
             id = urlParams.activity.split('-')[1];
+
             return String(e.id) === String(id) && String(e.type) === String(type);
           }
         });

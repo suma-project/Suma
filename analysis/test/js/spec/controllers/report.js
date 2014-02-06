@@ -677,6 +677,90 @@ describe('Controller: ReportCtrl', function () {
     getMetadataStub.restore();
   });
 
+  it(':setScope should setScope if parameters are valid (activity with type)', function (done) {
+    var expectedScope,
+        initiativesStub,
+        getMetadataStub,
+        urlParams;
+
+    // Stub initiatives
+    initiativesStub = sinon.stub(Initiatives, 'get');
+    initiativesStub.returns(okResponse());
+
+
+    // Instantiate controller
+    ReportCtrl = Controller('ReportCtrl', {
+      $scope: scope,
+      sumaConfig: SumaConfig
+    });
+
+    // Stub getMetadata
+    getMetadataStub = sinon.stub(scope, 'getMetadata');
+
+    // Set scope values
+    scope.inits = [{id: 4}, {id: 5}];
+    scope.countOptions = [
+      {id: 'count', title: 'Count Date'},
+      {id: 'start', title: 'Session Start'},
+      {id: 'end', title: 'Session End'}
+    ];
+    scope.dayOptions = [
+      {id: 'all', title: 'All'},
+      {id: 'weekdays', title: 'Weekdays Only'},
+      {id: 'weekends', title: 'Weekends Only'}
+    ];
+    scope.sessionOptions = [
+      {id: 'no', title: 'No'},
+      {id: 'yes', title: 'Yes'}
+    ];
+
+    scope.activities =  [{id: 'all'}, {id: '47', type: 'activity'}];
+    scope.locations = [{id: 'all'}];
+
+
+    urlParams = {
+      id: 4,
+      classifyCounts: 'count',
+      daygroup: 'all',
+      wholeSession: 'no',
+      sdate: '20131111',
+      edate: '20140101',
+      stime: '0400',
+      etime: '1600',
+      activity: 'activity-47',
+      location: 'all'
+    };
+
+
+    expectedScope = {
+      init: {id: 4},
+      classifyCounts: scope.countOptions[0],
+      daygroup: scope.dayOptions[0],
+      wholeSession: scope.sessionOptions[0],
+      sdate: '20131111',
+      edate:'20140101',
+      stime:'0400',
+      etime:'1600',
+      activity: scope.activities[1],
+      location: scope.locations[0]
+    };
+
+    // Call setScope method
+    scope.setScope(urlParams).then(function (response) {
+      expect(response).to.equal(undefined);
+      expect(expectedScope).to.deep.equal(scope.params);
+      done();
+    }, function (response) {
+    });
+
+    scope.$digest();
+
+
+    // Restore stubs
+    initiativesStub.restore();
+    getMetadataStub.restore();
+  });
+
   it(':setScope should build errorMessage if parameters are invalid', function (done) {
     var expectedScope,
         initiativesStub,
