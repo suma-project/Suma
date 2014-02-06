@@ -358,6 +358,58 @@ describe('Controller: ReportCtrl', function () {
     locationSearchStub.restore();
   });
 
+  it(':submit should call getData if currentScope equals currentUrl (activity with type)', function () {
+    var getDataStub,
+        locationSearchStub;
+
+    // Stub location.search
+    locationSearchStub = sinon.stub(location, 'search');
+    locationSearchStub.returns({
+      id: '4',
+      sdate: '20140101',
+      edate: '20140104',
+      stime: '',
+      etime: '',
+      classifyCounts: null,
+      wholeSession: null,
+      activity: 'activity-47',
+      location: null,
+      daygroup: null
+    });
+
+    // Instantiate controller
+    ReportCtrl = Controller('ReportCtrl', {
+      $scope: scope,
+      sumaConfig: SumaConfig
+    });
+
+    // Stub data
+    getDataStub = sinon.stub(scope, 'getData');
+
+    // Populate Scope
+    scope.params = {};
+    scope.params.init = {id: '4'};
+    scope.params.sdate = '20140101';
+    scope.params.edate = '20140104';
+    scope.params.stime = '';
+    scope.params.etime = '';
+    scope.params.classifyCounts = null;
+    scope.params.wholeSession = null;
+    scope.params.activity = {id: 47, type: 'activity'};
+    scope.params.location = null;
+    scope.params.daygroup = null;
+
+    // Call submit method
+    scope.submit();
+
+    // Assertions
+    expect(getDataStub).to.be.calledOnce;
+
+    // Restore stubs
+    getDataStub.restore();
+    locationSearchStub.restore();
+  });
+
   it(':submit should setUrl if  currentScope does not equal currentUrl', function () {
     var locationSearchStub;
 
