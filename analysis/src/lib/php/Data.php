@@ -363,7 +363,7 @@ class Data
         }
         else
         {
-            $message = 'Query Parameter Input Error.';
+            $message = 'Query parameter input error.';
 
             foreach ($validator->get_readable_errors() as $error) {
                 $message = $message . " " . strip_tags($error);
