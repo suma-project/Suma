@@ -22,7 +22,8 @@ describe('Controller: ReportCtrl', function () {
     location,
     SumaConfig,
     SumaConfig2,
-    Defaults;
+    Defaults,
+    Q;
 
   // Initialize the controller and a mock scope
   beforeEach(inject(function (
@@ -47,6 +48,7 @@ describe('Controller: ReportCtrl', function () {
     UIStates = uiStates;
     location = $location;
     ActsLocs = actsLocs;
+    Q = $q;
 
     SumaConfig = sumaConfig;
     SumaConfig2 = sumaConfig2;
@@ -836,7 +838,6 @@ describe('Controller: ReportCtrl', function () {
     initiativesStub = sinon.stub(Initiatives, 'get');
     initiativesStub.returns(okResponse());
 
-
     // Instantiate controller
     ReportCtrl = Controller('ReportCtrl', {
       $scope: scope,
@@ -893,5 +894,167 @@ describe('Controller: ReportCtrl', function () {
     // Restore stubs
     initiativesStub.restore();
     getMetadataStub.restore();
+  });
+
+  it(':routeUpdate should resolve active promiseTimeouts, set state, and setDefaults', function () {
+    var initiativesStub,
+        statesStub,
+        dataTimeoutStub,
+        initTimeoutStub,
+        setDefaultsStub;
+
+    // Stub initiatives service
+    initiativesStub = sinon.stub(Initiatives, 'get');
+    initiativesStub.returns(okResponse());
+
+    // Stub state service
+    statesStub = sinon.stub(UIStates, 'setUIState');
+
+    // Instantiate controller
+    ReportCtrl = Controller('ReportCtrl', {
+      $scope: scope,
+      sumaConfig: SumaConfig
+    });
+
+    // Define/redefine timeouts
+    scope.dataTimeoutPromise = Q.defer();
+    scope.initTimeoutPromise = undefined;
+    scope.initTimeoutPromise = Q.defer();
+
+    // Stub scope.setDefaults
+    setDefaultsStub = sinon.stub(scope, 'setDefaults');
+
+    // Call routeUpdate()
+    scope.routeUpdate();
+
+    // Assertions
+    scope.dataTimeoutPromise.promise.then(function (message) {
+      expect(message).to.equal('resolved');
+    });
+
+    scope.initTimeoutPromise.promise.finally(function (message) {
+      expect(message).to.equal('resolved');
+    });
+
+    expect(statesStub).to.be.calledWith('initial');
+    expect(setDefaultsStub).to.be.calledOnce;
+
+    scope.$digest();
+
+    // Restore stubs
+    initiativesStub.restore();
+    statesStub.restore();
+    setDefaultsStub.restore();
+  });
+
+  it(':routeUpdate should setScope and getData when params and scope.params.init present', function () {
+    var initiativesStub,
+        locationStub,
+        setScopeStub,
+        getDataStub;
+
+    // Stub initiatives service
+    initiativesStub = sinon.stub(Initiatives, 'get');
+    initiativesStub.returns(okResponse());
+
+    locationStub = sinon.stub(location, 'search');
+    locationStub.returns({id: 4});
+
+    // Instantiate controller
+    ReportCtrl = Controller('ReportCtrl', {
+      $scope: scope,
+      sumaConfig: SumaConfig
+    });
+
+    // Define/redefine timeouts
+    scope.initTimeoutPromise = undefined;
+
+    // Define scope.params.init
+    scope.params.init = {id: 4};
+
+    // Define scope.setScope
+    setScopeStub = sinon.stub(scope, 'setScope');
+    setScopeStub.returns(okResponse());
+
+    // Define scope.getData
+    getDataStub = sinon.stub(scope, 'getData');
+
+    // Call routeUpdate()
+    scope.routeUpdate();
+
+    // Assertions
+    expect(setScopeStub).to.be.calledOnce;
+
+    setScopeStub().then(function () {
+      expect(getDataStub).to.be.calledOnce;
+    });
+
+    scope.$digest();
+
+    // Restore stubs
+    initiativesStub.restore();
+    locationStub.restore();
+    setScopeStub.restore();
+    getDataStub.restore();
+  });
+
+  it(':routeUpdate should call getInitiatives when urlParams are present but scope.params.init is not', function () {
+    var initiativesStub,
+        locationStub,
+        getInitiativesStub,
+        setScopeStub,
+        getDataStub;
+
+    // Stub initiatives service
+    initiativesStub = sinon.stub(Initiatives, 'get');
+    initiativesStub.returns(okResponse());
+
+    locationStub = sinon.stub(location, 'search');
+    locationStub.returns({id: 4});
+
+    // Instantiate controller
+    ReportCtrl = Controller('ReportCtrl', {
+      $scope: scope,
+      sumaConfig: SumaConfig
+    });
+
+    // Define/redefine timeouts
+    scope.initTimeoutPromise = undefined;
+
+    // Define scope.params.init
+    // scope.params.init = {id: 4};
+
+    // Define scope.getInitiatives
+    getInitiativesStub = sinon.stub(scope, 'getInitiatives');
+    getInitiativesStub.returns(okResponse());
+
+    // Define scope.setScope
+    setScopeStub = sinon.stub(scope, 'setScope');
+    setScopeStub.returns(okResponse());
+
+    // Define scope.getData
+    getDataStub = sinon.stub(scope, 'getData');
+
+    // Call routeUpdate()
+    scope.routeUpdate();
+
+    // Assertions
+    expect(getInitiativesStub).to.be.calledOnce;
+
+    getInitiativesStub().then(function () {
+      expect(setScopeStub).to.be.calledOnce;
+
+      setScopeStub().then(function () {
+        expect(getDataStub).to.be.calledOnce;
+      });
+    });
+
+    scope.$digest();
+
+    // Restore stubs
+    initiativesStub.restore();
+    locationStub.restore();
+    setScopeStub.restore();
+    getDataStub.restore();
   });
 });
