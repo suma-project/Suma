@@ -32852,10 +32852,10 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
     $scope.routeUpdate = function () {
       var urlParams = $location.search();
       if ($scope.dataTimeoutPromise) {
-        $scope.dataTimeoutPromise.resolve();
+        $scope.dataTimeoutPromise.resolve('resolved');
       }
       if ($scope.initTimeoutPromise) {
-        $scope.initTimeoutPromise.resolve();
+        $scope.initTimeoutPromise.resolve('resolved');
         $scope.finder.cancel();
       }
       if (_.isEmpty(urlParams)) {
