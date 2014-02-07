@@ -9,46 +9,45 @@ describe('Controller: ReportCtrl', function () {
 
   var ReportCtrl,
     Controller,
-    Timeout,
     scope,
+    Q,
+    Timeout,
+    location,
     Initiatives,
     Data,
     ActsLocs,
     UIStates,
-    actsLocsStub,
     okResponse,
     errorResponse,
     dataResponse,
-    location,
     SumaConfig,
     SumaConfig2,
-    Defaults,
-    Q;
+    Defaults;
 
   // Initialize the controller and a mock scope
   beforeEach(inject(function (
     $controller,
     $rootScope,
-    initiatives,
-    uiStates,
-    data,
     $q,
+    $timeout,
     $location,
     actsLocs,
-    $timeout,
+    data,
+    initiatives,
+    uiStates,
     sumaConfig,
     sumaConfig2,
     defaults) {
 
-    scope = $rootScope.$new();
     Controller = $controller;
+    scope = $rootScope.$new();
+    Q = $q;
     Timeout = $timeout;
-    Initiatives = initiatives;
-    Data = data;
-    UIStates = uiStates;
     location = $location;
     ActsLocs = actsLocs;
-    Q = $q;
+    Data = data;
+    Initiatives = initiatives;
+    UIStates = uiStates;
 
     SumaConfig = sumaConfig;
     SumaConfig2 = sumaConfig2;
