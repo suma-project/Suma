@@ -250,11 +250,11 @@ angular.module('sumaAnalysis')
 
       // Resolve active requests
       if ($scope.dataTimeoutPromise) {
-        $scope.dataTimeoutPromise.resolve();
+        $scope.dataTimeoutPromise.resolve('resolved');
       }
 
       if ($scope.initTimeoutPromise) {
-        $scope.initTimeoutPromise.resolve();
+        $scope.initTimeoutPromise.resolve('resolved');
         $scope.finder.cancel();
       }
 
