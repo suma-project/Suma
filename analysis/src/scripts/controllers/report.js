@@ -24,16 +24,15 @@ angular.module('sumaAnalysis')
 
     // Set default form values
     $scope.setDefaults = function () {
-      // Form data
-      _.each(sumaConfig.formData, function (e, i) {
-        $scope[i] = e;
-      });
-
-      // Form defaults
       $scope.params = {};
-      _.each(sumaConfig.formDefaults, function (e, i) {
-        $scope.params[i] = $scope[e][0];
+
+      _.each(sumaConfig.formFields, function (field, fieldName) {
+        if (field && (fieldName !== 'locations' && fieldName !== 'activities')) {
+          $scope[sumaConfig.formDefaults[fieldName]] = sumaConfig.formData[sumaConfig.formDefaults[fieldName]];
+          $scope.params[fieldName] = $scope[sumaConfig.formDefaults[fieldName]][0]
+        }
       });
+      console.log('scope.params', $scope.params)
     };
 
     // Set scope.params based on urlParams

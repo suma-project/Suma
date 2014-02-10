@@ -86,14 +86,6 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
         resolve: {
           sumaConfig: function () {
             var newConfig = angular.copy(sumaBaseConfig);
-            delete newConfig.formData.countOptions;
-            delete newConfig.formData.sessionOptions;
-            delete newConfig.formDefaults.classifyCounts;
-            delete newConfig.formDefaults.wholeSession;
-            delete newConfig.formData.startTime;
-            delete newConfig.formData.endTime;
-            delete newConfig.formDefaults.stime;
-            delete newConfig.formDefaults.etime;
 
             newConfig.formFields.classifyCounts = false;
             newConfig.formFields.wholeSession = false;
@@ -114,12 +106,6 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
         resolve: {
           sumaConfig: function () {
             var newConfig = angular.copy(sumaBaseConfig);
-            delete newConfig.formData.countOptions;
-            delete newConfig.formData.dayOptions;
-            delete newConfig.formData.sessionOptions;
-            delete newConfig.formDefaults.classifyCounts;
-            delete newConfig.formDefaults.daygroup;
-            delete newConfig.formDefaults.wholeSession;
 
             newConfig.formFields.classifyCounts = false;
             newConfig.formFields.daygroup = false;
