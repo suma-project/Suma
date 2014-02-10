@@ -17,12 +17,31 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
         sessionOptions: [
           {id: 'no', title: 'No'},
           {id: 'yes', title: 'Yes'}
-        ]
+        ],
+        startDate: [moment().subtract('months', 6).add('days', 1).format('YYYY-MM-DD')],
+        endDate: [moment().add('days', 1).format('YYYY-MM-DD')],
+        startTime: [''],
+        endTime: ['']
       },
       formDefaults: {
         classifyCounts: 'countOptions',
         daygroup: 'dayOptions',
-        wholeSession: 'sessionOptions'
+        wholeSession: 'sessionOptions',
+        sdate: 'startDate',
+        edate: 'endDate',
+        stime: 'startTime',
+        etime: 'endTime'
+      },
+      formFields: {
+        sdate: true,
+        edate: true,
+        stime: true,
+        etime: true,
+        classifyCounts: true,
+        daygroup: true,
+        wholeSession: true,
+        activities: true,
+        locations: true
       },
       dataSource: 'getData',
       dataProcessor: 'processTimeSeriesData',
@@ -67,6 +86,20 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
         resolve: {
           sumaConfig: function () {
             var newConfig = angular.copy(sumaBaseConfig);
+            delete newConfig.formData.countOptions;
+            delete newConfig.formData.sessionOptions;
+            delete newConfig.formDefaults.classifyCounts;
+            delete newConfig.formDefaults.wholeSession;
+            delete newConfig.formData.startTime;
+            delete newConfig.formData.endTime;
+            delete newConfig.formDefaults.stime;
+            delete newConfig.formDefaults.etime;
+
+            newConfig.formFields.classifyCounts = false;
+            newConfig.formFields.wholeSession = false;
+            newConfig.formFields.stime = false;
+            newConfig.formFields.etime = false;
+
             newConfig.dataProcessor = 'processHourlyData';
             newConfig.suppWatch = false;
 
@@ -81,10 +114,21 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
         resolve: {
           sumaConfig: function () {
             var newConfig = angular.copy(sumaBaseConfig);
-            newConfig.formData = null;
-            newConfig.formDefaults = null;
+            delete newConfig.formData.countOptions;
+            delete newConfig.formData.dayOptions;
+            delete newConfig.formData.sessionOptions;
+            delete newConfig.formDefaults.classifyCounts;
+            delete newConfig.formDefaults.daygroup;
+            delete newConfig.formDefaults.wholeSession;
+
+            newConfig.formFields.classifyCounts = false;
+            newConfig.formFields.daygroup = false;
+            newConfig.formFields.wholeSession = false;
+            newConfig.formFields.activities = false;
+            newConfig.formFields.locations = false;
+
             newConfig.dataSource = 'getSessionsData';
-            newConfig.dataProcessor = null;
+            newConfig.dataProcessor = false;
             newConfig.suppWatch = false;
 
             return newConfig;

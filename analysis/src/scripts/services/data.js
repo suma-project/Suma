@@ -18,12 +18,7 @@ angular.module('sumaAnalysis')
             'sdate': cfg.params.sdate || '',
             'edate': cfg.params.edate || '',
             'stime': cfg.params.stime || '',
-            'etime': cfg.params.etime || '',
-            'classifyCounts': 'session',
-            'wholeSession': 'yes',
-            'daygroup': 'all' ,
-            'locations': 'all',
-            'activities': 'all'
+            'etime': cfg.params.etime || ''
           },
           timeout: cfg.timeoutPromise.promise
         };
