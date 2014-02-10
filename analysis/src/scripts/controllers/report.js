@@ -1,18 +1,7 @@
 'use strict';
 
 angular.module('sumaAnalysis')
-  .controller('ReportCtrl', function ($scope, $rootScope, $http, $location, $anchorScroll, $timeout, initiatives, actsLocs, data, promiseTracker, uiStates, sumaConfig, $routeParams, $q, validation, setScope) {
-
-    function compactObject (o) {
-      _.each(o, function(v, k){
-        if(!v && v !== '') {
-          delete o[k];
-        }
-      });
-
-      return o;
-    }
-
+  .controller('ReportCtrl', function ($scope, $http, $location, $anchorScroll, $timeout, initiatives, actsLocs, data, promiseTracker, uiStates, sumaConfig, $routeParams, $q, setScope) {
     // Initialize controller
     $scope.initialize = function () {
       var urlParams = $location.search();
@@ -59,8 +48,8 @@ angular.module('sumaAnalysis')
         $scope.params = response.params;
         dfd.resolve();
       }, function (response) {
-        console.log('error', response)
-      })
+        console.log('error', response);
+      });
 
       return dfd.promise;
     };
@@ -85,13 +74,11 @@ angular.module('sumaAnalysis')
         daygroup: $scope.params.daygroup ? $scope.params.daygroup.id : null
       };
 
-      currentScope = compactObject(currentScope);
+      currentScope = _.compactObject(currentScope);
 
       if (_.isEqual(currentUrl, currentScope)) {
-        console.log('equal')
         $scope.getData();
       } else {
-        console.log('not equal')
         $location.search(currentScope);
       }
     };
