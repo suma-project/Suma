@@ -54,35 +54,6 @@ angular.module('sumaAnalysis')
       return dfd.promise;
     };
 
-    // Attach params to URL
-    $scope.submit = function () {
-      var currentUrl,
-          currentScope;
-
-      currentUrl = $location.search();
-
-      currentScope = {
-        id: String($scope.params.init.id),
-        sdate: $scope.params.sdate,
-        edate: $scope.params.edate,
-        stime: $scope.params.stime ? $scope.params.stime : $scope.params.stime === '' ? '' : null,
-        etime: $scope.params.etime ? $scope.params.etime : $scope.params.etime === '' ? '' : null,
-        classifyCounts: $scope.params.classifyCounts ? $scope.params.classifyCounts.id : null,
-        wholeSession: $scope.params.wholeSession ? $scope.params.wholeSession.id : null,
-        activity: $scope.params.activity ? $scope.params.activity.type ? $scope.params.activity.type + '-' + $scope.params.activity.id : $scope.params.activity.id : null,
-        location: $scope.params.location ? $scope.params.location.id : null,
-        daygroup: $scope.params.daygroup ? $scope.params.daygroup.id : null
-      };
-
-      currentScope = _.compactObject(currentScope);
-
-      if (_.isEqual(currentUrl, currentScope)) {
-        $scope.getData();
-      } else {
-        $location.search(currentScope);
-      }
-    };
-
     // Get initiatives
     $scope.getInitiatives = function () {
       var cfg,
@@ -118,20 +89,6 @@ angular.module('sumaAnalysis')
       $scope.params.location = $scope.locations[0];
     };
 
-    // Update metadata UI wrapper
-    $scope.updateMetadata = function () {
-      if ($scope.params.init) {
-        $scope.processMetadata = true;
-
-        $scope.getMetadata();
-
-        // Artificially add a delay for UI
-        $timeout(function () {
-          $scope.processMetadata = false;
-        }, 400);
-      }
-    };
-
     // Submit request and draw chart
     $scope.getData = function () {
       var cfg;
@@ -150,6 +107,20 @@ angular.module('sumaAnalysis')
 
       data[sumaConfig.dataSource](cfg)
         .then($scope.success, $scope.error);
+    };
+
+    // Update metadata UI wrapper
+    $scope.updateMetadata = function () {
+      if ($scope.params.init) {
+        $scope.processMetadata = true;
+
+        $scope.getMetadata();
+
+        // Artificially add a delay for UI
+        $timeout(function () {
+          $scope.processMetadata = false;
+        }, 400);
+      }
     };
 
     // Respond to routeUpdate event
@@ -175,6 +146,35 @@ angular.module('sumaAnalysis')
         $scope.getInitiatives().then(function () {
           $scope.setScope(urlParams).then($scope.getData, $scope.error);
         });
+      }
+    };
+
+    // Attach params to URL
+    $scope.submit = function () {
+      var currentUrl,
+          currentScope;
+
+      currentUrl = $location.search();
+
+      currentScope = {
+        id: String($scope.params.init.id),
+        sdate: $scope.params.sdate,
+        edate: $scope.params.edate,
+        stime: $scope.params.stime ? $scope.params.stime : $scope.params.stime === '' ? '' : null,
+        etime: $scope.params.etime ? $scope.params.etime : $scope.params.etime === '' ? '' : null,
+        classifyCounts: $scope.params.classifyCounts ? $scope.params.classifyCounts.id : null,
+        wholeSession: $scope.params.wholeSession ? $scope.params.wholeSession.id : null,
+        activity: $scope.params.activity ? $scope.params.activity.type ? $scope.params.activity.type + '-' + $scope.params.activity.id : $scope.params.activity.id : null,
+        location: $scope.params.location ? $scope.params.location.id : null,
+        daygroup: $scope.params.daygroup ? $scope.params.daygroup.id : null
+      };
+
+      currentScope = _.compactObject(currentScope);
+
+      if (_.isEqual(currentUrl, currentScope)) {
+        $scope.getData();
+      } else {
+        $location.search(currentScope);
       }
     };
 
