@@ -3,7 +3,7 @@
 _.mixin({
   compactObject: function(o) {
     _.each(o, function(v, k) {
-      if (!v) {
+      if (!v && v !== '') {
         delete o[k];
       }
     });
