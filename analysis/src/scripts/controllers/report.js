@@ -29,7 +29,7 @@ angular.module('sumaAnalysis')
       _.each(sumaConfig.formFields, function (field, fieldName) {
         if (field && (fieldName !== 'locations' && fieldName !== 'activities')) {
           $scope[sumaConfig.formDefaults[fieldName]] = sumaConfig.formData[sumaConfig.formDefaults[fieldName]];
-          $scope.params[fieldName] = $scope[sumaConfig.formDefaults[fieldName]][0]
+          $scope.params[fieldName] = $scope[sumaConfig.formDefaults[fieldName]][0];
         }
       });
     };

@@ -648,7 +648,7 @@ describe('Controller: ReportCtrl', function () {
     scope.$digest();
 
     // Assertions
-    expect(errorStub).to.be.calledOnce
+    expect(errorStub).to.be.calledOnce;
 
     // Restore stubs
     initiativesStub.restore();

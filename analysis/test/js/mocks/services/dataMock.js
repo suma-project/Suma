@@ -28,4 +28,4 @@ angular.module('dataMock', [])
 .value('mockUrl2', 'lib/php/dataResults.php?activities=activity-4&classifyCounts=count&daygroup=all&edate=&etime=&id=1&locations=all&sdate=&stime=&wholeSession=no')
 .value('mockUrl3', 'lib/php/sessionsResults.php?activities=all&classifyCounts=session&daygroup=all&edate=&etime=&id=1&locations=all&sdate=&stime=&wholeSession=yes')
 .value('mockUrl4', 'lib/php/dataResults.php?activities=activity-4&classifyCounts=count&daygroup=all&edate=&etime=&id=1&locations=all&sdate=&stime=&wholeSession=yes')
-.value('mockUrl5', 'lib/php/sessionsResults.php?edate=&etime=&id=1&sdate=&stime=')
+.value('mockUrl5', 'lib/php/sessionsResults.php?edate=&etime=&id=1&sdate=&stime=');
