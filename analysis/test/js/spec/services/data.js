@@ -15,10 +15,12 @@ describe('Service: Data', function () {
     Params1,
     Params2,
     Params3,
+    Params4,
     MockUrl1,
     MockUrl2,
     MockUrl3,
     MockUrl4,
+    MockUrl5,
     Processtimeseriesdata,
     Processcalendardata,
     Processhourlydata,
@@ -41,10 +43,12 @@ describe('Service: Data', function () {
     mockParams1,
     mockParams2,
     mockParams3,
+    mockParams4,
     mockUrl1,
     mockUrl2,
     mockUrl3,
-    mockUrl4) {
+    mockUrl4,
+    mockUrl5) {
 
     Data = _data_;
     Processtimeseriesdata = _processTimeSeriesData_;
@@ -55,10 +59,12 @@ describe('Service: Data', function () {
     Params1 = mockParams1;
     Params2 = mockParams2;
     Params3 = mockParams3;
+    Params4 = mockParams4;
     MockUrl1 = mockUrl1;
     MockUrl2 = mockUrl2;
     MockUrl3 = mockUrl3;
     MockUrl4 = mockUrl4;
+    MockUrl5 = mockUrl5;
     Timeout = $timeout;
 
     tPromise = $q.defer();
@@ -337,7 +343,7 @@ describe('Service: Data', function () {
 
   it(':getSessionsData should make an AJAX call', function (done) {
     var cfg = {
-      params: Params1,
+      params: Params4,
       acts: [],
       locs: [],
       dataProcessor: '',
@@ -345,7 +351,7 @@ describe('Service: Data', function () {
       timeout: 180000
     };
 
-    $httpBackend.whenGET(MockUrl3)
+    $httpBackend.whenGET(MockUrl5)
       .respond([{}, {}]);
 
     Data.getSessionsData(cfg).then(function (result) {
@@ -358,7 +364,7 @@ describe('Service: Data', function () {
 
   it(':getSessionsData should return an error if AJAX fails', function (done) {
     var cfg = {
-      params: Params1,
+      params: Params4,
       acts: [],
       locs: [],
       dataProcessor: '',
@@ -366,7 +372,7 @@ describe('Service: Data', function () {
       timeout: 180000
     };
 
-    $httpBackend.whenGET(MockUrl3)
+    $httpBackend.whenGET(MockUrl5)
       .respond(500, {message: 'Error'});
 
     Data.getSessionsData(cfg).then(function (result) {
@@ -383,9 +389,9 @@ describe('Service: Data', function () {
     $httpBackend.flush();
   });
 
-  it(':getData should return error with promiseTimeout true on aborted http request', function (done) {
+  it(':getSessionsData should return error with promiseTimeout true on aborted http request', function (done) {
     var cfg = {
-      params: Params1,
+      params: Params4,
       acts: [],
       locs: [],
       dataProcessor: 'processTimeSeriesData',
@@ -394,7 +400,7 @@ describe('Service: Data', function () {
     };
 
     // simulate aborted request
-    $httpBackend.whenGET(MockUrl3)
+    $httpBackend.whenGET(MockUrl5)
       .respond(0, {message: 'Error'});
 
     Data.getSessionsData(cfg).then(function (result) {
@@ -412,9 +418,9 @@ describe('Service: Data', function () {
     $httpBackend.flush();
   });
 
-  it(':getData should return error without promiseTimeout on http timeout', function (done) {
+  it(':getSessionsData should return error without promiseTimeout on http timeout', function (done) {
     var cfg = {
-      params: Params1,
+      params: Params4,
       acts: [],
       locs: [],
       dataProcessor: 'processTimeSeriesData',
@@ -422,7 +428,7 @@ describe('Service: Data', function () {
       timeout: 180000
     };
 
-    $httpBackend.whenGET(MockUrl3)
+    $httpBackend.whenGET(MockUrl5)
           .respond([{}, {}]);
 
     Data.getSessionsData(cfg).then(function (result) {
