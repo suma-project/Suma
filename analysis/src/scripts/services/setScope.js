@@ -8,10 +8,7 @@ angular.module('sumaAnalysis')
 
     return {
       getMetadata: function (init) {
-        metadata = actsLocs.get(init);
-
-        activities = metadata.activities;
-        locations = metadata.locations;
+        return actsLocs.get(init);
       },
       set: function (urlParams, sumaConfig, inits) {
         var dfd = $q.defer(),
@@ -26,7 +23,6 @@ angular.module('sumaAnalysis')
         if (!newParams.init) {
           dfd.reject({message: 'Initiative ID Not Found.', code: 500});
         } else {
-
           if (sumaConfig.formFields.classifyCounts) {
             newParams.classifyCounts = _.find(sumaConfig.formData.countOptions, function (e, i) {
               return String(e.id) === String(urlParams.classifyCounts);
@@ -58,7 +54,9 @@ angular.module('sumaAnalysis')
           }
 
           if (sumaConfig.formFields.activities || sumaConfig.formFields.locations) {
-            this.getMetadata(newParams.init);
+            metadata = this.getMetadata(newParams.init);
+            activities = metadata.activities;
+            locations = metadata.locations;
           }
 
           if (sumaConfig.formFields.activities) {
@@ -142,9 +140,9 @@ angular.module('sumaAnalysis')
             activities: activities,
             errorMessage: errorMessage
           });
-
-          return dfd.promise;
         }
+
+        return dfd.promise;
       }
     };
   });

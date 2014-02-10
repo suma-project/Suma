@@ -33121,9 +33121,7 @@ angular.module('sumaAnalysis').factory('setScope', [
     var metadata, activities, locations;
     return {
       getMetadata: function (init) {
-        metadata = actsLocs.get(init);
-        activities = metadata.activities;
-        locations = metadata.locations;
+        return actsLocs.get(init);
       },
       set: function (urlParams, sumaConfig, inits) {
         var dfd = $q.defer(), errors = [], errorMessage, newParams = {};
@@ -33161,7 +33159,9 @@ angular.module('sumaAnalysis').factory('setScope', [
             }
           }
           if (sumaConfig.formFields.activities || sumaConfig.formFields.locations) {
-            this.getMetadata(newParams.init);
+            metadata = this.getMetadata(newParams.init);
+            activities = metadata.activities;
+            locations = metadata.locations;
           }
           if (sumaConfig.formFields.activities) {
             newParams.activity = _.find(activities, function (e, i) {
@@ -33227,8 +33227,8 @@ angular.module('sumaAnalysis').factory('setScope', [
             activities: activities,
             errorMessage: errorMessage
           });
-          return dfd.promise;
         }
+        return dfd.promise;
       }
     };
   }
