@@ -39,12 +39,20 @@ angular.module('sumaAnalysis')
       var dfd = $q.defer();
 
       setScope.set(urlParams, sumaConfig, $scope.inits).then(function (response) {
+        // Set scope where possible regardless of error
         $scope.actsLocs = response.actsLocs;
         $scope.activities = response.activities;
         $scope.locations = response.locations;
         $scope.params = response.params;
-        dfd.resolve();
-      }, $scope.error);
+
+        if (response.errorMessage) {
+          dfd.reject({message: response.errorMessage, code: 500});
+        } else {
+          dfd.resolve();
+        }
+      }, function (response) {
+        dfd.reject({message: response.errorMessage, code: 500});
+      });
 
       return dfd.promise;
     };

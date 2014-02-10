@@ -22,6 +22,7 @@ describe('Controller: ReportCtrl', function () {
     errorResponse,
     dataResponse,
     setScopeResponse,
+    setScopeResponseError,
     SumaConfig,
     SumaConfig2,
     Defaults;
@@ -76,6 +77,18 @@ describe('Controller: ReportCtrl', function () {
         locations: [],
         actLocs: {acts: [], locs: []},
         params: {}
+      });
+      return dfd.promise;
+    };
+
+    setScopeResponseError = function () {
+      var dfd = $q.defer();
+      dfd.resolve({
+        activities: [],
+        locations: [],
+        actLocs: {acts: [], locs: []},
+        params: {},
+        errorMessage: 'Error'
       });
       return dfd.promise;
     };
@@ -622,40 +635,6 @@ describe('Controller: ReportCtrl', function () {
     statesStub.restore();
   });
 
-  it(':setScope should call scope.error if setScope.set fails', function () {
-    var initiativesStub,
-        urlParams,
-        setScopeStub,
-        errorStub;
-
-    initiativesStub = sinon.stub(Initiatives, 'get');
-    initiativesStub.returns(okResponse());
-
-    // Instantiate controller
-    ReportCtrl = Controller('ReportCtrl', {
-      $scope: scope,
-      sumaConfig: SumaConfig
-    });
-
-    setScopeStub = sinon.stub(SetScope, 'set');
-    setScopeStub.returns(errorResponse());
-
-    errorStub = sinon.stub(scope, 'error');
-
-    // Call setScope method
-    scope.setScope(urlParams);
-
-    scope.$digest();
-
-    // Assertions
-    expect(errorStub).to.be.calledOnce;
-
-    // Restore stubs
-    initiativesStub.restore();
-    setScopeStub.restore();
-    errorStub.restore();
-  });
-
   it(':setScope should set scope values', function () {
     var initiativesStub,
         urlParams,
@@ -694,6 +673,87 @@ describe('Controller: ReportCtrl', function () {
     });
 
     scope.$digest();
+
+    // Restore stubs
+    initiativesStub.restore();
+    setScopeStub.restore();
+    errorStub.restore();
+  });
+
+  it(':setScope should call scope.error if setScope.set fails', function () {
+    var initiativesStub,
+        urlParams,
+        setScopeStub,
+        errorStub;
+
+    initiativesStub = sinon.stub(Initiatives, 'get');
+    initiativesStub.returns(okResponse());
+
+    // Instantiate controller
+    ReportCtrl = Controller('ReportCtrl', {
+      $scope: scope,
+      sumaConfig: SumaConfig
+    });
+
+    setScopeStub = sinon.stub(SetScope, 'set');
+    setScopeStub.returns(errorResponse());
+
+    errorStub = sinon.stub(scope, 'error');
+
+    // Call setScope method
+    scope.setScope(urlParams).then(scope.success, scope.error);
+
+    scope.$digest();
+
+    // Assertions
+    expect(errorStub).to.be.calledOnce;
+
+    // Restore stubs
+    initiativesStub.restore();
+    setScopeStub.restore();
+    errorStub.restore();
+  });
+
+  it(':setScope should set scope values and reject if setScope.set returns errorMessage', function () {
+    var initiativesStub,
+        urlParams,
+        setScopeStub,
+        errorStub,
+        expectedScope;
+
+    expectedScope = {
+      activities: [],
+      locations: [],
+      actLocs: {acts: [], locs: []},
+      params: {}
+    };
+
+    initiativesStub = sinon.stub(Initiatives, 'get');
+    initiativesStub.returns(okResponse());
+
+    // Instantiate controller
+    ReportCtrl = Controller('ReportCtrl', {
+      $scope: scope,
+      sumaConfig: SumaConfig
+    });
+
+    setScopeStub = sinon.stub(SetScope, 'set');
+    setScopeStub.returns(setScopeResponseError());
+
+    errorStub = sinon.stub(scope, 'error');
+
+    // Call setScope method
+    scope.setScope(urlParams).then(function () {
+      // Assertions
+      expect(expectedScope.activities).to.deep.equal(scope.activities);
+      expect(expectedScope.locations).to.deep.equal(scope.locations);
+      expect(expectedScope.actsLocs).to.deep.equal(scope.actsLocs);
+      expect(expectedScope.params).to.deep.equal(scope.params);
+    }, scope.error);
+
+    scope.$digest();
+
+    expect(errorStub).to.be.calledOnce;
 
     // Restore stubs
     initiativesStub.restore();

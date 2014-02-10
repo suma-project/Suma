@@ -14,9 +14,10 @@ angular.module('sumaAnalysis')
         locations = metadata.locations;
       },
       set: function (urlParams, sumaConfig, inits) {
-        var dfd = $q.defer();
-        var newParams = {};
-        var errors = [];
+        var dfd = $q.defer(),
+            errors = [],
+            errorMessage,
+            newParams = {};
 
         newParams.init = _.find(inits, function (e, i) {
           return String(e.id) === String(urlParams.id);
@@ -127,20 +128,20 @@ angular.module('sumaAnalysis')
           }
 
           if (errors.length > 0) {
-            var msg = 'Query parameter input error. ';
-            _.each(errors, function (e) {
-              msg = msg + e + ' ';
-            });
+            errorMessage = 'Query parameter input error. ';
 
-            dfd.reject({message: msg, code: 500});
-          } else {
-            dfd.resolve({
-              params: newParams,
-              actsLocs: metadata,
-              locations: locations,
-              activities: activities
+            _.each(errors, function (e) {
+              errorMessage = errorMessage + e + ' ';
             });
           }
+
+          dfd.resolve({
+            params: newParams,
+            actsLocs: metadata,
+            locations: locations,
+            activities: activities,
+            errorMessage: errorMessage
+          });
 
           return dfd.promise;
         }

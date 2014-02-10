@@ -32741,8 +32741,20 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
         $scope.activities = response.activities;
         $scope.locations = response.locations;
         $scope.params = response.params;
-        dfd.resolve();
-      }, $scope.error);
+        if (response.errorMessage) {
+          dfd.reject({
+            message: response.errorMessage,
+            code: 500
+          });
+        } else {
+          dfd.resolve();
+        }
+      }, function (response) {
+        dfd.reject({
+          message: response.errorMessage,
+          code: 500
+        });
+      });
       return dfd.promise;
     };
     $scope.getInitiatives = function () {
@@ -33114,9 +33126,7 @@ angular.module('sumaAnalysis').factory('setScope', [
         locations = metadata.locations;
       },
       set: function (urlParams, sumaConfig, inits) {
-        var dfd = $q.defer();
-        var newParams = {};
-        var errors = [];
+        var dfd = $q.defer(), errors = [], errorMessage, newParams = {};
         newParams.init = _.find(inits, function (e, i) {
           return String(e.id) === String(urlParams.id);
         });
@@ -33205,22 +33215,18 @@ angular.module('sumaAnalysis').factory('setScope', [
             }
           }
           if (errors.length > 0) {
-            var msg = 'Query parameter input error. ';
+            errorMessage = 'Query parameter input error. ';
             _.each(errors, function (e) {
-              msg = msg + e + ' ';
-            });
-            dfd.reject({
-              message: msg,
-              code: 500
-            });
-          } else {
-            dfd.resolve({
-              params: newParams,
-              actsLocs: metadata,
-              locations: locations,
-              activities: activities
+              errorMessage = errorMessage + e + ' ';
             });
           }
+          dfd.resolve({
+            params: newParams,
+            actsLocs: metadata,
+            locations: locations,
+            activities: activities,
+            errorMessage: errorMessage
+          });
           return dfd.promise;
         }
       }
