@@ -17,9 +17,11 @@ describe('Controller: ReportCtrl', function () {
     Data,
     ActsLocs,
     UIStates,
+    SetScope,
     okResponse,
     errorResponse,
     dataResponse,
+    setScopeResponse,
     SumaConfig,
     SumaConfig2,
     Defaults;
@@ -35,6 +37,7 @@ describe('Controller: ReportCtrl', function () {
     data,
     initiatives,
     uiStates,
+    setScope,
     sumaConfig,
     sumaConfig2,
     defaults) {
@@ -48,6 +51,7 @@ describe('Controller: ReportCtrl', function () {
     Data = data;
     Initiatives = initiatives;
     UIStates = uiStates;
+    SetScope = setScope;
 
     SumaConfig = sumaConfig;
     SumaConfig2 = sumaConfig2;
@@ -62,6 +66,17 @@ describe('Controller: ReportCtrl', function () {
     errorResponse = function () {
       var dfd = $q.defer();
       dfd.reject({message: 'Error', code: 500});
+      return dfd.promise;
+    };
+
+    setScopeResponse = function () {
+      var dfd = $q.defer();
+      dfd.resolve({
+        activities: [],
+        locations: [],
+        actLocs: {acts: [], locs: []},
+        params: {}
+      });
       return dfd.promise;
     };
 
@@ -318,12 +333,7 @@ describe('Controller: ReportCtrl', function () {
       sdate: '20140101',
       edate: '20140104',
       stime: '',
-      etime: '',
-      classifyCounts: null,
-      wholeSession: null,
-      activity: null,
-      location: null,
-      daygroup: null
+      etime: ''
     });
 
     // Instantiate controller
@@ -367,15 +377,11 @@ describe('Controller: ReportCtrl', function () {
     locationSearchStub = sinon.stub(location, 'search');
     locationSearchStub.returns({
       id: '4',
-      sdate: '20140101',
-      edate: '20140104',
+      sdate: '',
+      edate: '',
       stime: '',
       etime: '',
-      classifyCounts: null,
-      wholeSession: null,
-      activity: 'activity-47',
-      location: null,
-      daygroup: null
+      activity: 'activity-47'
     });
 
     // Instantiate controller
@@ -390,8 +396,8 @@ describe('Controller: ReportCtrl', function () {
     // Populate Scope
     scope.params = {};
     scope.params.init = {id: '4'};
-    scope.params.sdate = '20140101';
-    scope.params.edate = '20140104';
+    scope.params.sdate = '';
+    scope.params.edate = '';
     scope.params.stime = '';
     scope.params.etime = '';
     scope.params.classifyCounts = null;
@@ -438,10 +444,10 @@ describe('Controller: ReportCtrl', function () {
     // Populate Scope
     scope.params = {};
     scope.params.init = {id: '4'};
-    scope.params.sdate = '20140101';
-    scope.params.edate = '20140104';
-    scope.params.stime = '';
-    scope.params.etime = '';
+    scope.params.sdate = null;
+    scope.params.edate = null;
+    scope.params.stime = null;
+    scope.params.etime = null;
     scope.params.classifyCounts = 'count';
     scope.params.wholeSession = 'no';
     scope.params.activity = 'mouse';
@@ -616,12 +622,52 @@ describe('Controller: ReportCtrl', function () {
     statesStub.restore();
   });
 
-  it(':setScope should fail if initiative is not found', function () {
+  it(':setScope should call scope.error if setScope.set fails', function () {
     var initiativesStub,
-        urlParams;
+        urlParams,
+        setScopeStub,
+        errorStub;
 
-    urlParams = {
-      id: 2
+    initiativesStub = sinon.stub(Initiatives, 'get');
+    initiativesStub.returns(okResponse());
+
+    // Instantiate controller
+    ReportCtrl = Controller('ReportCtrl', {
+      $scope: scope,
+      sumaConfig: SumaConfig
+    });
+
+    setScopeStub = sinon.stub(SetScope, 'set');
+    setScopeStub.returns(errorResponse());
+
+    errorStub = sinon.stub(scope, 'error');
+
+    // Call setScope method
+    scope.setScope(urlParams);
+
+    scope.$digest();
+
+    // Assertions
+    expect(errorStub).to.be.calledOnce
+
+    // Restore stubs
+    initiativesStub.restore();
+    setScopeStub.restore();
+    errorStub.restore();
+  });
+
+  it(':setScope should set scope values', function () {
+    var initiativesStub,
+        urlParams,
+        setScopeStub,
+        errorStub,
+        expectedScope;
+
+    expectedScope = {
+      activities: [],
+      locations: [],
+      actLocs: {acts: [], locs: []},
+      params: {}
     };
 
     initiativesStub = sinon.stub(Initiatives, 'get');
@@ -633,266 +679,26 @@ describe('Controller: ReportCtrl', function () {
       sumaConfig: SumaConfig
     });
 
-    scope.inits = [{id: 4}, {id: 5}];
+    setScopeStub = sinon.stub(SetScope, 'set');
+    setScopeStub.returns(setScopeResponse());
+
+    errorStub = sinon.stub(scope, 'error');
 
     // Call setScope method
-    scope.setScope(urlParams).then(function (response) {
-
-    }, function (response) {
+    scope.setScope(urlParams).then(function () {
       // Assertions
-      expect(response.message).to.equal('Initiative ID Not Found.');
+      expect(expectedScope.activities).to.deep.equal(scope.activities);
+      expect(expectedScope.locations).to.deep.equal(scope.locations);
+      expect(expectedScope.actsLocs).to.deep.equal(scope.actsLocs);
+      expect(expectedScope.params).to.deep.equal(scope.params);
     });
 
     scope.$digest();
 
     // Restore stubs
     initiativesStub.restore();
-  });
-
-  it(':setScope should setScope if parameters are valid', function (done) {
-    var expectedScope,
-        initiativesStub,
-        getMetadataStub,
-        urlParams;
-
-    urlParams = {
-      id: 4,
-      classifyCounts: 'count',
-      daygroup: 'all',
-      wholeSession: 'no',
-      sdate: '20131111',
-      edate: '20140101',
-      stime: '0400',
-      etime: '1600',
-      activity: 'all',
-      location: 'all'
-    };
-
-    // Stub initiatives
-    initiativesStub = sinon.stub(Initiatives, 'get');
-    initiativesStub.returns(okResponse());
-
-
-    // Instantiate controller
-    ReportCtrl = Controller('ReportCtrl', {
-      $scope: scope,
-      sumaConfig: SumaConfig
-    });
-
-    // Stub getMetadata
-    getMetadataStub = sinon.stub(scope, 'getMetadata');
-
-    // Set scope values
-    scope.inits = [{id: 4}, {id: 5}];
-    scope.countOptions = [
-      {id: 'count', title: 'Count Date'},
-      {id: 'start', title: 'Session Start'},
-      {id: 'end', title: 'Session End'}
-    ];
-    scope.dayOptions = [
-      {id: 'all', title: 'All'},
-      {id: 'weekdays', title: 'Weekdays Only'},
-      {id: 'weekends', title: 'Weekends Only'}
-    ];
-    scope.sessionOptions = [
-      {id: 'no', title: 'No'},
-      {id: 'yes', title: 'Yes'}
-    ];
-
-    scope.activities =  [{id: 'all'}];
-    scope.locations = [{id: 'all'}];
-
-    expectedScope = {
-      init: {id: 4},
-      classifyCounts: scope.countOptions[0],
-      daygroup: scope.dayOptions[0],
-      wholeSession: scope.sessionOptions[0],
-      sdate: '20131111',
-      edate:'20140101',
-      stime:'0400',
-      etime:'1600',
-      activity: scope.activities[0],
-      location: scope.locations[0]
-    };
-
-    // Call setScope method
-    scope.setScope(urlParams).then(function (response) {
-      expect(response).to.equal(undefined);
-      expect(expectedScope).to.deep.equal(scope.params);
-      done();
-    }, function (response) {
-    });
-
-    scope.$digest();
-
-    // Restore stubs
-    initiativesStub.restore();
-    getMetadataStub.restore();
-  });
-
-  it(':setScope should setScope if parameters are valid (activity with type)', function (done) {
-    var expectedScope,
-        initiativesStub,
-        getMetadataStub,
-        urlParams;
-
-    // Stub initiatives
-    initiativesStub = sinon.stub(Initiatives, 'get');
-    initiativesStub.returns(okResponse());
-
-
-    // Instantiate controller
-    ReportCtrl = Controller('ReportCtrl', {
-      $scope: scope,
-      sumaConfig: SumaConfig
-    });
-
-    // Stub getMetadata
-    getMetadataStub = sinon.stub(scope, 'getMetadata');
-
-    // Set scope values
-    scope.inits = [{id: 4}, {id: 5}];
-    scope.countOptions = [
-      {id: 'count', title: 'Count Date'},
-      {id: 'start', title: 'Session Start'},
-      {id: 'end', title: 'Session End'}
-    ];
-    scope.dayOptions = [
-      {id: 'all', title: 'All'},
-      {id: 'weekdays', title: 'Weekdays Only'},
-      {id: 'weekends', title: 'Weekends Only'}
-    ];
-    scope.sessionOptions = [
-      {id: 'no', title: 'No'},
-      {id: 'yes', title: 'Yes'}
-    ];
-
-    scope.activities =  [{id: 'all'}, {id: '47', type: 'activity'}];
-    scope.locations = [{id: 'all'}];
-
-
-    urlParams = {
-      id: 4,
-      classifyCounts: 'count',
-      daygroup: 'all',
-      wholeSession: 'no',
-      sdate: '20131111',
-      edate: '20140101',
-      stime: '0400',
-      etime: '1600',
-      activity: 'activity-47',
-      location: 'all'
-    };
-
-
-    expectedScope = {
-      init: {id: 4},
-      classifyCounts: scope.countOptions[0],
-      daygroup: scope.dayOptions[0],
-      wholeSession: scope.sessionOptions[0],
-      sdate: '20131111',
-      edate:'20140101',
-      stime:'0400',
-      etime:'1600',
-      activity: scope.activities[1],
-      location: scope.locations[0]
-    };
-
-    // Call setScope method
-    scope.setScope(urlParams).then(function (response) {
-      expect(response).to.equal(undefined);
-      expect(expectedScope).to.deep.equal(scope.params);
-      done();
-    }, function (response) {
-    });
-
-    scope.$digest();
-
-
-    // Restore stubs
-    initiativesStub.restore();
-    getMetadataStub.restore();
-  });
-
-  it(':setScope should build errorMessage if parameters are invalid', function (done) {
-    var expectedScope,
-        initiativesStub,
-        getMetadataStub,
-        urlParams;
-
-    urlParams = {
-      id: 4,
-      classifyCounts: 'mouse',
-      daygroup: 'mouse',
-      wholeSession: 'mouse',
-      sdate: 'mouse',
-      edate: 'mouse',
-      stime: 'mouse',
-      etime: 'mouse',
-      activity: 'mouse',
-      location: 'mouse'
-    };
-
-    // Stub initiatives
-    initiativesStub = sinon.stub(Initiatives, 'get');
-    initiativesStub.returns(okResponse());
-
-    // Instantiate controller
-    ReportCtrl = Controller('ReportCtrl', {
-      $scope: scope,
-      sumaConfig: SumaConfig
-    });
-
-    // Stub getMetadata
-    getMetadataStub = sinon.stub(scope, 'getMetadata');
-
-    // Set scope values
-    scope.inits = [{id: 4}, {id: 5}];
-    scope.countOptions = [
-      {id: 'count', title: 'Count Date'},
-      {id: 'start', title: 'Session Start'},
-      {id: 'end', title: 'Session End'}
-    ];
-    scope.dayOptions = [
-      {id: 'all', title: 'All'},
-      {id: 'weekdays', title: 'Weekdays Only'},
-      {id: 'weekends', title: 'Weekends Only'}
-    ];
-    scope.sessionOptions = [
-      {id: 'no', title: 'No'},
-      {id: 'yes', title: 'Yes'}
-    ];
-
-    scope.activities =  [{id: 'all'}];
-    scope.locations = [{id: 'all'}];
-
-    expectedScope = {
-      init: {id: 4},
-      classifyCounts: scope.countOptions[0],
-      daygroup: scope.dayOptions[0],
-      wholeSession: scope.sessionOptions[0],
-      sdate: '20131111',
-      edate:'20140101',
-      stime:'0400',
-      etime:'1600',
-      activity: scope.activities[0],
-      location: scope.locations[0]
-    };
-
-    // Call setScope method
-    scope.setScope(urlParams).then(function (response) {
-      done();
-    }, function (response) {
-      var testString = response.message.split('. ')[0];
-      expect(testString).to.equal('Query parameter input error');
-      done();
-    });
-
-    scope.$digest();
-
-    // Restore stubs
-    initiativesStub.restore();
-    getMetadataStub.restore();
+    setScopeStub.restore();
+    errorStub.restore();
   });
 
   it(':routeUpdate should resolve active promiseTimeouts, set state, and setDefaults', function () {
@@ -1019,9 +825,6 @@ describe('Controller: ReportCtrl', function () {
 
     // Define/redefine timeouts
     scope.initTimeoutPromise = undefined;
-
-    // Define scope.params.init
-    // scope.params.init = {id: 4};
 
     // Define scope.getInitiatives
     getInitiativesStub = sinon.stub(scope, 'getInitiatives');

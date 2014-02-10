@@ -21,6 +21,7 @@ module.exports = function(config) {
       'src/bower_components/bootstrap-sass/js/popover.js',
       'src/bower_components/bootstrap3-datetimepicker/src/js/bootstrap-datetimepicker.js',
       'src/bower_components/lodash/dist/lodash.js',
+      'src/lib/js/lodash_mixins.js',
       'src/bower_components/d3/d3.js',
       'src/bower_components/canvg/canvg.js',
       'test/js/mocks/**/*.js',

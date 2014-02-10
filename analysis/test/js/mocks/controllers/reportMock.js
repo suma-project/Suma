@@ -16,12 +16,31 @@ angular.module('reportMock', [])
     sessionOptions: [
       {id: 'false', title: 'No'},
       {id: 'true', title: 'Yes'}
-    ]
+    ],
+    startDate: [moment().subtract('months', 6).add('days', 1).format('YYYY-MM-DD')],
+    endDate: [moment().add('days', 1).format('YYYY-MM-DD')],
+    startTime: [''],
+    endTime: ['']
   },
   formDefaults: {
     classifyCounts: 'countOptions',
     daygroup: 'dayOptions',
-    wholeSession: 'sessionOptions'
+    wholeSession: 'sessionOptions',
+    sdate: 'startDate',
+    edate: 'endDate',
+    stime: 'startTime',
+    etime: 'endTime'
+  },
+  formFields: {
+    sdate: true,
+    edate: true,
+    stime: true,
+    etime: true,
+    classifyCounts: true,
+    daygroup: true,
+    wholeSession: true,
+    activities: true,
+    locations: true
   },
   dataSource: 'getData',
   dataProcessor: 'processTimeSeriesData',

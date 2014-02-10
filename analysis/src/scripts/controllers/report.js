@@ -32,7 +32,6 @@ angular.module('sumaAnalysis')
           $scope.params[fieldName] = $scope[sumaConfig.formDefaults[fieldName]][0]
         }
       });
-      console.log('scope.params', $scope.params)
     };
 
     // Set scope.params based on urlParams
@@ -40,15 +39,12 @@ angular.module('sumaAnalysis')
       var dfd = $q.defer();
 
       setScope.set(urlParams, sumaConfig, $scope.inits).then(function (response) {
-        console.log('response test', response);
         $scope.actsLocs = response.actsLocs;
         $scope.activities = response.activities;
         $scope.locations = response.locations;
         $scope.params = response.params;
         dfd.resolve();
-      }, function (response) {
-        console.log('error', response);
-      });
+      }, $scope.error);
 
       return dfd.promise;
     };
@@ -157,10 +153,10 @@ angular.module('sumaAnalysis')
 
       currentScope = {
         id: String($scope.params.init.id),
-        sdate: $scope.params.sdate,
-        edate: $scope.params.edate,
-        stime: $scope.params.stime ? $scope.params.stime : $scope.params.stime === '' ? '' : null,
-        etime: $scope.params.etime ? $scope.params.etime : $scope.params.etime === '' ? '' : null,
+        sdate: $scope.params.sdate || $scope.params.sdate === '' ? $scope.params.sdate : null,
+        edate: $scope.params.edate || $scope.params.edate === '' ? $scope.params.edate : null,
+        stime: $scope.params.stime || $scope.params.stime === '' ? $scope.params.stime : null,
+        etime: $scope.params.etime || $scope.params.etime === '' ? $scope.params.etime : null,
         classifyCounts: $scope.params.classifyCounts ? $scope.params.classifyCounts.id : null,
         wholeSession: $scope.params.wholeSession ? $scope.params.wholeSession.id : null,
         activity: $scope.params.activity ? $scope.params.activity.type ? $scope.params.activity.type + '-' + $scope.params.activity.id : $scope.params.activity.id : null,
