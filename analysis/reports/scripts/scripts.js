@@ -16321,6 +16321,17 @@
     root._ = _;
   }
 }.call(this));
+'use strict';
+_.mixin({
+  compactObject: function (o) {
+    _.each(o, function (v, k) {
+      if (!v && v !== '') {
+        delete o[k];
+      }
+    });
+    return o;
+  }
+});
 d3 = function () {
   var d3 = { version: '3.3.13' };
   if (!Date.now)
@@ -32596,12 +32607,31 @@ angular.module('sumaAnalysis', [
               id: 'yes',
               title: 'Yes'
             }
-          ]
+          ],
+          startDate: [moment().subtract('months', 6).add('days', 1).format('YYYY-MM-DD')],
+          endDate: [moment().add('days', 1).format('YYYY-MM-DD')],
+          startTime: [''],
+          endTime: ['']
         },
         formDefaults: {
           classifyCounts: 'countOptions',
           daygroup: 'dayOptions',
-          wholeSession: 'sessionOptions'
+          wholeSession: 'sessionOptions',
+          sdate: 'startDate',
+          edate: 'endDate',
+          stime: 'startTime',
+          etime: 'endTime'
+        },
+        formFields: {
+          sdate: true,
+          edate: true,
+          stime: true,
+          etime: true,
+          classifyCounts: true,
+          daygroup: true,
+          wholeSession: true,
+          activities: true,
+          locations: true
         },
         dataSource: 'getData',
         dataProcessor: 'processTimeSeriesData',
@@ -32635,6 +32665,10 @@ angular.module('sumaAnalysis', [
       resolve: {
         sumaConfig: function () {
           var newConfig = angular.copy(sumaBaseConfig);
+          newConfig.formFields.classifyCounts = false;
+          newConfig.formFields.wholeSession = false;
+          newConfig.formFields.stime = false;
+          newConfig.formFields.etime = false;
           newConfig.dataProcessor = 'processHourlyData';
           newConfig.suppWatch = false;
           return newConfig;
@@ -32647,10 +32681,13 @@ angular.module('sumaAnalysis', [
       resolve: {
         sumaConfig: function () {
           var newConfig = angular.copy(sumaBaseConfig);
-          newConfig.formData = null;
-          newConfig.formDefaults = null;
+          newConfig.formFields.classifyCounts = false;
+          newConfig.formFields.daygroup = false;
+          newConfig.formFields.wholeSession = false;
+          newConfig.formFields.activities = false;
+          newConfig.formFields.locations = false;
           newConfig.dataSource = 'getSessionsData';
-          newConfig.dataProcessor = null;
+          newConfig.dataProcessor = false;
           newConfig.suppWatch = false;
           return newConfig;
         }
@@ -32662,7 +32699,6 @@ angular.module('sumaAnalysis', [
 'use strict';
 angular.module('sumaAnalysis').controller('ReportCtrl', [
   '$scope',
-  '$rootScope',
   '$http',
   '$location',
   '$anchorScroll',
@@ -32675,8 +32711,8 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
   'sumaConfig',
   '$routeParams',
   '$q',
-  'validation',
-  function ($scope, $rootScope, $http, $location, $anchorScroll, $timeout, initiatives, actsLocs, data, promiseTracker, uiStates, sumaConfig, $routeParams, $q, validation) {
+  'setScope',
+  function ($scope, $http, $location, $anchorScroll, $timeout, initiatives, actsLocs, data, promiseTracker, uiStates, sumaConfig, $routeParams, $q, setScope) {
     $scope.initialize = function () {
       var urlParams = $location.search();
       $scope.setDefaults();
@@ -32690,119 +32726,24 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
       });
     };
     $scope.setDefaults = function () {
-      _.each(sumaConfig.formData, function (e, i) {
-        $scope[i] = e;
-      });
       $scope.params = {};
-      _.each(sumaConfig.formDefaults, function (e, i) {
-        $scope.params[i] = $scope[e][0];
+      _.each(sumaConfig.formFields, function (field, fieldName) {
+        if (field && (fieldName !== 'locations' && fieldName !== 'activities')) {
+          $scope[sumaConfig.formDefaults[fieldName]] = sumaConfig.formData[sumaConfig.formDefaults[fieldName]];
+          $scope.params[fieldName] = $scope[sumaConfig.formDefaults[fieldName]][0];
+        }
       });
-      $scope.params.sdate = moment().subtract('months', 6).add('days', 1).format('YYYY-MM-DD');
-      $scope.params.edate = moment().add('days', 1).format('YYYY-MM-DD');
     };
     $scope.setScope = function (urlParams) {
-      var dfd = $q.defer(), errors = [];
-      $scope.params.init = _.find($scope.inits, function (e, i) {
-        return String(e.id) === String(urlParams.id);
-      });
-      if (!$scope.params.init) {
-        dfd.reject({
-          message: 'Initiative ID Not Found.',
-          code: 500
-        });
-      } else {
-        $scope.params.classifyCounts = _.find($scope.countOptions, function (e, i) {
-          return String(e.id) === String(urlParams.classifyCounts);
-        });
-        if (!$scope.params.classifyCounts) {
-          errors.push('Invalid value for classifyCounts. Valid values are "count", "start", or "end".');
-        }
-        $scope.params.wholeSession = _.find($scope.sessionOptions, function (e, i) {
-          return String(e.id) === String(urlParams.wholeSession);
-        });
-        if (!$scope.params.wholeSession) {
-          errors.push('Invalid value for wholeSession. Valid values are "yes" or "no".');
-        }
-        $scope.params.daygroup = _.find($scope.dayOptions, function (e, i) {
-          return String(e.id) === String(urlParams.daygroup);
-        });
-        if (!$scope.params.daygroup) {
-          errors.push('Invalid value for daygroup. Valid values are "all", "weekends", or "weekdays".');
-        }
-        $scope.getMetadata();
-        $scope.params.activity = _.find($scope.activities, function (e, i) {
-          var type, id;
-          if (urlParams.activity === 'all') {
-            return String(e.id) === String(urlParams.activity);
-          } else {
-            type = urlParams.activity.split('-')[0];
-            id = urlParams.activity.split('-')[1];
-            return String(e.id) === String(id) && String(e.type) === String(type);
-          }
-        });
-        if (!$scope.params.activity) {
-          errors.push('Invalid value for activity.');
-        }
-        $scope.params.location = _.find($scope.locations, function (e, i) {
-          return String(e.id) === String(urlParams.location);
-        });
-        if (!$scope.params.location) {
-          errors.push('Invalid value for location.');
-        }
-        if (validation.validateDateTime(urlParams.sdate, 8)) {
-          $scope.params.sdate = urlParams.sdate;
-        } else {
-          errors.push('Invalid value for sdate. Should be numeric and either 0 or 8 characters in length, not counting punctuation.');
-        }
-        if (validation.validateDateTime(urlParams.edate, 8)) {
-          $scope.params.edate = urlParams.edate;
-        } else {
-          errors.push('Invalid value for edate. Should be numeric and either 0 or 8 characters in length, not counting punctuation.');
-        }
-        if (validation.validateDateTime(urlParams.stime, 4, true)) {
-          $scope.params.stime = urlParams.stime;
-        } else {
-          errors.push('Invalid value for stime. Should be numeric and either 0 or 4 characters in length, not counting punctuation.');
-        }
-        if (validation.validateDateTime(urlParams.etime, 4, true)) {
-          $scope.params.etime = urlParams.etime;
-        } else {
-          errors.push('Invalid value for etime. Should be numeric and either 0 or 4 characters in length, not counting punctuation.');
-        }
-        if (errors.length > 0) {
-          var msg = 'Query parameter input error. ';
-          _.each(errors, function (e) {
-            msg = msg + e + ' ';
-          });
-          dfd.reject({
-            message: msg,
-            code: 500
-          });
-        }
+      var dfd = $q.defer();
+      setScope.set(urlParams, sumaConfig, $scope.inits).then(function (response) {
+        $scope.actsLocs = response.actsLocs;
+        $scope.activities = response.activities;
+        $scope.locations = response.locations;
+        $scope.params = response.params;
         dfd.resolve();
-      }
+      }, $scope.error);
       return dfd.promise;
-    };
-    $scope.submit = function () {
-      var currentUrl, currentScope;
-      currentUrl = $location.search();
-      currentScope = {
-        id: String($scope.params.init.id),
-        sdate: $scope.params.sdate,
-        edate: $scope.params.edate,
-        stime: $scope.params.stime || '',
-        etime: $scope.params.etime || '',
-        classifyCounts: $scope.params.classifyCounts ? $scope.params.classifyCounts.id : null,
-        wholeSession: $scope.params.wholeSession ? $scope.params.wholeSession.id : null,
-        activity: $scope.params.activity ? $scope.params.activity.type ? $scope.params.activity.type + '-' + $scope.params.activity.id : $scope.params.activity.id : null,
-        location: $scope.params.location ? $scope.params.location.id : null,
-        daygroup: $scope.params.daygroup ? $scope.params.daygroup.id : null
-      };
-      if (_.isEqual(currentUrl, currentScope)) {
-        $scope.getData();
-      } else {
-        $location.search(currentScope);
-      }
     };
     $scope.getInitiatives = function () {
       var cfg, dfd = $q.defer();
@@ -32823,17 +32764,8 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
       $scope.actsLocs = actsLocs.get($scope.params.init);
       $scope.activities = $scope.actsLocs.activities;
       $scope.locations = $scope.actsLocs.locations;
-      $scope.params.activity = $scope.actsLocs.activities[0];
-      $scope.params.location = $scope.actsLocs.locations[0];
-    };
-    $scope.updateMetadata = function () {
-      if ($scope.params.init) {
-        $scope.processMetadata = true;
-        $scope.getMetadata();
-        $timeout(function () {
-          $scope.processMetadata = false;
-        }, 400);
-      }
+      $scope.params.activity = $scope.activities[0];
+      $scope.params.location = $scope.locations[0];
     };
     $scope.getData = function () {
       var cfg;
@@ -32848,6 +32780,15 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
         timeout: 180000
       };
       data[sumaConfig.dataSource](cfg).then($scope.success, $scope.error);
+    };
+    $scope.updateMetadata = function () {
+      if ($scope.params.init) {
+        $scope.processMetadata = true;
+        $scope.getMetadata();
+        $timeout(function () {
+          $scope.processMetadata = false;
+        }, 400);
+      }
     };
     $scope.routeUpdate = function () {
       var urlParams = $location.search();
@@ -32867,6 +32808,28 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
         $scope.getInitiatives().then(function () {
           $scope.setScope(urlParams).then($scope.getData, $scope.error);
         });
+      }
+    };
+    $scope.submit = function () {
+      var currentUrl, currentScope;
+      currentUrl = $location.search();
+      currentScope = {
+        id: String($scope.params.init.id),
+        sdate: $scope.params.sdate || $scope.params.sdate === '' ? $scope.params.sdate : null,
+        edate: $scope.params.edate || $scope.params.edate === '' ? $scope.params.edate : null,
+        stime: $scope.params.stime || $scope.params.stime === '' ? $scope.params.stime : null,
+        etime: $scope.params.etime || $scope.params.etime === '' ? $scope.params.etime : null,
+        classifyCounts: $scope.params.classifyCounts ? $scope.params.classifyCounts.id : null,
+        wholeSession: $scope.params.wholeSession ? $scope.params.wholeSession.id : null,
+        activity: $scope.params.activity ? $scope.params.activity.type ? $scope.params.activity.type + '-' + $scope.params.activity.id : $scope.params.activity.id : null,
+        location: $scope.params.location ? $scope.params.location.id : null,
+        daygroup: $scope.params.daygroup ? $scope.params.daygroup.id : null
+      };
+      currentScope = _.compactObject(currentScope);
+      if (_.isEqual(currentUrl, currentScope)) {
+        $scope.getData();
+      } else {
+        $location.search(currentScope);
       }
     };
     $scope.error = function (data) {
@@ -33019,12 +32982,7 @@ angular.module('sumaAnalysis').factory('data', [
             'sdate': cfg.params.sdate || '',
             'edate': cfg.params.edate || '',
             'stime': cfg.params.stime || '',
-            'etime': cfg.params.etime || '',
-            'classifyCounts': 'session',
-            'wholeSession': 'yes',
-            'daygroup': 'all',
-            'locations': 'all',
-            'activities': 'all'
+            'etime': cfg.params.etime || ''
           },
           timeout: cfg.timeoutPromise.promise
         };
@@ -33142,6 +33100,133 @@ angular.module('sumaAnalysis').service('validation', function Validation() {
     return false;
   };
 });
+'use strict';
+angular.module('sumaAnalysis').factory('setScope', [
+  '$q',
+  'actsLocs',
+  'validation',
+  function ($q, actsLocs, validation) {
+    var metadata, activities, locations;
+    return {
+      getMetadata: function (init) {
+        metadata = actsLocs.get(init);
+        activities = metadata.activities;
+        locations = metadata.locations;
+      },
+      set: function (urlParams, sumaConfig, inits) {
+        var dfd = $q.defer();
+        var newParams = {};
+        var errors = [];
+        newParams.init = _.find(inits, function (e, i) {
+          return String(e.id) === String(urlParams.id);
+        });
+        if (!newParams.init) {
+          dfd.reject({
+            message: 'Initiative ID Not Found.',
+            code: 500
+          });
+        } else {
+          if (sumaConfig.formFields.classifyCounts) {
+            newParams.classifyCounts = _.find(sumaConfig.formData.countOptions, function (e, i) {
+              return String(e.id) === String(urlParams.classifyCounts);
+            });
+            if (!newParams.classifyCounts) {
+              errors.push('Invalid value for classifyCounts. Valid values are "count", "start", or "end".');
+            }
+          }
+          if (sumaConfig.formFields.wholeSession) {
+            newParams.wholeSession = _.find(sumaConfig.formData.sessionOptions, function (e, i) {
+              return String(e.id) === String(urlParams.wholeSession);
+            });
+            if (!newParams.wholeSession) {
+              errors.push('Invalid value for wholeSession. Valid values are "yes" or "no".');
+            }
+          }
+          if (sumaConfig.formFields.daygroup) {
+            newParams.daygroup = _.find(sumaConfig.formData.dayOptions, function (e, i) {
+              return String(e.id) === String(urlParams.daygroup);
+            });
+            if (!newParams.daygroup) {
+              errors.push('Invalid value for daygroup. Valid values are "all", "weekends", or "weekdays".');
+            }
+          }
+          if (sumaConfig.formFields.activities || sumaConfig.formFields.locations) {
+            this.getMetadata(newParams.init);
+          }
+          if (sumaConfig.formFields.activities) {
+            newParams.activity = _.find(activities, function (e, i) {
+              var type, id;
+              if (urlParams.activity === 'all') {
+                return String(e.id) === String(urlParams.activity);
+              } else {
+                type = urlParams.activity.split('-')[0];
+                id = urlParams.activity.split('-')[1];
+                return String(e.id) === String(id) && String(e.type) === String(type);
+              }
+            });
+            if (!newParams.activity) {
+              errors.push('Invalid value for activity.');
+            }
+          }
+          if (sumaConfig.formFields.locations) {
+            newParams.location = _.find(locations, function (e, i) {
+              return String(e.id) === String(urlParams.location);
+            });
+            if (!newParams.location) {
+              errors.push('Invalid value for location.');
+            }
+          }
+          if (sumaConfig.formFields.sdate) {
+            if (validation.validateDateTime(urlParams.sdate, 8)) {
+              newParams.sdate = urlParams.sdate;
+            } else {
+              errors.push('Invalid value for sdate. Should be numeric and either 0 or 8 characters in length, not counting punctuation.');
+            }
+          }
+          if (sumaConfig.formFields.edate) {
+            if (validation.validateDateTime(urlParams.edate, 8)) {
+              newParams.edate = urlParams.edate;
+            } else {
+              errors.push('Invalid value for edate. Should be numeric and either 0 or 8 characters in length, not counting punctuation.');
+            }
+          }
+          if (sumaConfig.formFields.stime) {
+            if (validation.validateDateTime(urlParams.stime, 4, true)) {
+              newParams.stime = urlParams.stime;
+            } else {
+              errors.push('Invalid value for stime. Should be numeric and either 0 or 4 characters in length, not counting punctuation.');
+            }
+          }
+          if (sumaConfig.formFields.etime) {
+            if (validation.validateDateTime(urlParams.etime, 4, true)) {
+              newParams.etime = urlParams.etime;
+            } else {
+              errors.push('Invalid value for etime. Should be numeric and either 0 or 4 characters in length, not counting punctuation.');
+            }
+          }
+          if (errors.length > 0) {
+            var msg = 'Query parameter input error. ';
+            _.each(errors, function (e) {
+              msg = msg + e + ' ';
+            });
+            dfd.reject({
+              message: msg,
+              code: 500
+            });
+          } else {
+            dfd.resolve({
+              params: newParams,
+              actsLocs: metadata,
+              locations: locations,
+              activities: activities
+            });
+          }
+          return dfd.promise;
+        }
+      }
+    };
+  }
+]);
 'use strict';
 angular.module('sumaAnalysis').factory('processTimeSeriesData', [
   '$q',
