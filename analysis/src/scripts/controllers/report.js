@@ -194,6 +194,7 @@ angular.module('sumaAnalysis')
     $scope.success = function (processedData) {
       $scope.state = uiStates.setUIState('success');
       $scope.data = processedData;
+      $scope.summaryParams = angular.copy($scope.params);
 
       if (sumaConfig.suppWatch) {
         $scope.$watch('data.actsLocsData', function () {

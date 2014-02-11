@@ -2,14 +2,14 @@
   <div class="row" data-ng-show="state.success">
     <div class="col-xs-5">
       <p class="text-muted">
-        <strong>Initiative: </strong> {{params.init.title}} <br/>
-        <strong>Classify By: </strong> {{params.classifyCounts.title}}
-        <strong>Whole Session: </strong> {{params.wholeSession.title}} <br/>
-        <strong>Dates: </strong> {{params.sdate}} - {{params.edate}}
-        <strong>Subset: </strong> {{params.stime || '00:00'}} - {{params.etime || '23:59'}} <br/>
-        <strong>Days: </strong> {{params.daygroup.title}}
-        <strong>Locations: </strong> {{params.location.title}}
-        <strong>Activities: </strong> {{params.activity.title}}
+        <strong>Initiative: </strong> {{summaryParams.init.title}} <br/>
+        <strong>Classify By: </strong> {{summaryParams.classifyCounts.title}}
+        <strong>Whole Session: </strong> {{summaryParams.wholeSession.title}} <br/>
+        <strong>Dates: </strong> {{summaryParams.sdate}} - {{summaryParams.edate}}
+        <strong>Subset: </strong> {{summaryParams.stime || '00:00'}} - {{summaryParams.etime || '23:59'}} <br/>
+        <strong>Days: </strong> {{summaryParams.daygroup.title}}
+        <strong>Locations: </strong> {{summaryParams.location.title}}
+        <strong>Activities: </strong> {{summaryParams.activity.title}}
       </p>
     </div>
     <div class="col-xs-7">
