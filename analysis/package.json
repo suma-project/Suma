@@ -38,7 +38,8 @@
     "karma-coverage": "~0.1.4",
     "grunt-html-validation": "~0.1.13",
     "karma-safari-launcher": "~0.1.1",
-    "karma-opera-launcher": "~0.1.0"
+    "karma-opera-launcher": "~0.1.0",
+    "grunt-phpunit": "~0.3.2"
   },
   "engines": {
     "node": ">=0.8.0"

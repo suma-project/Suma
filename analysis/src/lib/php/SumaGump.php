@@ -1,6 +1,6 @@
 <?php
 
-require_once("../vendor/Gump.php");
+require_once("Gump.php");
 
 /**
  * SumaGump - A subclass that extends GUMP

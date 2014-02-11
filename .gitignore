@@ -11,6 +11,7 @@ tmp/**/*
 .tmp
 node_modules
 analysis/test/js/coverage
+analysis/test/php/coverage
 
 # Configuration Files
 service/config/config.ini

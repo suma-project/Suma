@@ -1,7 +1,7 @@
 <?php
 
 require_once 'ServerIO.php';
-require_once '../vendor/Gump.php';
+require_once 'Gump.php';
 require_once 'SumaGump.php';
 
 // Suppress Error Reporting

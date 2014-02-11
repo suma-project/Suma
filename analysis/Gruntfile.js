@@ -38,6 +38,10 @@ module.exports = function (grunt) {
           '{.tmp,<%= yeoman.app %>}/scripts/{,*/}*.js',
           '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp}'
         ]
+      },
+      tests: {
+        files: ['src/lib/php/*.php','test/php/spec/*.php'],
+        tasks: ['phpunit']
       }
     },
     autoprefixer: {
@@ -246,6 +250,15 @@ module.exports = function (grunt) {
           '<%= yeoman.app %>/index.html',
           '<%= yeoman.app %>/views/**/*.html'
         ]
+      }
+    },
+    phpunit: {
+      classes: {
+        dir: 'test/php/spec'
+      },
+      options: {
+        coverageHtml: 'test/php/coverage',
+        configuration: 'test/php/config.xml'
       }
     }
   });
