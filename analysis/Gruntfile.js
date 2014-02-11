@@ -173,8 +173,7 @@ module.exports = function (grunt) {
           src: [
             '*.{ico,png,txt}',
             'images/{,*/}*.{gif,webp}',
-            'lib/php/**/*',
-            'lib/vendor/**/*'
+            'lib/php/**/*'
           ]
         }, {
           expand: true,

@@ -32854,6 +32854,7 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
     $scope.success = function (processedData) {
       $scope.state = uiStates.setUIState('success');
       $scope.data = processedData;
+      $scope.summaryParams = angular.copy($scope.params);
       if (sumaConfig.suppWatch) {
         $scope.$watch('data.actsLocsData', function () {
           var index = _.findIndex($scope.data.actsLocsData.items, function (item) {
