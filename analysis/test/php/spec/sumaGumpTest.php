@@ -1,6 +1,5 @@
 <?php
 
-require_once 'src/lib/php/Gump.php';
 require_once 'src/lib/php/SumaGump.php';
 
 class SumaGumpTest extends PHPUnit_Framework_TestCase {
@@ -10,7 +9,7 @@ class SumaGumpTest extends PHPUnit_Framework_TestCase {
     $expected = array('id' => '20140101');
 
     $filters = array(
-      'id'         => 'rmhyphen',
+      'id' => 'rmhyphen',
     );
 
     $gump = new SumaGump();
@@ -25,7 +24,7 @@ class SumaGumpTest extends PHPUnit_Framework_TestCase {
     $expected = array('id' => '0300');
 
     $filters = array(
-      'id'         => 'pad_time',
+      'id' => 'pad_time',
     );
 
     $gump = new SumaGump();
@@ -40,7 +39,7 @@ class SumaGumpTest extends PHPUnit_Framework_TestCase {
     $expected = array('id' => '0300');
 
     $filters = array(
-      'id'         => 'pad_time',
+      'id' => 'pad_time',
     );
 
     $gump = new SumaGump();
@@ -48,5 +47,34 @@ class SumaGumpTest extends PHPUnit_Framework_TestCase {
     $filtered = $gump->filter($original, $filters);
 
     $this->assertEquals($expected, $filtered);
+  }
+
+  public function testValidatorMultiExactLengthTrue () {
+    $original = array('stime' => '0300');
+    $expected = array('stime' => '0300');
+
+    $rules = array(
+      'stime' => 'multi_exact_len, 0 4',
+    );
+
+    $gump = new SumaGump();
+
+    $validated = $gump->validate($original, $rules);
+
+    $this->assertEquals($validated, TRUE);
+  }
+
+  public function testValidatorMultiExactLengthFalse () {
+    $original = array('stime' => '12345');
+
+    $rules = array(
+      'stime' => 'multi_exact_len, 0 4',
+    );
+
+    $gump = new SumaGump();
+
+    $validated = $gump->validate($original, $rules);
+
+    $this->assertTrue(is_array($validated));
   }
 }
