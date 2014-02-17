@@ -1151,10 +1151,10 @@ class Data
             throw new Exception($e);
         }
     }
-    public function getData($params)
+    public function getData($input)
     {
         // Validate form input
-        $params = $this->validateInput($_GET);
+        $params = $this->validateInput($input);
 
         // Set query type and format
         $params['format'] = 'lca';
