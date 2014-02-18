@@ -50,9 +50,9 @@ class ServerIO
      * Constructor to set url configuration
      */
     function __construct() {
-        $config = Spyc::YAMLLoad('../../../config/config.yaml');
+        $config = Spyc::YAMLLoad(realpath(__DIR__) . '/../../../config/config.yaml');
 
-        if (isset($config['serverIO']{'baseUrl'}))
+        if (isset($config['serverIO']['baseUrl']))
         {
             $this->_baseUrl = $config['serverIO']['baseUrl'];
         }
