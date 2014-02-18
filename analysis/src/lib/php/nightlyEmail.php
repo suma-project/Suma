@@ -3,7 +3,7 @@
 require_once 'spyc/Spyc.php';
 
 // Configuration
-$config = Spyc::YAMLLoad(realpath(__DIR__) . '/../../../config/config.yaml');
+$config = Spyc::YAMLLoad(realpath(dirname(__FILE__)) . '/../../../config/config.yaml');
 
 // Default Timezone. See: http://us3.php.net/manual/en/timezones.php
 $DEFAULT_TIMEZONE = $config['nightly']['timezone'];

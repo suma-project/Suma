@@ -4,7 +4,7 @@ require_once 'NightlyData.php';
 require_once 'spyc/Spyc.php';
 
 // Configuration
-$config = Spyc::YAMLLoad(realpath(__DIR__) . '/../../../config/config.yaml');
+$config = Spyc::YAMLLoad(realpath(dirname(__FILE__)) . '/../../../config/config.yaml');
 
 if (isset($config['nightly']))
 {
