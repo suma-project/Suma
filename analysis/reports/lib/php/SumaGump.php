@@ -32,21 +32,17 @@ class SumaGump extends GUMP
       $param = trim(strtolower($param));
       $len = (string)mb_strlen(trim(strtolower($input[$field])));
 
-      if (preg_match_all('#\'(.+?)\'#', $param, $matches, PREG_PATTERN_ORDER)) {
-          $param = $matches[1];
-      } else  {
-          $param = explode(chr(32), $param);
-      }
+      $param = explode(chr(32), $param);
 
       if(in_array($len, $param)) { // valid, return nothing
-          return;
+        return;
       } else {
-          return array(
-              'field' => $field,
-              'value' => $value,
-              'rule'  => __FUNCTION__,
-              'param' => $param
-          );
+        return array(
+          'field' => $field,
+          'value' => $value,
+          'rule'  => __FUNCTION__,
+          'param' => $param
+        );
       }
     }
 }

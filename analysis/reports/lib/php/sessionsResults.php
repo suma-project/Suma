@@ -9,19 +9,24 @@ require_once 'setHttpCode.php';
 $data = new SessionsData();
 
 try {
-  $sessionData = $data->getData($_GET);
-  echo json_encode($sessionData);
+    // $_GET superglobal is only used to read
+    // input parameters. It is not modified by
+    // SessionsData.php and extraneous parameters
+    // will be ignored. All necessary parameters
+    // are validated before being used by the system.
+    $sessionData = $data->getData($_GET);
+    echo json_encode($sessionData);
 }
 catch (Exception $e)
 {
-  $message = (string)$e->getMessage();
-  $code = (int)$e->getCode();
+    $message = (string)$e->getMessage();
+    $code = (int)$e->getCode();
 
-  $header = setHttpCode($code);
+    $header = setHttpCode($code);
 
-  // Set Header
-  header($header);
+    // Set Header
+    header($header);
 
-  // Return JSON with display data
-   die(json_encode(array('message' => $message)));
+    // Return JSON with display data
+    die(json_encode(array('message' => $message)));
 }

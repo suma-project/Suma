@@ -99,6 +99,12 @@ class SessionsData
      * @access  private
      */
     private function populateHash($response) {
+        // Check for sessions object
+        if (!isset($response['initiative']['sessions']))
+        {
+            throw new Exception('No data found for that combination of filters. Please try a broader search.');
+        }
+
         $sessions = $response['initiative']['sessions'];
 
         foreach ($sessions as $sess)
@@ -171,7 +177,7 @@ class SessionsData
         }
         catch (Exception $e)
         {
-            throw $e;
+            throw new Exception($e->getMessage());
         }
 
     }

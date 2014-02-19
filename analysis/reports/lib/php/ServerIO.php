@@ -50,9 +50,9 @@ class ServerIO
      * Constructor to set url configuration
      */
     function __construct() {
-        $config = Spyc::YAMLLoad('../../../config/config.yaml');
+        $config = Spyc::YAMLLoad(realpath(dirname(__FILE__)) . '/../../../config/config.yaml');
 
-        if (isset($config['serverIO']{'baseUrl'}))
+        if (isset($config['serverIO']['baseUrl']))
         {
             $this->_baseUrl = $config['serverIO']['baseUrl'];
         }
@@ -145,7 +145,7 @@ class ServerIO
             $request  = $this->_client->get($url);
             $response = $request->send();
         } catch (Exception $e){
-            $message = (string)$e->getMessage();
+            $message = $e->getResponse()->getBody();
             $code = (string)$e->getResponse()->getStatusCode();
             throw new Exception($message, $code);
         }

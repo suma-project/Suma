@@ -4,32 +4,39 @@ require_once 'NightlyData.php';
 require_once 'spyc/Spyc.php';
 
 // Configuration
-$config = Spyc::YAMLLoad('../../../../config/config.yaml');
+$config = Spyc::YAMLLoad(realpath(dirname(__FILE__)) . '/../../../config/config.yaml');
 
-// Default Timezone. See: http://us3.php.net/manual/en/timezones.php
-$DEFAULT_TIMEZONE = $config['nightly']['timezone'];
-date_default_timezone_set($DEFAULT_TIMEZONE);
-
-// Which day to retrieve hourly report
-$DAY_PROCESS = date('Ymd', strtotime('yesterday'));
-
-// Initialize class and retrieve data
-try
+if (isset($config['nightly']))
 {
-    $data = new NightlyData();
-    $nightlyData = $data->getData($DAY_PROCESS);
+    // Default Timezone. See: http://us3.php.net/manual/en/timezones.php
+    $DEFAULT_TIMEZONE = $config['nightly']['timezone'];
+    date_default_timezone_set($DEFAULT_TIMEZONE);
 
-    // Print Output
-    foreach ($nightlyData as $key => $init)
+    // Which day to retrieve hourly report
+    $DAY_PROCESS = date('Ymd', strtotime('yesterday'));
+
+    // Initialize class and retrieve data
+    try
     {
-        print "\n" . $key . "\n";
-        foreach ($init as $key => $count)
+        $data = new NightlyData();
+        $nightlyData = $data->getData($DAY_PROCESS);
+
+        // Print Output
+        foreach ($nightlyData as $key => $init)
         {
-            print " " . $data->hourDisplay[$key] . ': ' . $count . "\n";
+            print "\n" . $key . "\n";
+            foreach ($init as $key => $count)
+            {
+                print " " . $data->hourDisplay[$key] . ': ' . $count . "\n";
+            }
         }
     }
+    catch (Exception $e)
+    {
+        print "Error: " . $e;
+    }
 }
-catch (Exception $e)
+else
 {
-    print "Error: " . $e;
+    print 'Error: Problem loading config.yaml. Please verify config.yaml exists and contains a valid baseUrl.';
 }
