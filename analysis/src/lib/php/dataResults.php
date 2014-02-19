@@ -9,19 +9,19 @@ require_once 'setHttpCode.php';
 $data = new Data();
 
 try {
-  $chartData = $data->getData($_GET);
-  echo json_encode($chartData);
+    $chartData = $data->getData($_GET);
+    echo json_encode($chartData);
 }
 catch (Exception $e)
 {
 
-  $message = (string)$e->getMessage();
-  $code = (int)$e->getCode();
-  $header = setHttpCode($code);
+    $message = (string)$e->getMessage();
+    $code = (int)$e->getCode();
+    $header = setHttpCode($code);
 
-  // Set Header
-  header($header);
+    // Set Header
+    header($header);
 
-  // Return JSON with display data
-  die(json_encode(array('message' => $message)));
+    // Return JSON with display data
+    die(json_encode(array('message' => $message)));
 }
