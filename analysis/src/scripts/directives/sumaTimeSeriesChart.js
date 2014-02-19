@@ -302,10 +302,18 @@ angular.module('sumaAnalysis')
         var chart = new TimeSeries();
 
         scope.render = function (data) {
-          d3.select(element[0]).select('svg').remove();
-          d3.select(element[0])
-            .datum(data.data)
-            .call(chart);
+          if (data.data.length > 1) {
+            d3.select(element[0]).select('svg, div').remove();
+            d3.select(element[0])
+              .datum(data.data)
+              .call(chart);
+          } else {
+            d3.select(element[0]).select('svg, div').remove();
+            d3.select(element[0])
+              .append('div')
+              .attr('class', 'alert alert-warning alert-block')
+              .html('<h4>Notice!</h4><p>Limited data is available for this query.</p><p>Message: Not enough data was found to display a time series. However, summary data is shown below.</p>');
+          }
         };
 
         scope.$watch('data', function (newData) {
