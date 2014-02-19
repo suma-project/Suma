@@ -9,6 +9,11 @@ require_once 'setHttpCode.php';
 $data = new Data();
 
 try {
+    // $_GET superglobal is only used to read
+    // input parameters. It is not modified by
+    // Data.php and extraneous parameters will
+    // be ignored. All necessary parameters are
+    // validated before being used by the system.
     $chartData = $data->getData($_GET);
     echo json_encode($chartData);
 }
