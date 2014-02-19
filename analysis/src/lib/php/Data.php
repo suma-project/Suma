@@ -845,7 +845,7 @@ class Data
         // Check for sessions object
         if (!isset($response['initiative']['sessions']))
         {
-            throw new Exception('Error retrieving data.');
+            throw new Exception('No data found for that combination of filters. Please try a broader search.');
         }
 
         // Populate location list for filters
@@ -1148,7 +1148,7 @@ class Data
         }
         catch (Exception $e)
         {
-            throw new Exception($e);
+            throw new Exception($e->getMessage());
         }
     }
     public function getData($input)
