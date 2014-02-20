@@ -1,6 +1,6 @@
 {
   "name": "d3",
-  "version": "3.3.13",
+  "version": "3.4.2",
   "main": "d3.js",
   "scripts": [
     "d3.js"
@@ -14,7 +14,6 @@
     "Makefile",
     "bin",
     "component.json",
-    "index-browserify.js",
     "index.js",
     "lib",
     "node_modules",
@@ -23,13 +22,13 @@
     "test"
   ],
   "homepage": "https://github.com/mbostock/d3",
-  "_release": "3.3.13",
+  "_release": "3.4.2",
   "_resolution": {
     "type": "version",
-    "tag": "v3.3.13",
-    "commit": "fe09f453a8e1c93891cde2d1067b7334ab692f9c"
+    "tag": "v3.4.2",
+    "commit": "4637ee5a49ec9f2edea217869a0b4f43b3617912"
   },
   "_source": "git://github.com/mbostock/d3.git",
-  "_target": "~3.3.11",
+  "_target": "~3.4.2",
   "_originalSource": "d3"
 }
