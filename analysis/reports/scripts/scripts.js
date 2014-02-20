@@ -5433,7 +5433,7 @@
         }
         return match;
       });
-      message = message + '\nhttp://errors.angularjs.org/1.2.8-build.2087+sha.affcbad/' + (module ? module + '/' : '') + code;
+      message = message + '\nhttp://errors.angularjs.org/1.2.13/' + (module ? module + '/' : '') + code;
       for (i = 2; i < arguments.length; i++) {
         message = message + (i == 2 ? '?' : '&') + 'p' + (i - 2) + '=' + encodeURIComponent(stringify(arguments[i]));
       }
@@ -5443,6 +5443,7 @@
   var lowercase = function (string) {
     return isString(string) ? string.toLowerCase() : string;
   };
+  var hasOwnProperty = Object.prototype.hasOwnProperty;
   var uppercase = function (string) {
     return isString(string) ? string.toUpperCase() : string;
   };
@@ -5738,7 +5739,7 @@
   function shallowCopy(src, dst) {
     dst = dst || {};
     for (var key in src) {
-      if (src.hasOwnProperty(key) && key.charAt(0) !== '$' && key.charAt(1) !== '$') {
+      if (src.hasOwnProperty(key) && !(key.charAt(0) === '$' && key.charAt(1) === '$')) {
         dst[key] = src[key];
       }
     }
@@ -6133,11 +6134,11 @@
     });
   }
   var version = {
-      full: '1.2.8-build.2087+sha.affcbad',
+      full: '1.2.13',
       major: 1,
       minor: 2,
-      dot: 8,
-      codeName: 'interdimensional-cartography'
+      dot: 13,
+      codeName: 'romantic-transclusion'
     };
   function publishExternalAPI(angular) {
     extend(angular, {
@@ -6255,6 +6256,9 @@
     } : function (element, type, fn) {
       element.detachEvent('on' + type, fn);
     };
+  var jqData = JQLite._data = function (node) {
+      return this.cache[node[this.expando]] || {};
+    };
   function jqNextId() {
     return ++jqId;
   }
@@ -6295,6 +6299,9 @@
   function JQLite(element) {
     if (element instanceof JQLite) {
       return element;
+    }
+    if (isString(element)) {
+      element = trim(element);
     }
     if (!(this instanceof JQLite)) {
       if (isString(element) && element.charAt(0) != '<') {
@@ -7156,6 +7163,13 @@
                 });
                 done && $timeout(done, 0, false);
               },
+              setClass: function (element, add, remove, done) {
+                forEach(element, function (element) {
+                  jqLiteAddClass(element, add);
+                  jqLiteRemoveClass(element, remove);
+                });
+                done && $timeout(done, 0, false);
+              },
               enabled: noop
             };
           }
@@ -7442,7 +7456,7 @@
     '$$sanitizeUriProvider'
   ];
   function $CompileProvider($provide, $$sanitizeUriProvider) {
-    var hasDirectives = {}, Suffix = 'Directive', COMMENT_DIRECTIVE_REGEXP = /^\s*directive\:\s*([\d\w\-_]+)\s+(.*)$/, CLASS_DIRECTIVE_REGEXP = /(([\d\w\-_]+)(?:\:([^;]+))?;?)/;
+    var hasDirectives = {}, Suffix = 'Directive', COMMENT_DIRECTIVE_REGEXP = /^\s*directive\:\s*([\d\w\-_]+)\s+(.*)$/, CLASS_DIRECTIVE_REGEXP = /(([\d\w\-_]+)(?:\:([^;]+))?;?)/, TABLE_CONTENT_REGEXP = /^<\s*(tr|th|td|tbody)(\s+[^>]*)?>/i;
     var EVENT_HANDLER_ATTR_REGEXP = /^(on[a-z]+|formaction)$/;
     this.directive = function registerDirective(name, directiveFactory) {
       assertNotHasOwnProperty(name, 'directive');
@@ -7530,8 +7544,15 @@
             }
           },
           $updateClass: function (newClasses, oldClasses) {
-            this.$removeClass(tokenDifference(oldClasses, newClasses));
-            this.$addClass(tokenDifference(newClasses, oldClasses));
+            var toAdd = tokenDifference(newClasses, oldClasses);
+            var toRemove = tokenDifference(oldClasses, newClasses);
+            if (toAdd.length === 0) {
+              $animate.removeClass(this.$$element, toRemove);
+            } else if (toRemove.length === 0) {
+              $animate.addClass(this.$$element, toAdd);
+            } else {
+              $animate.setClass(this.$$element, toAdd, toRemove);
+            }
           },
           $set: function (key, value, writeAttr, attrName) {
             var booleanKey = getBooleanAttrName(this.$$element[0], key), normalizedVal, nodeName;
@@ -7771,7 +7792,7 @@
         }
         function applyDirectivesToNode(directives, compileNode, templateAttrs, transcludeFn, jqCollection, originalReplaceDirective, preLinkFns, postLinkFns, previousCompileContext) {
           previousCompileContext = previousCompileContext || {};
-          var terminalPriority = -Number.MAX_VALUE, newScopeDirective, controllerDirectives = previousCompileContext.controllerDirectives, newIsolateScopeDirective = previousCompileContext.newIsolateScopeDirective, templateDirective = previousCompileContext.templateDirective, nonTlbTranscludeDirective = previousCompileContext.nonTlbTranscludeDirective, hasTranscludeDirective = false, hasElementTranscludeDirective = false, $compileNode = templateAttrs.$$element = jqLite(compileNode), directive, directiveName, $template, replaceDirective = originalReplaceDirective, childTranscludeFn = transcludeFn, linkFn, directiveValue;
+          var terminalPriority = -Number.MAX_VALUE, newScopeDirective, controllerDirectives = previousCompileContext.controllerDirectives, newIsolateScopeDirective = previousCompileContext.newIsolateScopeDirective, templateDirective = previousCompileContext.templateDirective, nonTlbTranscludeDirective = previousCompileContext.nonTlbTranscludeDirective, hasTranscludeDirective = false, hasElementTranscludeDirective = previousCompileContext.hasElementTranscludeDirective, $compileNode = templateAttrs.$$element = jqLite(compileNode), directive, directiveName, $template, replaceDirective = originalReplaceDirective, childTranscludeFn = transcludeFn, linkFn, directiveValue;
           for (var i = 0, ii = directives.length; i < ii; i++) {
             directive = directives[i];
             var attrStart = directive.$$start;
@@ -7826,7 +7847,7 @@
               directiveValue = denormalizeTemplate(directiveValue);
               if (directive.replace) {
                 replaceDirective = directive;
-                $template = jqLite('<div>' + trim(directiveValue) + '</div>').contents();
+                $template = directiveTemplateContents(directiveValue);
                 compileNode = $template[0];
                 if ($template.length != 1 || compileNode.nodeType !== 1) {
                   throw $compileMinErr('tplrt', 'Template for directive \'{0}\' must have exactly one root element. {1}', directiveName, '');
@@ -7877,6 +7898,7 @@
           }
           nodeLinkFn.scope = newScopeDirective && newScopeDirective.scope === true;
           nodeLinkFn.transclude = hasTranscludeDirective && childTranscludeFn;
+          previousCompileContext.hasElementTranscludeDirective = hasElementTranscludeDirective;
           return nodeLinkFn;
           function addLinkFns(pre, post, attrStart, attrEnd) {
             if (pre) {
@@ -8106,6 +8128,22 @@
             }
           });
         }
+        function directiveTemplateContents(template) {
+          var type;
+          template = trim(template);
+          if (type = TABLE_CONTENT_REGEXP.exec(template)) {
+            type = type[1].toLowerCase();
+            var table = jqLite('<table>' + template + '</table>'), tbody = table.children('tbody'), leaf = /(td|th)/.test(type) && table.find('tr');
+            if (tbody.length && type !== 'tbody') {
+              table = tbody;
+            }
+            if (leaf && leaf.length) {
+              table = leaf;
+            }
+            return table.contents();
+          }
+          return jqLite('<div>' + template + '</div>').contents();
+        }
         function compileTemplateUrl(directives, $compileNode, tAttrs, $rootElement, childTranscludeFn, preLinkFns, postLinkFns, previousCompileContext) {
           var linkQueue = [], afterTemplateNodeLinkFn, afterTemplateChildLinkFn, beforeTemplateCompileNode = $compileNode[0], origAsyncDirective = directives.shift(), derivedSyncDirective = extend({}, origAsyncDirective, {
               templateUrl: null,
@@ -8118,7 +8156,7 @@
             var compileNode, tempTemplateAttrs, $template, childBoundTranscludeFn;
             content = denormalizeTemplate(content);
             if (origAsyncDirective.replace) {
-              $template = jqLite('<div>' + trim(content) + '</div>').contents();
+              $template = directiveTemplateContents(content);
               compileNode = $template[0];
               if ($template.length != 1 || compileNode.nodeType !== 1) {
                 throw $compileMinErr('tplrt', 'Template for directive \'{0}\' must have exactly one root element. {1}', origAsyncDirective.name, templateUrl);
@@ -8146,8 +8184,12 @@
             while (linkQueue.length) {
               var scope = linkQueue.shift(), beforeTemplateLinkNode = linkQueue.shift(), linkRootElement = linkQueue.shift(), boundTranscludeFn = linkQueue.shift(), linkNode = $compileNode[0];
               if (beforeTemplateLinkNode !== beforeTemplateCompileNode) {
-                linkNode = jqLiteClone(compileNode);
+                var oldClasses = beforeTemplateLinkNode.className;
+                if (!(previousCompileContext.hasElementTranscludeDirective && origAsyncDirective.replace)) {
+                  linkNode = jqLiteClone(compileNode);
+                }
                 replaceWith(linkRootElement, jqLite(beforeTemplateLinkNode), linkNode);
+                safeAddClass(jqLite(linkNode), oldClasses);
               }
               if (afterTemplateNodeLinkFn.transclude) {
                 childBoundTranscludeFn = createBoundTranscludeFn(scope, afterTemplateNodeLinkFn.transclude);
@@ -8411,9 +8453,9 @@
           }],
         headers: {
           common: { 'Accept': 'application/json, text/plain, */*' },
-          post: CONTENT_TYPE_APPLICATION_JSON,
-          put: CONTENT_TYPE_APPLICATION_JSON,
-          patch: CONTENT_TYPE_APPLICATION_JSON
+          post: copy(CONTENT_TYPE_APPLICATION_JSON),
+          put: copy(CONTENT_TYPE_APPLICATION_JSON),
+          patch: copy(CONTENT_TYPE_APPLICATION_JSON)
         },
         xsrfCookieName: 'XSRF-TOKEN',
         xsrfHeaderName: 'X-XSRF-TOKEN'
@@ -8645,7 +8687,12 @@
     ];
   }
   function createXhr(method) {
-    return msie <= 8 && lowercase(method) === 'patch' ? new ActiveXObject('Microsoft.XMLHTTP') : new window.XMLHttpRequest();
+    if (msie <= 8 && (!method.match(/^(get|post|head|put|delete|options)$/i) || !window.XMLHttpRequest)) {
+      return new window.ActiveXObject('Microsoft.XMLHTTP');
+    } else if (window.XMLHttpRequest) {
+      return new window.XMLHttpRequest();
+    }
+    throw minErr('$httpBackend')('noxhr', 'This browser does not support XMLHttpRequest.');
   }
   function $HttpBackendProvider() {
     this.$get = [
@@ -8674,7 +8721,7 @@
             } else {
               completeRequest(callback, status || -2);
             }
-            delete callbacks[callbackId];
+            callbacks[callbackId] = angular.noop;
           });
       } else {
         var xhr = createXhr(method);
@@ -8689,7 +8736,7 @@
             var responseHeaders = null, response = null;
             if (status !== ABORTED) {
               responseHeaders = xhr.getAllResponseHeaders();
-              response = xhr.responseType ? xhr.response : xhr.responseText;
+              response = 'response' in xhr ? xhr.response : xhr.responseText;
             }
             completeRequest(callback, status || xhr.status, response, responseHeaders);
           }
@@ -8698,7 +8745,13 @@
           xhr.withCredentials = true;
         }
         if (responseType) {
-          xhr.responseType = responseType;
+          try {
+            xhr.responseType = responseType;
+          } catch (e) {
+            if (responseType !== 'json') {
+              throw e;
+            }
+          }
         }
         xhr.send(post || null);
       }
@@ -8713,10 +8766,9 @@
         xhr && xhr.abort();
       }
       function completeRequest(callback, status, response, headersString) {
-        var protocol = urlResolve(url).protocol;
         timeoutId && $browserDefer.cancel(timeoutId);
         jsonpDone = xhr = null;
-        status = protocol == 'file' && status === 0 ? response ? 200 : 404 : status;
+        status = status === 0 ? response ? 200 : 404 : status;
         status = status == 1223 ? 204 : status;
         callback(status, response, headersString);
         $browser.$$completeOutstandingRequest(noop);
@@ -8843,7 +8895,8 @@
         var intervals = {};
         function interval(fn, delay, count, invokeApply) {
           var setInterval = $window.setInterval, clearInterval = $window.clearInterval, deferred = $q.defer(), promise = deferred.promise, iteration = 0, skipApply = isDefined(invokeApply) && !invokeApply;
-          count = isDefined(count) ? count : 0, promise.then(null, null, fn);
+          count = isDefined(count) ? count : 0;
+          promise.then(null, null, fn);
           promise.$$intervalId = setInterval(function tick() {
             deferred.notify(iteration++);
             if (count > 0 && iteration >= count) {
@@ -9910,7 +9963,7 @@
       var field = this.expect().text;
       var getter = getterFn(field, this.options, this.text);
       return extend(function (scope, locals, self) {
-        return getter(self || object(scope, locals), locals);
+        return getter(self || object(scope, locals));
       }, {
         assign: function (scope, value, locals) {
           return setter(object(scope, locals), field, value, parser.text, parser.options);
@@ -10317,7 +10370,7 @@
           }
         },
         reject: function (reason) {
-          deferred.resolve(reject(reason));
+          deferred.resolve(createInternalRejectedPromise(reason));
         },
         notify: function (progress) {
           if (pending) {
@@ -10424,6 +10477,11 @@
       };
     };
     var reject = function (reason) {
+      var result = defer();
+      result.reject(reason);
+      return result.promise;
+    };
+    var createInternalRejectedPromise = function (reason) {
       return {
         then: function (callback, errback) {
           var result = defer();
@@ -10733,7 +10791,7 @@
                     }
                   }
                 } while (current = next);
-              if (dirty && !ttl--) {
+              if ((dirty || asyncQueue.length) && !ttl--) {
                 clearPhase();
                 throw $rootScopeMinErr('infdig', '{0} $digest() iterations reached. Aborting!\n' + 'Watchers fired in the last 5 iterations: {1}', TTL, toJson(watchLog));
               }
@@ -11323,6 +11381,14 @@
           };
         } else {
           comparator = function (obj, text) {
+            if (obj && text && typeof obj === 'object' && typeof text === 'object') {
+              for (var objKey in obj) {
+                if (objKey.charAt(0) !== '$' && hasOwnProperty.call(obj, objKey) && comparator(obj[objKey], text[objKey])) {
+                  return true;
+                }
+              }
+              return false;
+            }
             text = ('' + text).toLowerCase();
             return ('' + obj).toLowerCase().indexOf(text) > -1;
           };
@@ -11372,7 +11438,7 @@
             if (typeof expression[path] == 'undefined')
               return;
             predicates.push(function (value) {
-              return search(path == '$' ? value : getter(value, path), expression[path]);
+              return search(path == '$' ? value : value && value[path], expression[path]);
             });
           }(key));
         }
@@ -11696,10 +11762,11 @@
           }
           element.append(document.createComment('IE fix'));
         }
-        if (!attr.href && !attr.name) {
+        if (!attr.href && !attr.xlinkHref && !attr.name) {
           return function (scope, element) {
+            var href = toString.call(element.prop('href')) === '[object SVGAnimatedString]' ? 'xlink:href' : 'href';
             element.on('click', function (event) {
-              if (!element.attr('href')) {
+              if (!element.attr(href)) {
                 event.preventDefault();
               }
             });
@@ -11715,12 +11782,10 @@
     ngAttributeAliasDirectives[normalized] = function () {
       return {
         priority: 100,
-        compile: function () {
-          return function (scope, element, attr) {
-            scope.$watch(attr[normalized], function ngBooleanAttrWatchAction(value) {
-              attr.$set(attrName, !!value);
-            });
-          };
+        link: function (scope, element, attr) {
+          scope.$watch(attr[normalized], function ngBooleanAttrWatchAction(value) {
+            attr.$set(attrName, !!value);
+          });
         }
       };
     };
@@ -11884,7 +11949,7 @@
   var formDirective = formDirectiveFactory();
   var ngFormDirective = formDirectiveFactory(true);
   var URL_REGEXP = /^(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?$/;
-  var EMAIL_REGEXP = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6}$/;
+  var EMAIL_REGEXP = /^[a-z0-9!#$%&'*+/=?^_`{|}~.-]+@[a-z0-9-]+(\.[a-z0-9-]+)*$/i;
   var NUMBER_REGEXP = /^\s*(\-|\+)?(\d+|(\d*(\.\d*)))\s*$/;
   var inputType = {
       'text': textInputType,
@@ -11896,7 +11961,8 @@
       'hidden': noop,
       'button': noop,
       'submit': noop,
-      'reset': noop
+      'reset': noop,
+      'file': noop
     };
   function validate(ctrl, validatorName, validity, value) {
     ctrl.$setValidity(validatorName, validity);
@@ -11910,6 +11976,7 @@
       });
       element.on('compositionend', function () {
         composing = false;
+        listener();
       });
     }
     var listener = function () {
@@ -12795,14 +12862,12 @@
       transclude: 'element',
       priority: 800,
       require: '^ngSwitch',
-      compile: function (element, attrs) {
-        return function (scope, element, attr, ctrl, $transclude) {
-          ctrl.cases['!' + attrs.ngSwitchWhen] = ctrl.cases['!' + attrs.ngSwitchWhen] || [];
-          ctrl.cases['!' + attrs.ngSwitchWhen].push({
-            transclude: $transclude,
-            element: element
-          });
-        };
+      link: function (scope, element, attrs, ctrl, $transclude) {
+        ctrl.cases['!' + attrs.ngSwitchWhen] = ctrl.cases['!' + attrs.ngSwitchWhen] || [];
+        ctrl.cases['!' + attrs.ngSwitchWhen].push({
+          transclude: $transclude,
+          element: element
+        });
       }
     });
   var ngSwitchDefaultDirective = ngDirective({
@@ -12818,18 +12883,11 @@
       }
     });
   var ngTranscludeDirective = ngDirective({
-      controller: [
-        '$element',
-        '$transclude',
-        function ($element, $transclude) {
-          if (!$transclude) {
-            throw minErr('ngTransclude')('orphan', 'Illegal use of ngTransclude directive in the template! ' + 'No parent directive that requires a transclusion found. ' + 'Element: {0}', startingTag($element));
-          }
-          this.$transclude = $transclude;
+      link: function ($scope, $element, $attrs, controller, $transclude) {
+        if (!$transclude) {
+          throw minErr('ngTransclude')('orphan', 'Illegal use of ngTransclude directive in the template! ' + 'No parent directive that requires a transclusion found. ' + 'Element: {0}', startingTag($element));
         }
-      ],
-      link: function ($scope, $element, $attrs, controller) {
-        controller.$transclude(function (clone) {
+        $transclude(function (clone) {
           $element.empty();
           $element.append(clone);
         });
@@ -12856,7 +12914,7 @@
       '$compile',
       '$parse',
       function ($compile, $parse) {
-        var NG_OPTIONS_REGEXP = /^\s*(.*?)(?:\s+as\s+(.*?))?(?:\s+group\s+by\s+(.*))?\s+for\s+(?:([\$\w][\$\w]*)|(?:\(\s*([\$\w][\$\w]*)\s*,\s*([\$\w][\$\w]*)\s*\)))\s+in\s+(.*?)(?:\s+track\s+by\s+(.*?))?$/, nullModelCtrl = { $setViewValue: noop };
+        var NG_OPTIONS_REGEXP = /^\s*([\s\S]+?)(?:\s+as\s+([\s\S]+?))?(?:\s+group\s+by\s+([\s\S]+?))?\s+for\s+(?:([\$\w][\$\w]*)|(?:\(\s*([\$\w][\$\w]*)\s*,\s*([\$\w][\$\w]*)\s*\)))\s+in\s+([\s\S]+?)(?:\s+track\s+by\s+([\s\S]+?))?$/, nullModelCtrl = { $setViewValue: noop };
         return {
           restrict: 'E',
           require: [
@@ -13228,7 +13286,7 @@
     angularInit(document, bootstrap);
   });
 }(window, document));
-!angular.$$csp() && angular.element(document).find('head').prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide{display:none !important;}ng\\:form{display:block;}</style>');
+!angular.$$csp() && angular.element(document).find('head').prepend('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide{display:none !important;}ng\\:form{display:block;}.ng-animate-block-transitions{transition:0s all!important;-webkit-transition:0s all!important;}</style>');
 (function (window, angular, undefined) {
   'use strict';
   var ngRouteModule = angular.module('ngRoute', ['ng']).provider('$route', $RouteProvider);
@@ -13251,7 +13309,7 @@
           originalPath: path,
           regexp: path
         }, keys = ret.keys = [];
-      path = path.replace(/([().])/g, '\\$1').replace(/(\/)?:(\w+)([\?|\*])?/g, function (_, slash, key, option) {
+      path = path.replace(/([().])/g, '\\$1').replace(/(\/)?:(\w+)([\?\*])?/g, function (_, slash, key, option) {
         var optional = option === '?' ? option : null;
         var star = option === '*' ? option : null;
         keys.push({
@@ -13483,189 +13541,80 @@
   }
 }(window, window.angular));
 (function () {
-  angular.module('ajoslin.promise-tracker', []);
-  angular.module('ajoslin.promise-tracker').config([
-    '$httpProvider',
-    function ($httpProvider) {
-      if ($httpProvider.interceptors) {
-        $httpProvider.interceptors.push(TrackerHttpInterceptor);
-      } else {
-        $httpProvider.responseInterceptors.push(TrackerResponseInterceptor);
-      }
-    }
-  ]);
-  function TrackerResponseInterceptor($q, promiseTracker, $injector) {
-    var $http;
-    return function trackerResponse(promise) {
-      if (!$http) {
-        $http = $injector.get('$http');
-      }
-      var config = $http.pendingRequests[$http.pendingRequests.length - 1];
-      if (config.tracker) {
-        if (!angular.isArray(config.tracker)) {
-          config.tracker = [config.tracker];
-        }
-        angular.forEach(config.tracker, function (trackerName) {
-          promiseTracker(trackerName).addPromise(promise, config);
-        });
-      }
-      return promise;
-    };
-  }
-  TrackerResponseInterceptor.$inject = [
-    '$q',
-    'promiseTracker',
-    '$injector'
-  ];
-  function TrackerHttpInterceptor($q, promiseTracker) {
-    return {
-      request: function (config) {
-        if (config.tracker) {
-          if (!angular.isArray(config.tracker)) {
-            config.tracker = [config.tracker];
-          }
-          config.$promiseTrackerDeferred = config.$promiseTrackerDeferred || [];
-          angular.forEach(config.tracker, function (trackerName) {
-            var deferred = promiseTracker(trackerName).createPromise(config);
-            config.$promiseTrackerDeferred.push(deferred);
-          });
-        }
-        return $q.when(config);
-      },
-      response: function (response) {
-        if (response.config && response.config.$promiseTrackerDeferred) {
-          angular.forEach(response.config.$promiseTrackerDeferred, function (deferred) {
-            deferred.resolve(response);
-          });
-        }
-        return $q.when(response);
-      },
-      responseError: function (response) {
-        if (response.config && response.config.$promiseTrackerDeferred) {
-          angular.forEach(response.config.$promiseTrackerDeferred, function (deferred) {
-            deferred.reject(response);
-          });
-        }
-        return $q.reject(response);
-      }
-    };
-  }
-  TrackerHttpInterceptor.$inject = [
-    '$q',
-    'promiseTracker'
-  ];
-  angular.module('ajoslin.promise-tracker').provider('promiseTracker', function () {
-    var uid = [
-        '0',
-        '0',
-        '0'
-      ];
-    function nextUid() {
-      var index = uid.length;
-      var digit;
-      while (index) {
-        index--;
-        digit = uid[index].charCodeAt(0);
-        if (digit === 57) {
-          uid[index] = 'A';
-          return uid.join('');
-        }
-        if (digit === 90) {
-          uid[index] = '0';
-        } else {
-          uid[index] = String.fromCharCode(digit + 1);
-          return uid.join('');
-        }
-      }
-      uid.unshift('0');
-      return uid.join('');
-    }
+  angular.module('ajoslin.promise-tracker', []).provider('promiseTracker', function () {
     var trackers = {};
     this.$get = [
       '$q',
       '$timeout',
       function ($q, $timeout) {
-        var self = this;
-        function Tracker(options) {
-          var self = this;
-          var callbacks = {
-              start: [],
-              done: [],
-              error: [],
-              success: []
-            };
-          var trackedPromises = [];
-          options = options || {};
-          self.setMinDuration = function (minimum) {
-            self._minDuration = minimum;
-          };
-          self.setMinDuration(options.minDuration);
-          self.setMaxDuration = function (maximum) {
-            self._maxDuration = maximum;
-          };
-          self.setMaxDuration(options.maxDuration);
-          self.active = function () {
-            return trackedPromises.length > 0;
-          };
-          self.cancel = function () {
-            angular.forEach(trackedPromises, function (deferred) {
-              deferred.resolve();
-            });
-          };
-          function fireEvent(options) {
-            angular.forEach(callbacks[options.event], function (cb) {
-              cb.call(self, options.value, options.id);
-            });
+        function cancelTimeout(promise) {
+          if (promise) {
+            $timeout.cancel(promise);
           }
-          function createPromise(startArg) {
+        }
+        return function PromiseTracker(options) {
+          if (!(this instanceof PromiseTracker)) {
+            return new PromiseTracker(options);
+          }
+          options = options || {};
+          var tracked = [];
+          var self = this;
+          var minDuration = options.minDuration;
+          var activationDelay = options.activationDelay;
+          var minDurationPromise;
+          var activationDelayPromise;
+          self.active = function () {
+            if (activationDelayPromise) {
+              return false;
+            }
+            return tracked.length > 0;
+          };
+          self.destroy = self.cancel = function () {
+            minDurationPromise = cancelTimeout(minDurationPromise);
+            activationDelayPromise = cancelTimeout(activationDelayPromise);
+            for (var i = tracked.length - 1; i >= 0; i--) {
+              tracked[i].resolve();
+            }
+            tracked.length = 0;
+          };
+          self.createPromise = function () {
             var deferred = $q.defer();
-            var promiseId = nextUid();
-            trackedPromises.push(deferred);
-            if (trackedPromises.length === 1) {
-              if (self._minDuration) {
-                self.minPromise = $timeout(angular.noop, self._minDuration);
+            tracked.push(deferred);
+            if (tracked.length === 1) {
+              if (activationDelay) {
+                activationDelayPromise = $timeout(function () {
+                  activationDelayPromise = cancelTimeout(activationDelayPromise);
+                  startMinDuration();
+                }, activationDelay);
               } else {
-                self.minPromise = $q.when(true);
-              }
-              if (self._maxDuration) {
-                self.maxPromise = $timeout(deferred.resolve, self._maxDuration);
+                startMinDuration();
               }
             }
-            fireEvent({
-              event: 'start',
-              id: promiseId,
-              value: startArg
-            });
             deferred.promise.then(onDone(false), onDone(true));
+            return deferred;
+            function startMinDuration() {
+              if (minDuration) {
+                minDurationPromise = $timeout(angular.noop, minDuration);
+              }
+            }
             function onDone(isError) {
               return function (value) {
-                self.minPromise.then(function () {
-                  var index = trackedPromises.indexOf(deferred);
-                  trackedPromises.splice(index, 1);
-                  if (trackedPromises.length === 0 && self.maxPromise) {
-                    $timeout.cancel(self.maxPromise);
+                (minDurationPromise || $q.when()).then(function () {
+                  var index = tracked.indexOf(deferred);
+                  tracked.splice(index, 1);
+                  if (tracked.length === 0) {
+                    activationDelayPromise = cancelTimeout(activationDelayPromise);
                   }
-                  fireEvent({
-                    event: isError ? 'error' : 'success',
-                    id: promiseId,
-                    value: value
-                  });
-                  fireEvent({
-                    event: 'done',
-                    id: promiseId,
-                    value: value
-                  });
                 });
               };
             }
-            return deferred;
-          }
-          self.addPromise = function (promise, startArg) {
-            var then = promise && (promise.$then || promise.then);
+          };
+          self.addPromise = function (promise) {
+            var then = promise && (promise.then || promise.$then || promise.$promise && promise.$promise.then);
             if (!then) {
               throw new Error('promiseTracker#addPromise expects a promise object!');
             }
-            var deferred = createPromise(startArg);
+            var deferred = self.createPromise();
             then(function success(value) {
               deferred.resolve(value);
               return value;
@@ -13675,39 +13624,10 @@
             });
             return deferred;
           };
-          self.createPromise = function (startArg) {
-            return createPromise(startArg);
-          };
-          self.on = self.bind = function (event, cb) {
-            if (!callbacks[event]) {
-              throw new Error('Cannot bind callback for event \'' + event + '\'. Allowed types: \'start\', \'done\', \'error\', \'success\'');
-            }
-            callbacks[event].push(cb);
-            return self;
-          };
-          self.off = self.unbind = function (event, cb) {
-            if (!callbacks[event]) {
-              throw new Error('Cannot unbind callback for event \'' + event + '\'. Allowed types: \'start\', \'done\', \'error\', \'success\'');
-            }
-            if (cb) {
-              var index = callbacks[event].indexOf(cb);
-              callbacks[event].splice(index, 1);
-            } else {
-              callbacks[event].length = 0;
-            }
-            return self;
-          };
-        }
-        return function promiseTracker(trackerName, options) {
-          if (!trackers[trackerName]) {
-            trackers[trackerName] = new Tracker(options);
-          }
-          return trackers[trackerName];
         };
       }
     ];
   });
-  ;
 }());
 +function ($) {
   'use strict';
@@ -16332,8 +16252,8 @@ _.mixin({
     return o;
   }
 });
-d3 = function () {
-  var d3 = { version: '3.3.13' };
+!function () {
+  var d3 = { version: '3.4.2' };
   if (!Date.now)
     Date.now = function () {
       return +new Date();
@@ -16637,26 +16557,15 @@ d3 = function () {
   function d3_Map() {
   }
   d3_class(d3_Map, {
-    has: function (key) {
-      return d3_map_prefix + key in this;
-    },
+    has: d3_map_has,
     get: function (key) {
       return this[d3_map_prefix + key];
     },
     set: function (key, value) {
       return this[d3_map_prefix + key] = value;
     },
-    remove: function (key) {
-      key = d3_map_prefix + key;
-      return key in this && delete this[key];
-    },
-    keys: function () {
-      var keys = [];
-      this.forEach(function (key) {
-        keys.push(key);
-      });
-      return keys;
-    },
+    remove: d3_map_remove,
+    keys: d3_map_keys,
     values: function () {
       var values = [];
       this.forEach(function (key, value) {
@@ -16674,15 +16583,42 @@ d3 = function () {
       });
       return entries;
     },
+    size: d3_map_size,
+    empty: d3_map_empty,
     forEach: function (f) {
-      for (var key in this) {
-        if (key.charCodeAt(0) === d3_map_prefixCode) {
+      for (var key in this)
+        if (key.charCodeAt(0) === d3_map_prefixCode)
           f.call(this, key.substring(1), this[key]);
-        }
-      }
     }
   });
   var d3_map_prefix = '\0', d3_map_prefixCode = d3_map_prefix.charCodeAt(0);
+  function d3_map_has(key) {
+    return d3_map_prefix + key in this;
+  }
+  function d3_map_remove(key) {
+    key = d3_map_prefix + key;
+    return key in this && delete this[key];
+  }
+  function d3_map_keys() {
+    var keys = [];
+    this.forEach(function (key) {
+      keys.push(key);
+    });
+    return keys;
+  }
+  function d3_map_size() {
+    var size = 0;
+    for (var key in this)
+      if (key.charCodeAt(0) === d3_map_prefixCode)
+        ++size;
+    return size;
+  }
+  function d3_map_empty() {
+    for (var key in this)
+      if (key.charCodeAt(0) === d3_map_prefixCode)
+        return false;
+    return true;
+  }
   d3.nest = function () {
     var nest = {}, keys = [], sortKeys = [], sortValues, rollup;
     function map(mapType, array, depth) {
@@ -16758,9 +16694,7 @@ d3 = function () {
   function d3_Set() {
   }
   d3_class(d3_Set, {
-    has: function (value) {
-      return d3_map_prefix + value in this;
-    },
+    has: d3_map_has,
     add: function (value) {
       this[d3_map_prefix + value] = true;
       return value;
@@ -16769,19 +16703,13 @@ d3 = function () {
       value = d3_map_prefix + value;
       return value in this && delete this[value];
     },
-    values: function () {
-      var values = [];
-      this.forEach(function (value) {
-        values.push(value);
-      });
-      return values;
-    },
+    values: d3_map_keys,
+    size: d3_map_size,
+    empty: d3_map_empty,
     forEach: function (f) {
-      for (var value in this) {
-        if (value.charCodeAt(0) === d3_map_prefixCode) {
+      for (var value in this)
+        if (value.charCodeAt(0) === d3_map_prefixCode)
           f.call(this, value.substring(1));
-        }
-      }
     }
   });
   d3.behavior = {};
@@ -17660,6 +17588,9 @@ d3 = function () {
   var π = Math.PI, τ = 2 * π, halfπ = π / 2, ε = 0.000001, ε2 = ε * ε, d3_radians = π / 180, d3_degrees = 180 / π;
   function d3_sgn(x) {
     return x > 0 ? 1 : x < 0 ? -1 : 0;
+  }
+  function d3_cross2d(a, b, c) {
+    return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
   }
   function d3_acos(x) {
     return x > 1 ? 0 : x < -1 ? π : Math.acos(x);
@@ -18693,10 +18624,12 @@ d3 = function () {
     d3_timer_queueTail = t0;
     return time;
   }
-  var d3_format_decimalPoint = '.', d3_format_thousandsSeparator = ',', d3_format_grouping = [
-      3,
-      3
-    ], d3_format_currencySymbol = '$';
+  function d3_format_precision(x, p) {
+    return p - (x ? Math.ceil(Math.log(x) / Math.LN10) : 1);
+  }
+  d3.round = function (x, n) {
+    return n ? Math.round(x * (n = Math.pow(10, n))) / n : Math.round(x);
+  };
   var d3_formatPrefixes = [
       'y',
       'z',
@@ -18739,87 +18672,93 @@ d3 = function () {
       symbol: d
     };
   }
-  d3.round = function (x, n) {
-    return n ? Math.round(x * (n = Math.pow(10, n))) / n : Math.round(x);
-  };
-  d3.format = function (specifier) {
-    var match = d3_format_re.exec(specifier), fill = match[1] || ' ', align = match[2] || '>', sign = match[3] || '', symbol = match[4] || '', zfill = match[5], width = +match[6], comma = match[7], precision = match[8], type = match[9], scale = 1, suffix = '', integer = false;
-    if (precision)
-      precision = +precision.substring(1);
-    if (zfill || fill === '0' && align === '=') {
-      zfill = fill = '0';
-      align = '=';
-      if (comma)
-        width -= Math.floor((width - 1) / 4);
-    }
-    switch (type) {
-    case 'n':
-      comma = true;
-      type = 'g';
-      break;
-    case '%':
-      scale = 100;
-      suffix = '%';
-      type = 'f';
-      break;
-    case 'p':
-      scale = 100;
-      suffix = '%';
-      type = 'r';
-      break;
-    case 'b':
-    case 'o':
-    case 'x':
-    case 'X':
-      if (symbol === '#')
-        symbol = '0' + type.toLowerCase();
-    case 'c':
-    case 'd':
-      integer = true;
-      precision = 0;
-      break;
-    case 's':
-      scale = -1;
-      type = 'r';
-      break;
-    }
-    if (symbol === '#')
-      symbol = '';
-    else if (symbol === '$')
-      symbol = d3_format_currencySymbol;
-    if (type == 'r' && !precision)
-      type = 'g';
-    if (precision != null) {
-      if (type == 'g')
-        precision = Math.max(1, Math.min(21, precision));
-      else if (type == 'e' || type == 'f')
-        precision = Math.max(0, Math.min(20, precision));
-    }
-    type = d3_format_types.get(type) || d3_format_typeDefault;
-    var zcomma = zfill && comma;
-    return function (value) {
-      if (integer && value % 1)
-        return '';
-      var negative = value < 0 || value === 0 && 1 / value < 0 ? (value = -value, '-') : sign;
-      if (scale < 0) {
-        var prefix = d3.formatPrefix(value, precision);
-        value = prefix.scale(value);
-        suffix = prefix.symbol;
-      } else {
-        value *= scale;
+  function d3_locale_numberFormat(locale) {
+    var locale_decimal = locale.decimal, locale_thousands = locale.thousands, locale_grouping = locale.grouping, locale_currency = locale.currency, formatGroup = locale_grouping ? function (value) {
+        var i = value.length, t = [], j = 0, g = locale_grouping[0];
+        while (i > 0 && g > 0) {
+          t.push(value.substring(i -= g, i + g));
+          g = locale_grouping[j = (j + 1) % locale_grouping.length];
+        }
+        return t.reverse().join(locale_thousands);
+      } : d3_identity;
+    return function (specifier) {
+      var match = d3_format_re.exec(specifier), fill = match[1] || ' ', align = match[2] || '>', sign = match[3] || '', symbol = match[4] || '', zfill = match[5], width = +match[6], comma = match[7], precision = match[8], type = match[9], scale = 1, prefix = '', suffix = '', integer = false;
+      if (precision)
+        precision = +precision.substring(1);
+      if (zfill || fill === '0' && align === '=') {
+        zfill = fill = '0';
+        align = '=';
+        if (comma)
+          width -= Math.floor((width - 1) / 4);
       }
-      value = type(value, precision);
-      var i = value.lastIndexOf('.'), before = i < 0 ? value : value.substring(0, i), after = i < 0 ? '' : d3_format_decimalPoint + value.substring(i + 1);
-      if (!zfill && comma)
-        before = d3_format_group(before);
-      var length = symbol.length + before.length + after.length + (zcomma ? 0 : negative.length), padding = length < width ? new Array(length = width - length + 1).join(fill) : '';
-      if (zcomma)
-        before = d3_format_group(padding + before);
-      negative += symbol;
-      value = before + after;
-      return (align === '<' ? negative + value + padding : align === '>' ? padding + negative + value : align === '^' ? padding.substring(0, length >>= 1) + negative + value + padding.substring(length) : negative + (zcomma ? value : padding + value)) + suffix;
+      switch (type) {
+      case 'n':
+        comma = true;
+        type = 'g';
+        break;
+      case '%':
+        scale = 100;
+        suffix = '%';
+        type = 'f';
+        break;
+      case 'p':
+        scale = 100;
+        suffix = '%';
+        type = 'r';
+        break;
+      case 'b':
+      case 'o':
+      case 'x':
+      case 'X':
+        if (symbol === '#')
+          prefix = '0' + type.toLowerCase();
+      case 'c':
+      case 'd':
+        integer = true;
+        precision = 0;
+        break;
+      case 's':
+        scale = -1;
+        type = 'r';
+        break;
+      }
+      if (symbol === '$')
+        prefix = locale_currency[0], suffix = locale_currency[1];
+      if (type == 'r' && !precision)
+        type = 'g';
+      if (precision != null) {
+        if (type == 'g')
+          precision = Math.max(1, Math.min(21, precision));
+        else if (type == 'e' || type == 'f')
+          precision = Math.max(0, Math.min(20, precision));
+      }
+      type = d3_format_types.get(type) || d3_format_typeDefault;
+      var zcomma = zfill && comma;
+      return function (value) {
+        var fullSuffix = suffix;
+        if (integer && value % 1)
+          return '';
+        var negative = value < 0 || value === 0 && 1 / value < 0 ? (value = -value, '-') : sign;
+        if (scale < 0) {
+          var unit = d3.formatPrefix(value, precision);
+          value = unit.scale(value);
+          fullSuffix = unit.symbol + suffix;
+        } else {
+          value *= scale;
+        }
+        value = type(value, precision);
+        var i = value.lastIndexOf('.'), before = i < 0 ? value : value.substring(0, i), after = i < 0 ? '' : locale_decimal + value.substring(i + 1);
+        if (!zfill && comma)
+          before = formatGroup(before);
+        var length = prefix.length + before.length + after.length + (zcomma ? 0 : negative.length), padding = length < width ? new Array(length = width - length + 1).join(fill) : '';
+        if (zcomma)
+          before = formatGroup(padding + before);
+        negative += prefix;
+        value = before + after;
+        return (align === '<' ? negative + value + padding : align === '>' ? padding + negative + value : align === '^' ? padding.substring(0, length >>= 1) + negative + value + padding.substring(length) : negative + (zcomma ? value : padding + value)) + fullSuffix;
+      };
     };
-  };
+  }
   var d3_format_re = /(?:([^{])?([<>=^]))?([+\- ])?([$#])?(0)?(\d+)?(,)?(\.-?\d+)?([a-z%])?/i;
   var d3_format_types = d3.map({
       b: function (x) {
@@ -18850,24 +18789,591 @@ d3 = function () {
         return (x = d3.round(x, d3_format_precision(x, p))).toFixed(Math.max(0, Math.min(20, d3_format_precision(x * (1 + 1e-15), p))));
       }
     });
-  function d3_format_precision(x, p) {
-    return p - (x ? Math.ceil(Math.log(x) / Math.LN10) : 1);
-  }
   function d3_format_typeDefault(x) {
     return x + '';
   }
-  var d3_format_group = d3_identity;
-  if (d3_format_grouping) {
-    var d3_format_groupingLength = d3_format_grouping.length;
-    d3_format_group = function (value) {
-      var i = value.length, t = [], j = 0, g = d3_format_grouping[0];
-      while (i > 0 && g > 0) {
-        t.push(value.substring(i -= g, i + g));
-        g = d3_format_grouping[j = (j + 1) % d3_format_groupingLength];
+  var d3_time = d3.time = {}, d3_date = Date;
+  function d3_date_utc() {
+    this._ = new Date(arguments.length > 1 ? Date.UTC.apply(this, arguments) : arguments[0]);
+  }
+  d3_date_utc.prototype = {
+    getDate: function () {
+      return this._.getUTCDate();
+    },
+    getDay: function () {
+      return this._.getUTCDay();
+    },
+    getFullYear: function () {
+      return this._.getUTCFullYear();
+    },
+    getHours: function () {
+      return this._.getUTCHours();
+    },
+    getMilliseconds: function () {
+      return this._.getUTCMilliseconds();
+    },
+    getMinutes: function () {
+      return this._.getUTCMinutes();
+    },
+    getMonth: function () {
+      return this._.getUTCMonth();
+    },
+    getSeconds: function () {
+      return this._.getUTCSeconds();
+    },
+    getTime: function () {
+      return this._.getTime();
+    },
+    getTimezoneOffset: function () {
+      return 0;
+    },
+    valueOf: function () {
+      return this._.valueOf();
+    },
+    setDate: function () {
+      d3_time_prototype.setUTCDate.apply(this._, arguments);
+    },
+    setDay: function () {
+      d3_time_prototype.setUTCDay.apply(this._, arguments);
+    },
+    setFullYear: function () {
+      d3_time_prototype.setUTCFullYear.apply(this._, arguments);
+    },
+    setHours: function () {
+      d3_time_prototype.setUTCHours.apply(this._, arguments);
+    },
+    setMilliseconds: function () {
+      d3_time_prototype.setUTCMilliseconds.apply(this._, arguments);
+    },
+    setMinutes: function () {
+      d3_time_prototype.setUTCMinutes.apply(this._, arguments);
+    },
+    setMonth: function () {
+      d3_time_prototype.setUTCMonth.apply(this._, arguments);
+    },
+    setSeconds: function () {
+      d3_time_prototype.setUTCSeconds.apply(this._, arguments);
+    },
+    setTime: function () {
+      d3_time_prototype.setTime.apply(this._, arguments);
+    }
+  };
+  var d3_time_prototype = Date.prototype;
+  function d3_time_interval(local, step, number) {
+    function round(date) {
+      var d0 = local(date), d1 = offset(d0, 1);
+      return date - d0 < d1 - date ? d0 : d1;
+    }
+    function ceil(date) {
+      step(date = local(new d3_date(date - 1)), 1);
+      return date;
+    }
+    function offset(date, k) {
+      step(date = new d3_date(+date), k);
+      return date;
+    }
+    function range(t0, t1, dt) {
+      var time = ceil(t0), times = [];
+      if (dt > 1) {
+        while (time < t1) {
+          if (!(number(time) % dt))
+            times.push(new Date(+time));
+          step(time, 1);
+        }
+      } else {
+        while (time < t1)
+          times.push(new Date(+time)), step(time, 1);
       }
-      return t.reverse().join(d3_format_thousandsSeparator);
+      return times;
+    }
+    function range_utc(t0, t1, dt) {
+      try {
+        d3_date = d3_date_utc;
+        var utc = new d3_date_utc();
+        utc._ = t0;
+        return range(utc, t1, dt);
+      } finally {
+        d3_date = Date;
+      }
+    }
+    local.floor = local;
+    local.round = round;
+    local.ceil = ceil;
+    local.offset = offset;
+    local.range = range;
+    var utc = local.utc = d3_time_interval_utc(local);
+    utc.floor = utc;
+    utc.round = d3_time_interval_utc(round);
+    utc.ceil = d3_time_interval_utc(ceil);
+    utc.offset = d3_time_interval_utc(offset);
+    utc.range = range_utc;
+    return local;
+  }
+  function d3_time_interval_utc(method) {
+    return function (date, k) {
+      try {
+        d3_date = d3_date_utc;
+        var utc = new d3_date_utc();
+        utc._ = date;
+        return method(utc, k)._;
+      } finally {
+        d3_date = Date;
+      }
     };
   }
+  d3_time.year = d3_time_interval(function (date) {
+    date = d3_time.day(date);
+    date.setMonth(0, 1);
+    return date;
+  }, function (date, offset) {
+    date.setFullYear(date.getFullYear() + offset);
+  }, function (date) {
+    return date.getFullYear();
+  });
+  d3_time.years = d3_time.year.range;
+  d3_time.years.utc = d3_time.year.utc.range;
+  d3_time.day = d3_time_interval(function (date) {
+    var day = new d3_date(2000, 0);
+    day.setFullYear(date.getFullYear(), date.getMonth(), date.getDate());
+    return day;
+  }, function (date, offset) {
+    date.setDate(date.getDate() + offset);
+  }, function (date) {
+    return date.getDate() - 1;
+  });
+  d3_time.days = d3_time.day.range;
+  d3_time.days.utc = d3_time.day.utc.range;
+  d3_time.dayOfYear = function (date) {
+    var year = d3_time.year(date);
+    return Math.floor((date - year - (date.getTimezoneOffset() - year.getTimezoneOffset()) * 60000) / 86400000);
+  };
+  [
+    'sunday',
+    'monday',
+    'tuesday',
+    'wednesday',
+    'thursday',
+    'friday',
+    'saturday'
+  ].forEach(function (day, i) {
+    i = 7 - i;
+    var interval = d3_time[day] = d3_time_interval(function (date) {
+        (date = d3_time.day(date)).setDate(date.getDate() - (date.getDay() + i) % 7);
+        return date;
+      }, function (date, offset) {
+        date.setDate(date.getDate() + Math.floor(offset) * 7);
+      }, function (date) {
+        var day = d3_time.year(date).getDay();
+        return Math.floor((d3_time.dayOfYear(date) + (day + i) % 7) / 7) - (day !== i);
+      });
+    d3_time[day + 's'] = interval.range;
+    d3_time[day + 's'].utc = interval.utc.range;
+    d3_time[day + 'OfYear'] = function (date) {
+      var day = d3_time.year(date).getDay();
+      return Math.floor((d3_time.dayOfYear(date) + (day + i) % 7) / 7);
+    };
+  });
+  d3_time.week = d3_time.sunday;
+  d3_time.weeks = d3_time.sunday.range;
+  d3_time.weeks.utc = d3_time.sunday.utc.range;
+  d3_time.weekOfYear = d3_time.sundayOfYear;
+  function d3_locale_timeFormat(locale) {
+    var locale_dateTime = locale.dateTime, locale_date = locale.date, locale_time = locale.time, locale_periods = locale.periods, locale_days = locale.days, locale_shortDays = locale.shortDays, locale_months = locale.months, locale_shortMonths = locale.shortMonths;
+    function d3_time_format(template) {
+      var n = template.length;
+      function format(date) {
+        var string = [], i = -1, j = 0, c, p, f;
+        while (++i < n) {
+          if (template.charCodeAt(i) === 37) {
+            string.push(template.substring(j, i));
+            if ((p = d3_time_formatPads[c = template.charAt(++i)]) != null)
+              c = template.charAt(++i);
+            if (f = d3_time_formats[c])
+              c = f(date, p == null ? c === 'e' ? ' ' : '0' : p);
+            string.push(c);
+            j = i + 1;
+          }
+        }
+        string.push(template.substring(j, i));
+        return string.join('');
+      }
+      format.parse = function (string) {
+        var d = {
+            y: 1900,
+            m: 0,
+            d: 1,
+            H: 0,
+            M: 0,
+            S: 0,
+            L: 0,
+            Z: null
+          }, i = d3_time_parse(d, template, string, 0);
+        if (i != string.length)
+          return null;
+        if ('p' in d)
+          d.H = d.H % 12 + d.p * 12;
+        var localZ = d.Z != null && d3_date !== d3_date_utc, date = new (localZ ? d3_date_utc : d3_date)();
+        if ('j' in d)
+          date.setFullYear(d.y, 0, d.j);
+        else if ('w' in d && ('W' in d || 'U' in d)) {
+          date.setFullYear(d.y, 0, 1);
+          date.setFullYear(d.y, 0, 'W' in d ? (d.w + 6) % 7 + d.W * 7 - (date.getDay() + 5) % 7 : d.w + d.U * 7 - (date.getDay() + 6) % 7);
+        } else
+          date.setFullYear(d.y, d.m, d.d);
+        date.setHours(d.H + Math.floor(d.Z / 100), d.M + d.Z % 100, d.S, d.L);
+        return localZ ? date._ : date;
+      };
+      format.toString = function () {
+        return template;
+      };
+      return format;
+    }
+    function d3_time_parse(date, template, string, j) {
+      var c, p, t, i = 0, n = template.length, m = string.length;
+      while (i < n) {
+        if (j >= m)
+          return -1;
+        c = template.charCodeAt(i++);
+        if (c === 37) {
+          t = template.charAt(i++);
+          p = d3_time_parsers[t in d3_time_formatPads ? template.charAt(i++) : t];
+          if (!p || (j = p(date, string, j)) < 0)
+            return -1;
+        } else if (c != string.charCodeAt(j++)) {
+          return -1;
+        }
+      }
+      return j;
+    }
+    d3_time_format.utc = function (template) {
+      var local = d3_time_format(template);
+      function format(date) {
+        try {
+          d3_date = d3_date_utc;
+          var utc = new d3_date();
+          utc._ = date;
+          return local(utc);
+        } finally {
+          d3_date = Date;
+        }
+      }
+      format.parse = function (string) {
+        try {
+          d3_date = d3_date_utc;
+          var date = local.parse(string);
+          return date && date._;
+        } finally {
+          d3_date = Date;
+        }
+      };
+      format.toString = local.toString;
+      return format;
+    };
+    d3_time_format.multi = d3_time_format.utc.multi = d3_time_formatMulti;
+    var d3_time_periodLookup = d3.map(), d3_time_dayRe = d3_time_formatRe(locale_days), d3_time_dayLookup = d3_time_formatLookup(locale_days), d3_time_dayAbbrevRe = d3_time_formatRe(locale_shortDays), d3_time_dayAbbrevLookup = d3_time_formatLookup(locale_shortDays), d3_time_monthRe = d3_time_formatRe(locale_months), d3_time_monthLookup = d3_time_formatLookup(locale_months), d3_time_monthAbbrevRe = d3_time_formatRe(locale_shortMonths), d3_time_monthAbbrevLookup = d3_time_formatLookup(locale_shortMonths);
+    locale_periods.forEach(function (p, i) {
+      d3_time_periodLookup.set(p.toLowerCase(), i);
+    });
+    var d3_time_formats = {
+        a: function (d) {
+          return locale_shortDays[d.getDay()];
+        },
+        A: function (d) {
+          return locale_days[d.getDay()];
+        },
+        b: function (d) {
+          return locale_shortMonths[d.getMonth()];
+        },
+        B: function (d) {
+          return locale_months[d.getMonth()];
+        },
+        c: d3_time_format(locale_dateTime),
+        d: function (d, p) {
+          return d3_time_formatPad(d.getDate(), p, 2);
+        },
+        e: function (d, p) {
+          return d3_time_formatPad(d.getDate(), p, 2);
+        },
+        H: function (d, p) {
+          return d3_time_formatPad(d.getHours(), p, 2);
+        },
+        I: function (d, p) {
+          return d3_time_formatPad(d.getHours() % 12 || 12, p, 2);
+        },
+        j: function (d, p) {
+          return d3_time_formatPad(1 + d3_time.dayOfYear(d), p, 3);
+        },
+        L: function (d, p) {
+          return d3_time_formatPad(d.getMilliseconds(), p, 3);
+        },
+        m: function (d, p) {
+          return d3_time_formatPad(d.getMonth() + 1, p, 2);
+        },
+        M: function (d, p) {
+          return d3_time_formatPad(d.getMinutes(), p, 2);
+        },
+        p: function (d) {
+          return locale_periods[+(d.getHours() >= 12)];
+        },
+        S: function (d, p) {
+          return d3_time_formatPad(d.getSeconds(), p, 2);
+        },
+        U: function (d, p) {
+          return d3_time_formatPad(d3_time.sundayOfYear(d), p, 2);
+        },
+        w: function (d) {
+          return d.getDay();
+        },
+        W: function (d, p) {
+          return d3_time_formatPad(d3_time.mondayOfYear(d), p, 2);
+        },
+        x: d3_time_format(locale_date),
+        X: d3_time_format(locale_time),
+        y: function (d, p) {
+          return d3_time_formatPad(d.getFullYear() % 100, p, 2);
+        },
+        Y: function (d, p) {
+          return d3_time_formatPad(d.getFullYear() % 10000, p, 4);
+        },
+        Z: d3_time_zone,
+        '%': function () {
+          return '%';
+        }
+      };
+    var d3_time_parsers = {
+        a: d3_time_parseWeekdayAbbrev,
+        A: d3_time_parseWeekday,
+        b: d3_time_parseMonthAbbrev,
+        B: d3_time_parseMonth,
+        c: d3_time_parseLocaleFull,
+        d: d3_time_parseDay,
+        e: d3_time_parseDay,
+        H: d3_time_parseHour24,
+        I: d3_time_parseHour24,
+        j: d3_time_parseDayOfYear,
+        L: d3_time_parseMilliseconds,
+        m: d3_time_parseMonthNumber,
+        M: d3_time_parseMinutes,
+        p: d3_time_parseAmPm,
+        S: d3_time_parseSeconds,
+        U: d3_time_parseWeekNumberSunday,
+        w: d3_time_parseWeekdayNumber,
+        W: d3_time_parseWeekNumberMonday,
+        x: d3_time_parseLocaleDate,
+        X: d3_time_parseLocaleTime,
+        y: d3_time_parseYear,
+        Y: d3_time_parseFullYear,
+        Z: d3_time_parseZone,
+        '%': d3_time_parseLiteralPercent
+      };
+    function d3_time_parseWeekdayAbbrev(date, string, i) {
+      d3_time_dayAbbrevRe.lastIndex = 0;
+      var n = d3_time_dayAbbrevRe.exec(string.substring(i));
+      return n ? (date.w = d3_time_dayAbbrevLookup.get(n[0].toLowerCase()), i + n[0].length) : -1;
+    }
+    function d3_time_parseWeekday(date, string, i) {
+      d3_time_dayRe.lastIndex = 0;
+      var n = d3_time_dayRe.exec(string.substring(i));
+      return n ? (date.w = d3_time_dayLookup.get(n[0].toLowerCase()), i + n[0].length) : -1;
+    }
+    function d3_time_parseMonthAbbrev(date, string, i) {
+      d3_time_monthAbbrevRe.lastIndex = 0;
+      var n = d3_time_monthAbbrevRe.exec(string.substring(i));
+      return n ? (date.m = d3_time_monthAbbrevLookup.get(n[0].toLowerCase()), i + n[0].length) : -1;
+    }
+    function d3_time_parseMonth(date, string, i) {
+      d3_time_monthRe.lastIndex = 0;
+      var n = d3_time_monthRe.exec(string.substring(i));
+      return n ? (date.m = d3_time_monthLookup.get(n[0].toLowerCase()), i + n[0].length) : -1;
+    }
+    function d3_time_parseLocaleFull(date, string, i) {
+      return d3_time_parse(date, d3_time_formats.c.toString(), string, i);
+    }
+    function d3_time_parseLocaleDate(date, string, i) {
+      return d3_time_parse(date, d3_time_formats.x.toString(), string, i);
+    }
+    function d3_time_parseLocaleTime(date, string, i) {
+      return d3_time_parse(date, d3_time_formats.X.toString(), string, i);
+    }
+    function d3_time_parseAmPm(date, string, i) {
+      var n = d3_time_periodLookup.get(string.substring(i, i += 2).toLowerCase());
+      return n == null ? -1 : (date.p = n, i);
+    }
+    return d3_time_format;
+  }
+  var d3_time_formatPads = {
+      '-': '',
+      _: ' ',
+      '0': '0'
+    }, d3_time_numberRe = /^\s*\d+/, d3_time_percentRe = /^%/;
+  function d3_time_formatPad(value, fill, width) {
+    var sign = value < 0 ? '-' : '', string = (sign ? -value : value) + '', length = string.length;
+    return sign + (length < width ? new Array(width - length + 1).join(fill) + string : string);
+  }
+  function d3_time_formatRe(names) {
+    return new RegExp('^(?:' + names.map(d3.requote).join('|') + ')', 'i');
+  }
+  function d3_time_formatLookup(names) {
+    var map = new d3_Map(), i = -1, n = names.length;
+    while (++i < n)
+      map.set(names[i].toLowerCase(), i);
+    return map;
+  }
+  function d3_time_parseWeekdayNumber(date, string, i) {
+    d3_time_numberRe.lastIndex = 0;
+    var n = d3_time_numberRe.exec(string.substring(i, i + 1));
+    return n ? (date.w = +n[0], i + n[0].length) : -1;
+  }
+  function d3_time_parseWeekNumberSunday(date, string, i) {
+    d3_time_numberRe.lastIndex = 0;
+    var n = d3_time_numberRe.exec(string.substring(i));
+    return n ? (date.U = +n[0], i + n[0].length) : -1;
+  }
+  function d3_time_parseWeekNumberMonday(date, string, i) {
+    d3_time_numberRe.lastIndex = 0;
+    var n = d3_time_numberRe.exec(string.substring(i));
+    return n ? (date.W = +n[0], i + n[0].length) : -1;
+  }
+  function d3_time_parseFullYear(date, string, i) {
+    d3_time_numberRe.lastIndex = 0;
+    var n = d3_time_numberRe.exec(string.substring(i, i + 4));
+    return n ? (date.y = +n[0], i + n[0].length) : -1;
+  }
+  function d3_time_parseYear(date, string, i) {
+    d3_time_numberRe.lastIndex = 0;
+    var n = d3_time_numberRe.exec(string.substring(i, i + 2));
+    return n ? (date.y = d3_time_expandYear(+n[0]), i + n[0].length) : -1;
+  }
+  function d3_time_parseZone(date, string, i) {
+    return /^[+-]\d{4}$/.test(string = string.substring(i, i + 5)) ? (date.Z = +string, i + 5) : -1;
+  }
+  function d3_time_expandYear(d) {
+    return d + (d > 68 ? 1900 : 2000);
+  }
+  function d3_time_parseMonthNumber(date, string, i) {
+    d3_time_numberRe.lastIndex = 0;
+    var n = d3_time_numberRe.exec(string.substring(i, i + 2));
+    return n ? (date.m = n[0] - 1, i + n[0].length) : -1;
+  }
+  function d3_time_parseDay(date, string, i) {
+    d3_time_numberRe.lastIndex = 0;
+    var n = d3_time_numberRe.exec(string.substring(i, i + 2));
+    return n ? (date.d = +n[0], i + n[0].length) : -1;
+  }
+  function d3_time_parseDayOfYear(date, string, i) {
+    d3_time_numberRe.lastIndex = 0;
+    var n = d3_time_numberRe.exec(string.substring(i, i + 3));
+    return n ? (date.j = +n[0], i + n[0].length) : -1;
+  }
+  function d3_time_parseHour24(date, string, i) {
+    d3_time_numberRe.lastIndex = 0;
+    var n = d3_time_numberRe.exec(string.substring(i, i + 2));
+    return n ? (date.H = +n[0], i + n[0].length) : -1;
+  }
+  function d3_time_parseMinutes(date, string, i) {
+    d3_time_numberRe.lastIndex = 0;
+    var n = d3_time_numberRe.exec(string.substring(i, i + 2));
+    return n ? (date.M = +n[0], i + n[0].length) : -1;
+  }
+  function d3_time_parseSeconds(date, string, i) {
+    d3_time_numberRe.lastIndex = 0;
+    var n = d3_time_numberRe.exec(string.substring(i, i + 2));
+    return n ? (date.S = +n[0], i + n[0].length) : -1;
+  }
+  function d3_time_parseMilliseconds(date, string, i) {
+    d3_time_numberRe.lastIndex = 0;
+    var n = d3_time_numberRe.exec(string.substring(i, i + 3));
+    return n ? (date.L = +n[0], i + n[0].length) : -1;
+  }
+  function d3_time_zone(d) {
+    var z = d.getTimezoneOffset(), zs = z > 0 ? '-' : '+', zh = ~~(abs(z) / 60), zm = abs(z) % 60;
+    return zs + d3_time_formatPad(zh, '0', 2) + d3_time_formatPad(zm, '0', 2);
+  }
+  function d3_time_parseLiteralPercent(date, string, i) {
+    d3_time_percentRe.lastIndex = 0;
+    var n = d3_time_percentRe.exec(string.substring(i, i + 1));
+    return n ? i + n[0].length : -1;
+  }
+  function d3_time_formatMulti(formats) {
+    var n = formats.length, i = -1;
+    while (++i < n)
+      formats[i][0] = this(formats[i][0]);
+    return function (date) {
+      var i = 0, f = formats[i];
+      while (!f[1](date))
+        f = formats[++i];
+      return f[0](date);
+    };
+  }
+  d3.locale = function (locale) {
+    return {
+      numberFormat: d3_locale_numberFormat(locale),
+      timeFormat: d3_locale_timeFormat(locale)
+    };
+  };
+  var d3_locale_enUS = d3.locale({
+      decimal: '.',
+      thousands: ',',
+      grouping: [3],
+      currency: [
+        '$',
+        ''
+      ],
+      dateTime: '%a %b %e %X %Y',
+      date: '%m/%d/%Y',
+      time: '%H:%M:%S',
+      periods: [
+        'AM',
+        'PM'
+      ],
+      days: [
+        'Sunday',
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+        'Saturday'
+      ],
+      shortDays: [
+        'Sun',
+        'Mon',
+        'Tue',
+        'Wed',
+        'Thu',
+        'Fri',
+        'Sat'
+      ],
+      months: [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December'
+      ],
+      shortMonths: [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec'
+      ]
+    });
+  d3.format = d3_locale_enUS.numberFormat;
   d3.geo = {};
   function d3_adder() {
   }
@@ -19930,19 +20436,16 @@ d3 = function () {
           for (var j = 1, v = polygon[i], m = v.length, a = v[0], b; j < m; ++j) {
             b = v[j];
             if (a[1] <= y) {
-              if (b[1] > y && isLeft(a, b, p) > 0)
+              if (b[1] > y && d3_cross2d(a, b, p) > 0)
                 ++wn;
             } else {
-              if (b[1] <= y && isLeft(a, b, p) < 0)
+              if (b[1] <= y && d3_cross2d(a, b, p) < 0)
                 --wn;
             }
             a = b;
           }
         }
         return wn !== 0;
-      }
-      function isLeft(a, b, c) {
-        return (b[0] - a[0]) * (c[1] - a[1]) - (c[0] - a[0]) * (b[1] - a[1]);
       }
       function interpolate(from, to, direction, listener) {
         var a = 0, a1 = 0;
@@ -21321,74 +21824,27 @@ d3 = function () {
     function hull(data) {
       if (data.length < 3)
         return [];
-      var fx = d3_functor(x), fy = d3_functor(y), n = data.length, vertices, plen = n - 1, points = [], stack = [], d, i, j, h = 0, x1, y1, x2, y2, u, v, a, sp;
-      if (fx === d3_geom_pointX && y === d3_geom_pointY)
-        vertices = data;
-      else
-        for (i = 0, vertices = []; i < n; ++i) {
-          vertices.push([
-            +fx.call(this, d = data[i], i),
-            +fy.call(this, d, i)
-          ]);
-        }
-      for (i = 1; i < n; ++i) {
-        if (vertices[i][1] < vertices[h][1] || vertices[i][1] == vertices[h][1] && vertices[i][0] < vertices[h][0])
-          h = i;
+      var fx = d3_functor(x), fy = d3_functor(y), i, n = data.length, points = [], flippedPoints = [];
+      for (i = 0; i < n; i++) {
+        points.push([
+          +fx.call(this, data[i], i),
+          +fy.call(this, data[i], i),
+          i
+        ]);
       }
-      for (i = 0; i < n; ++i) {
-        if (i === h)
-          continue;
-        y1 = vertices[i][1] - vertices[h][1];
-        x1 = vertices[i][0] - vertices[h][0];
-        points.push({
-          angle: Math.atan2(y1, x1),
-          index: i
-        });
-      }
-      points.sort(function (a, b) {
-        return a.angle - b.angle;
-      });
-      a = points[0].angle;
-      v = points[0].index;
-      u = 0;
-      for (i = 1; i < plen; ++i) {
-        j = points[i].index;
-        if (a == points[i].angle) {
-          x1 = vertices[v][0] - vertices[h][0];
-          y1 = vertices[v][1] - vertices[h][1];
-          x2 = vertices[j][0] - vertices[h][0];
-          y2 = vertices[j][1] - vertices[h][1];
-          if (x1 * x1 + y1 * y1 >= x2 * x2 + y2 * y2) {
-            points[i].index = -1;
-            continue;
-          } else {
-            points[u].index = -1;
-          }
-        }
-        a = points[i].angle;
-        u = i;
-        v = j;
-      }
-      stack.push(h);
-      for (i = 0, j = 0; i < 2; ++j) {
-        if (points[j].index > -1) {
-          stack.push(points[j].index);
-          i++;
-        }
-      }
-      sp = stack.length;
-      for (; j < plen; ++j) {
-        if (points[j].index < 0)
-          continue;
-        while (!d3_geom_hullCCW(stack[sp - 2], stack[sp - 1], points[j].index, vertices)) {
-          --sp;
-        }
-        stack[sp++] = points[j].index;
-      }
-      var poly = [];
-      for (i = sp - 1; i >= 0; --i)
-        poly.push(data[stack[i]]);
-      return poly;
+      points.sort(d3_geom_hullOrder);
+      for (i = 0; i < n; i++)
+        flippedPoints.push([
+          points[i][0],
+          -points[i][1]
+        ]);
+      var upper = d3_geom_hullUpper(points), lower = d3_geom_hullUpper(flippedPoints);
+      var skipLeft = lower[0] === upper[0], skipRight = lower[lower.length - 1] === upper[upper.length - 1], polygon = [];
+      for (i = upper.length - 1; i >= 0; --i)
+        polygon.push(data[points[upper[i]][2]]);
+      for (i = +skipLeft; i < lower.length - skipRight; ++i)
+        polygon.push(data[points[lower[i]][2]]);
+      return polygon;
     }
     hull.x = function (_) {
       return arguments.length ? (x = _, hull) : x;
@@ -21398,18 +21854,20 @@ d3 = function () {
     };
     return hull;
   };
-  function d3_geom_hullCCW(i1, i2, i3, v) {
-    var t, a, b, c, d, e, f;
-    t = v[i1];
-    a = t[0];
-    b = t[1];
-    t = v[i2];
-    c = t[0];
-    d = t[1];
-    t = v[i3];
-    e = t[0];
-    f = t[1];
-    return (f - b) * (c - a) - (d - b) * (e - a) > 0;
+  function d3_geom_hullUpper(points) {
+    var n = points.length, hull = [
+        0,
+        1
+      ], hs = 2;
+    for (var i = 2; i < n; i++) {
+      while (hs > 1 && d3_cross2d(points[hull[hs - 2]], points[hull[hs - 1]], points[i]) <= 0)
+        --hs;
+      hull[hs++] = i;
+    }
+    return hull.slice(0, hs);
+  }
+  function d3_geom_hullOrder(a, b) {
+    return a[0] - b[0] || a[1] - b[1];
   }
   d3.geom.polygon = function (coordinates) {
     d3_subclass(coordinates, d3_geom_polygonPrototype);
@@ -23002,19 +23460,21 @@ d3 = function () {
     var force = {}, event = d3.dispatch('start', 'tick', 'end'), size = [
         1,
         1
-      ], drag, alpha, friction = 0.9, linkDistance = d3_layout_forceLinkDistance, linkStrength = d3_layout_forceLinkStrength, charge = -30, gravity = 0.1, theta = 0.8, nodes = [], links = [], distances, strengths, charges;
+      ], drag, alpha, friction = 0.9, linkDistance = d3_layout_forceLinkDistance, linkStrength = d3_layout_forceLinkStrength, charge = -30, chargeDistance2 = d3_layout_forceChargeDistance2, gravity = 0.1, theta2 = 0.64, nodes = [], links = [], distances, strengths, charges;
     function repulse(node) {
       return function (quad, x1, _, x2) {
         if (quad.point !== node) {
-          var dx = quad.cx - node.x, dy = quad.cy - node.y, dn = 1 / Math.sqrt(dx * dx + dy * dy);
-          if ((x2 - x1) * dn < theta) {
-            var k = quad.charge * dn * dn;
-            node.px -= dx * k;
-            node.py -= dy * k;
+          var dx = quad.cx - node.x, dy = quad.cy - node.y, dw = x2 - x1, dn = dx * dx + dy * dy;
+          if (dw * dw / theta2 < dn) {
+            if (dn < chargeDistance2) {
+              var k = quad.charge / dn;
+              node.px -= dx * k;
+              node.py -= dy * k;
+            }
             return true;
           }
-          if (quad.point && isFinite(dn)) {
-            var k = quad.pointCharge * dn * dn;
+          if (quad.point && dn && dn < chargeDistance2) {
+            var k = quad.pointCharge / dn;
             node.px -= dx * k;
             node.py -= dy * k;
           }
@@ -23126,6 +23586,12 @@ d3 = function () {
       charge = typeof x === 'function' ? x : +x;
       return force;
     };
+    force.chargeDistance = function (x) {
+      if (!arguments.length)
+        return Math.sqrt(chargeDistance2);
+      chargeDistance2 = x * x;
+      return force;
+    };
     force.gravity = function (x) {
       if (!arguments.length)
         return gravity;
@@ -23134,8 +23600,8 @@ d3 = function () {
     };
     force.theta = function (x) {
       if (!arguments.length)
-        return theta;
-      theta = +x;
+        return Math.sqrt(theta2);
+      theta2 = x * x;
       return force;
     };
     force.alpha = function (x) {
@@ -23283,7 +23749,7 @@ d3 = function () {
     quad.cx = cx / quad.charge;
     quad.cy = cy / quad.charge;
   }
-  var d3_layout_forceLinkDistance = 20, d3_layout_forceLinkStrength = 1;
+  var d3_layout_forceLinkDistance = 20, d3_layout_forceLinkStrength = 1, d3_layout_forceChargeDistance2 = Infinity;
   d3.layout.hierarchy = function () {
     var sort = d3_layout_hierarchySort, children = d3_layout_hierarchyChildren, value = d3_layout_hierarchyValue;
     function recurse(node, depth, nodes) {
@@ -26515,552 +26981,8 @@ d3 = function () {
       ],
       []
     ];
-  var d3_time = d3.time = {}, d3_date = Date, d3_time_daySymbols = [
-      'Sunday',
-      'Monday',
-      'Tuesday',
-      'Wednesday',
-      'Thursday',
-      'Friday',
-      'Saturday'
-    ];
-  function d3_date_utc() {
-    this._ = new Date(arguments.length > 1 ? Date.UTC.apply(this, arguments) : arguments[0]);
-  }
-  d3_date_utc.prototype = {
-    getDate: function () {
-      return this._.getUTCDate();
-    },
-    getDay: function () {
-      return this._.getUTCDay();
-    },
-    getFullYear: function () {
-      return this._.getUTCFullYear();
-    },
-    getHours: function () {
-      return this._.getUTCHours();
-    },
-    getMilliseconds: function () {
-      return this._.getUTCMilliseconds();
-    },
-    getMinutes: function () {
-      return this._.getUTCMinutes();
-    },
-    getMonth: function () {
-      return this._.getUTCMonth();
-    },
-    getSeconds: function () {
-      return this._.getUTCSeconds();
-    },
-    getTime: function () {
-      return this._.getTime();
-    },
-    getTimezoneOffset: function () {
-      return 0;
-    },
-    valueOf: function () {
-      return this._.valueOf();
-    },
-    setDate: function () {
-      d3_time_prototype.setUTCDate.apply(this._, arguments);
-    },
-    setDay: function () {
-      d3_time_prototype.setUTCDay.apply(this._, arguments);
-    },
-    setFullYear: function () {
-      d3_time_prototype.setUTCFullYear.apply(this._, arguments);
-    },
-    setHours: function () {
-      d3_time_prototype.setUTCHours.apply(this._, arguments);
-    },
-    setMilliseconds: function () {
-      d3_time_prototype.setUTCMilliseconds.apply(this._, arguments);
-    },
-    setMinutes: function () {
-      d3_time_prototype.setUTCMinutes.apply(this._, arguments);
-    },
-    setMonth: function () {
-      d3_time_prototype.setUTCMonth.apply(this._, arguments);
-    },
-    setSeconds: function () {
-      d3_time_prototype.setUTCSeconds.apply(this._, arguments);
-    },
-    setTime: function () {
-      d3_time_prototype.setTime.apply(this._, arguments);
-    }
-  };
-  var d3_time_prototype = Date.prototype;
-  var d3_time_formatDateTime = '%a %b %e %X %Y', d3_time_formatDate = '%m/%d/%Y', d3_time_formatTime = '%H:%M:%S';
-  var d3_time_days = [
-      'Sunday',
-      'Monday',
-      'Tuesday',
-      'Wednesday',
-      'Thursday',
-      'Friday',
-      'Saturday'
-    ], d3_time_dayAbbreviations = [
-      'Sun',
-      'Mon',
-      'Tue',
-      'Wed',
-      'Thu',
-      'Fri',
-      'Sat'
-    ], d3_time_months = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December'
-    ], d3_time_monthAbbreviations = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec'
-    ];
-  function d3_time_interval(local, step, number) {
-    function round(date) {
-      var d0 = local(date), d1 = offset(d0, 1);
-      return date - d0 < d1 - date ? d0 : d1;
-    }
-    function ceil(date) {
-      step(date = local(new d3_date(date - 1)), 1);
-      return date;
-    }
-    function offset(date, k) {
-      step(date = new d3_date(+date), k);
-      return date;
-    }
-    function range(t0, t1, dt) {
-      var time = ceil(t0), times = [];
-      if (dt > 1) {
-        while (time < t1) {
-          if (!(number(time) % dt))
-            times.push(new Date(+time));
-          step(time, 1);
-        }
-      } else {
-        while (time < t1)
-          times.push(new Date(+time)), step(time, 1);
-      }
-      return times;
-    }
-    function range_utc(t0, t1, dt) {
-      try {
-        d3_date = d3_date_utc;
-        var utc = new d3_date_utc();
-        utc._ = t0;
-        return range(utc, t1, dt);
-      } finally {
-        d3_date = Date;
-      }
-    }
-    local.floor = local;
-    local.round = round;
-    local.ceil = ceil;
-    local.offset = offset;
-    local.range = range;
-    var utc = local.utc = d3_time_interval_utc(local);
-    utc.floor = utc;
-    utc.round = d3_time_interval_utc(round);
-    utc.ceil = d3_time_interval_utc(ceil);
-    utc.offset = d3_time_interval_utc(offset);
-    utc.range = range_utc;
-    return local;
-  }
-  function d3_time_interval_utc(method) {
-    return function (date, k) {
-      try {
-        d3_date = d3_date_utc;
-        var utc = new d3_date_utc();
-        utc._ = date;
-        return method(utc, k)._;
-      } finally {
-        d3_date = Date;
-      }
-    };
-  }
-  d3_time.year = d3_time_interval(function (date) {
-    date = d3_time.day(date);
-    date.setMonth(0, 1);
-    return date;
-  }, function (date, offset) {
-    date.setFullYear(date.getFullYear() + offset);
-  }, function (date) {
-    return date.getFullYear();
-  });
-  d3_time.years = d3_time.year.range;
-  d3_time.years.utc = d3_time.year.utc.range;
-  d3_time.day = d3_time_interval(function (date) {
-    var day = new d3_date(2000, 0);
-    day.setFullYear(date.getFullYear(), date.getMonth(), date.getDate());
-    return day;
-  }, function (date, offset) {
-    date.setDate(date.getDate() + offset);
-  }, function (date) {
-    return date.getDate() - 1;
-  });
-  d3_time.days = d3_time.day.range;
-  d3_time.days.utc = d3_time.day.utc.range;
-  d3_time.dayOfYear = function (date) {
-    var year = d3_time.year(date);
-    return Math.floor((date - year - (date.getTimezoneOffset() - year.getTimezoneOffset()) * 60000) / 86400000);
-  };
-  d3_time_daySymbols.forEach(function (day, i) {
-    day = day.toLowerCase();
-    i = 7 - i;
-    var interval = d3_time[day] = d3_time_interval(function (date) {
-        (date = d3_time.day(date)).setDate(date.getDate() - (date.getDay() + i) % 7);
-        return date;
-      }, function (date, offset) {
-        date.setDate(date.getDate() + Math.floor(offset) * 7);
-      }, function (date) {
-        var day = d3_time.year(date).getDay();
-        return Math.floor((d3_time.dayOfYear(date) + (day + i) % 7) / 7) - (day !== i);
-      });
-    d3_time[day + 's'] = interval.range;
-    d3_time[day + 's'].utc = interval.utc.range;
-    d3_time[day + 'OfYear'] = function (date) {
-      var day = d3_time.year(date).getDay();
-      return Math.floor((d3_time.dayOfYear(date) + (day + i) % 7) / 7);
-    };
-  });
-  d3_time.week = d3_time.sunday;
-  d3_time.weeks = d3_time.sunday.range;
-  d3_time.weeks.utc = d3_time.sunday.utc.range;
-  d3_time.weekOfYear = d3_time.sundayOfYear;
-  d3_time.format = d3_time_format;
-  function d3_time_format(template) {
-    var n = template.length;
-    function format(date) {
-      var string = [], i = -1, j = 0, c, p, f;
-      while (++i < n) {
-        if (template.charCodeAt(i) === 37) {
-          string.push(template.substring(j, i));
-          if ((p = d3_time_formatPads[c = template.charAt(++i)]) != null)
-            c = template.charAt(++i);
-          if (f = d3_time_formats[c])
-            c = f(date, p == null ? c === 'e' ? ' ' : '0' : p);
-          string.push(c);
-          j = i + 1;
-        }
-      }
-      string.push(template.substring(j, i));
-      return string.join('');
-    }
-    format.parse = function (string) {
-      var d = {
-          y: 1900,
-          m: 0,
-          d: 1,
-          H: 0,
-          M: 0,
-          S: 0,
-          L: 0,
-          Z: null
-        }, i = d3_time_parse(d, template, string, 0);
-      if (i != string.length)
-        return null;
-      if ('p' in d)
-        d.H = d.H % 12 + d.p * 12;
-      var localZ = d.Z != null && d3_date !== d3_date_utc, date = new (localZ ? d3_date_utc : d3_date)();
-      if ('j' in d)
-        date.setFullYear(d.y, 0, d.j);
-      else if ('w' in d && ('W' in d || 'U' in d)) {
-        date.setFullYear(d.y, 0, 1);
-        date.setFullYear(d.y, 0, 'W' in d ? (d.w + 6) % 7 + d.W * 7 - (date.getDay() + 5) % 7 : d.w + d.U * 7 - (date.getDay() + 6) % 7);
-      } else
-        date.setFullYear(d.y, d.m, d.d);
-      date.setHours(d.H + Math.floor(d.Z / 100), d.M + d.Z % 100, d.S, d.L);
-      return localZ ? date._ : date;
-    };
-    format.toString = function () {
-      return template;
-    };
-    return format;
-  }
-  function d3_time_parse(date, template, string, j) {
-    var c, p, t, i = 0, n = template.length, m = string.length;
-    while (i < n) {
-      if (j >= m)
-        return -1;
-      c = template.charCodeAt(i++);
-      if (c === 37) {
-        t = template.charAt(i++);
-        p = d3_time_parsers[t in d3_time_formatPads ? template.charAt(i++) : t];
-        if (!p || (j = p(date, string, j)) < 0)
-          return -1;
-      } else if (c != string.charCodeAt(j++)) {
-        return -1;
-      }
-    }
-    return j;
-  }
-  function d3_time_formatRe(names) {
-    return new RegExp('^(?:' + names.map(d3.requote).join('|') + ')', 'i');
-  }
-  function d3_time_formatLookup(names) {
-    var map = new d3_Map(), i = -1, n = names.length;
-    while (++i < n)
-      map.set(names[i].toLowerCase(), i);
-    return map;
-  }
-  function d3_time_formatPad(value, fill, width) {
-    var sign = value < 0 ? '-' : '', string = (sign ? -value : value) + '', length = string.length;
-    return sign + (length < width ? new Array(width - length + 1).join(fill) + string : string);
-  }
-  var d3_time_dayRe = d3_time_formatRe(d3_time_days), d3_time_dayLookup = d3_time_formatLookup(d3_time_days), d3_time_dayAbbrevRe = d3_time_formatRe(d3_time_dayAbbreviations), d3_time_dayAbbrevLookup = d3_time_formatLookup(d3_time_dayAbbreviations), d3_time_monthRe = d3_time_formatRe(d3_time_months), d3_time_monthLookup = d3_time_formatLookup(d3_time_months), d3_time_monthAbbrevRe = d3_time_formatRe(d3_time_monthAbbreviations), d3_time_monthAbbrevLookup = d3_time_formatLookup(d3_time_monthAbbreviations), d3_time_percentRe = /^%/;
-  var d3_time_formatPads = {
-      '-': '',
-      _: ' ',
-      '0': '0'
-    };
-  var d3_time_formats = {
-      a: function (d) {
-        return d3_time_dayAbbreviations[d.getDay()];
-      },
-      A: function (d) {
-        return d3_time_days[d.getDay()];
-      },
-      b: function (d) {
-        return d3_time_monthAbbreviations[d.getMonth()];
-      },
-      B: function (d) {
-        return d3_time_months[d.getMonth()];
-      },
-      c: d3_time_format(d3_time_formatDateTime),
-      d: function (d, p) {
-        return d3_time_formatPad(d.getDate(), p, 2);
-      },
-      e: function (d, p) {
-        return d3_time_formatPad(d.getDate(), p, 2);
-      },
-      H: function (d, p) {
-        return d3_time_formatPad(d.getHours(), p, 2);
-      },
-      I: function (d, p) {
-        return d3_time_formatPad(d.getHours() % 12 || 12, p, 2);
-      },
-      j: function (d, p) {
-        return d3_time_formatPad(1 + d3_time.dayOfYear(d), p, 3);
-      },
-      L: function (d, p) {
-        return d3_time_formatPad(d.getMilliseconds(), p, 3);
-      },
-      m: function (d, p) {
-        return d3_time_formatPad(d.getMonth() + 1, p, 2);
-      },
-      M: function (d, p) {
-        return d3_time_formatPad(d.getMinutes(), p, 2);
-      },
-      p: function (d) {
-        return d.getHours() >= 12 ? 'PM' : 'AM';
-      },
-      S: function (d, p) {
-        return d3_time_formatPad(d.getSeconds(), p, 2);
-      },
-      U: function (d, p) {
-        return d3_time_formatPad(d3_time.sundayOfYear(d), p, 2);
-      },
-      w: function (d) {
-        return d.getDay();
-      },
-      W: function (d, p) {
-        return d3_time_formatPad(d3_time.mondayOfYear(d), p, 2);
-      },
-      x: d3_time_format(d3_time_formatDate),
-      X: d3_time_format(d3_time_formatTime),
-      y: function (d, p) {
-        return d3_time_formatPad(d.getFullYear() % 100, p, 2);
-      },
-      Y: function (d, p) {
-        return d3_time_formatPad(d.getFullYear() % 10000, p, 4);
-      },
-      Z: d3_time_zone,
-      '%': function () {
-        return '%';
-      }
-    };
-  var d3_time_parsers = {
-      a: d3_time_parseWeekdayAbbrev,
-      A: d3_time_parseWeekday,
-      b: d3_time_parseMonthAbbrev,
-      B: d3_time_parseMonth,
-      c: d3_time_parseLocaleFull,
-      d: d3_time_parseDay,
-      e: d3_time_parseDay,
-      H: d3_time_parseHour24,
-      I: d3_time_parseHour24,
-      j: d3_time_parseDayOfYear,
-      L: d3_time_parseMilliseconds,
-      m: d3_time_parseMonthNumber,
-      M: d3_time_parseMinutes,
-      p: d3_time_parseAmPm,
-      S: d3_time_parseSeconds,
-      U: d3_time_parseWeekNumberSunday,
-      w: d3_time_parseWeekdayNumber,
-      W: d3_time_parseWeekNumberMonday,
-      x: d3_time_parseLocaleDate,
-      X: d3_time_parseLocaleTime,
-      y: d3_time_parseYear,
-      Y: d3_time_parseFullYear,
-      Z: d3_time_parseZone,
-      '%': d3_time_parseLiteralPercent
-    };
-  function d3_time_parseWeekdayAbbrev(date, string, i) {
-    d3_time_dayAbbrevRe.lastIndex = 0;
-    var n = d3_time_dayAbbrevRe.exec(string.substring(i));
-    return n ? (date.w = d3_time_dayAbbrevLookup.get(n[0].toLowerCase()), i + n[0].length) : -1;
-  }
-  function d3_time_parseWeekday(date, string, i) {
-    d3_time_dayRe.lastIndex = 0;
-    var n = d3_time_dayRe.exec(string.substring(i));
-    return n ? (date.w = d3_time_dayLookup.get(n[0].toLowerCase()), i + n[0].length) : -1;
-  }
-  function d3_time_parseWeekdayNumber(date, string, i) {
-    d3_time_numberRe.lastIndex = 0;
-    var n = d3_time_numberRe.exec(string.substring(i, i + 1));
-    return n ? (date.w = +n[0], i + n[0].length) : -1;
-  }
-  function d3_time_parseWeekNumberSunday(date, string, i) {
-    d3_time_numberRe.lastIndex = 0;
-    var n = d3_time_numberRe.exec(string.substring(i));
-    return n ? (date.U = +n[0], i + n[0].length) : -1;
-  }
-  function d3_time_parseWeekNumberMonday(date, string, i) {
-    d3_time_numberRe.lastIndex = 0;
-    var n = d3_time_numberRe.exec(string.substring(i));
-    return n ? (date.W = +n[0], i + n[0].length) : -1;
-  }
-  function d3_time_parseMonthAbbrev(date, string, i) {
-    d3_time_monthAbbrevRe.lastIndex = 0;
-    var n = d3_time_monthAbbrevRe.exec(string.substring(i));
-    return n ? (date.m = d3_time_monthAbbrevLookup.get(n[0].toLowerCase()), i + n[0].length) : -1;
-  }
-  function d3_time_parseMonth(date, string, i) {
-    d3_time_monthRe.lastIndex = 0;
-    var n = d3_time_monthRe.exec(string.substring(i));
-    return n ? (date.m = d3_time_monthLookup.get(n[0].toLowerCase()), i + n[0].length) : -1;
-  }
-  function d3_time_parseLocaleFull(date, string, i) {
-    return d3_time_parse(date, d3_time_formats.c.toString(), string, i);
-  }
-  function d3_time_parseLocaleDate(date, string, i) {
-    return d3_time_parse(date, d3_time_formats.x.toString(), string, i);
-  }
-  function d3_time_parseLocaleTime(date, string, i) {
-    return d3_time_parse(date, d3_time_formats.X.toString(), string, i);
-  }
-  function d3_time_parseFullYear(date, string, i) {
-    d3_time_numberRe.lastIndex = 0;
-    var n = d3_time_numberRe.exec(string.substring(i, i + 4));
-    return n ? (date.y = +n[0], i + n[0].length) : -1;
-  }
-  function d3_time_parseYear(date, string, i) {
-    d3_time_numberRe.lastIndex = 0;
-    var n = d3_time_numberRe.exec(string.substring(i, i + 2));
-    return n ? (date.y = d3_time_expandYear(+n[0]), i + n[0].length) : -1;
-  }
-  function d3_time_parseZone(date, string, i) {
-    return /^[+-]\d{4}$/.test(string = string.substring(i, i + 5)) ? (date.Z = +string, i + 5) : -1;
-  }
-  function d3_time_expandYear(d) {
-    return d + (d > 68 ? 1900 : 2000);
-  }
-  function d3_time_parseMonthNumber(date, string, i) {
-    d3_time_numberRe.lastIndex = 0;
-    var n = d3_time_numberRe.exec(string.substring(i, i + 2));
-    return n ? (date.m = n[0] - 1, i + n[0].length) : -1;
-  }
-  function d3_time_parseDay(date, string, i) {
-    d3_time_numberRe.lastIndex = 0;
-    var n = d3_time_numberRe.exec(string.substring(i, i + 2));
-    return n ? (date.d = +n[0], i + n[0].length) : -1;
-  }
-  function d3_time_parseDayOfYear(date, string, i) {
-    d3_time_numberRe.lastIndex = 0;
-    var n = d3_time_numberRe.exec(string.substring(i, i + 3));
-    return n ? (date.j = +n[0], i + n[0].length) : -1;
-  }
-  function d3_time_parseHour24(date, string, i) {
-    d3_time_numberRe.lastIndex = 0;
-    var n = d3_time_numberRe.exec(string.substring(i, i + 2));
-    return n ? (date.H = +n[0], i + n[0].length) : -1;
-  }
-  function d3_time_parseMinutes(date, string, i) {
-    d3_time_numberRe.lastIndex = 0;
-    var n = d3_time_numberRe.exec(string.substring(i, i + 2));
-    return n ? (date.M = +n[0], i + n[0].length) : -1;
-  }
-  function d3_time_parseSeconds(date, string, i) {
-    d3_time_numberRe.lastIndex = 0;
-    var n = d3_time_numberRe.exec(string.substring(i, i + 2));
-    return n ? (date.S = +n[0], i + n[0].length) : -1;
-  }
-  function d3_time_parseMilliseconds(date, string, i) {
-    d3_time_numberRe.lastIndex = 0;
-    var n = d3_time_numberRe.exec(string.substring(i, i + 3));
-    return n ? (date.L = +n[0], i + n[0].length) : -1;
-  }
-  var d3_time_numberRe = /^\s*\d+/;
-  function d3_time_parseAmPm(date, string, i) {
-    var n = d3_time_amPmLookup.get(string.substring(i, i += 2).toLowerCase());
-    return n == null ? -1 : (date.p = n, i);
-  }
-  var d3_time_amPmLookup = d3.map({
-      am: 0,
-      pm: 1
-    });
-  function d3_time_zone(d) {
-    var z = d.getTimezoneOffset(), zs = z > 0 ? '-' : '+', zh = ~~(abs(z) / 60), zm = abs(z) % 60;
-    return zs + d3_time_formatPad(zh, '0', 2) + d3_time_formatPad(zm, '0', 2);
-  }
-  function d3_time_parseLiteralPercent(date, string, i) {
-    d3_time_percentRe.lastIndex = 0;
-    var n = d3_time_percentRe.exec(string.substring(i, i + 1));
-    return n ? i + n[0].length : -1;
-  }
-  d3_time_format.utc = d3_time_formatUtc;
-  function d3_time_formatUtc(template) {
-    var local = d3_time_format(template);
-    function format(date) {
-      try {
-        d3_date = d3_date_utc;
-        var utc = new d3_date();
-        utc._ = date;
-        return local(utc);
-      } finally {
-        d3_date = Date;
-      }
-    }
-    format.parse = function (string) {
-      try {
-        d3_date = d3_date_utc;
-        var date = local.parse(string);
-        return date && date._;
-      } finally {
-        d3_date = Date;
-      }
-    };
-    format.toString = local.toString;
-    return format;
-  }
+  var d3_time_format = d3_time.format = d3_locale_enUS.timeFormat;
+  var d3_time_formatUtc = d3_time_format.utc;
   var d3_time_formatIso = d3_time_formatUtc('%Y-%m-%dT%H:%M:%S.%LZ');
   d3_time_format.iso = Date.prototype.toISOString && +new Date('2000-01-01T00:00:00.000Z') ? d3_time_formatIsoNative : d3_time_formatIso;
   function d3_time_formatIsoNative(date) {
@@ -27175,14 +27097,6 @@ d3 = function () {
   function d3_time_scaleDate(t) {
     return new Date(t);
   }
-  function d3_time_scaleFormat(formats) {
-    return function (date) {
-      var i = formats.length - 1, f = formats[i];
-      while (!f[1](date))
-        f = formats[--i];
-      return f[0](date);
-    };
-  }
   var d3_time_scaleSteps = [
       1000,
       5000,
@@ -27277,59 +27191,54 @@ d3 = function () {
         1
       ]
     ];
-  var d3_time_scaleLocalFormats = [
+  var d3_time_scaleLocalFormat = d3_time_format.multi([
       [
-        d3_time_format('%Y'),
-        d3_true
-      ],
-      [
-        d3_time_format('%B'),
+        '.%L',
         function (d) {
-          return d.getMonth();
+          return d.getMilliseconds();
         }
       ],
       [
-        d3_time_format('%b %d'),
-        function (d) {
-          return d.getDate() != 1;
-        }
-      ],
-      [
-        d3_time_format('%a %d'),
-        function (d) {
-          return d.getDay() && d.getDate() != 1;
-        }
-      ],
-      [
-        d3_time_format('%I %p'),
-        function (d) {
-          return d.getHours();
-        }
-      ],
-      [
-        d3_time_format('%I:%M'),
-        function (d) {
-          return d.getMinutes();
-        }
-      ],
-      [
-        d3_time_format(':%S'),
+        ':%S',
         function (d) {
           return d.getSeconds();
         }
       ],
       [
-        d3_time_format('.%L'),
+        '%I:%M',
         function (d) {
-          return d.getMilliseconds();
+          return d.getMinutes();
         }
+      ],
+      [
+        '%I %p',
+        function (d) {
+          return d.getHours();
+        }
+      ],
+      [
+        '%a %d',
+        function (d) {
+          return d.getDay() && d.getDate() != 1;
+        }
+      ],
+      [
+        '%b %d',
+        function (d) {
+          return d.getDate() != 1;
+        }
+      ],
+      [
+        '%B',
+        function (d) {
+          return d.getMonth();
+        }
+      ],
+      [
+        '%Y',
+        d3_true
       ]
-    ];
-  var d3_time_scaleLocalFormat = d3_time_scaleFormat(d3_time_scaleLocalFormats);
-  d3_time_scaleLocalMethods.year = d3_time.year;
-  d3_time.scale = function () {
-    return d3_time_scale(d3.scale.linear(), d3_time_scaleLocalMethods, d3_time_scaleLocalFormat);
-  };
+    ]);
   var d3_time_scaleMilliseconds = {
       range: function (start, stop, step) {
         return d3.range(+start, +stop, step).map(d3_time_scaleDate);
@@ -27337,64 +27246,67 @@ d3 = function () {
       floor: d3_identity,
       ceil: d3_identity
     };
-  var d3_time_scaleUTCMethods = d3_time_scaleLocalMethods.map(function (m) {
+  d3_time_scaleLocalMethods.year = d3_time.year;
+  d3_time.scale = function () {
+    return d3_time_scale(d3.scale.linear(), d3_time_scaleLocalMethods, d3_time_scaleLocalFormat);
+  };
+  var d3_time_scaleUtcMethods = d3_time_scaleLocalMethods.map(function (m) {
       return [
         m[0].utc,
         m[1]
       ];
     });
-  var d3_time_scaleUTCFormats = [
+  var d3_time_scaleUtcFormat = d3_time_formatUtc.multi([
       [
-        d3_time_formatUtc('%Y'),
-        d3_true
-      ],
-      [
-        d3_time_formatUtc('%B'),
+        '.%L',
         function (d) {
-          return d.getUTCMonth();
+          return d.getUTCMilliseconds();
         }
       ],
       [
-        d3_time_formatUtc('%b %d'),
-        function (d) {
-          return d.getUTCDate() != 1;
-        }
-      ],
-      [
-        d3_time_formatUtc('%a %d'),
-        function (d) {
-          return d.getUTCDay() && d.getUTCDate() != 1;
-        }
-      ],
-      [
-        d3_time_formatUtc('%I %p'),
-        function (d) {
-          return d.getUTCHours();
-        }
-      ],
-      [
-        d3_time_formatUtc('%I:%M'),
-        function (d) {
-          return d.getUTCMinutes();
-        }
-      ],
-      [
-        d3_time_formatUtc(':%S'),
+        ':%S',
         function (d) {
           return d.getUTCSeconds();
         }
       ],
       [
-        d3_time_formatUtc('.%L'),
+        '%I:%M',
         function (d) {
-          return d.getUTCMilliseconds();
+          return d.getUTCMinutes();
         }
+      ],
+      [
+        '%I %p',
+        function (d) {
+          return d.getUTCHours();
+        }
+      ],
+      [
+        '%a %d',
+        function (d) {
+          return d.getUTCDay() && d.getUTCDate() != 1;
+        }
+      ],
+      [
+        '%b %d',
+        function (d) {
+          return d.getUTCDate() != 1;
+        }
+      ],
+      [
+        '%B',
+        function (d) {
+          return d.getUTCMonth();
+        }
+      ],
+      [
+        '%Y',
+        d3_true
       ]
-    ];
-  var d3_time_scaleUTCFormat = d3_time_scaleFormat(d3_time_scaleUTCFormats);
-  d3_time_scaleUTCMethods.year = d3_time.year.utc;
+    ]);
+  d3_time_scaleUtcMethods.year = d3_time.year.utc;
   d3_time.scale.utc = function () {
-    return d3_time_scale(d3.scale.linear(), d3_time_scaleUTCMethods, d3_time_scaleUTCFormat);
+    return d3_time_scale(d3.scale.linear(), d3_time_scaleUtcMethods, d3_time_scaleUtcFormat);
   };
   d3.text = d3_xhrType(function (request) {
     return request.responseText;
@@ -27416,14 +27328,46 @@ d3 = function () {
   d3.xml = d3_xhrType(function (request) {
     return request.responseXML;
   });
-  return d3;
+  if (typeof define === 'function' && define.amd) {
+    define(d3);
+  } else if (typeof module === 'object' && module.exports) {
+    module.exports = d3;
+  } else {
+    this.d3 = d3;
+  }
 }();
 (function (undefined) {
-  var moment, VERSION = '2.4.0', round = Math.round, i, YEAR = 0, MONTH = 1, DATE = 2, HOUR = 3, MINUTE = 4, SECOND = 5, MILLISECOND = 6, languages = {}, hasModule = typeof module !== 'undefined' && module.exports, aspNetJsonRegex = /^\/?Date\((\-?\d+)/i, aspNetTimeSpanJsonRegex = /(\-)?(?:(\d*)\.)?(\d+)\:(\d+)(?:\:(\d+)\.?(\d{3})?)?/, isoDurationRegex = /^(-)?P(?:(?:([0-9,.]*)Y)?(?:([0-9,.]*)M)?(?:([0-9,.]*)D)?(?:T(?:([0-9,.]*)H)?(?:([0-9,.]*)M)?(?:([0-9,.]*)S)?)?|([0-9,.]*)W)$/, formattingTokens = /(\[[^\[]*\])|(\\)?(Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|YYYYY|YYYY|YY|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|mm?|ss?|S{1,4}|X|zz?|ZZ?|.)/g, localFormattingTokens = /(\[[^\[]*\])|(\\)?(LT|LL?L?L?|l{1,4})/g, parseTokenOneOrTwoDigits = /\d\d?/, parseTokenOneToThreeDigits = /\d{1,3}/, parseTokenThreeDigits = /\d{3}/, parseTokenFourDigits = /\d{1,4}/, parseTokenSixDigits = /[+\-]?\d{1,6}/, parseTokenDigits = /\d+/, parseTokenWord = /[0-9]*['a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+|[\u0600-\u06FF\/]+(\s*?[\u0600-\u06FF]+){1,2}/i, parseTokenTimezone = /Z|[\+\-]\d\d:?\d\d/i, parseTokenT = /T/i, parseTokenTimestampMs = /[\+\-]?\d+(\.\d{1,3})?/, isoRegex = /^\s*\d{4}-(?:(\d\d-\d\d)|(W\d\d$)|(W\d\d-\d)|(\d\d\d))((T| )(\d\d(:\d\d(:\d\d(\.\d+)?)?)?)?([\+\-]\d\d:?\d\d|Z)?)?$/, isoFormat = 'YYYY-MM-DDTHH:mm:ssZ', isoDates = [
-      'YYYY-MM-DD',
-      'GGGG-[W]WW',
-      'GGGG-[W]WW-E',
-      'YYYY-DDD'
+  var moment, VERSION = '2.5.1', global = this, round = Math.round, i, YEAR = 0, MONTH = 1, DATE = 2, HOUR = 3, MINUTE = 4, SECOND = 5, MILLISECOND = 6, languages = {}, momentProperties = {
+      _isAMomentObject: null,
+      _i: null,
+      _f: null,
+      _l: null,
+      _strict: null,
+      _isUTC: null,
+      _offset: null,
+      _pf: null,
+      _lang: null
+    }, hasModule = typeof module !== 'undefined' && module.exports && typeof require !== 'undefined', aspNetJsonRegex = /^\/?Date\((\-?\d+)/i, aspNetTimeSpanJsonRegex = /(\-)?(?:(\d*)\.)?(\d+)\:(\d+)(?:\:(\d+)\.?(\d{3})?)?/, isoDurationRegex = /^(-)?P(?:(?:([0-9,.]*)Y)?(?:([0-9,.]*)M)?(?:([0-9,.]*)D)?(?:T(?:([0-9,.]*)H)?(?:([0-9,.]*)M)?(?:([0-9,.]*)S)?)?|([0-9,.]*)W)$/, formattingTokens = /(\[[^\[]*\])|(\\)?(Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|YYYYYY|YYYYY|YYYY|YY|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|mm?|ss?|S{1,4}|X|zz?|ZZ?|.)/g, localFormattingTokens = /(\[[^\[]*\])|(\\)?(LT|LL?L?L?|l{1,4})/g, parseTokenOneOrTwoDigits = /\d\d?/, parseTokenOneToThreeDigits = /\d{1,3}/, parseTokenOneToFourDigits = /\d{1,4}/, parseTokenOneToSixDigits = /[+\-]?\d{1,6}/, parseTokenDigits = /\d+/, parseTokenWord = /[0-9]*['a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+|[\u0600-\u06FF\/]+(\s*?[\u0600-\u06FF]+){1,2}/i, parseTokenTimezone = /Z|[\+\-]\d\d:?\d\d/gi, parseTokenT = /T/i, parseTokenTimestampMs = /[\+\-]?\d+(\.\d{1,3})?/, parseTokenOneDigit = /\d/, parseTokenTwoDigits = /\d\d/, parseTokenThreeDigits = /\d{3}/, parseTokenFourDigits = /\d{4}/, parseTokenSixDigits = /[+-]?\d{6}/, parseTokenSignedNumber = /[+-]?\d+/, isoRegex = /^\s*(?:[+-]\d{6}|\d{4})-(?:(\d\d-\d\d)|(W\d\d$)|(W\d\d-\d)|(\d\d\d))((T| )(\d\d(:\d\d(:\d\d(\.\d+)?)?)?)?([\+\-]\d\d(?::?\d\d)?|\s*Z)?)?$/, isoFormat = 'YYYY-MM-DDTHH:mm:ssZ', isoDates = [
+      [
+        'YYYYYY-MM-DD',
+        /[+-]\d{6}-\d{2}-\d{2}/
+      ],
+      [
+        'YYYY-MM-DD',
+        /\d{4}-\d{2}-\d{2}/
+      ],
+      [
+        'GGGG-[W]WW-E',
+        /\d{4}-W\d{2}-\d/
+      ],
+      [
+        'GGGG-[W]WW',
+        /\d{4}-W\d{2}/
+      ],
+      [
+        'YYYY-DDD',
+        /\d{4}-\d{3}/
+      ]
     ], isoTimes = [
       [
         'HH:mm:ss.SSSS',
@@ -27514,11 +27458,15 @@ d3 = function () {
       YYYYY: function () {
         return leftZeroFill(this.year(), 5);
       },
+      YYYYYY: function () {
+        var y = this.year(), sign = y >= 0 ? '+' : '-';
+        return sign + leftZeroFill(Math.abs(y), 6);
+      },
       gg: function () {
         return leftZeroFill(this.weekYear() % 100, 2);
       },
       gggg: function () {
-        return this.weekYear();
+        return leftZeroFill(this.weekYear(), 4);
       },
       ggggg: function () {
         return leftZeroFill(this.weekYear(), 5);
@@ -27527,7 +27475,7 @@ d3 = function () {
         return leftZeroFill(this.isoWeekYear() % 100, 2);
       },
       GGGG: function () {
-        return this.isoWeekYear();
+        return leftZeroFill(this.isoWeekYear(), 4);
       },
       GGGGG: function () {
         return leftZeroFill(this.isoWeekYear(), 5);
@@ -27582,7 +27530,7 @@ d3 = function () {
           a = -a;
           b = '-';
         }
-        return b + leftZeroFill(toInt(10 * a / 6), 4);
+        return b + leftZeroFill(toInt(a / 60), 2) + leftZeroFill(toInt(a) % 60, 2);
       },
       z: function () {
         return this.zoneAbbr();
@@ -27592,6 +27540,9 @@ d3 = function () {
       },
       X: function () {
         return this.unix();
+      },
+      Q: function () {
+        return this.quarter();
       }
     }, lists = [
       'months',
@@ -27600,6 +27551,20 @@ d3 = function () {
       'weekdaysShort',
       'weekdaysMin'
     ];
+  function defaultParsingFlags() {
+    return {
+      empty: false,
+      unusedTokens: [],
+      unusedInput: [],
+      overflow: -2,
+      charsLeftOver: 0,
+      nullInput: false,
+      invalidMonth: null,
+      invalidFormat: false,
+      userInvalidated: false,
+      iso: false
+    };
+  }
   function padToken(func, count) {
     return function (a) {
       return leftZeroFill(func.call(this, a), count);
@@ -27627,7 +27592,6 @@ d3 = function () {
   }
   function Duration(duration) {
     var normalizedInput = normalizeObjectUnits(duration), years = normalizedInput.year || 0, months = normalizedInput.month || 0, weeks = normalizedInput.week || 0, days = normalizedInput.day || 0, hours = normalizedInput.hour || 0, minutes = normalizedInput.minute || 0, seconds = normalizedInput.second || 0, milliseconds = normalizedInput.millisecond || 0;
-    this._input = duration;
     this._milliseconds = +milliseconds + seconds * 1000 + minutes * 60000 + hours * 3600000;
     this._days = +days + weeks * 7;
     this._months = +months + years * 12;
@@ -27648,6 +27612,15 @@ d3 = function () {
     }
     return a;
   }
+  function cloneMoment(m) {
+    var result = {}, i;
+    for (i in m) {
+      if (m.hasOwnProperty(i) && momentProperties.hasOwnProperty(i)) {
+        result[i] = m[i];
+      }
+    }
+    return result;
+  }
   function absRound(number) {
     if (number < 0) {
       return Math.ceil(number);
@@ -27655,12 +27628,12 @@ d3 = function () {
       return Math.floor(number);
     }
   }
-  function leftZeroFill(number, targetLength) {
-    var output = number + '';
+  function leftZeroFill(number, targetLength, forceSign) {
+    var output = '' + Math.abs(number), sign = number >= 0;
     while (output.length < targetLength) {
       output = '0' + output;
     }
-    return output;
+    return (sign ? forceSign ? '+' : '' : '-') + output;
   }
   function addOrSubtractDurationFromMoment(mom, duration, isAdding, ignoreUpdateOffset) {
     var milliseconds = duration._milliseconds, days = duration._days, months = duration._months, minutes, hours;
@@ -27708,7 +27681,7 @@ d3 = function () {
     return units;
   }
   function normalizeObjectUnits(inputObject) {
-    var normalizedInput = {}, normalizedProp, prop, index;
+    var normalizedInput = {}, normalizedProp, prop;
     for (prop in inputObject) {
       if (inputObject.hasOwnProperty(prop)) {
         normalizedProp = normalizeUnits(prop);
@@ -27780,20 +27753,6 @@ d3 = function () {
       m._pf.overflow = overflow;
     }
   }
-  function initializeParsingFlags(config) {
-    config._pf = {
-      empty: false,
-      unusedTokens: [],
-      unusedInput: [],
-      overflow: -2,
-      charsLeftOver: 0,
-      nullInput: false,
-      invalidMonth: null,
-      invalidFormat: false,
-      userInvalidated: false,
-      iso: false
-    };
-  }
   function isValid(m) {
     if (m._isValid == null) {
       m._isValid = !isNaN(m._d.getTime()) && m._pf.overflow < 0 && !m._pf.empty && !m._pf.invalidMonth && !m._pf.nullInput && !m._pf.invalidFormat && !m._pf.userInvalidated;
@@ -27805,6 +27764,9 @@ d3 = function () {
   }
   function normalizeLanguage(key) {
     return key ? key.toLowerCase().replace('_', '-') : key;
+  }
+  function makeAs(input, model) {
+    return model._isUTC ? moment(input).zone(model._offset || 0) : moment(input).local();
   }
   extend(Language.prototype, {
     set: function (config) {
@@ -28058,21 +28020,35 @@ d3 = function () {
     return format;
   }
   function getParseRegexForToken(token, config) {
-    var a;
+    var a, strict = config._strict;
     switch (token) {
     case 'DDDD':
       return parseTokenThreeDigits;
     case 'YYYY':
     case 'GGGG':
     case 'gggg':
-      return parseTokenFourDigits;
+      return strict ? parseTokenFourDigits : parseTokenOneToFourDigits;
+    case 'Y':
+    case 'G':
+    case 'g':
+      return parseTokenSignedNumber;
+    case 'YYYYYY':
     case 'YYYYY':
     case 'GGGGG':
     case 'ggggg':
-      return parseTokenSixDigits;
+      return strict ? parseTokenSixDigits : parseTokenOneToSixDigits;
     case 'S':
+      if (strict) {
+        return parseTokenOneDigit;
+      }
     case 'SS':
+      if (strict) {
+        return parseTokenTwoDigits;
+      }
     case 'SSS':
+      if (strict) {
+        return parseTokenThreeDigits;
+      }
     case 'DDD':
       return parseTokenOneToThreeDigits;
     case 'MMM':
@@ -28102,6 +28078,9 @@ d3 = function () {
     case 'hh':
     case 'mm':
     case 'ss':
+    case 'ww':
+    case 'WW':
+      return strict ? parseTokenTwoDigits : parseTokenOneOrTwoDigits;
     case 'M':
     case 'D':
     case 'd':
@@ -28110,9 +28089,7 @@ d3 = function () {
     case 'm':
     case 's':
     case 'w':
-    case 'ww':
     case 'W':
-    case 'WW':
     case 'e':
     case 'E':
       return parseTokenOneOrTwoDigits;
@@ -28122,7 +28099,8 @@ d3 = function () {
     }
   }
   function timezoneMinutesFromString(string) {
-    var tzchunk = (parseTokenTimezone.exec(string) || [])[0], parts = (tzchunk + '').match(parseTimezoneChunker) || [
+    string = string || '';
+    var possibleTzMatches = string.match(parseTokenTimezone) || [], tzChunk = possibleTzMatches[possibleTzMatches.length - 1] || [], parts = (tzChunk + '').match(parseTimezoneChunker) || [
         '-',
         0,
         0
@@ -28164,6 +28142,7 @@ d3 = function () {
       break;
     case 'YYYY':
     case 'YYYYY':
+    case 'YYYYYY':
       datePartArray[YEAR] = toInt(input);
       break;
     case 'a':
@@ -28230,7 +28209,8 @@ d3 = function () {
     currentDate = currentDateArray(config);
     if (config._w && config._a[DATE] == null && config._a[MONTH] == null) {
       fixYear = function (val) {
-        return val ? val.length < 3 ? parseInt(val, 10) > 68 ? '19' + val : '20' + val : val : config._a[YEAR] == null ? moment().weekYear() : config._a[YEAR];
+        var int_val = parseInt(val, 10);
+        return val ? val.length < 3 ? int_val > 68 ? 1900 + int_val : 2000 + int_val : int_val : config._a[YEAR] == null ? moment().weekYear() : config._a[YEAR];
       };
       w = config._w;
       if (w.GG != null || w.W != null || w.E != null) {
@@ -28306,7 +28286,7 @@ d3 = function () {
     tokens = expandFormat(config._f, lang).match(formattingTokens) || [];
     for (i = 0; i < tokens.length; i++) {
       token = tokens[i];
-      parsedInput = (getParseRegexForToken(token, config).exec(string) || [])[0];
+      parsedInput = (string.match(getParseRegexForToken(token, config)) || [])[0];
       if (parsedInput) {
         skipped = string.substr(0, string.indexOf(parsedInput));
         if (skipped.length > 0) {
@@ -28357,7 +28337,7 @@ d3 = function () {
     for (i = 0; i < config._f.length; i++) {
       currentScore = 0;
       tempConfig = extend({}, config);
-      initializeParsingFlags(tempConfig);
+      tempConfig._pf = defaultParsingFlags();
       tempConfig._f = config._f[i];
       makeDateFromStringAndFormat(tempConfig);
       if (!isValid(tempConfig)) {
@@ -28374,22 +28354,22 @@ d3 = function () {
     extend(config, bestMoment || tempConfig);
   }
   function makeDateFromString(config) {
-    var i, string = config._i, match = isoRegex.exec(string);
+    var i, l, string = config._i, match = isoRegex.exec(string);
     if (match) {
       config._pf.iso = true;
-      for (i = 4; i > 0; i--) {
-        if (match[i]) {
-          config._f = isoDates[i - 1] + (match[6] || ' ');
+      for (i = 0, l = isoDates.length; i < l; i++) {
+        if (isoDates[i][1].exec(string)) {
+          config._f = isoDates[i][0] + (match[6] || ' ');
           break;
         }
       }
-      for (i = 0; i < 4; i++) {
+      for (i = 0, l = isoTimes.length; i < l; i++) {
         if (isoTimes[i][1].exec(string)) {
           config._f += isoTimes[i][0];
           break;
         }
       }
-      if (parseTokenTimezone.exec(string)) {
+      if (string.match(parseTokenTimezone)) {
         config._f += 'Z';
       }
       makeDateFromStringAndFormat(config);
@@ -28486,9 +28466,9 @@ d3 = function () {
     };
   }
   function dayOfYearFromWeeks(year, week, weekday, firstDayOfWeekOfYear, firstDayOfWeek) {
-    var d = new Date(Date.UTC(year, 0)).getUTCDay(), daysToAdd, dayOfYear;
+    var d = makeUTCDate(year, 0, 1).getUTCDay(), daysToAdd, dayOfYear;
     weekday = weekday != null ? weekday : firstDayOfWeek;
-    daysToAdd = firstDayOfWeek - d + (d > firstDayOfWeekOfYear ? 7 : 0);
+    daysToAdd = firstDayOfWeek - d + (d > firstDayOfWeekOfYear ? 7 : 0) - (d < firstDayOfWeek ? 7 : 0);
     dayOfYear = 7 * (week - 1) + (weekday - firstDayOfWeek) + daysToAdd + 1;
     return {
       year: dayOfYear > 0 ? year : year - 1,
@@ -28497,9 +28477,6 @@ d3 = function () {
   }
   function makeMoment(config) {
     var input = config._i, format = config._f;
-    if (typeof config._pf === 'undefined') {
-      initializeParsingFlags(config);
-    }
     if (input === null) {
       return moment.invalid({ nullInput: true });
     }
@@ -28507,7 +28484,7 @@ d3 = function () {
       config._i = input = getLangDefinition().preparse(input);
     }
     if (moment.isMoment(input)) {
-      config = extend({}, input);
+      config = cloneMoment(input);
       config._d = new Date(+input._d);
     } else if (format) {
       if (isArray(format)) {
@@ -28521,40 +28498,51 @@ d3 = function () {
     return new Moment(config);
   }
   moment = function (input, format, lang, strict) {
+    var c;
     if (typeof lang === 'boolean') {
       strict = lang;
       lang = undefined;
     }
-    return makeMoment({
-      _i: input,
-      _f: format,
-      _l: lang,
-      _strict: strict,
-      _isUTC: false
-    });
+    c = {};
+    c._isAMomentObject = true;
+    c._i = input;
+    c._f = format;
+    c._l = lang;
+    c._strict = strict;
+    c._isUTC = false;
+    c._pf = defaultParsingFlags();
+    return makeMoment(c);
   };
   moment.utc = function (input, format, lang, strict) {
-    var m;
+    var c;
     if (typeof lang === 'boolean') {
       strict = lang;
       lang = undefined;
     }
-    m = makeMoment({
-      _useUTC: true,
-      _isUTC: true,
-      _l: lang,
-      _i: input,
-      _f: format,
-      _strict: strict
-    }).utc();
-    return m;
+    c = {};
+    c._isAMomentObject = true;
+    c._useUTC = true;
+    c._isUTC = true;
+    c._l = lang;
+    c._i = input;
+    c._f = format;
+    c._strict = strict;
+    c._pf = defaultParsingFlags();
+    return makeMoment(c).utc();
   };
   moment.unix = function (input) {
     return moment(input * 1000);
   };
   moment.duration = function (input, key) {
-    var isDuration = moment.isDuration(input), isNumber = typeof input === 'number', duration = isDuration ? input._input : isNumber ? {} : input, match = null, sign, ret, parseIso, timeEmpty, dateTimeEmpty;
-    if (isNumber) {
+    var duration = input, match = null, sign, ret, parseIso;
+    if (moment.isDuration(input)) {
+      duration = {
+        ms: input._milliseconds,
+        d: input._days,
+        M: input._months
+      };
+    } else if (typeof input === 'number') {
+      duration = {};
       if (key) {
         duration[key] = input;
       } else {
@@ -28587,7 +28575,7 @@ d3 = function () {
       };
     }
     ret = new Duration(duration);
-    if (isDuration && input.hasOwnProperty('_lang')) {
+    if (moment.isDuration(input) && input.hasOwnProperty('_lang')) {
       ret._lang = input._lang;
     }
     return ret;
@@ -28619,7 +28607,7 @@ d3 = function () {
     return getLangDefinition(key);
   };
   moment.isMoment = function (obj) {
-    return obj instanceof Moment;
+    return obj instanceof Moment || obj != null && obj.hasOwnProperty('_isAMomentObject');
   };
   moment.isDuration = function (obj) {
     return obj instanceof Duration;
@@ -28659,7 +28647,12 @@ d3 = function () {
       return this._offset ? new Date(+this) : this._d;
     },
     toISOString: function () {
-      return formatMoment(moment(this).utc(), 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]');
+      var m = moment(this).utc();
+      if (0 < m.year() && m.year() <= 9999) {
+        return formatMoment(m, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]');
+      } else {
+        return formatMoment(m, 'YYYYYY-MM-DD[T]HH:mm:ss.SSS[Z]');
+      }
     },
     toArray: function () {
       var m = this;
@@ -28721,7 +28714,7 @@ d3 = function () {
       return this;
     },
     diff: function (input, units, asFloat) {
-      var that = this._isUTC ? moment(input).zone(this._offset || 0) : moment(input).local(), zoneDiff = (this.zone() - that.zone()) * 60000, diff, output;
+      var that = makeAs(input, this), zoneDiff = (this.zone() - that.zone()) * 60000, diff, output;
       units = normalizeUnits(units);
       if (units === 'year' || units === 'month') {
         diff = (this.daysInMonth() + that.daysInMonth()) * 43200000;
@@ -28744,7 +28737,7 @@ d3 = function () {
       return this.from(moment(), withoutSuffix);
     },
     calendar: function () {
-      var diff = this.diff(moment().zone(this.zone()).startOf('day'), 'days', true), format = diff < -6 ? 'sameElse' : diff < -1 ? 'lastWeek' : diff < 0 ? 'lastDay' : diff < 1 ? 'sameDay' : diff < 2 ? 'nextDay' : diff < 7 ? 'nextWeek' : 'sameElse';
+      var sod = makeAs(moment(), this).startOf('day'), diff = this.diff(sod, 'days', true), format = diff < -6 ? 'sameElse' : diff < -1 ? 'lastWeek' : diff < 0 ? 'lastDay' : diff < 1 ? 'sameDay' : diff < 2 ? 'nextDay' : diff < 7 ? 'nextWeek' : 'sameElse';
       return this.format(this.lang().calendar(format, this));
     },
     isLeapYear: function () {
@@ -28819,8 +28812,8 @@ d3 = function () {
       return +this.clone().startOf(units) < +moment(input).startOf(units);
     },
     isSame: function (input, units) {
-      units = typeof units !== 'undefined' ? units : 'millisecond';
-      return +this.clone().startOf(units) === +moment(input).startOf(units);
+      units = units || 'ms';
+      return +this.clone().startOf(units) === +makeAs(input, this).startOf(units);
     },
     min: function (other) {
       other = moment.apply(null, arguments);
@@ -28856,7 +28849,9 @@ d3 = function () {
       return this._isUTC ? 'Coordinated Universal Time' : '';
     },
     parseZone: function () {
-      if (typeof this._i === 'string') {
+      if (this._tzm) {
+        this.zone(this._tzm);
+      } else if (typeof this._i === 'string') {
         this.zone(this._i);
       }
       return this;
@@ -28875,6 +28870,9 @@ d3 = function () {
     dayOfYear: function (input) {
       var dayOfYear = round((moment(this).startOf('day') - moment(this).startOf('year')) / 86400000) + 1;
       return input == null ? dayOfYear : this.add('d', input - dayOfYear);
+    },
+    quarter: function () {
+      return Math.ceil((this.month() + 1) / 3);
     },
     weekYear: function (input) {
       var year = weekOfYear(this, this.lang()._week.dow, this.lang()._week.doy).year;
@@ -29035,15 +29033,16 @@ d3 = function () {
       return;
     }
     if (deprecate) {
-      this.moment = function () {
+      global.moment = function () {
         if (!warned && console && console.warn) {
           warned = true;
           console.warn('Accessing Moment through the global scope is ' + 'deprecated, and will be removed in an upcoming ' + 'release.');
         }
         return local_moment.apply(null, arguments);
       };
+      extend(global.moment, local_moment);
     } else {
-      this['moment'] = moment;
+      global['moment'] = moment;
     }
   }
   if (hasModule) {
@@ -29051,7 +29050,7 @@ d3 = function () {
     makeGlobal(true);
   } else if (typeof define === 'function' && define.amd) {
     define('moment', function (require, exports, module) {
-      if (module.config().noGlobal !== true) {
+      if (module.config && module.config() && module.config().noGlobal !== true) {
         makeGlobal(module.config().noGlobal === undefined);
       }
       return moment;
@@ -31649,7 +31648,7 @@ if (typeof CanvasRenderingContext2D != 'undefined') {
 }(function (d, e) {
   if (typeof e === 'undefined') {
     alert('momentjs is requried');
-    throw new Error('momentjs is requried');
+    throw new Error('momentjs is required');
   }
   var c = 0, a = e, b = function (o, q) {
       var z = {
@@ -31661,12 +31660,13 @@ if (typeof CanvasRenderingContext2D != 'undefined') {
           startDate: new a({ y: 1970 }),
           endDate: new a().add(50, 'y'),
           collapse: true,
-          language: 'en',
+          language: a.lang(),
           defaultDate: '',
           disabledDates: [],
           enabledDates: false,
           icons: {},
-          useStrict: false
+          useStrict: false,
+          direction: 'auto'
         }, M = {
           time: 'glyphicon glyphicon-time',
           date: 'glyphicon glyphicon-calendar',
@@ -31959,7 +31959,7 @@ if (typeof CanvasRenderingContext2D != 'undefined') {
               }))) {
               S += ' active';
             }
-            if (a(T).add(1, 'd') <= l.options.startDate || T > l.options.endDate || O(T) || !s(T)) {
+            if (O(T) || !s(T)) {
               S += ' disabled';
             }
             af.append('<td class="day' + S + '">' + T.date() + '</td>');
@@ -32223,25 +32223,25 @@ if (typeof CanvasRenderingContext2D != 'undefined') {
           }
           r();
           k();
-          p(Q);
+          p(Q, S.type);
           return T;
         }, K = function (Q) {
           Q.stopPropagation();
           Q.preventDefault();
-        }, i = function (S) {
+        }, i = function (T) {
           a.lang(l.options.language);
-          var Q = d(S.target), R = a(l.date), T = a(Q.val(), l.format, l.options.useStrict);
-          if (T.isValid()) {
+          var R = d(T.target), S = a(l.date), Q = a(R.val(), l.format, l.options.useStrict);
+          if (Q.isValid() && !O(Q) && s(Q)) {
             y();
-            l.setValue(T);
-            p(R);
+            l.setValue(Q);
+            p(S, T.type);
             r();
           } else {
-            l.viewDate = R;
-            p(R);
-            C(T);
+            l.viewDate = S;
+            R.val(a(S).format(l.format));
+            p(S, T.type);
+            C(Q);
             l.unset = true;
-            Q.val('');
           }
         }, g = function (Q) {
           if (Q) {
@@ -32359,7 +32359,7 @@ if (typeof CanvasRenderingContext2D != 'undefined') {
           } else {
             Q = a(l.date).subtract(R, S);
           }
-          if (Q.isAfter(l.options.endDate) || a(Q.subtract(R, S)).isBefore(l.options.startDate) || O(Q)) {
+          if (O(a(Q.subtract(R, S))) || O(Q)) {
             C(Q.format(l.format));
             return;
           }
@@ -32368,8 +32368,12 @@ if (typeof CanvasRenderingContext2D != 'undefined') {
           } else {
             l.date.subtract(R, S);
           }
+          l.unset = false;
         }, O = function (Q) {
           a.lang(l.options.language);
+          if (Q.isAfter(l.options.endDate) || Q.isBefore(l.options.startDate)) {
+            return true;
+          }
           var S = l.options.disabledDates, R;
           for (R in S) {
             if (S[R] == a(Q).format('L')) {
@@ -32458,7 +32462,7 @@ if (typeof CanvasRenderingContext2D != 'undefined') {
         }
       }, l.disable = function () {
         var Q = l.element.find('input');
-        if (!Q.prop('disabled')) {
+        if (Q.prop('disabled')) {
           return;
         }
         Q.prop('disabled', true);
@@ -32468,7 +32472,7 @@ if (typeof CanvasRenderingContext2D != 'undefined') {
         if (!Q.prop('disabled')) {
           return;
         }
-        Q.prop('disabled', true);
+        Q.prop('disabled', false);
         J();
       }, l.hide = function (S) {
         if (S && d(S.target).is(l.element.attr('id'))) {
@@ -32533,18 +32537,18 @@ if (typeof CanvasRenderingContext2D != 'undefined') {
           y();
         }
       }, l.setEndDate = function (Q) {
-        l.options.endDate = a(Q);
-        if (!l.options.endDate.isValid()) {
-          l.options.endDate = a().add(50, 'y');
+        if (Q == undefined) {
+          return;
         }
+        l.options.endDate = a(Q);
         if (l.viewDate) {
           y();
         }
       }, l.setStartDate = function (Q) {
-        l.options.startDate = a(Q);
-        if (!l.options.startDate.isValid()) {
-          l.options.startDate = a({ y: 1970 });
+        if (Q == undefined) {
+          return;
         }
+        l.options.startDate = a(Q);
         if (l.viewDate) {
           y();
         }
