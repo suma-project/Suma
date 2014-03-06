@@ -202,7 +202,7 @@ module.exports = function (grunt) {
       },
       sourceMapPrep: {
         dest: '<%= yeoman.dist %>/scripts/scripts.js',
-        src: '<%= yeoman.dist %>/scripts/scripts.min.js'
+        src: '.tmp/concat/scripts/scripts.min.js'
       }
     },
     karma: {
