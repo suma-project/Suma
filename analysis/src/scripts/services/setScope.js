@@ -43,13 +43,26 @@ angular.module('sumaAnalysis')
             }
           }
 
-          if (sumaConfig.formFields.daygroup) {
-            newParams.daygroup = _.find(sumaConfig.formData.dayOptions, function (e, i) {
-              return String(e.id) === String(urlParams.daygroup);
-            });
+          // if (sumaConfig.formFields.daygroup) {
+          //   newParams.daygroup = _.find(sumaConfig.formData.dayOptions, function (e, i) {
+          //     return String(e.id) === String(urlParams.daygroup);
+          //   });
 
-            if (!newParams.daygroup) {
-              errors.push('Invalid value for daygroup. Valid values are "all", "weekends", or "weekdays".');
+          //   if (!newParams.daygroup) {
+          //     errors.push('Invalid value for daygroup. Valid values are "all", "weekends", or "weekdays".');
+          //   }
+          // }
+
+          if (sumaConfig.formFields.days) {
+            if (urlParams.days) {
+              var days = urlParams.days.split(',');
+              newParams.days = days;
+            } else {
+              newParams.days = [];
+            }
+
+            if (!newParams.days || newParams.days.length === 0) {
+              errors.push('Invalid value for days. Valid values are "mo", "tu", "we", "th", "fr", "sa", "su". Values should be separated by a comma.');
             }
           }
 

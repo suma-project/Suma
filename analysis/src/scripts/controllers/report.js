@@ -27,9 +27,12 @@ angular.module('sumaAnalysis')
       $scope.params = {};
 
       _.each(sumaConfig.formFields, function (field, fieldName) {
-        if (field && (fieldName !== 'locations' && fieldName !== 'activities')) {
+        if (field && (fieldName !== 'locations' && fieldName !== 'activities' && fieldName !== 'days')) {
           $scope[sumaConfig.formDefaults[fieldName]] = sumaConfig.formData[sumaConfig.formDefaults[fieldName]];
           $scope.params[fieldName] = $scope[sumaConfig.formDefaults[fieldName]][0];
+        } else if (field && fieldName === 'days') {
+          $scope.dayOptions = sumaConfig.formData.dayOptions;
+          $scope.params.days = angular.copy($scope.dayOptions);
         }
       });
     };
@@ -152,6 +155,18 @@ angular.module('sumaAnalysis')
       }
     };
 
+    $scope.stringifyDays = function (days) {
+      var string;
+
+      if (!days || days.length === 0) {
+        return null;
+      }
+
+      string = days.join(',');
+
+      return string;
+    };
+
     // Attach params to URL
     $scope.submit = function () {
       var currentUrl,
@@ -169,7 +184,7 @@ angular.module('sumaAnalysis')
         wholeSession: $scope.params.wholeSession ? $scope.params.wholeSession.id : null,
         activity: $scope.params.activity ? $scope.params.activity.type ? $scope.params.activity.type + '-' + $scope.params.activity.id : $scope.params.activity.id : null,
         location: $scope.params.location ? $scope.params.location.id : null,
-        daygroup: $scope.params.daygroup ? $scope.params.daygroup.id : null
+        days: $scope.stringifyDays($scope.params.days)
       };
 
       currentScope = _.compactObject(currentScope);

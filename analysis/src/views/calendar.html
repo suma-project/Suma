@@ -111,9 +111,15 @@
 
         <div class="col-xs-3" data-ng-show="params.init && !processMetadata">
           <div class="form-group">
-            <label class="suma-popover" data-title="Limit Days of the Week" data-content="Filter by Weekday or Weekend." data-suma-popover>Limit Days of the Week</label>
+            <label class="suma-popover" data-title="Limit Days of the Week" data-content="Filter by weekday." data-suma-popover>Limit Days of the Week</label>
             <div class="controls">
-              <select name="daygroup" id="daygroup" class="form-control" data-ng-model="params.daygroup" data-ng-options="day.title for day in dayOptions"></select>
+              <div class="row" >
+                <div class="col-xs-3" ng-repeat="day in dayOptions">
+                  <label class="checkbox-inline">
+                    <input type="checkbox" value="{{day}}" check-list="params.days" suma-checklist>{{day | capitalize}}
+                  </label>
+                </div>
+              </div>
             </div>
           </div>
 

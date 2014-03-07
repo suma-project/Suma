@@ -3,6 +3,7 @@
 require_once 'ServerIO.php';
 require_once 'Gump.php';
 require_once 'SumaGump.php';
+require_once 'ChromePhp.php';
 
 // Suppress Error Reporting
 error_reporting(0);
@@ -16,26 +17,12 @@ ini_set('display_errors', 0);
 class Data
 {
     /**
-     * Define weekdays
+     * Define day names
      *
      * @var array
      * @access  private
      */
-    private $weekdays = array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday');
-    /**
-     * Define weekends
-     *
-     * @var array
-     * @access  private
-     */
-    private $weekends = array('Saturday', 'Sunday');
-    /**
-     * Define full week
-     *
-     * @var array
-     * @access  private
-     */
-    private $all = array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday');
+    private $daysScaffold = array('mo' => 'Monday', 'tu' => 'Tuesday', 'we' => 'Wednesday', 'th' => 'Thursday', 'fr' => 'Friday', 'sa' => 'Saturday', 'su' => 'Sunday');
     /**
      * Main hash to store data as it is retrieved from the server
      *
@@ -292,7 +279,7 @@ class Data
             'etime'      => 'trim|rmpunctuation|pad_time',
             'classifyCounts'    => 'trim',
             'wholeSession' => 'trim',
-            'daygroup'   => 'trim',
+            'days'   => 'trim',
             'locations'  => 'trim',
             'activities' => 'trim'
         );
@@ -306,7 +293,6 @@ class Data
             'etime'      => 'numeric|multi_exact_len, 0 4',
             'classifyCounts'    => 'alpha|contains, count start end',
             'wholeSession' => 'alpha|contains, yes no',
-            'daygroup'   => 'alpha|contains, all weekdays weekends',
             'locations'  => 'alpha_numeric',
             'activities' => 'alpha_dash'
         );
@@ -328,7 +314,7 @@ class Data
                 'etime'      => $input['etime'],
                 'classifyCounts'    => $input['classifyCounts'],
                 'wholeSession' => $input['wholeSession'],
-                'daygroup'   => $input['daygroup'],
+                'days'   => $input['days'],
                 'locations'  => $input['locations'],
                 'activities' => $input['activities']
             );
@@ -1160,18 +1146,14 @@ class Data
         $params['format'] = 'lca';
         $queryType        = 'sessions';
 
-        // Determine which array to use as filter for daygroup
-        if ($params['daygroup'] === 'weekdays')
-        {
-            $params['days'] = $this->weekdays;
-        }
-        elseif ($params['daygroup'] === 'weekends')
-        {
-            $params['days'] = $this->weekends;
-        }
-        else
-        {
-            $params['days'] = $this->all;
+        $days = explode(",", $params['days']);
+
+        $params['days'] = array();
+
+        foreach ($days as $day) {
+            if (array_key_exists($day, $this->daysScaffold)) {
+                array_push($params['days'], $this->daysScaffold[$day]);
+            }
         }
 
         // Defaults

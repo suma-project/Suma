@@ -83,7 +83,7 @@ angular.module('sumaAnalysis')
             etime: cfg.params.etime || '',
             classifyCounts: cfg.params.classifyCounts ? cfg.params.classifyCounts.id : 'count',
             wholeSession: cfg.params.wholeSession ? cfg.params.wholeSession.id : 'no',
-            daygroup: cfg.params.daygroup ? cfg.params.daygroup.id : 'all' ,
+            days: cfg.params.days ? cfg.params.days.join(',') : '',
             locations: cfg.params.location ? cfg.params.location.id : 'all',
             activities: cfg.params.activity.type ? (cfg.params.activity.type + '-' + cfg.params.activity.id) : 'all'
           },

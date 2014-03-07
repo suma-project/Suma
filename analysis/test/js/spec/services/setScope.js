@@ -54,7 +54,7 @@ describe('Service: SetScope', function () {
     urlParams = {
       id: 4,
       classifyCounts: 'count',
-      daygroup: 'all',
+      days: 'mo,tu,we,th,fr,sa,su',
       wholeSession: 'no',
       sdate: '20131111',
       edate: '20140101',
@@ -69,7 +69,7 @@ describe('Service: SetScope', function () {
       init: {id: 4},
       classifyCounts: {id: 'count', title: 'Count Date'},
       wholeSession: {id: 'no', title: 'No'},
-      daygroup: {id: 'all', title: 'All'},
+      days: ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su'],
       activity: {id: 'all'},
       location: {id: 'all'},
       sdate: '20131111',
@@ -111,7 +111,7 @@ describe('Service: SetScope', function () {
     urlParams = {
       id: 4,
       classifyCounts: 'count',
-      daygroup: 'all',
+      days: 'mo,tu,we,th,fr,sa,su',
       wholeSession: 'no',
       sdate: '20131111',
       edate: '20140101',
@@ -126,7 +126,7 @@ describe('Service: SetScope', function () {
       init: {id: 4},
       classifyCounts: {id: 'count', title: 'Count Date'},
       wholeSession: {id: 'no', title: 'No'},
-      daygroup: {id: 'all', title: 'All'},
+      days: ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su'],
       activity: {id: '4', type: 'activity'},
       location: {id: 'all'},
       sdate: '20131111',
@@ -254,7 +254,7 @@ describe('Service: SetScope', function () {
     // Call SetScope.set
     SetScope.set(urlParams, SumaConfig, inits).then(function (response) {
       // Assertions
-      expect(response.errorMessage).to.equal('Query parameter input error. Invalid value for classifyCounts. Valid values are "count", "start", or "end". Invalid value for wholeSession. Valid values are "yes" or "no". Invalid value for daygroup. Valid values are "all", "weekends", or "weekdays". Invalid value for activity. Invalid value for location. Invalid value for sdate. Should be numeric and either 0 or 8 characters in length, not counting punctuation. Invalid value for edate. Should be numeric and either 0 or 8 characters in length, not counting punctuation. Invalid value for stime. Should be numeric and either 0 or 4 characters in length, not counting punctuation. Invalid value for etime. Should be numeric and either 0 or 4 characters in length, not counting punctuation. ');
+      expect(response.errorMessage).to.equal('Query parameter input error. Invalid value for classifyCounts. Valid values are "count", "start", or "end". Invalid value for wholeSession. Valid values are "yes" or "no". Invalid value for days. Valid values are "mo", "tu", "we", "th", "fr", "sa", "su". Values should be separated by a comma. Invalid value for activity. Invalid value for location. Invalid value for sdate. Should be numeric and either 0 or 8 characters in length, not counting punctuation. Invalid value for edate. Should be numeric and either 0 or 8 characters in length, not counting punctuation. Invalid value for stime. Should be numeric and either 0 or 4 characters in length, not counting punctuation. Invalid value for etime. Should be numeric and either 0 or 4 characters in length, not counting punctuation. ');
     });
 
     scope.$digest();

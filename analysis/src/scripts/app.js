@@ -9,11 +9,12 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
           {id: 'start', title: 'Session Start'},
           {id: 'end', title: 'Session End'}
         ],
-        dayOptions: [
-          {id: 'all', title: 'All'},
-          {id: 'weekdays', title: 'Weekdays Only'},
-          {id: 'weekends', title: 'Weekends Only'}
-        ],
+        // dayOptions: [
+        //   {id: 'all', title: 'All'},
+        //   {id: 'weekdays', title: 'Weekdays Only'},
+        //   {id: 'weekends', title: 'Weekends Only'}
+        // ],
+        dayOptions: ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su'],
         sessionOptions: [
           {id: 'no', title: 'No'},
           {id: 'yes', title: 'Yes'}
@@ -25,7 +26,6 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
       },
       formDefaults: {
         classifyCounts: 'countOptions',
-        daygroup: 'dayOptions',
         wholeSession: 'sessionOptions',
         sdate: 'startDate',
         edate: 'endDate',
@@ -38,7 +38,7 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
         stime: true,
         etime: true,
         classifyCounts: true,
-        daygroup: true,
+        days: true,
         wholeSession: true,
         activities: true,
         locations: true
@@ -108,7 +108,7 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
             var newConfig = angular.copy(sumaBaseConfig);
 
             newConfig.formFields.classifyCounts = false;
-            newConfig.formFields.daygroup = false;
+            newConfig.formFields.days = false;
             newConfig.formFields.wholeSession = false;
             newConfig.formFields.activities = false;
             newConfig.formFields.locations = false;

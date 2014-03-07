@@ -8,11 +8,7 @@ angular.module('reportMock', [])
       {id: 'start', title: 'Session Start'},
       {id: 'end', title: 'Session End'}
     ],
-    dayOptions: [
-      {id: 'all', title: 'All'},
-      {id: 'weekdays', title: 'Weekdays Only'},
-      {id: 'weekends', title: 'Weekends Only'}
-    ],
+    dayOptions: ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su'],
     sessionOptions: [
       {id: 'no', title: 'No'},
       {id: 'yes', title: 'Yes'}
@@ -24,7 +20,6 @@ angular.module('reportMock', [])
   },
   formDefaults: {
     classifyCounts: 'countOptions',
-    daygroup: 'dayOptions',
     wholeSession: 'sessionOptions',
     sdate: 'startDate',
     edate: 'endDate',
@@ -37,7 +32,7 @@ angular.module('reportMock', [])
     stime: true,
     etime: true,
     classifyCounts: true,
-    daygroup: true,
+    days: true,
     wholeSession: true,
     activities: true,
     locations: true
@@ -52,11 +47,7 @@ angular.module('reportMock', [])
       {id: 'start', title: 'Session Start'},
       {id: 'end', title: 'Session End'}
     ],
-    dayOptions: [
-      {id: 'all', title: 'All'},
-      {id: 'weekdays', title: 'Weekdays Only'},
-      {id: 'weekends', title: 'Weekends Only'}
-    ],
+    dayOptions: ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su'],
     sessionOptions: [
       {id: 'no', title: 'No'},
       {id: 'yes', title: 'Yes'}
@@ -68,7 +59,6 @@ angular.module('reportMock', [])
   },
   formDefaults: {
     classifyCounts: 'countOptions',
-    daygroup: 'dayOptions',
     wholeSession: 'sessionOptions',
     sdate: 'startDate',
     edate: 'endDate',
@@ -81,7 +71,7 @@ angular.module('reportMock', [])
     stime: true,
     etime: true,
     classifyCounts: true,
-    daygroup: true,
+    days: true,
     wholeSession: true,
     activities: true,
     locations: true
@@ -96,11 +86,7 @@ angular.module('reportMock', [])
       {id: 'start', title: 'Session Start'},
       {id: 'end', title: 'Session End'}
     ],
-    dayOptions: [
-      {id: 'all', title: 'All'},
-      {id: 'weekdays', title: 'Weekdays Only'},
-      {id: 'weekends', title: 'Weekends Only'}
-    ],
+    dayOptions: ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su'],
     sessionOptions: [
       {id: 'no', title: 'No'},
       {id: 'yes', title: 'Yes'}
@@ -112,7 +98,6 @@ angular.module('reportMock', [])
   },
   formDefaults: {
     classifyCounts: 'countOptions',
-    daygroup: 'dayOptions',
     wholeSession: 'sessionOptions',
     sdate: 'startDate',
     edate: 'endDate',
@@ -125,7 +110,7 @@ angular.module('reportMock', [])
     stime: false,
     etime: false,
     classifyCounts: false,
-    daygroup: false,
+    days: false,
     wholeSession: false,
     activities: false,
     locations: false
@@ -139,17 +124,13 @@ angular.module('reportMock', [])
     {id: 'start', title: 'Session Start'},
     {id: 'end', title: 'Session End'}
   ],
-  dayOptions : [
-    {id: 'all', title: 'All'},
-    {id: 'weekdays', title: 'Weekdays Only'},
-    {id: 'weekends', title: 'Weekends Only'}
-  ],
+  dayOptions: ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su'],
   sessionOptions : [
     {id: 'no', title: 'No'},
     {id: 'yes', title: 'Yes'}
   ],
   classifyCounts : {id: 'count', title: 'Count Date'},
-  daygroup : {id: 'all', title: 'All'},
+  days : {id: 'all', title: 'All'},
   wholeSession : {id: 'no', title: 'No'},
   sDate : moment().subtract('months', 6).add('days', 1).format('YYYY-MM-DD'),
   eDate : moment().add('days', 1).format('YYYY-MM-DD')

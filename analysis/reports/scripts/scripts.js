@@ -48989,18 +48989,13 @@ angular.module('sumaAnalysis', [
             }
           ],
           dayOptions: [
-            {
-              id: 'all',
-              title: 'All'
-            },
-            {
-              id: 'weekdays',
-              title: 'Weekdays Only'
-            },
-            {
-              id: 'weekends',
-              title: 'Weekends Only'
-            }
+            'mo',
+            'tu',
+            'we',
+            'th',
+            'fr',
+            'sa',
+            'su'
           ],
           sessionOptions: [
             {
@@ -49019,7 +49014,6 @@ angular.module('sumaAnalysis', [
         },
         formDefaults: {
           classifyCounts: 'countOptions',
-          daygroup: 'dayOptions',
           wholeSession: 'sessionOptions',
           sdate: 'startDate',
           edate: 'endDate',
@@ -49032,7 +49026,7 @@ angular.module('sumaAnalysis', [
           stime: true,
           etime: true,
           classifyCounts: true,
-          daygroup: true,
+          days: true,
           wholeSession: true,
           activities: true,
           locations: true
@@ -49086,7 +49080,7 @@ angular.module('sumaAnalysis', [
         sumaConfig: function () {
           var newConfig = angular.copy(sumaBaseConfig);
           newConfig.formFields.classifyCounts = false;
-          newConfig.formFields.daygroup = false;
+          newConfig.formFields.days = false;
           newConfig.formFields.wholeSession = false;
           newConfig.formFields.activities = false;
           newConfig.formFields.locations = false;
@@ -49142,9 +49136,12 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
     $scope.setDefaults = function () {
       $scope.params = {};
       _.each(sumaConfig.formFields, function (field, fieldName) {
-        if (field && (fieldName !== 'locations' && fieldName !== 'activities')) {
+        if (field && (fieldName !== 'locations' && fieldName !== 'activities' && fieldName !== 'days')) {
           $scope[sumaConfig.formDefaults[fieldName]] = sumaConfig.formData[sumaConfig.formDefaults[fieldName]];
           $scope.params[fieldName] = $scope[sumaConfig.formDefaults[fieldName]][0];
+        } else if (field && fieldName === 'days') {
+          $scope.dayOptions = sumaConfig.formData.dayOptions;
+          $scope.params.days = angular.copy($scope.dayOptions);
         }
       });
     };
@@ -49249,6 +49246,14 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
         });
       }
     };
+    $scope.stringifyDays = function (days) {
+      var string;
+      if (!days || days.length === 0) {
+        return null;
+      }
+      string = days.join(',');
+      return string;
+    };
     // Attach params to URL
     $scope.submit = function () {
       var currentUrl, currentScope;
@@ -49263,7 +49268,7 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
         wholeSession: $scope.params.wholeSession ? $scope.params.wholeSession.id : null,
         activity: $scope.params.activity ? $scope.params.activity.type ? $scope.params.activity.type + '-' + $scope.params.activity.id : $scope.params.activity.id : null,
         location: $scope.params.location ? $scope.params.location.id : null,
-        daygroup: $scope.params.daygroup ? $scope.params.daygroup.id : null
+        days: $scope.stringifyDays($scope.params.days)
       };
       currentScope = _.compactObject(currentScope);
       if (_.isEqual(currentUrl, currentScope)) {
@@ -49488,7 +49493,7 @@ angular.module('sumaAnalysis').factory('data', [
             etime: cfg.params.etime || '',
             classifyCounts: cfg.params.classifyCounts ? cfg.params.classifyCounts.id : 'count',
             wholeSession: cfg.params.wholeSession ? cfg.params.wholeSession.id : 'no',
-            daygroup: cfg.params.daygroup ? cfg.params.daygroup.id : 'all',
+            days: cfg.params.days ? cfg.params.days.join(',') : '',
             locations: cfg.params.location ? cfg.params.location.id : 'all',
             activities: cfg.params.activity.type ? cfg.params.activity.type + '-' + cfg.params.activity.id : 'all'
           },
@@ -49594,12 +49599,23 @@ angular.module('sumaAnalysis').factory('setScope', [
               errors.push('Invalid value for wholeSession. Valid values are "yes" or "no".');
             }
           }
-          if (sumaConfig.formFields.daygroup) {
-            newParams.daygroup = _.find(sumaConfig.formData.dayOptions, function (e, i) {
-              return String(e.id) === String(urlParams.daygroup);
-            });
-            if (!newParams.daygroup) {
-              errors.push('Invalid value for daygroup. Valid values are "all", "weekends", or "weekdays".');
+          // if (sumaConfig.formFields.daygroup) {
+          //   newParams.daygroup = _.find(sumaConfig.formData.dayOptions, function (e, i) {
+          //     return String(e.id) === String(urlParams.daygroup);
+          //   });
+          //   if (!newParams.daygroup) {
+          //     errors.push('Invalid value for daygroup. Valid values are "all", "weekends", or "weekdays".');
+          //   }
+          // }
+          if (sumaConfig.formFields.days) {
+            if (urlParams.days) {
+              var days = urlParams.days.split(',');
+              newParams.days = days;
+            } else {
+              newParams.days = [];
+            }
+            if (!newParams.days || newParams.days.length === 0) {
+              errors.push('Invalid value for days. Valid values are "mo", "tu", "we", "th", "fr", "sa", "su". Values should be separated by a comma.');
             }
           }
           if (sumaConfig.formFields.activities || sumaConfig.formFields.locations) {
@@ -50007,6 +50023,17 @@ angular.module('sumaAnalysis').filter('countFormat', function () {
   return function (input) {
     var formatCount = d3.format(','), formattedCount = formatCount(input);
     return formattedCount;
+  };
+});
+'use strict';
+angular.module('sumaAnalysis').filter('capitalize', function () {
+  return function (input, scope) {
+    if (input !== null && input !== undefined) {
+      input = input.toLowerCase();
+      return input.substring(0, 1).toUpperCase() + input.substring(1);
+    } else {
+      return input;
+    }
   };
 });
 'use strict';
@@ -51508,5 +51535,41 @@ angular.module('sumaAnalysis').directive('sumaCsvHourly', function () {
         };
       }
     ]
+  };
+});
+'use strict';
+angular.module('sumaAnalysis').directive('sumaChecklist', function () {
+  return {
+    scope: {
+      list: '=checkList',
+      value: '@'
+    },
+    link: function (scope, elem, attrs) {
+      var handler, setupHandler, changeHandler;
+      handler = function (setup) {
+        var checked, index;
+        checked = elem.prop('checked');
+        index = scope.list.indexOf(scope.value);
+        if (checked && index === -1) {
+          if (setup) {
+            elem.prop('checked', false);
+          } else {
+            scope.list.push(scope.value);
+          }
+        } else if (!checked && index !== -1) {
+          if (setup) {
+            elem.prop('checked', true);
+          } else {
+            scope.list.splice(index, 1);
+          }
+        }
+      };
+      setupHandler = handler.bind(null, true);
+      changeHandler = handler.bind(null, false);
+      elem.on('change', function () {
+        scope.$apply(changeHandler);
+      });
+      scope.$watch('list', setupHandler, true);
+    }
   };
 });
