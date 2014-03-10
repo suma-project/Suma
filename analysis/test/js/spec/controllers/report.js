@@ -919,4 +919,60 @@ describe('Controller: ReportCtrl', function () {
     setScopeStub.restore();
     getDataStub.restore();
   });
+
+
+  it(':stringifyDays should return a string of days', function () {
+    var initiativesStub,
+        getInitsStub,
+        setDefaultsStub,
+        statesStub;
+
+    // Stub initiatives service
+    initiativesStub = sinon.stub(Initiatives, 'get');
+    initiativesStub.returns(okResponse());
+
+    // Stub state service
+    statesStub = sinon.stub(UIStates, 'setUIState');
+
+    // Instantiate Controller
+    ReportCtrl = Controller('ReportCtrl', {
+      $scope: scope,
+      sumaConfig: SumaConfig
+    });
+
+    // Assertions
+    expect(scope.stringifyDays(['mo', 'tu', 'we'])).to.equal('mo,tu,we');
+
+    // Restore stubs
+    initiativesStub.restore();
+    statesStub.restore();
+  });
+
+  it(':stringifyDays should null if array is empty or undefined/null', function () {
+    var initiativesStub,
+        getInitsStub,
+        setDefaultsStub,
+        statesStub;
+
+    // Stub initiatives service
+    initiativesStub = sinon.stub(Initiatives, 'get');
+    initiativesStub.returns(okResponse());
+
+    // Stub state service
+    statesStub = sinon.stub(UIStates, 'setUIState');
+
+    // Instantiate Controller
+    ReportCtrl = Controller('ReportCtrl', {
+      $scope: scope,
+      sumaConfig: SumaConfig
+    });
+
+    // Assertions
+    expect(scope.stringifyDays([])).to.equal(null);
+    expect(scope.stringifyDays()).to.equal(null);
+
+    // Restore stubs
+    initiativesStub.restore();
+    statesStub.restore();
+  });
 });
