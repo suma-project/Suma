@@ -49607,7 +49607,7 @@ angular.module('sumaAnalysis').factory('scopeUtils', [
               newParams.days = [];
             }
             if (!newParams.days || newParams.days.length === 0) {
-              errors.push('Invalid value for days. Valid values are "mo", "tu", "we", "th", "fr", "sa", "su". Values should be separated by a comma.');
+              errors.push('At least one calendar day should be selected. Valid values are "mo", "tu", "we", "th", "fr", "sa", "su". Values should be separated by a comma.');
             }
           }
           if (sumaConfig.formFields.activities || sumaConfig.formFields.locations) {
