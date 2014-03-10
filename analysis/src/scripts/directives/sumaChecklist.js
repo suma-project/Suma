@@ -1,5 +1,6 @@
 'use strict';
 
+// taken from http://stackoverflow.com/a/14519881
 angular.module('sumaAnalysis')
   .directive('sumaChecklist', function () {
     return {
@@ -37,7 +38,7 @@ angular.module('sumaAnalysis')
         setupHandler = handler.bind(null, true);
         changeHandler = handler.bind(null, false);
 
-        elem.on('change', function() {
+        elem.on('click', function() {
           scope.$apply(changeHandler);
         });
 
