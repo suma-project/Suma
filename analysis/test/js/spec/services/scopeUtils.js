@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Service: SetScope', function () {
+describe('Service: ScopeUtils', function () {
 
   // load the service's module
   beforeEach(module('sumaAnalysis'));
@@ -9,7 +9,7 @@ describe('Service: SetScope', function () {
   beforeEach(module('reportMock'));
 
   // instantiate service
-  var SetScope,
+  var ScopeUtils,
       Q,
       ActsLocs,
       Validation,
@@ -18,8 +18,8 @@ describe('Service: SetScope', function () {
       SumaConfig3,
       scope;
 
-  beforeEach(inject(function (_$rootScope_, _setScope_, _$q_, _actsLocs_, _validation_, sumaConfig, sumaConfig2, sumaConfig3) {
-    SetScope = _setScope_;
+  beforeEach(inject(function (_$rootScope_, _scopeUtils_, _$q_, _actsLocs_, _validation_, sumaConfig, sumaConfig2, sumaConfig3) {
+    ScopeUtils = _scopeUtils_;
     Q = _$q_;
     ActsLocs = _actsLocs_;
     Validation = _validation_;
@@ -30,7 +30,18 @@ describe('Service: SetScope', function () {
 
   }));
 
-  it('SetScope:getMetadata should return an object of activities and locations', function () {
+  it(':stringifyDays should return a string of days', function () {
+    // Assertions
+    expect(ScopeUtils.stringifyDays(['mo', 'tu', 'we'])).to.equal('mo,tu,we');
+  });
+
+  it(':stringifyDays should null if array is empty or undefined/null', function () {
+    // Assertions
+    expect(ScopeUtils.stringifyDays([])).to.equal(null);
+    expect(ScopeUtils.stringifyDays()).to.equal(null);
+  });
+
+  it('ScopeUtils:getMetadata should return an object of activities and locations', function () {
     var actsLocsStub;
 
     // Stub actsLocs.get
@@ -38,13 +49,13 @@ describe('Service: SetScope', function () {
     actsLocsStub.returns({activities: [], locations: []});
 
     // Assertions
-    expect(SetScope.getMetadata()).to.deep.equal({activities: [], locations: []});
+    expect(ScopeUtils.getMetadata()).to.deep.equal({activities: [], locations: []});
 
     // Restore Stubs
     actsLocsStub.restore();
   });
 
-  it('SetScope:set should return a params object if params are valid', function () {
+  it('ScopeUtils:set should return a params object if params are valid', function () {
     var expectedScope,
         getMetadataStub,
         urlParams,
@@ -81,12 +92,12 @@ describe('Service: SetScope', function () {
     // mock inits
     inits = [{id: 4}, {id: 5}];
 
-    // Stub SetScope.getMetadata
-    getMetadataStub = sinon.stub(SetScope, 'getMetadata');
+    // Stub ScopeUtils.getMetadata
+    getMetadataStub = sinon.stub(ScopeUtils, 'getMetadata');
     getMetadataStub.returns({activities: [{id: 'all'}], locations: [{id: 'all'}]});
 
-    // Call SetScope.set
-    SetScope.set(urlParams, SumaConfig, inits).then(function (response) {
+    // Call ScopeUtils.set
+    ScopeUtils.set(urlParams, SumaConfig, inits).then(function (response) {
       // Assertions
       expect(response.actsLocs).to.deep.equal({activities: [{id: 'all'}], locations: [{id: 'all'}]});
       expect(response.activities).to.deep.equal([{id: 'all'}]);
@@ -101,7 +112,7 @@ describe('Service: SetScope', function () {
     getMetadataStub.restore();
   });
 
-  it('SetScope:set should return a params object if params are valid', function () {
+  it('ScopeUtils:set should return a params object if params are valid', function () {
     var expectedScope,
         getMetadataStub,
         urlParams,
@@ -138,12 +149,12 @@ describe('Service: SetScope', function () {
     // mock inits
     inits = [{id: 4}, {id: 5}];
 
-    // Stub SetScope.getMetadata
-    getMetadataStub = sinon.stub(SetScope, 'getMetadata');
+    // Stub ScopeUtils.getMetadata
+    getMetadataStub = sinon.stub(ScopeUtils, 'getMetadata');
     getMetadataStub.returns({activities: [{id: '4', type: 'activity'}], locations: [{id: 'all'}]});
 
-    // Call SetScope.set
-    SetScope.set(urlParams, SumaConfig, inits).then(function (response) {
+    // Call ScopeUtils.set
+    ScopeUtils.set(urlParams, SumaConfig, inits).then(function (response) {
       // Assertions
       expect(response.actsLocs).to.deep.equal({activities: [{id: '4', type: 'activity'}], locations: [{id: 'all'}]});
       expect(response.activities).to.deep.equal([{id: '4', type: 'activity'}]);
@@ -158,7 +169,7 @@ describe('Service: SetScope', function () {
     getMetadataStub.restore();
   });
 
-  it('SetScope:set should fail if init is invalid', function () {
+  it('ScopeUtils:set should fail if init is invalid', function () {
     var getMetadataStub,
         urlParams,
         inits;
@@ -171,12 +182,12 @@ describe('Service: SetScope', function () {
     // mock inits
     inits = [{id: 4}, {id: 5}];
 
-    // Stub SetScope.getMetadata
-    getMetadataStub = sinon.stub(SetScope, 'getMetadata');
+    // Stub ScopeUtils.getMetadata
+    getMetadataStub = sinon.stub(ScopeUtils, 'getMetadata');
     getMetadataStub.returns({activities: [{id: 'all'}], locations: [{id: 'all'}]});
 
-    // Call SetScope.set
-    SetScope.set(urlParams, SumaConfig, inits).then(function (response) {
+    // Call ScopeUtils.set
+    ScopeUtils.set(urlParams, SumaConfig, inits).then(function (response) {
     }, function (response) {
       expect(response.message).to.equal('Initiative ID Not Found.');
       expect(response.code).to.equal(500);
@@ -187,7 +198,7 @@ describe('Service: SetScope', function () {
     getMetadataStub.restore();
   });
 
-  it('SetScope:set should not set fields that are false in config', function () {
+  it('ScopeUtils:set should not set fields that are false in config', function () {
     var expectedScope,
         getMetadataStub,
         urlParams,
@@ -205,12 +216,12 @@ describe('Service: SetScope', function () {
     // mock inits
     inits = [{id: 4}, {id: 5}];
 
-    // Stub SetScope.getMetadata
-    getMetadataStub = sinon.stub(SetScope, 'getMetadata');
+    // Stub ScopeUtils.getMetadata
+    getMetadataStub = sinon.stub(ScopeUtils, 'getMetadata');
     getMetadataStub.returns({activities: [{id: 'all'}], locations: [{id: 'all'}]});
 
-    // Call SetScope.set
-    SetScope.set(urlParams, SumaConfig3, inits).then(function (response) {
+    // Call ScopeUtils.set
+    ScopeUtils.set(urlParams, SumaConfig3, inits).then(function (response) {
       // Assertions
       expect(response.actsLocs).to.deep.equal(undefined);
       expect(response.activities).to.deep.equal(undefined);
@@ -224,7 +235,7 @@ describe('Service: SetScope', function () {
     getMetadataStub.restore();
   });
 
-  it('SetScope:set return error message with invalid fields', function () {
+  it('ScopeUtils:set return error message with invalid fields', function () {
     var expectedScope,
         getMetadataStub,
         urlParams,
@@ -247,12 +258,12 @@ describe('Service: SetScope', function () {
     // mock inits
     inits = [{id: 4}, {id: 5}];
 
-    // Stub SetScope.getMetadata
-    getMetadataStub = sinon.stub(SetScope, 'getMetadata');
+    // Stub ScopeUtils.getMetadata
+    getMetadataStub = sinon.stub(ScopeUtils, 'getMetadata');
     getMetadataStub.returns({activities: [{id: 'all'}], locations: [{id: 'all'}]});
 
-    // Call SetScope.set
-    SetScope.set(urlParams, SumaConfig, inits).then(function (response) {
+    // Call ScopeUtils.set
+    ScopeUtils.set(urlParams, SumaConfig, inits).then(function (response) {
       // Assertions
       expect(response.errorMessage).to.equal('Query parameter input error. Invalid value for classifyCounts. Valid values are "count", "start", or "end". Invalid value for wholeSession. Valid values are "yes" or "no". Invalid value for days. Valid values are "mo", "tu", "we", "th", "fr", "sa", "su". Values should be separated by a comma. Invalid value for activity. Invalid value for location. Invalid value for sdate. Should be numeric and either 0 or 8 characters in length, not counting punctuation. Invalid value for edate. Should be numeric and either 0 or 8 characters in length, not counting punctuation. Invalid value for stime. Should be numeric and either 0 or 4 characters in length, not counting punctuation. Invalid value for etime. Should be numeric and either 0 or 4 characters in length, not counting punctuation. ');
     });

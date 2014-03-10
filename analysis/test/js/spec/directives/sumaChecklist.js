@@ -33,12 +33,28 @@ describe('Directive: sumaChecklist', function () {
   it('should change scope when selected', function () {
     var input = element[0];
 
+    // Set input to checked
     input.click();
-    expect(input.checked).to.equal(true);
+
+    // Hack to catch Firefox
+    if (!input.checked) {
+      $(input).prop('checked', true);
+      input.click();
+    }
+
+    // Assertion
     expect(scope.params.days).to.deep.equal(['mo']);
 
+    // Set input to unchecked
     input.click();
-    expect(input.checked).to.equal(false);
+
+    // Hack to catch Firefox
+    if (input.checked) {
+      $(input).prop('checked', false);
+      input.click();
+    }
+
+    // Assertion
     expect(scope.params.days).to.deep.equal([]);
   });
 

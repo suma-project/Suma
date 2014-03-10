@@ -17,7 +17,7 @@ describe('Controller: ReportCtrl', function () {
     Data,
     ActsLocs,
     UIStates,
-    SetScope,
+    ScopeUtils,
     okResponse,
     errorResponse,
     dataResponse,
@@ -38,7 +38,7 @@ describe('Controller: ReportCtrl', function () {
     data,
     initiatives,
     uiStates,
-    setScope,
+    scopeUtils,
     sumaConfig,
     sumaConfig2,
     defaults) {
@@ -52,7 +52,7 @@ describe('Controller: ReportCtrl', function () {
     Data = data;
     Initiatives = initiatives;
     UIStates = uiStates;
-    SetScope = setScope;
+    ScopeUtils = scopeUtils;
 
     SumaConfig = sumaConfig;
     SumaConfig2 = sumaConfig2;
@@ -658,7 +658,7 @@ describe('Controller: ReportCtrl', function () {
       sumaConfig: SumaConfig
     });
 
-    setScopeStub = sinon.stub(SetScope, 'set');
+    setScopeStub = sinon.stub(ScopeUtils, 'set');
     setScopeStub.returns(setScopeResponse());
 
     errorStub = sinon.stub(scope, 'error');
@@ -695,7 +695,7 @@ describe('Controller: ReportCtrl', function () {
       sumaConfig: SumaConfig
     });
 
-    setScopeStub = sinon.stub(SetScope, 'set');
+    setScopeStub = sinon.stub(ScopeUtils, 'set');
     setScopeStub.returns(errorResponse());
 
     errorStub = sinon.stub(scope, 'error');
@@ -737,7 +737,7 @@ describe('Controller: ReportCtrl', function () {
       sumaConfig: SumaConfig
     });
 
-    setScopeStub = sinon.stub(SetScope, 'set');
+    setScopeStub = sinon.stub(ScopeUtils, 'set');
     setScopeStub.returns(setScopeResponseError());
 
     errorStub = sinon.stub(scope, 'error');
@@ -918,61 +918,5 @@ describe('Controller: ReportCtrl', function () {
     locationStub.restore();
     setScopeStub.restore();
     getDataStub.restore();
-  });
-
-
-  it(':stringifyDays should return a string of days', function () {
-    var initiativesStub,
-        getInitsStub,
-        setDefaultsStub,
-        statesStub;
-
-    // Stub initiatives service
-    initiativesStub = sinon.stub(Initiatives, 'get');
-    initiativesStub.returns(okResponse());
-
-    // Stub state service
-    statesStub = sinon.stub(UIStates, 'setUIState');
-
-    // Instantiate Controller
-    ReportCtrl = Controller('ReportCtrl', {
-      $scope: scope,
-      sumaConfig: SumaConfig
-    });
-
-    // Assertions
-    expect(scope.stringifyDays(['mo', 'tu', 'we'])).to.equal('mo,tu,we');
-
-    // Restore stubs
-    initiativesStub.restore();
-    statesStub.restore();
-  });
-
-  it(':stringifyDays should null if array is empty or undefined/null', function () {
-    var initiativesStub,
-        getInitsStub,
-        setDefaultsStub,
-        statesStub;
-
-    // Stub initiatives service
-    initiativesStub = sinon.stub(Initiatives, 'get');
-    initiativesStub.returns(okResponse());
-
-    // Stub state service
-    statesStub = sinon.stub(UIStates, 'setUIState');
-
-    // Instantiate Controller
-    ReportCtrl = Controller('ReportCtrl', {
-      $scope: scope,
-      sumaConfig: SumaConfig
-    });
-
-    // Assertions
-    expect(scope.stringifyDays([])).to.equal(null);
-    expect(scope.stringifyDays()).to.equal(null);
-
-    // Restore stubs
-    initiativesStub.restore();
-    statesStub.restore();
   });
 });

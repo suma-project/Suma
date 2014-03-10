@@ -35,8 +35,8 @@ angular.module('sumaAnalysis')
           }
         };
 
-        setupHandler = handler.bind(null, true);
-        changeHandler = handler.bind(null, false);
+        setupHandler = _.bind(handler, null, true);
+        changeHandler = _.bind(handler, null, false);
 
         elem.on('click', function() {
           scope.$apply(changeHandler);

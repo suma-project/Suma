@@ -1,12 +1,23 @@
 'use strict';
 
 angular.module('sumaAnalysis')
-  .factory('setScope', function ($q, actsLocs, validation) {
+  .factory('scopeUtils', function ($q, actsLocs, validation) {
     var metadata,
         activities,
         locations;
 
     return {
+      stringifyDays: function (days) {
+        var string;
+
+        if (!days || days.length === 0) {
+          return null;
+        }
+
+        string = days.join(',');
+
+        return string;
+      },
       getMetadata: function (init) {
         return actsLocs.get(init);
       },
@@ -42,16 +53,6 @@ angular.module('sumaAnalysis')
               errors.push('Invalid value for wholeSession. Valid values are "yes" or "no".');
             }
           }
-
-          // if (sumaConfig.formFields.daygroup) {
-          //   newParams.daygroup = _.find(sumaConfig.formData.dayOptions, function (e, i) {
-          //     return String(e.id) === String(urlParams.daygroup);
-          //   });
-
-          //   if (!newParams.daygroup) {
-          //     errors.push('Invalid value for daygroup. Valid values are "all", "weekends", or "weekdays".');
-          //   }
-          // }
 
           if (sumaConfig.formFields.days) {
             if (urlParams.days) {

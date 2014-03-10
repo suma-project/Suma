@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('sumaAnalysis')
-  .controller('ReportCtrl', function ($scope, $http, $location, $anchorScroll, $timeout, initiatives, actsLocs, data, promiseTracker, uiStates, sumaConfig, $routeParams, $q, setScope) {
+  .controller('ReportCtrl', function ($scope, $http, $location, $anchorScroll, $timeout, initiatives, actsLocs, data, promiseTracker, uiStates, sumaConfig, $routeParams, $q, scopeUtils) {
     // Initialize controller
     $scope.initialize = function () {
       var urlParams = $location.search();
@@ -41,7 +41,7 @@ angular.module('sumaAnalysis')
     $scope.setScope = function (urlParams) {
       var dfd = $q.defer();
 
-      setScope.set(urlParams, sumaConfig, $scope.inits).then(function (response) {
+      scopeUtils.set(urlParams, sumaConfig, $scope.inits).then(function (response) {
         // Set scope where possible regardless of error
         $scope.actsLocs = response.actsLocs;
         $scope.activities = response.activities;
@@ -155,18 +155,6 @@ angular.module('sumaAnalysis')
       }
     };
 
-    $scope.stringifyDays = function (days) {
-      var string;
-
-      if (!days || days.length === 0) {
-        return null;
-      }
-
-      string = days.join(',');
-
-      return string;
-    };
-
     // Attach params to URL
     $scope.submit = function () {
       var currentUrl,
@@ -184,7 +172,7 @@ angular.module('sumaAnalysis')
         wholeSession: $scope.params.wholeSession ? $scope.params.wholeSession.id : null,
         activity: $scope.params.activity ? $scope.params.activity.type ? $scope.params.activity.type + '-' + $scope.params.activity.id : $scope.params.activity.id : null,
         location: $scope.params.location ? $scope.params.location.id : null,
-        days: $scope.stringifyDays($scope.params.days)
+        days: scopeUtils.stringifyDays($scope.params.days)
       };
 
       currentScope = _.compactObject(currentScope);
