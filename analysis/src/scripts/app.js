@@ -9,11 +9,6 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
           {id: 'start', title: 'Session Start'},
           {id: 'end', title: 'Session End'}
         ],
-        // dayOptions: [
-        //   {id: 'all', title: 'All'},
-        //   {id: 'weekdays', title: 'Weekdays Only'},
-        //   {id: 'weekends', title: 'Weekends Only'}
-        // ],
         dayOptions: ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su'],
         sessionOptions: [
           {id: 'no', title: 'No'},
