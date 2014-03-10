@@ -49114,8 +49114,8 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
   'sumaConfig',
   '$routeParams',
   '$q',
-  'setScope',
-  function ($scope, $http, $location, $anchorScroll, $timeout, initiatives, actsLocs, data, promiseTracker, uiStates, sumaConfig, $routeParams, $q, setScope) {
+  'scopeUtils',
+  function ($scope, $http, $location, $anchorScroll, $timeout, initiatives, actsLocs, data, promiseTracker, uiStates, sumaConfig, $routeParams, $q, scopeUtils) {
     // Initialize controller
     $scope.initialize = function () {
       var urlParams = $location.search();
@@ -49148,7 +49148,7 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
     // Set scope.params based on urlParams
     $scope.setScope = function (urlParams) {
       var dfd = $q.defer();
-      setScope.set(urlParams, sumaConfig, $scope.inits).then(function (response) {
+      scopeUtils.set(urlParams, sumaConfig, $scope.inits).then(function (response) {
         // Set scope where possible regardless of error
         $scope.actsLocs = response.actsLocs;
         $scope.activities = response.activities;
@@ -49246,14 +49246,6 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
         });
       }
     };
-    $scope.stringifyDays = function (days) {
-      var string;
-      if (!days || days.length === 0) {
-        return null;
-      }
-      string = days.join(',');
-      return string;
-    };
     // Attach params to URL
     $scope.submit = function () {
       var currentUrl, currentScope;
@@ -49268,7 +49260,7 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
         wholeSession: $scope.params.wholeSession ? $scope.params.wholeSession.id : null,
         activity: $scope.params.activity ? $scope.params.activity.type ? $scope.params.activity.type + '-' + $scope.params.activity.id : $scope.params.activity.id : null,
         location: $scope.params.location ? $scope.params.location.id : null,
-        days: $scope.stringifyDays($scope.params.days)
+        days: scopeUtils.stringifyDays($scope.params.days)
       };
       currentScope = _.compactObject(currentScope);
       if (_.isEqual(currentUrl, currentScope)) {
@@ -49562,13 +49554,21 @@ angular.module('sumaAnalysis').service('validation', function Validation() {
   };
 });
 'use strict';
-angular.module('sumaAnalysis').factory('setScope', [
+angular.module('sumaAnalysis').factory('scopeUtils', [
   '$q',
   'actsLocs',
   'validation',
   function ($q, actsLocs, validation) {
     var metadata, activities, locations;
     return {
+      stringifyDays: function (days) {
+        var string;
+        if (!days || days.length === 0) {
+          return null;
+        }
+        string = days.join(',');
+        return string;
+      },
       getMetadata: function (init) {
         return actsLocs.get(init);
       },
@@ -49599,14 +49599,6 @@ angular.module('sumaAnalysis').factory('setScope', [
               errors.push('Invalid value for wholeSession. Valid values are "yes" or "no".');
             }
           }
-          // if (sumaConfig.formFields.daygroup) {
-          //   newParams.daygroup = _.find(sumaConfig.formData.dayOptions, function (e, i) {
-          //     return String(e.id) === String(urlParams.daygroup);
-          //   });
-          //   if (!newParams.daygroup) {
-          //     errors.push('Invalid value for daygroup. Valid values are "all", "weekends", or "weekdays".');
-          //   }
-          // }
           if (sumaConfig.formFields.days) {
             if (urlParams.days) {
               var days = urlParams.days.split(',');
@@ -51538,6 +51530,7 @@ angular.module('sumaAnalysis').directive('sumaCsvHourly', function () {
   };
 });
 'use strict';
+// taken from http://stackoverflow.com/a/14519881
 angular.module('sumaAnalysis').directive('sumaChecklist', function () {
   return {
     scope: {
@@ -51564,9 +51557,9 @@ angular.module('sumaAnalysis').directive('sumaChecklist', function () {
           }
         }
       };
-      setupHandler = handler.bind(null, true);
-      changeHandler = handler.bind(null, false);
-      elem.on('change', function () {
+      setupHandler = _.bind(handler, null, true);
+      changeHandler = _.bind(handler, null, false);
+      elem.on('click', function () {
         scope.$apply(changeHandler);
       });
       scope.$watch('list', setupHandler, true);
