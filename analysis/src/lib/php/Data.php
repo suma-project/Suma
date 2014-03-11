@@ -1225,7 +1225,7 @@ class Data
         if ($this->checkData($returnData)) {
             return $returnData;
         } else {
-            throw new Exception(" NEW No data found for that combination of filters. Please try a broader search.");
+            throw new Exception("No data found for that combination of filters. Please try a broader search.");
         }
     }
 }
