@@ -39,37 +39,4 @@ describe('Service: Processcalendardata', function () {
 
     $httpBackend.flush();
   });
-
-  it('should reject if locationsSum is not present', function (done) {
-    var locations = [],
-        activities = [],
-        response = {},
-        mock = {};
-
-    Processcalendardata.get(response, activities, locations).then(function (data) {
-
-    }, function (response) {
-      expect(response).to.deep.equal({statusText: 'no data, periodSum not found'});
-      done();
-    });
-
-    $httpBackend.flush();
-  });
-
-  it('should reject if not enough data', function (done) {
-    var locations = [],
-        activities = [],
-        response = {periodSum:{}},
-        mock = {};
-
-    Processcalendardata.get(response, activities, locations).then(function (data) {
-
-    }, function (response) {
-      expect(response).to.deep.equal({statusText: 'not enough data'});
-      done();
-    });
-
-    $httpBackend.flush();
-  });
-
 });

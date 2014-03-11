@@ -1137,6 +1137,60 @@ class Data
             throw new Exception($e->getMessage());
         }
     }
+    public function checkData($data) {
+        if (!isset($data['activitiesAvgAvg'])) {
+            return false;
+        }
+
+        if (!isset($data['activitiesAvgSum'])) {
+            return false;
+        }
+
+        if (!isset($data['activitiesSum'])) {
+            return false;
+        }
+
+        if (!isset($data['csv'])) {
+            return false;
+        }
+
+        if (!isset($data['dailyHourSummary'])) {
+            return false;
+        }
+
+        if (!isset($data['hourSummary'])) {
+            return false;
+        }
+        if (!isset($data['locationsAvgAvg'])) {
+            return false;
+        }
+        if (!isset($data['locationsAvgSum'])) {
+            return false;
+        }
+        if (!isset($data['locationsSum'])) {
+            return false;
+        }
+        if (!isset($data['monthSummary'])) {
+            return false;
+        }
+        if (!isset($data['periodAvg'])) {
+            return false;
+        }
+        if (!isset($data['periodSum'])) {
+            return false;
+        }
+        if (!isset($data['total'])) {
+            return false;
+        }
+        if (!isset($data['weekdaySummary'])) {
+            return false;
+        }
+        if (!isset($data['yearSummary'])) {
+            return false;
+        }
+
+        return true;
+    }
     public function getData($input)
     {
         // Validate form input
@@ -1168,6 +1222,11 @@ class Data
         // Pad days as necessary
         $returnData = $this->padData($returnData, $params);
 
-        return $returnData;
+        // Ensure sufficient results to return
+        if ($this->checkData($returnData)) {
+            return $returnData;
+        } else {
+            throw new Exception(" NEW No data found for that combination of filters. Please try a broader search.");
+        }
     }
 }

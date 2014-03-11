@@ -260,11 +260,7 @@ angular.module('sumaAnalysis')
 
     return {
       get: function (response, acts, locs) {
-        var data,
-            dataTest,
-            dfd;
-
-        dfd = $q.defer();
+        var dfd = $q.defer();
 
         acts = _.filter(acts, function (act) {
           return act.id !== 'all';
@@ -274,24 +270,7 @@ angular.module('sumaAnalysis')
           return loc.id !== 'all';
         });
 
-        // TODO: Clean-up response checking and expand conditions
-        // Reject if no locations
-        if (!response.locationsSum) {
-          dfd.reject({statusText: 'no data, locationsSum not found'});
-        }
-
-        data = processData(response, acts, locs);
-
-        // Check data for display
-        dataTest = _.reduce(_.pluck(data.periodSum, 'count'), function (sum, num) {
-          return sum + num;
-        });
-
-        if (!dataTest) {
-          dfd.reject({statusText: 'no data, dataTest failed'});
-        }
-
-        dfd.resolve(data);
+        dfd.resolve(processData(response, acts, locs));
 
         return dfd.promise;
       }

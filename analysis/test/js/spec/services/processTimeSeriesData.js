@@ -55,36 +55,4 @@ describe('Service: Processtimeseriesdata', function () {
 
     $httpBackend.flush();
   });
-
-  it('should reject if locationsSum is not present', function (done) {
-    var locations = [],
-        activities = [],
-        response = {},
-        mock = {};
-
-    Processtimeseriesdata.get(response, activities, locations).then(function (data) {
-
-    }, function (response) {
-      expect(response).to.deep.equal({statusText: 'no data, locationsSum not found'});
-      done();
-    });
-
-    $httpBackend.flush();
-  });
-
-  it('should reject if no data', function (done) {
-    var locations = [],
-        activities = [],
-        response = {locationsSum:{}},
-        mock = {};
-
-    Processtimeseriesdata.get(response, activities, locations).then(function (data) {
-
-    }, function (response) {
-      expect(response).to.deep.equal({statusText: 'no data, dataTest failed'});
-      done();
-    });
-
-    $httpBackend.flush();
-  });
 });

@@ -3,7 +3,6 @@
 angular.module('sumaAnalysis')
   .factory('processHourlyData', function ($q, $rootScope) {
     function processData (response) {
-      var dfd = $.Deferred(),
       data = {};
 
       data.sum = _.flatten(_.map(response.dailyHourSummary, function (day, d) {
@@ -15,11 +14,6 @@ angular.module('sumaAnalysis')
           };
         });
       }));
-
-      // Does response have enough values to draw meaningful graph?
-      if (_.compact(_.pluck(data.sum, 'value')) < 1) {
-        return dfd.reject({statusText: 'no data'});
-      }
 
       data.avg = _.flatten(_.map(response.dailyHourSummary, function (day, d) {
         return _.map(day, function (hour, h) {
@@ -49,16 +43,12 @@ angular.module('sumaAnalysis')
 
       data.data = data.options[0];
 
-      dfd.resolve(data);
-
-      return dfd.promise();
+      return data;
     }
     // Public API here
     return {
       get: function (response) {
-        var dfd;
-
-        dfd = $q.defer();
+        var dfd = $q.defer();
 
         dfd.resolve(processData(response));
 

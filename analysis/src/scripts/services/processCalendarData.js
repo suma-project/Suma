@@ -38,21 +38,7 @@ angular.module('sumaAnalysis')
 
     return {
       get: function (response) {
-        var dfd;
-
-        dfd = $q.defer();
-
-        // TODO: improve rejection of poor data set
-        // Does response have enough values to draw meaningful graph?
-        if (!response.periodSum) {
-          dfd.reject({statusText: 'no data, periodSum not found'});
-        }
-
-        if (response.periodSum) {
-          if (Object.keys(response.periodSum).length < 1) {
-            dfd.reject({statusText: 'not enough data'});
-          }
-        }
+        var dfd = $q.defer();
 
         dfd.resolve(processData(response));
 

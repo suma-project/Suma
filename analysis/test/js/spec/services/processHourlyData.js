@@ -40,21 +40,4 @@ describe('Service: Processhourlydata', function () {
 
     $httpBackend.flush();
   });
-
-  it('should reject with a statusText error if no data', function (done) {
-    var locs = [],
-        acts = [],
-        response = [];
-
-    Processhourlydata.get(response, acts, locs).then(function (data) {
-
-    }, function (data) {
-      expect(data).to.deep.equal({statusText: 'no data'});
-      done();
-    });
-
-    $httpBackend.flush();
-
-  });
-
 });
