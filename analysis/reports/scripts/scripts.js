@@ -49007,8 +49007,8 @@ angular.module('sumaAnalysis', [
               title: 'Yes'
             }
           ],
-          startDate: [moment().subtract('months', 6).add('days', 1).format('YYYY-MM-DD')],
-          endDate: [moment().add('days', 1).format('YYYY-MM-DD')],
+          startDate: [moment().subtract('months', 4).format('YYYY-MM-DD')],
+          endDate: [moment().format('YYYY-MM-DD')],
           startTime: [''],
           endTime: ['']
         },

@@ -14,8 +14,8 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
           {id: 'no', title: 'No'},
           {id: 'yes', title: 'Yes'}
         ],
-        startDate: [moment().subtract('months', 6).add('days', 1).format('YYYY-MM-DD')],
-        endDate: [moment().add('days', 1).format('YYYY-MM-DD')],
+        startDate: [moment().subtract('months', 4).format('YYYY-MM-DD')],
+        endDate: [moment().format('YYYY-MM-DD')],
         startTime: [''],
         endTime: ['']
       },

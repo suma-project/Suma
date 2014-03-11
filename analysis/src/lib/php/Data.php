@@ -336,15 +336,6 @@ class Data
             $params['actType'] = $actType;
             $params['actId']   = $actId;
 
-            // If end date parameter is greater than or equal
-            // to today, set end date to today
-            $today = date('Ymd');
-
-            if ($params['edate'] > $today)
-            {
-                $params['edate'] = $today;
-            }
-
             return $params;
         }
         else
