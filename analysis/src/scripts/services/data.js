@@ -81,9 +81,9 @@ angular.module('sumaAnalysis')
             edate: cfg.params.edate || '',
             stime: cfg.params.stime || '',
             etime: cfg.params.etime || '',
-            classifyCounts: cfg.params.classifyCounts ? cfg.params.classifyCounts.id : 'count',
-            wholeSession: cfg.params.wholeSession ? cfg.params.wholeSession.id : 'no',
-            days: cfg.params.days ? cfg.params.days.join(',') : '',
+            classifyCounts: cfg.params.classifyCounts ? cfg.params.classifyCounts.id : null,
+            wholeSession: cfg.params.wholeSession ? cfg.params.wholeSession.id : null,
+            days: cfg.params.days ? cfg.params.days.join(',') : null,
             locations: cfg.params.location ? cfg.params.location.id : 'all',
             activities: cfg.params.activity.type ? (cfg.params.activity.type + '-' + cfg.params.activity.id) : 'all'
           },

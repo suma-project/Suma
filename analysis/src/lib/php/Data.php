@@ -3,7 +3,6 @@
 require_once 'ServerIO.php';
 require_once 'Gump.php';
 require_once 'SumaGump.php';
-require_once 'ChromePhp.php';
 
 // Suppress Error Reporting
 error_reporting(0);
@@ -272,29 +271,30 @@ class Data
 
         // Define filters
         $filters = array(
-            'id'         => 'trim',
-            'sdate'      => 'trim|rmpunctuation|rmhyphen',
-            'edate'      => 'trim|rmpunctuation|rmhyphen',
-            'stime'      => 'trim|rmpunctuation|pad_time',
-            'etime'      => 'trim|rmpunctuation|pad_time',
-            'classifyCounts'    => 'trim',
-            'wholeSession' => 'trim',
-            'days'   => 'trim',
-            'locations'  => 'trim',
-            'activities' => 'trim'
+            'id'             => 'trim',
+            'sdate'          => 'trim|rmpunctuation|rmhyphen',
+            'edate'          => 'trim|rmpunctuation|rmhyphen',
+            'stime'          => 'trim|rmpunctuation|pad_time',
+            'etime'          => 'trim|rmpunctuation|pad_time',
+            'classifyCounts' => 'trim',
+            'wholeSession'   => 'trim',
+            'days'           => 'trim',
+            'locations'      => 'trim',
+            'activities'     => 'trim'
         );
 
         // Define validation rules
         $rules = array(
-            'id'         => 'required|numeric',
-            'sdate'      => 'numeric|multi_exact_len, 0 8',
-            'edate'      => 'numeric|multi_exact_len, 0 8',
-            'stime'      => 'numeric|multi_exact_len, 0 4',
-            'etime'      => 'numeric|multi_exact_len, 0 4',
-            'classifyCounts'    => 'alpha|contains, count start end',
-            'wholeSession' => 'alpha|contains, yes no',
-            'locations'  => 'alpha_numeric',
-            'activities' => 'alpha_dash'
+            'id'             => 'required|numeric',
+            'sdate'          => 'numeric|multi_exact_len, 0 8',
+            'edate'          => 'numeric|multi_exact_len, 0 8',
+            'stime'          => 'numeric|multi_exact_len, 0 4',
+            'etime'          => 'numeric|multi_exact_len, 0 4',
+            'classifyCounts' => 'alpha|contains, count start end',
+            'wholeSession'   => 'alpha|contains, yes no',
+            'days'           => 'day_of_week',
+            'locations'      => 'alpha_numeric',
+            'activities'     => 'alpha_dash'
         );
 
         // Filter input
@@ -1146,25 +1146,14 @@ class Data
         $params['format'] = 'lca';
         $queryType        = 'sessions';
 
+        // Set days of the week
         $days = explode(",", $params['days']);
-
         $params['days'] = array();
 
         foreach ($days as $day) {
             if (array_key_exists($day, $this->daysScaffold)) {
                 array_push($params['days'], $this->daysScaffold[$day]);
             }
-        }
-
-        // Defaults
-        if (!isset($params['classifyCounts']))
-        {
-            $params['classifyCounts'] = 'count';
-        }
-
-        if (!isset($params['wholeSession']))
-        {
-            $params['wholeSession'] = 'no';
         }
 
         // Create params array for Suma server

@@ -77,4 +77,60 @@ class SumaGumpTest extends PHPUnit_Framework_TestCase {
 
     $this->assertTrue(is_array($validated));
   }
+
+  public function testValidatorDayOfWeekTrue () {
+    $original = array('days' => 'mo,tu,we,th,fr,sa,su');
+
+    $rules = array(
+      'days' => 'day_of_week',
+    );
+
+    $gump = new SumaGump();
+
+    $validated = $gump->validate($original, $rules);
+
+    $this->assertEquals($validated, TRUE);
+  }
+
+  public function testValidatorDayOfWeekFalseTooManyValues () {
+    $original = array('days' => 'mo,tu,we,th,fr,sa,su, su');
+
+    $rules = array(
+      'days' => 'day_of_week',
+    );
+
+    $gump = new SumaGump();
+
+    $validated = $gump->validate($original, $rules);
+
+    $this->assertTrue(is_array($validated));
+  }
+
+  public function testValidatorDayOfWeekFalseInvalidValues () {
+    $original = array('days' => 'mouse,tub,weep');
+
+    $rules = array(
+      'days' => 'day_of_week',
+    );
+
+    $gump = new SumaGump();
+
+    $validated = $gump->validate($original, $rules);
+
+    $this->assertTrue(is_array($validated));
+  }
+
+  public function testValidatorDayOfWeekFalseNoValues () {
+    $original = array('days' => '');
+
+    $rules = array(
+      'days' => 'day_of_week',
+    );
+
+    $gump = new SumaGump();
+
+    $validated = $gump->validate($original, $rules);
+
+    $this->assertTrue(is_array($validated));
+  }
 }

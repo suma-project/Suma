@@ -1,6 +1,6 @@
 <?php
 
-require_once("Gump.php");
+require_once 'Gump.php';
 
 /**
  * SumaGump - A subclass that extends GUMP
@@ -44,5 +44,37 @@ class SumaGump extends GUMP
           'param' => $param
         );
       }
+    }
+
+    public function validate_day_of_week($field, $input, $param = NULL)
+    {
+      // Valid day values
+      $validDays = array('mo', 'tu', 'we', 'th', 'fr', 'sa', 'su');
+
+      // Error array
+      $error = array(
+        'field' => $field,
+        'value' => $value,
+        'rule'  => __FUNCTION__,
+        'param' => $param
+      );
+
+      // Convert input string into array
+      $days = explode(",", $input[$field]);
+
+      // Extra value, generate error
+      if (count($days) > 7) {
+        return $error;
+      }
+
+      // If $days contains invalid value, generate error
+      foreach ($days as $day) {
+        if (!in_array($day, $validDays)) {
+          return $error;
+        }
+      }
+
+      // All values valid
+      return;
     }
 }

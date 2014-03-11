@@ -466,6 +466,9 @@ class GUMP
                 case 'validate_multi_exact_len':
                     $resp[] = "The <span class=\"$field_class\">$field</span> field needs to be the exact length of one of these values (hyphens or colons are not counted): ".implode(', ', $param);
                     break;
+                case 'validate_day_of_week':
+                    $resp[] = "The <span class=\"$field_class\">$field</span> field should contain one or more of these values (mo, tu, we, th, fr, sa, su) separated by a comma.";
+                    break;
             }
         }
 

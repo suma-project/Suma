@@ -83,7 +83,7 @@ class SessionsData
         }
         else
         {
-            $message = 'Query Parameter Input Error. Gump rejected parameters.';
+            $message = 'Query Parameter Input Error.';
 
             foreach ($validator->get_readable_errors() as $error) {
                 $message = $message . " " . strip_tags($error);
