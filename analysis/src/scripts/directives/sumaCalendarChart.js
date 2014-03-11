@@ -333,6 +333,7 @@ angular.module('sumaAnalysis')
         });
 
         scope.render = function (data) {
+          d3.select(element[0]).select('svg, div').remove();
           d3.select(element[0])
             .datum(data.data)
             .call(chart);
