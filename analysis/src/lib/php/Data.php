@@ -1152,30 +1152,38 @@ class Data
         if (!isset($data['hourSummary'])) {
             return false;
         }
+
         if (!isset($data['locationsAvgAvg'])) {
             return false;
         }
+
         if (!isset($data['locationsAvgSum'])) {
             return false;
         }
+
         if (!isset($data['locationsSum'])) {
             return false;
         }
+
         if (!isset($data['monthSummary'])) {
             return false;
         }
+
         if (!isset($data['periodAvg'])) {
             return false;
         }
         if (!isset($data['periodSum'])) {
             return false;
         }
+
         if (!isset($data['total'])) {
             return false;
         }
+
         if (!isset($data['weekdaySummary'])) {
             return false;
         }
+
         if (!isset($data['yearSummary'])) {
             return false;
         }
