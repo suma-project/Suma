@@ -3,7 +3,7 @@
 angular.module('sumaAnalysis')
   .factory('processHourlyData', function ($q, $rootScope) {
     function processData (response) {
-      data = {};
+      var data = {};
 
       data.sum = _.flatten(_.map(response.dailyHourSummary, function (day, d) {
         return _.map(day, function (hour, h) {
