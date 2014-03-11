@@ -49063,8 +49063,6 @@ angular.module('sumaAnalysis', [
       resolve: {
         sumaConfig: function () {
           var newConfig = angular.copy(sumaBaseConfig);
-          newConfig.formFields.classifyCounts = false;
-          newConfig.formFields.wholeSession = false;
           newConfig.formFields.stime = false;
           newConfig.formFields.etime = false;
           newConfig.dataProcessor = 'processHourlyData';
@@ -49944,28 +49942,14 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
     }
     return {
       get: function (response, acts, locs) {
-        var data, dataTest, dfd;
-        dfd = $q.defer();
+        var dfd = $q.defer();
         acts = _.filter(acts, function (act) {
           return act.id !== 'all';
         });
         locs = _.filter(locs, function (loc) {
           return loc.id !== 'all';
         });
-        // TODO: Clean-up response checking and expand conditions
-        // Reject if no locations
-        if (!response.locationsSum) {
-          dfd.reject({ statusText: 'no data, locationsSum not found' });
-        }
-        data = processData(response, acts, locs);
-        // Check data for display
-        dataTest = _.reduce(_.pluck(data.periodSum, 'count'), function (sum, num) {
-          return sum + num;
-        });
-        if (!dataTest) {
-          dfd.reject({ statusText: 'no data, dataTest failed' });
-        }
-        dfd.resolve(data);
+        dfd.resolve(processData(response, acts, locs));
         return dfd.promise;
       }
     };
@@ -50671,18 +50655,7 @@ angular.module('sumaAnalysis').factory('processCalendarData', [
     }
     return {
       get: function (response) {
-        var dfd;
-        dfd = $q.defer();
-        // TODO: improve rejection of poor data set
-        // Does response have enough values to draw meaningful graph?
-        if (!response.periodSum) {
-          dfd.reject({ statusText: 'no data, periodSum not found' });
-        }
-        if (response.periodSum) {
-          if (Object.keys(response.periodSum).length < 1) {
-            dfd.reject({ statusText: 'not enough data' });
-          }
-        }
+        var dfd = $q.defer();
         dfd.resolve(processData(response));
         return dfd.promise;
       }
@@ -50928,6 +50901,7 @@ angular.module('sumaAnalysis').directive('sumaCalendarChart', function () {
         $('.day, .rKey, .rOutlier').tooltip('hide');
       });
       scope.render = function (data) {
+        d3.select(element[0]).select('svg, div').remove();
         d3.select(element[0]).datum(data.data).call(chart);
       };
       scope.updateStats = function () {
@@ -50954,7 +50928,7 @@ angular.module('sumaAnalysis').factory('processHourlyData', [
   '$rootScope',
   function ($q, $rootScope) {
     function processData(response) {
-      var dfd = $.Deferred(), data = {};
+      var data = {};
       data.sum = _.flatten(_.map(response.dailyHourSummary, function (day, d) {
         return _.map(day, function (hour, h) {
           return {
@@ -50964,10 +50938,6 @@ angular.module('sumaAnalysis').factory('processHourlyData', [
           };
         });
       }));
-      // Does response have enough values to draw meaningful graph?
-      if (_.compact(_.pluck(data.sum, 'value')) < 1) {
-        return dfd.reject({ statusText: 'no data' });
-      }
       data.avg = _.flatten(_.map(response.dailyHourSummary, function (day, d) {
         return _.map(day, function (hour, h) {
           return {
@@ -51004,14 +50974,12 @@ angular.module('sumaAnalysis').factory('processHourlyData', [
         }
       ];
       data.data = data.options[0];
-      dfd.resolve(data);
-      return dfd.promise();
+      return data;
     }
     // Public API here
     return {
       get: function (response) {
-        var dfd;
-        dfd = $q.defer();
+        var dfd = $q.defer();
         dfd.resolve(processData(response));
         return dfd.promise;
       }
