@@ -189,8 +189,8 @@ $("a#editTree").live('click', function() {
 $("a.editLoc").live('click', function() {
             // var locNode = $(this).closest("div")[0];
             var locLi = $(this).closest("li")[0];
-            var titleSib = $(locLi).find("span.locTitle");
-            var descSib = $(locLi).find("span.locDesc");
+            var titleSib = $(locLi).find("> div span.locTitle");
+            var descSib = $(locLi).find("> div span.locDesc");
             var locTitleInput = $("input#locTitleInput");
             var locDescInput = $("textarea#locDescInput");
             var locEnabledCheck = $("input#locEnabledCheck");
