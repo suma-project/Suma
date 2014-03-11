@@ -49643,6 +49643,7 @@ angular.module('sumaAnalysis').factory('scopeUtils', [
             if (validation.validateDateTime(urlParams.sdate, 8)) {
               newParams.sdate = urlParams.sdate;
             } else {
+              newParams.sdate = '';
               errors.push('Invalid value for sdate. Should be numeric and either 0 or 8 characters in length, not counting punctuation.');
             }
           }
@@ -49651,6 +49652,7 @@ angular.module('sumaAnalysis').factory('scopeUtils', [
             if (validation.validateDateTime(urlParams.edate, 8)) {
               newParams.edate = urlParams.edate;
             } else {
+              newParams.edate = '';
               errors.push('Invalid value for edate. Should be numeric and either 0 or 8 characters in length, not counting punctuation.');
             }
           }
@@ -49659,6 +49661,7 @@ angular.module('sumaAnalysis').factory('scopeUtils', [
             if (validation.validateDateTime(urlParams.stime, 4, true)) {
               newParams.stime = urlParams.stime;
             } else {
+              newParams.stime = '';
               errors.push('Invalid value for stime. Should be numeric and either 0 or 4 characters in length, not counting punctuation.');
             }
           }
@@ -49667,6 +49670,7 @@ angular.module('sumaAnalysis').factory('scopeUtils', [
             if (validation.validateDateTime(urlParams.etime, 4, true)) {
               newParams.etime = urlParams.etime;
             } else {
+              newParams.etime = '';
               errors.push('Invalid value for etime. Should be numeric and either 0 or 4 characters in length, not counting punctuation.');
             }
           }
