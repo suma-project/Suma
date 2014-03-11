@@ -82,8 +82,6 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
           sumaConfig: function () {
             var newConfig = angular.copy(sumaBaseConfig);
 
-            newConfig.formFields.classifyCounts = false;
-            newConfig.formFields.wholeSession = false;
             newConfig.formFields.stime = false;
             newConfig.formFields.etime = false;
 
