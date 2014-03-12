@@ -1,25 +1,26 @@
-Suma Data Analysis Module
+Suma Developer Docs
 =========================
 
-The reports included here are early examples to help one get started with report development. More advanced reports are under development.
-
-Configuration options
----------------------
-
-* Update the `$_serverUrl` property to the base address of your Suma query server
-
-
-Report requirements
+Developing New Reports
 -------------------
-
 * A unique directory under analysis/reports/
 * An index.php file in that directory for collecting user inputs
 * Add an entry to analysis/index.php for your report (this will be more automated in the future)
 
+New Report Configuration Settings
+-----------------------------
+Any new report that has external configuration settings should utilize the `config.yaml` file at `analysis/config/config.yaml`. Each report should be namespaced as follows:
+
+    nightly:
+        timezone: America/New_York
+        displayFormat: m-d-Y
+        recipients: bddavids@ncsu.edu
+        errorRecipients: bddavids@ncsu.edu
+
+See the nightly report or view the docs on the [spyc library](https://github.com/tekimaki/spyc) for importing YAML configs into PHP.
 
 API options
 ------------
-
 * To use the analysis helper library, just add this to the start of your report code:
 
     `require_once('../../lib/Server_IO.php')`
@@ -33,15 +34,3 @@ API options
     * Returns array representation of all initiatives that can be queried
       * Keys include: 'id', 'title', 'description'
 
-Report Configuration Settings
------------------------------
-
-Any new report that has external configuration settings should utilize the `config.yaml` file at `analysis/config/config.yaml`. Each report should be namespaced as follows:
-
-    nightly:
-        timezone: America/New_York
-        displayFormat: m-d-Y
-        recipients: bddavids@ncsu.edu
-        errorRecipients: bddavids@ncsu.edu
-
-See the nightly report or view the docs on the [spyc library](https://github.com/tekimaki/spyc) for importing YAML configs into PHP.
