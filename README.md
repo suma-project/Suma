@@ -30,9 +30,7 @@ Documentation
 
 How to contribute?
 ===================
-You want to contribute some code? Maybe some data reports, bug fixes, new clients, or even new core features? Awesome! Just contact us or fork the code on GitHub and create a pull request.
-
-Be sure to check out the [Developer Docs](DEVELOPER.md)!
+You want to contribute some code? Maybe some data reports, bug fixes, new clients, or even new core features? Awesome! Just contact us or fork the code on GitHub and create a pull request. Be sure to check out the [Developer Docs](DEVELOPER.md)!
 
 Project URLs
 ============
