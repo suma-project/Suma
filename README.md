@@ -22,12 +22,17 @@ Documentation
 * [Installation guide](INSTALL.md)
 * [Understanding Suma log messages](LOGS.md)
 * [Suma Query Server overview](QUERYSERVER.md)
+* [Developer Docs](DEVELOPER.md)
+* [Version 1.0 Upgrade](UPGRADE_1.0.md)
+* [Version 2.0 Upgrade](UPGRADE_2.0.md)
 * [This overview](README.md)
 * [Suma license](LICENSE)
 
 How to contribute?
 ===================
 You want to contribute some code? Maybe some data reports, bug fixes, new clients, or even new core features? Awesome! Just contact us or fork the code on GitHub and create a pull request.
+
+Be sure to check out the [Developer Docs](DEVELOPER.md)!
 
 Project URLs
 ============
@@ -43,9 +48,9 @@ If you would like to be invited to a google group for the Suma users community, 
 Credits and contacts
 =====================
 
-* Jason Casden (jmcasden AT ncsu DOT edu) – Project lead. 
-* Joyce Chapman (joyce DOT chapman AT gmail DOT com) – Community development and data analysis specialist. 
+* Jason Casden (jmcasden AT ncsu DOT edu) – Project lead.
+* Joyce Chapman (joyce DOT chapman AT gmail DOT com) – Community development and data analysis specialist.
 * Bret Davidson - Technical lead.
-* Rob Rucker – Project team member and our first stakeholder. Research Information Services department head responsible for NCSU D. H. Hill Libraries head counts and reference desk transactions. 
-* Eric McEachern – Backend developer, responsible for much of the development of the server-side components. 
-* Rusty Earl – Backend developer and technical consultant. 
+* Rob Rucker – Project team member and our first stakeholder. Research Information Services department head responsible for NCSU D. H. Hill Libraries head counts and reference desk transactions.
+* Eric McEachern – Backend developer, responsible for much of the development of the server-side components.
+* Rusty Earl – Backend developer and technical consultant.
