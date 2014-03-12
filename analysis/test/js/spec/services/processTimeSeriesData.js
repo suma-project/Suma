@@ -13,9 +13,7 @@ describe('Service: Processtimeseriesdata', function () {
       MockLocations,
       MockActivities,
       MockResponse,
-      MTSPD1,
-      MTSPD2,
-      NoActs;
+      MockProcessedData;
 
   beforeEach(inject(function (
     _processTimeSeriesData_,
@@ -23,35 +21,36 @@ describe('Service: Processtimeseriesdata', function () {
     mockLocations,
     mockActivities,
     mockResponse,
-    mockTimeSeriesProcessedData,
-    mockTimeSeriesNoActsProcessedData,
-    mockNoActivities) {
+    mockTimeSeriesProcessedData) {
 
     Processtimeseriesdata = _processTimeSeriesData_;
     $httpBackend = _$httpBackend_;
     MockLocations = mockLocations;
     MockActivities = mockActivities;
     MockResponse = mockResponse;
-    MTSPD1 = mockTimeSeriesProcessedData;
-    MTSPD2 = mockTimeSeriesNoActsProcessedData;
-    NoActs = mockNoActivities;
+    MockProcessedData = mockTimeSeriesProcessedData;
   }));
 
   it('should build an object of data objects', function (done) {
     Processtimeseriesdata.get(MockResponse, MockActivities, MockLocations)
       .then(function (data) {
-        expect(MTSPD1).to.deep.equal(data);
+        expect(MockProcessedData).to.deep.equal(data);
         done();
       });
 
     $httpBackend.flush();
   });
 
-  it('should build an object of objects with no activities', function (done) {
-    Processtimeseriesdata.get(MockResponse, NoActs, MockLocations).then(function (data) {
-      expect(MTSPD2).to.deep.equal(data);
-      done();
-    });
+  it('should take else branch if _No Activity does not exist', function (done) {
+    var locs = [],
+        acts = [],
+        resp = {};
+
+    Processtimeseriesdata.get(resp, acts, locs)
+      .then(function (data) {
+        expect(data).to.be.an('object');
+        done();
+      });
 
     $httpBackend.flush();
   });
