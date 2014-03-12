@@ -1,7 +1,7 @@
 var Session, Initiative, Activity, ActivityGroup, Person, Location;
 
 // http://stackoverflow.com/a/14223920
-function iOSversion() {
+function iOSVersion() {
     if (/iP(hone|od|ad)/.test(navigator.platform)) {
         // supports iOS 2.0 and later: <http://bit.ly/TJjs1V>
         var v = (navigator.appVersion).match(/OS (\d+)_(\d+)_?(\d+)?/);
@@ -13,13 +13,15 @@ function iOSversion() {
 
 
 function initSADB(callback) {
+    var iOSVer;
+
     try
     {
-        // This is necessary to deal with a bug in Safari on iOS 7 (tested on iOS 7.0.2)
-        // iOS 7 Safari users will be prompted if the database exceeds 5MB
-        // FIXME: the insert that triggers that prompt may be lost!!
-        if (iOSversion()[0] >= 7) {
-            persistence.store.websql.config(persistence, 'ncsuSpaceAssess', 'NCSU Libraries Space Assessment Tool', 5 * 1024 * 1024);
+        // This is necessary to deal with a bug in Safari on iOS 7.0.x (tested on iOS 7.0.2 through 7.0.4)
+        // iOS 7.0.x Safari users will be prompted if the database exceeds 5MB
+        iOSVer = iOSVersion();
+        if (iOSVer[0] >= 7 && iOSVer[1] < 1) {
+	       alert("You appear to be using a device running iOS 7.0, which includes a Safari bug that prevents safe Suma data collection. Please upgrade your device to iOS 7.1 or greater.");
         } else {
             persistence.store.websql.config(persistence, 'ncsuSpaceAssess', 'NCSU Libraries Space Assessment Tool', 50 * 1024 * 1024);
         }

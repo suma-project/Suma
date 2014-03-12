@@ -372,7 +372,15 @@ function syncSessions() {
     // but decremented here. This could be better for sure.
     if (0 === currentlySyncing) {
         serializeCollectedData(function(serJson, sessionIDs) {
-            var syncStart = (new Date()).getTime();
+            var syncStart = (new Date()).getTime(),
+                numOfCounts = 0,
+                numOfSessions = 0;
+
+            $.each(serJson["sessions"], function(i, e) {
+                numOfSessions++;
+                numOfCounts += e["counts"].length;
+            });
+
             $.ajax({
                 url: syncUrl,
                 type: 'POST',
@@ -387,7 +395,8 @@ function syncSessions() {
                             session.people.destroyAll(function() {
                                 persistence.flush(function() {
                                     currentlySyncing--;
-                                    alert("data sent to server");
+                                    alert(numOfCounts + ((numOfCounts==1)?" count":" counts") + " (including \"zero\" counts) across " +
+                                        numOfSessions + ((numOfSessions==1)?" session":" sessions") + " sent to server");
                                 });
                             });
                         }
@@ -395,7 +404,8 @@ function syncSessions() {
                 });
             }).error(function(xhr, ajaxOptions, thrownError) {
                 currentlySyncing--;
-                alert("Error sending data to server, please contact an administrator: " + thrownError);
+                alert("Error sending data to server. This may caused by issues including server outages and Wi-Fi connectivity problems. " +
+                    "The data will be retained by the browser. Please contact an administrator if this doesn't resolve itself soon: " + thrownError)
             });
         });
     }
