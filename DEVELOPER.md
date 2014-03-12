@@ -3,13 +3,21 @@ Suma Developer Docs
 
 Developing New Reports
 -------------------
-* A unique directory under analysis/reports/
-* An index.php file in that directory for collecting user inputs
-* Add an entry to analysis/index.php for your report (this will be more automated in the future)
+
+Reports Dependencies/Tool
+--------------------------
+
+* [AngularJS](http://angularjs.org)
+* [Bower](http://bower.io)
+* [Grunt](http://gruntjs.com)
+* [Mocha](http://visionmedia.github.io/mocha)
+* [SinonJS](http://sinonjs.org)
+* [ChaiJS](http://chaijs.com)
+* [PHP Unit](http://phpunit.de)
 
 New Report Configuration Settings
 -----------------------------
-Any new report that has external configuration settings should utilize the `config.yaml` file at `analysis/config/config.yaml`. Each report should be namespaced as follows:
+Any new report that has external configuration settings should utilize the `config.yaml` file at `analysis/config/config.yaml`. Be sure to add your config settings to `config_example.yaml` as well. Each report should be namespaced as follows:
 
     nightly:
         timezone: America/New_York
@@ -19,11 +27,9 @@ Any new report that has external configuration settings should utilize the `conf
 
 See the nightly report or view the docs on the [spyc library](https://github.com/tekimaki/spyc) for importing YAML configs into PHP.
 
-API options
+API and Data Retrieval
 ------------
-* To use the analysis helper library, just add this to the start of your report code:
-
-    `require_once('../../lib/Server_IO.php')`
+* Most reports will utilize the `ServerIO.php` class to extract data from the Suma queryserver. In order to utilize this class, include the `ServerIO.php` file in your data processing code. Reports that will be added to the Suma repository should place their data processing code in the `analysis/src/lib/php` directory, which can then be accessed from within a new AngularJS service via HTTP. Custom reports that will be used outside of the Suma repository can still use the `ServerIO.php` class to extract data from Suma.
 
 * The following methods are provided by Server_IO:
   * `Server_IO::getData($params, $queryType)`
