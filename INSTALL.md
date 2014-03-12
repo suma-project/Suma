@@ -186,9 +186,9 @@ Suma Analysis Tools Configuration
 
     In the `YOUR_WEB_DIR/suma/analysis/config/config.yaml` file, edit the timezone, displayFormat, recipients, and errorRecipients as needed. See http://php.net/manual/en/timezones.php for information on timezone formats.
 
-    Using cron, or some other scheduler, schedule a task to run the `YOUR_WEB_DIR/suma/analysis/reports/nightly/nightlyEmail.php` script as desired.
+    Using cron, or some other scheduler, schedule a task to run the `YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightlyEmail.php` script as desired.
 
-    Alternatively, `YOUR_WEB_DIR/suma/analysis/reports/nightly/nightly.php` may be run from the command line for quick reporting through stdout.
+    Alternatively, `YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightly.php` may be run from the command line for quick reporting through stdout.
 
 Other Things You Can Configure
 -------------------------------
