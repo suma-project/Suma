@@ -14,9 +14,11 @@ angular.module('sumaAnalysis')
 
       // Get initiatives
       $scope.getInitiatives().then(function () {
+        // None bookmark navigation
         if (_.isEmpty(urlParams)) {
           $scope.state = uiStates.setUIState('initial');
         } else {
+          // Bookmark navigation
           $scope.setScope(urlParams).then($scope.getData, $scope.error);
         }
       });
@@ -27,6 +29,7 @@ angular.module('sumaAnalysis')
       $scope.params = {};
 
       _.each(sumaConfig.formFields, function (field, fieldName) {
+        // Set all fields except acts/locs, which are set after init is selected in form
         if (field && (fieldName !== 'locations' && fieldName !== 'activities' && fieldName !== 'days')) {
           $scope[sumaConfig.formDefaults[fieldName]] = sumaConfig.formData[sumaConfig.formDefaults[fieldName]];
           $scope.params[fieldName] = $scope[sumaConfig.formDefaults[fieldName]][0];
@@ -48,9 +51,11 @@ angular.module('sumaAnalysis')
         $scope.locations = response.locations;
         $scope.params = response.params;
 
+        // Partial success
         if (response.errorMessage) {
           dfd.reject({message: response.errorMessage, code: 500});
         } else {
+          // Fully successful
           dfd.resolve();
         }
       }, function (response) {
@@ -65,8 +70,10 @@ angular.module('sumaAnalysis')
       var cfg,
           dfd = $q.defer();
 
+      // Promise to resolve request on navigation change
       $scope.initTimeoutPromise = $q.defer();
 
+      // Promise/Explicit timeouts
       cfg = {
         timeoutPromise: $scope.initTimeoutPromise,
         timeout: 180000
@@ -99,9 +106,11 @@ angular.module('sumaAnalysis')
     $scope.getData = function () {
       var cfg;
 
+      // Promise to resolve request on navigation change
       $scope.dataTimeoutPromise = $q.defer();
       $scope.state = uiStates.setUIState('loading');
 
+      // Includes promise/explicit timeout values
       cfg = {
         params: $scope.params,
         acts: $scope.activities,
@@ -115,7 +124,8 @@ angular.module('sumaAnalysis')
         .then($scope.success, $scope.error);
     };
 
-    // Update metadata UI wrapper
+    // Update metadata UI wrapper, fired by
+    // init selection in form
     $scope.updateMetadata = function () {
       if ($scope.params.init) {
         $scope.processMetadata = true;
@@ -155,13 +165,15 @@ angular.module('sumaAnalysis')
       }
     };
 
-    // Attach params to URL
+    // Submit form and set URL
     $scope.submit = function () {
       var currentUrl,
           currentScope;
 
+      // Current URL for comparison
       currentUrl = $location.search();
 
+      // Map current scope to object for comparison/setting
       currentScope = {
         id: String($scope.params.init.id),
         sdate: $scope.params.sdate || $scope.params.sdate === '' ? $scope.params.sdate : null,
@@ -175,8 +187,10 @@ angular.module('sumaAnalysis')
         days: scopeUtils.stringifyDays($scope.params.days)
       };
 
+      // Remove empty fields
       currentScope = _.compactObject(currentScope);
 
+      // Resubmit if equal, set URL if not and fire RouteUpdate
       if (_.isEqual(currentUrl, currentScope)) {
         $scope.getData();
       } else {
@@ -199,6 +213,7 @@ angular.module('sumaAnalysis')
       $scope.data = processedData;
       $scope.summaryParams = angular.copy($scope.params);
 
+      // Supplemental bar chart
       if (sumaConfig.suppWatch) {
         $scope.$watch('data.actsLocsData', function () {
           var index = _.findIndex($scope.data.actsLocsData.items, function (item) {
@@ -220,5 +235,6 @@ angular.module('sumaAnalysis')
       $location.hash(old);
     };
 
+    // Initialize controller
     $scope.initialize();
   });
