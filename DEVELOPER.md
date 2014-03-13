@@ -2,11 +2,11 @@ Suma Developer Docs
 =========================
 
 Developing New Reports
--------------------
+----------------------
+New suma reports may be developed within the AngularJS framework or as standalone reports. Reports developed within AngularJS should follow the model of the included reports and use a PHP file to retrieve data from the Suma query server as well as AngularJS based controllers, services, directives, views, etc. These reports will also need to be integrated into the various build processes that are facilitated by the tools and libraries listed below. However, if you are unfamiliar with these tools, particularly AngularJS, and you need to generate custom reports, it is possible to do so using whatever visualization and data processing tools you prefer. You will likely still want to use the `ServerIO.php` class discussed in the API and Data Retrieval documentation below.
 
-Reports Dependencies/Tool
+Reports Dependencies/Tools
 --------------------------
-
 * [AngularJS](http://angularjs.org)
 * [Bower](http://bower.io)
 * [Grunt](http://gruntjs.com)
@@ -16,7 +16,7 @@ Reports Dependencies/Tool
 * [PHP Unit](http://phpunit.de)
 
 New Report Configuration Settings
------------------------------
+---------------------------------
 Any new report that has external configuration settings should utilize the `config.yaml` file at `analysis/config/config.yaml`. Be sure to add your config settings to `config_example.yaml` as well. Each report should be namespaced as follows:
 
     nightly:
