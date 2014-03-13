@@ -9,13 +9,9 @@ describe('Directive: sumaDatepicker', function () {
 
   var element,
     linkScope,
-    scope,
-    stub; // Stub global required for datepicker
+    scope;
 
   beforeEach(inject(function ($rootScope, $compile) {
-    stub = sinon.stub($.fn, 'datetimepicker');
-    stub.returns(true);
-
     element = angular.element('<div suma-datepicker model="params.sdate"></div>');
 
     scope = $rootScope.$new();
@@ -24,24 +20,11 @@ describe('Directive: sumaDatepicker', function () {
 
     scope.$apply(function() {
       scope.params = {};
-      scope.params.sdate = moment().subtract('months', 6).add('days', 1).format('YYYY-MM-DD');
+      scope.params.sdate = '2014-01-01';
     });
 
     linkScope = element.isolateScope();
   }));
-
-  afterEach(function () {
-    stub.restore();
-  });
-
-  it('should initialize a datetimepicker', function () {
-    expect($.fn.datetimepicker).to.be.calledOnce;
-    expect($.fn.datetimepicker).to.be.calledWith({
-      defaultDate: scope.model,
-      pickDate: true,
-      pickTime: false
-    });
-  });
 
   it('should update scope.model on change', function () {
     element.find('input').val('updated value');
