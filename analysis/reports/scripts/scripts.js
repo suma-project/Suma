@@ -50019,8 +50019,8 @@ angular.module('sumaAnalysis').filter('hourFormat', function () {
 'use strict';
 angular.module('sumaAnalysis').filter('countFormat', function () {
   return function (input) {
-    var formatCount = d3.format(','), formattedCount = formatCount(input);
-    return formattedCount;
+    var formatCount = d3.format(',');
+    return formatCount(input);
   };
 });
 'use strict';
