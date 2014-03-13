@@ -11,7 +11,7 @@ The most significant addition to v2.0 is the use of [Angular JS](http://angularj
 Upgrade
 -------
 
-Depending upon your installation method, either copy the updated Suma files into place or pull the changes from Github (preferred).
+Depending upon your installation method, either copy the updated Suma files into place or pull the changes from GitHub (preferred).
 
 Notes
 ------
