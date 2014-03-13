@@ -18,12 +18,12 @@ describe('Filter: capitalize', function () {
 
   it('should do nothing with null value', function () {
     var input = null;
-    expect(capitalize(input)).to.equal(null);
+    expect(capitalize(input)).to.equal('');
   });
 
   it('should do nothing with undefined value', function () {
     var input;
-    expect(capitalize(input)).to.equal(undefined);
+    expect(capitalize(input)).to.equal('');
   });
 
   it('should capitalize strings', function () {

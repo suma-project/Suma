@@ -50024,14 +50024,11 @@ angular.module('sumaAnalysis').filter('countFormat', function () {
   };
 });
 'use strict';
+// taken from Underscore.string capitalize method
 angular.module('sumaAnalysis').filter('capitalize', function () {
-  return function (input, scope) {
-    if (input !== null && input !== undefined) {
-      input = input.toLowerCase();
-      return input.substring(0, 1).toUpperCase() + input.substring(1);
-    } else {
-      return input;
-    }
+  return function (str) {
+    str = str === undefined || str === null ? '' : String(str);
+    return str.charAt(0).toUpperCase() + str.slice(1);
   };
 });
 'use strict';
