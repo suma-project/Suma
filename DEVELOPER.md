@@ -5,6 +5,10 @@ Developing New Reports
 ----------------------
 New suma reports may be developed within the AngularJS framework or as standalone reports. Reports developed within AngularJS should follow the model of the included reports and use a PHP file to retrieve data from the Suma query server as well as AngularJS based controllers, services, directives, views, etc. These reports will also need to be integrated into the various build processes that are facilitated by the tools and libraries listed below. However, if you are unfamiliar with these tools, particularly AngularJS, and you need to generate custom reports, it is possible to do so using whatever visualization and data processing tools you prefer. You will likely still want to use the `ServerIO.php` class discussed in the API and Data Retrieval documentation below.
 
+Apache Configuration Note
+-------------------------
+If you plan on developing reports for inclusion in the Suma repository and will be making use of the Grunt build tools, you will need to add a virtual host in order to link to the .tmp directory that contains compiled style assets. For example, if you are using MAMP Pro as your development server, create a virtualhost alias for localhost as something like 'Alias /suma/analysis/src/styles "/Applications/MAMP/htdocs/suma/analysis/.tmp/styles/"'. **Please Note:** the paths in the alias will depend on your development environment. See http://darrenhall.info/development/yeoman-and-mamp for more information.
+
 Reports Dependencies/Tools
 --------------------------
 * [AngularJS](http://angularjs.org)
