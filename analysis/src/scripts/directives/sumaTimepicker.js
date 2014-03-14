@@ -7,11 +7,15 @@ angular.module('sumaAnalysis')
       templateUrl: 'views/directives/timepicker.html',
       scope: {model: '=', placeholder: '@'},
       link: function (scope, el, attrs) {
+        var inputGroup = el.find('.input-group'),
+            inputGroupAddon = el.find('.input-group-addon');
+
         // Initialize
-        el.find('.input-group').datetimepicker({
+        inputGroup.datetimepicker({
           defaultDate: moment(scope.placeholder, 'HH:mm'),
           pickDate: false,
           pickTime: true,
+          format: 'HH:mm',
           icons: {
             time: 'fa fa-clock-o',
             up: 'fa fa-arrow-up',
@@ -20,16 +24,17 @@ angular.module('sumaAnalysis')
         });
 
         // Respond to changes from input
-        el.find('.input-group').on('change.dp', function () {
+        inputGroup.on('dp.change', function () {
           scope.$apply(function () {
             scope.model = el.find('input').val();
           });
         });
 
         // Respond to changes from model
-        scope.$watch('model', function () {
-          el.find('.input-group').data('DateTimePicker').setDate(moment(scope.model, 'HH:mm'));
-        }, true);
+        inputGroupAddon.on('click', function (e) {
+          inputGroup.data('DateTimePicker').setDate(moment(scope.model, 'HH:mm'));
+          inputGroup.data('DateTimePicker').show();
+        });
       }
     };
   });

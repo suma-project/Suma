@@ -1,30 +1,36 @@
 'use strict';
 
 angular.module('sumaAnalysis')
-  .directive('sumaDatepicker', function () {
+  .directive('sumaDatepicker', function ($timeout) {
     return {
       restrict: 'A',
       templateUrl: 'views/directives/datepicker.html',
       scope: {model: '='},
       link: function (scope, el, attrs) {
+        var inputGroup = el.find('.input-group'),
+            inputGroupAddon = el.find('.input-group-addon');
+
         // Initialize
-        el.find('.input-group').datetimepicker({
+        inputGroup.datetimepicker({
           defaultDate: scope.model,
+          showToday: false,
           pickDate: true,
-          pickTime: false
+          pickTime: false,
+          format: 'YYYY-MM-DD'
         });
 
         // Respond to changes from input
-        el.find('.input-group').on('change.dp', function () {
+        inputGroup.on('dp.change', function () {
           scope.$apply(function () {
             scope.model = el.find('input').val();
           });
         });
 
         // Respond to changes from model
-        scope.$watch('model', function () {
-          el.find('.input-group').data('DateTimePicker').setDate(scope.model);
-        }, true);
+        inputGroupAddon.on('click', function (e) {
+          inputGroup.data('DateTimePicker').setDate(scope.model);
+          inputGroup.data('DateTimePicker').show();
+        });
       }
     };
   });
