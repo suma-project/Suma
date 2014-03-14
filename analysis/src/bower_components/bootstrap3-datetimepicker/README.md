@@ -5,7 +5,9 @@
 ### [⇢ View the manual and demos](http://eonasdan.github.io/bootstrap-datetimepicker/)
 
 ##Where do you use this?
-I'd love to know if your public site is using this plugin and list your logo on the documentation site. Please email me `eonasdan at outlook dot com`
+I'd love to know if your public site is using this plugin and list your logo on the documentation site. Please email me `eonasdan at outlook dot com`. Do not submit issue/feature request to this email, they will be ignored.
+
+## See the [Change Log](#change-log) for important changes and updates.
 
 ## Quick installation using
 
@@ -15,23 +17,6 @@ Run the following command:
 ```
 bower install eonasdan-bootstrap-datetimepicker#latest --save
 ```
-## [Nuget](https://www.nuget.org/packages/Bootstrap.v3.Datetimepicker/): ![NuGet version](https://badge.fury.io/nu/Bootstrap.v3.Datetimepicker.png)
-```
-PM> Install-Package Bootstrap.v3.Datetimepicker
-```
-
-## [Rails](http://rubyonrails.org/) ![Gem Version](https://badge.fury.io/rb/bootstrap3-datetimepicker-rails.png)
-
-Add the following to your `Gemfile`:
-```
-gem 'momentjs-rails', '~> 2.5.0'
-gem 'bootstrap3-datetimepicker-rails', '~> 2.1.20'
-```
-Read the rest of the install instructions @ 
-[TrevorS/bootstrap3-datetimepicker-rails](https://github.com/TrevorS/bootstrap3-datetimepicker-rails)
-
-
-## See the [Change Log](#change-log) for important changes and updates
 
 Include necessary scripts and styles:
 ```html
@@ -46,8 +31,42 @@ Include necessary scripts and styles:
 </head>
 ```
 
-Done! [Now take a look at the manual](http://eonasdan.github.io/bootstrap-datetimepicker/) for examples and available options.
+## [Nuget (LESS)](https://www.nuget.org/packages/Bootstrap.v3.Datetimepicker/): ![NuGet version](https://badge.fury.io/nu/Bootstrap.v3.Datetimepicker.png)
+```
+PM> Install-Package Bootstrap.v3.Datetimepicker
+```
 
+## [Nuget (CSS)](https://www.nuget.org/packages/Bootstrap.v3.Datetimepicker.CSS/): ![NuGet version](https://badge.fury.io/nu/Bootstrap.v3.Datetimepicker.CSS.png)
+```
+PM> Install-Package Bootstrap.v3.Datetimepicker.CSS
+```
+
+```html
+<head>
+  <script type="text/javascript" src="/scripts/jquery.min.js"></script>
+  <script type="text/javascript" src="/scripts/moment.min.js"></script>
+  <script type="text/javascript" src="/scripts/bootstrap.min.js"></script>
+  <script type="text/javascript" src="/scripts/bootstrap-datetimepicker.min.js"></script>
+  <!-- include your less or built css files  -->
+  <!-- 
+  bootstrap-datetimepicker-build.less will pull in "../bootstrap/variables.less" and "bootstrap-datetimepicker.less";
+  or
+  <link rel="stylesheet" href="/Content/bootstrap-datetimepicker.css" />
+  -->
+</head>
+```
+
+## [Rails](http://rubygems.org/gems/bootstrap3-datetimepicker-rails) ![Gem Version](https://badge.fury.io/rb/bootstrap3-datetimepicker-rails.png)
+
+Add the following to your `Gemfile`:
+```
+gem 'momentjs-rails', '~> 2.5.0'
+gem 'bootstrap3-datetimepicker-rails', '~> 2.1.30'
+```
+Read the rest of the install instructions @ 
+[TrevorS/bootstrap3-datetimepicker-rails](https://github.com/TrevorS/bootstrap3-datetimepicker-rails)
+
+Done! [Now take a look at the manual](http://eonasdan.github.io/bootstrap-datetimepicker/) for examples and available options.
 
 
 ## Manual installation
@@ -97,6 +116,35 @@ Finally include the main javascript file.
 ```
 
 # Change Log
+## 3.0.0
+## **Breaking changes in this update! Pay attention!!**
+* Fix for #170, #179, #183: Changed event to `dp.-` options load as `data-date-OPTION` instead of `data-OPTION`. This should fix the double change event firing.
+* Fix for #192: `setDate` now fires `dp.change`
+* Fix for #182: Picker will **not** set the default date if the input field has a value
+* Fix for #169: Seconds doesn't get reset when changing the date (Thanks to PR #174)
+* Fix for #168 z-index fix for BS modal
+* Fix for #155 Picker properly displays the active year and month
+* Fix for #154 CSS update to fix the collapse jump
+* Fix for #150 and #75 `minViewMode` and `viewMode` work properly
+* Fix for #147 AM/PM won't toggle when selecting a value from the hours grid
+* Fix for #44 Finally! It's here!! Thanks to @ruiwei and his code on #210 picker will adjust the positioning of the widget.
+
+#### **Manually merged PR**
+* #178 When using `minuteStepping` the minute select grid will only show available steppings
+* #195, #197 Using the `data-OPTION` has been changed to `data-date-OPTION`. These options are expected to be on the `input-group` if you're using the `form-group` **or** the input field
+* #184 The option `sideBySide` change be used to display both the d and the timepicker side by side
+* #143 Added option `daysOfWeekDisabled: []`. For example, use `daysOfWeekDisabled: [0,6]` to disable Sunday and Saturday
+
+#### **Other Changes**
+* Changed picker width to 300px if using seconds and am/pm
+* Added option `useCurrent`, thanks to @ruiwei. When true, picker will set the value to the current date/time (respects picker's format)
+* Added option `showToday`, thanks to @ruiwei. When true, picker will display a small arrow to indicate today's date.
+* Changed `startDate` to `minDate` and `endDate` to `maxDate` to make it more clear what these options do.
+
+## 2.1.32 (Hotfix)
+
+* Fix for #151: When a bad date value or the picker is cleared, the plugin will not longer attempt to reset it back to the previous date
+* Fix for #140: `setDate` can be given `null` to force clear the picker
 
 ## 2.1.30
 #### Important! `build.less` file name has been been changed to `bootstrap-datetimepicker-build.less` to prevent collisions
