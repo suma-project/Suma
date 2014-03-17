@@ -84,7 +84,7 @@ $(document).ready(function(){
                             return false;
                         }}
                     });
-return false;
+    return false;
 });
 
 
@@ -184,6 +184,8 @@ $("a#editTree").live('click', function() {
                     }
                 }
             });
+
+    return false;
 });
 
 $("a.editLoc").live('click', function() {
@@ -240,6 +242,8 @@ $("a.editLoc").live('click', function() {
                     }
                 }
             });
+
+    return false;
 });
 
         var History = window.History; // Note: We are using a capital H instead of a lower h
