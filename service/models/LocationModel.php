@@ -242,7 +242,7 @@ class LocationModel
         if (isset($locTree['id']) && (is_numeric($locTree['id']) 
             || ($locTree['id'] === 'new-loc')))
         {
-            if (!empty($locTree['title']) 
+            if ((isset($locTree['title']) && strlen($locTree['title'] > 0)) 
                 && isset($locTree['description']) 
                 && (isset($locTree['enabled']) && is_bool($locTree['enabled'])))
             {
