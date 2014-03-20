@@ -156,7 +156,7 @@ class ActivityModel
             $db->beginTransaction();
             foreach($activities as $actGroupKey => $activityGroup) {
 
-                if ((isset($activityGroup['title']) && strlen($activityGroup['title']) > 0) && (isset($activityGroup['id']) && is_numeric($activityGroup['id']))
+                if ((isset($activityGroup['title']) && strlen($activityGroup['title']) > 0) && isset($activityGroup['id'])
                     && isset($activityGroup['desc'])  && (isset($activityGroup['required']) && is_bool($activityGroup['required']))
                     && (isset($activityGroup['allowMulti']) && is_bool($activityGroup['allowMulti'])))
                 {
@@ -192,9 +192,8 @@ class ActivityModel
 
                     foreach($activityGroup['activities'] as $actKey => $activity)
                     {
-                        if ((isset($activity['title']) && strlen($activity['title']) > 0) && (isset($activity['id']) && is_numeric($activity['id']))
-                            && isset($activity['desc'])
-                            && (isset($activity['enabled']) && is_bool($activity['enabled'])))
+                        if ((isset($activity['title']) && strlen($activity['title']) > 0) && isset($activity['id'])
+                            && isset($activity['desc']) && (isset($activity['enabled']) && is_bool($activity['enabled'])))
                         {
                             $actData = Array(
                                 'title'   => $activity['title'],
