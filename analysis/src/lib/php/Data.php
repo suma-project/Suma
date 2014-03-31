@@ -80,7 +80,7 @@ class Data
         {
             foreach($actDict as $act)
             {
-                $this->actHash[$act['id']] = $this->actGrpHash[$act['activityGroup']] . "-" . $act['title'];
+                $this->actHash[$act['id']] = $this->actGrpHash[$act['activityGroup']] . ": " . $act['title'];
             }
         }
 
@@ -96,7 +96,7 @@ class Data
         {
             foreach($actDict as $act)
             {
-                $name = $this->actGrpHash[$act['activityGroup']] . "-" . $act['title'];
+                $name = $this->actGrpHash[$act['activityGroup']] . ": " . $act['title'];
                 $scaffoldArray['activities'][$name] = NULL;
             }
         }
@@ -104,7 +104,7 @@ class Data
         {
             foreach($this->actListIds as $act)
             {
-                $name = $this->actGrpHash[$act['activityGroup']] . "-" . $act['title'];
+                $name = $this->actGrpHash[$act['activityGroup']] . ": " . $act['title'];
                 $scaffoldArray['activities'][$name] = NULL;
             }
         }
