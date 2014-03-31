@@ -294,9 +294,9 @@ class QueryModel
             }
 
             // SQL to pull counts of returned session IDs
-            $this->_countsSql = 'SELECT s.id as sid, s.start, s.end, c.id as cid, c.number as cnum, caj.fk_activity as act, c.fk_location as loc, c.occurrence as oc
-                    FROM session s,
-                    count c LEFT JOIN count_activity_join caj ON c.id = caj.fk_count
+            $this->_countsSql = 'SELECT s.id as sid, s.start, s.end, c.id as cid, c.number as cnum, caj.fk_activity as act, c.fk_location as loc, c.occurrence as oc, s.fk_transaction as transId, t.start as transStart, t.end as transEnd
+                    FROM (session s LEFT JOIN transaction t ON s.fk_transaction = t.id), count c
+                    LEFT JOIN count_activity_join caj ON c.id = caj.fk_count
                     WHERE s.deleted = false AND c.fk_session = s.id AND s.fk_initiative = '.$this->_initId.' AND '
                     .' s.id IN (';
 

@@ -7,6 +7,11 @@ tmp/**/*
 ._*
 .htaccess
 .htpasswd
+.sass-cache
+.tmp
+node_modules
+analysis/test/js/coverage
+analysis/test/php/coverage
 
 # Configuration Files
 service/config/config.ini
