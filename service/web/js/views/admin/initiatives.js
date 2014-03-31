@@ -183,6 +183,7 @@ $(document).ready(function(){
                 }
             }
         });
+
         return false;
     });
 
@@ -401,7 +402,6 @@ $(document).ready(function(){
         }).error(function(jqXHR) {
             alert("Error: " + jqXHR.responseText);
         });
-
 
         return false;
     });

@@ -84,7 +84,7 @@ $(document).ready(function(){
                             return false;
                         }}
                     });
-return false;
+    return false;
 });
 
 
@@ -184,13 +184,15 @@ $("a#editTree").live('click', function() {
                     }
                 }
             });
+
+    return false;
 });
 
 $("a.editLoc").live('click', function() {
             // var locNode = $(this).closest("div")[0];
             var locLi = $(this).closest("li")[0];
-            var titleSib = $(locLi).find("span.locTitle");
-            var descSib = $(locLi).find("span.locDesc");
+            var titleSib = $(locLi).find("> div span.locTitle");
+            var descSib = $(locLi).find("> div span.locDesc");
             var locTitleInput = $("input#locTitleInput");
             var locDescInput = $("textarea#locDescInput");
             var locEnabledCheck = $("input#locEnabledCheck");
@@ -240,6 +242,8 @@ $("a.editLoc").live('click', function() {
                     }
                 }
             });
+
+    return false;
 });
 
         var History = window.History; // Note: We are using a capital H instead of a lower h

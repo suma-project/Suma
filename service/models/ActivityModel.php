@@ -111,8 +111,7 @@ class ActivityModel
     public static function create($data)
     {
         $db = Globals::getDBConn();
-
-        if ((!empty($data['group']) && is_numeric($data['group'])) && !empty($data['title'])) {
+        if ((isset($data['group']) && is_numeric($data['group'])) && (isset($data['title']) && strlen($data['title']) > 0)) {
             $select = $db->select()
                 ->from('activity')
                 ->where('fk_activity_group = '.$data['group'].' AND LOWER(title) = '.$db->quote(strtolower($data['title'])));
@@ -157,7 +156,7 @@ class ActivityModel
             $db->beginTransaction();
             foreach($activities as $actGroupKey => $activityGroup) {
 
-                if (!empty($activityGroup['title']) && !empty($activityGroup['id'])
+                if ((isset($activityGroup['title']) && strlen($activityGroup['title']) > 0) && isset($activityGroup['id'])
                     && isset($activityGroup['desc'])  && (isset($activityGroup['required']) && is_bool($activityGroup['required']))
                     && (isset($activityGroup['allowMulti']) && is_bool($activityGroup['allowMulti'])))
                 {
@@ -193,9 +192,8 @@ class ActivityModel
 
                     foreach($activityGroup['activities'] as $actKey => $activity)
                     {
-                        if (!empty($activity['title']) && !empty($activity['id'])
-                            && isset($activity['desc'])
-                            && (isset($activity['enabled']) && is_bool($activity['enabled'])))
+                        if ((isset($activity['title']) && strlen($activity['title']) > 0) && isset($activity['id'])
+                            && isset($activity['desc']) && (isset($activity['enabled']) && is_bool($activity['enabled'])))
                         {
                             $actData = Array(
                                 'title'   => $activity['title'],

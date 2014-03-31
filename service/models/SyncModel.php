@@ -165,7 +165,7 @@ class SyncModel
 
         foreach($sessions as $session)
         {
-            if (! empty($session['id']))
+            if (is_numeric($session['id']))
             {
                 $select = $db->select()
                     ->from('count')
