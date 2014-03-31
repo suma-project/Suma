@@ -1,0 +1,155 @@
+<div class="hourly">
+  <div class="row" data-ng-show="state.success">
+    <div class="col-xs-4">
+      <p class="text-muted">
+        <strong>Initiative: </strong> {{summaryParams.init.title}} <br>
+        <strong>Dates: </strong> {{summaryParams.sdate}} - {{summaryParams.edate}} <br>
+        <strong>Subset: </strong> {{summaryParams.stime || '00:00'}} - {{summaryParams.etime || '23:59'}} <br>
+        <strong>Days: </strong> {{summaryParams.days}}
+        <strong>Locations: </strong> {{summaryParams.location.title}}
+        <strong>Activities: </strong> {{summaryParams.activity.title}}
+      </p>
+    </div>
+
+    <div class="col-xs-8">
+      <div class="row">
+        <div data-suma-buttons-radio="" class="btn-group col-xs-5 pull-right" data-model="data.data" data-options="data.options"></div>
+        <div class="pull-right">
+          <span data-suma-csv-hourly="" data-data="data"></span>
+          <span data-suma-chart-download="" data-chart="#chart-1" data-text="Save Line Chart" data-title="suma_hourly_line_chart.png"></span>
+          <span data-suma-chart-download="" data-chart="#chart-2" data-text="Save Calendar Chart" data-title="suma_hourly_calendar_chart.png"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-12 chart-wrapper">
+      <div class="loading" data-ng-show="state.loading"><img src="images/spinner.gif" alt="Spinner"></div>
+      <div class="alert alert-info alert-block" data-ng-show="state.initial">
+        <h4>Welcome!</h4>
+        Please select an initiative from the select menu below. Once you have chosen an initiative, additional filter options will appear. You can also limit your search by date or time.
+      </div>
+
+      <div class="alert alert-danger alert-block" data-ng-show="state.error">
+        <h4>Notice!</h4>
+        <p>There was a problem generating the report. Please try again or contact your system administrator.</p>
+        <p>Error Code: {{errorCode}}</p>
+        <p>Error Message: {{errorMessage}}</p>
+      </div>
+      <div data-suma-hourly-line-chart="" id="chart-1" data-data="data.data" data-ng-show="state.success"></div>
+      <div data-suma-hourly-calendar-chart="" id="chart-2" data-data="data.data" data-stats="stats" data-ng-show="state.success"></div>
+    </div>
+  </div>
+
+  <div class="row" data-ng-hide="finder.active()">
+    <div class="col-xs-3">
+      <h3>Modify Chart</h3>
+    </div>
+
+    <div class="col-xs-3" data-ng-show="params.init && !processMetadata">
+      <h3>Initiative Filters</h3>
+    </div>
+
+    <div class="col-xs-6" data-ng-show="state.success">
+      <h3>Summary Statistics</h3>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="loading" data-ng-show="finder.active()"><img src="images/spinner.gif" alt="Spinner"></div>
+  </div>
+
+  <div class="row filter-row" data-ng-hide="finder.active()">
+    <form data-ng-submit="submit()">
+      <fieldset data-ng-disabled="state.loading">
+        <div class="col-xs-3">
+          <div class="form-group">
+            <label class="suma-popover" data-title="Select Initiative" data-content="Select an initiative to reveal additional filters." data-suma-popover="">Select an Initiative</label>
+            <select name="initiative" data-ng-model="params.init" data-ng-options="init.title for init in inits" data-ng-change="updateMetadata()" class="form-control">
+              <option value="">Select an Initiative</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="suma-popover" data-title="Choose Date Range" data-content="Select a start date for your analysis. Defaults to 4 months from current day. Clear fields to retrieve the complete data set." data-suma-popover="">Start Date</label>
+            <div data-suma-datepicker="" data-model="params.sdate"></div>
+            <span class="help-block">YYYY-MM-DD</span>
+          </div>
+
+          <div class="form-group">
+            <label class="suma-popover" data-title="Choose Date Range" data-content="Select an end date for your analysis. Clear fields to retrieve complete data set." data-suma-popover="">End Date</label>
+            <div data-suma-datepicker="" data-model="params.edate"></div>
+            <span class="help-block">YYYY-MM-DD</span>
+          </div>
+        </div>
+
+        <div class="col-xs-3 supp-wrapper" data-ng-show="processMetadata">
+          <div class="loading"><img src="images/spinner.gif" alt="Spinner"></div>
+        </div>
+
+        <div class="col-xs-3" data-ng-show="params.init && !processMetadata">
+          <div class="form-group">
+            <label class="suma-popover" data-title="Limit Days of the Week" data-content="Filter by weekday." data-suma-popover="">Limit Days of the Week</label>
+            <div class="controls">
+              <div class="row">
+                <div class="col-xs-3" ng-repeat="day in dayOptions">
+                  <label class="checkbox-inline">
+                    <input type="checkbox" value="{{day}}" check-list="params.days" suma-checklist="">{{day | capitalize}}
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="suma-popover" data-title="Limit Locations" data-content="Select which locations to include in your analysis. Selecting a location with children will include all children in the data set." data-suma-popover="">Limit Locations</label>
+            <div class="controls">
+              <select name="locations" data-ng-model="params.location" data-ng-options="loc | depth for loc in locations" class="form-control">
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="suma-popover" data-title="Limit Activities" data-content="Select which activities to include in your analysis. Selecting an Activity Group will include all group activities." data-suma-popover="">Limit Activities</label>
+            <div class="controls">
+              <select name="activities" data-ng-model="params.activity" data-ng-options="act | depth for act in activities" class="form-control">
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <input type="submit" id="submit" class="btn btn-success" value="{{state.loading ? 'Loading...' : 'Submit'}}">
+          </div>
+        </div>
+
+        <div class="col-xs-6" data-ng-show="state.success">
+          <table class="table table-hover table-condensed">
+            <tbody>
+              <tr>
+                <td>Quartiles</td>
+                <td>{{stats.quartiles}}</td>
+              </tr>
+              <tr>
+                <td>Interquartile Range</td>
+                <td>{{stats.iqr}}</td>
+              </tr>
+              <tr>
+                <td>Lower Outlier Threshold</td>
+                <td>{{stats.lowerOutlier}}</td>
+              </tr>
+              <tr>
+                <td>Upper Outlier Threshold</td>
+                <td>{{stats.upperOutlier}}</td>
+              </tr>
+              <tr>
+                <td>Median</td>
+                <td>{{stats.median}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+</div>

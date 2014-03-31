@@ -1,0 +1,75 @@
+<!doctype html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suma Reports</title>
+  <!-- build:css(.tmp) styles/main.min.css -->
+  <!-- Add styles outside of the styles folder to copy:styles:src in Gruntfile.js -->
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css">
+  <link rel="stylesheet" href="bower_components/bootstrap3-datetimepicker/build/css/bootstrap-datetimepicker.min.css">
+  <!-- endbuild -->
+</head>
+<body data-ng-app="sumaAnalysis">
+  <div class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="#home"><img src="images/logo.png" alt="Suma Logo"></a>
+      <ul class="nav navbar-nav">
+        <li><a href="#/home">Home</a></li>
+        <li><a href="#/about">About</a></li>
+        <li><a href="#/contact">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="container" data-ng-view=""></div>
+
+  <!-- build:js scripts/scripts.min.js -->
+  <!-- core -->
+  <script src="bower_components/jquery/jquery.js"></script>
+  <script src="bower_components/angular/angular.js"></script>
+  <script src="bower_components/angular-route/angular-route.js"></script>
+  <script src="bower_components/angular-promise-tracker/promise-tracker.js"></script>
+
+  <!-- plugins -->
+  <script src="bower_components/bootstrap-sass/js/tooltip.js"></script>
+  <script src="bower_components/bootstrap-sass/js/popover.js"></script>
+  <script src="bower_components/lodash/dist/lodash.js"></script>
+  <script src="lib/js/lodash_mixins.js"></script>
+  <script src="bower_components/d3/d3.js"></script>
+  <script src="bower_components/moment/moment.js"></script>
+  <script src="bower_components/canvg/canvg.js"></script>
+  <script src="bower_components/bootstrap3-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+
+  <!-- scripts -->
+  <script src="scripts/app.js"></script>
+  <script src="scripts/controllers/report.js"></script>
+  <script src="scripts/services/initiatives.js"></script>
+  <script src="scripts/services/actsLocs.js"></script>
+  <script src="scripts/services/data.js"></script>
+  <script src="scripts/services/validation.js"></script>
+  <script src="scripts/services/scopeUtils.js"></script>
+  <script src="scripts/services/processTimeseriesData.js"></script>
+  <script src="scripts/filters/depth.js"></script>
+  <script src="scripts/filters/hourFormat.js"></script>
+  <script src="scripts/filters/countFormat.js"></script>
+  <script src="scripts/filters/capitalize.js"></script>
+  <script src="scripts/directives/sumaTimeSeriesChart.js"></script>
+  <script src="scripts/directives/sumaBarChart.js"></script>
+  <script src="scripts/directives/sumaButtonsRadio.js"></script>
+  <script src="scripts/directives/sumaChartDownload.js"></script>
+  <script src="scripts/directives/sumaCsv.js"></script>
+  <script src="scripts/directives/sumaDatepicker.js"></script>
+  <script src="scripts/directives/sumaTimepicker.js"></script>
+  <script src="scripts/directives/sumaPopover.js"></script>
+  <script src="scripts/services/processCalendarData.js"></script>
+  <script src="scripts/directives/sumaCalendarChart.js"></script>
+  <script src="scripts/services/processHourlyData.js"></script>
+  <script src="scripts/directives/sumaHourlyLineChart.js"></script>
+  <script src="scripts/directives/sumaHourlyCalendarChart.js"></script>
+  <script src="scripts/services/uiStates.js"></script>
+  <script src="scripts/directives/sumaCsvHourly.js"></script>
+  <script src="scripts/directives/sumaChecklist.js"></script>
+  <!-- endbuild -->
+</body>
+</html>

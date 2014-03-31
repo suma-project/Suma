@@ -1,0 +1,34 @@
+.time-series {
+  .bar-chart-wrapper {
+    margin-top: 20px;
+  }
+
+  svg {
+    font: 10px sans-serif;
+  }
+
+  .dot {
+    stroke: #f7f7f7;
+    stroke-width: 2px;
+  }
+
+  #legend-circle {
+    stroke: #f7f7f7;
+    stroke-width: 2px;
+  }
+
+  .axis {
+    shape-rendering: crispEdges;
+  }
+
+  .brush rect.extent {
+    stroke: #333;
+    fill-opacity: .125;
+    shape-rendering: crispEdges;
+  }
+
+  .brush .resize path {
+    fill: #eee;
+    stroke: #666;
+  }
+}

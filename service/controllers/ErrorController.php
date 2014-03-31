@@ -21,6 +21,11 @@ class ErrorController extends BaseController
             $this->getResponse()->setHttpResponseCode(500);
             $this->view->message = '500 Application error';
             break;
-        }        
-    }    
+        }
+    }
+
+    public function errorxhrAction()
+    {
+
+    }
 }

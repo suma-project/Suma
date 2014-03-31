@@ -121,8 +121,8 @@ class QueryController extends BaseController
                     $eDate = new Zend_Date(array('year' => $yr, 'month' => $month, 'day' => $day));
                     if (is_object($sDate) && $eDate->isEarlier($sDate))
                     {
-                        $params['sDate'] = $eDate->get(Zend_Date::ISO_8601);
-                        $params['eDate'] = $sDate->get(Zend_Date::ISO_8601);
+                        $this->view->error = 'End date must come after start date.';
+                        $this->_forward("errorxhr", "error");
                     }
                     else
                     {
@@ -131,7 +131,7 @@ class QueryController extends BaseController
                 }
             }
 
-            if (!empty($sTime) && ctype_digit($sTime) && 
+            if (!empty($sTime) && ctype_digit($sTime) &&
                 (int)$sTime > 0 && (int)$sTime < 2400)
             {
                 $sTime = str_pad($sTime, 4, '0', STR_PAD_LEFT);
@@ -139,7 +139,7 @@ class QueryController extends BaseController
                 $params['sTimeM'] = substr($sTime, 2, 2);
             }
 
-            if (!empty($eTime) && ctype_digit($eTime) && 
+            if (!empty($eTime) && ctype_digit($eTime) &&
                 (int)$eTime >= 0 && (int)$eTime < 2359)
             {
                 $sTime = str_pad($eTime, 4, '0', STR_PAD_LEFT);
