@@ -50,6 +50,7 @@ class Data
      */
     private $actHash = array();
     private $locHash = array();
+    private $actGrpHash = array();
     private $csvScaffold = NULL;
     private $hourSumScaffold = NULL;
     /**
@@ -58,7 +59,7 @@ class Data
      * @param  array $actListIds
      * @return array
      */
-    private function buildCSVScaffold ($actDict, $locDict)
+    private function buildCSVScaffold ($actDict, $locDict, $actGrpDict)
     {
         $scaffoldArray = array(
                 'date' => NULL,
@@ -67,11 +68,19 @@ class Data
                 'activities' => array()
             );
 
+        if (empty($this->actGrpHash))
+        {
+           foreach($actGrpDict as $grp)
+           {
+               $this->actGrpHash[$grp['id']] = $grp['title'];
+           }
+        }
+
         if(empty($this->actHash))
         {
             foreach($actDict as $act)
             {
-                $this->actHash[$act['id']] = $act['title'];
+                $this->actHash[$act['id']] = $this->actGrpHash[$act['activityGroup']] . "-" . $act['title'];
             }
         }
 
@@ -87,14 +96,15 @@ class Data
         {
             foreach($actDict as $act)
             {
-                $scaffoldArray['activities'][$act['title']] = NULL;
+                $name = $this->actGrpHash[$act['activityGroup']] . "-" . $act['title'];
+                $scaffoldArray['activities'][$name] = NULL;
             }
         }
         else
         {
             foreach($this->actListIds as $act)
             {
-                $name = $this->actHash[$act];
+                $name = $this->actGrpHash[$act['activityGroup']] . "-" . $act['title'];
                 $scaffoldArray['activities'][$name] = NULL;
             }
         }
@@ -817,6 +827,7 @@ class Data
         $actType = $params['actType'];
         $locID   = $params['locations'];
         $actDict = $response['initiative']['dictionary']['activities'];
+        $actGrpDict = $response['initiative']['dictionary']['activityGroups'];
         $locDict = $response['initiative']['dictionary']['locations'];
 
         // Check for sessions object
@@ -844,7 +855,7 @@ class Data
         // Populate $csvScaffold for csv array
         if (!isset($this->csvScaffold))
         {
-            $this->csvScaffold = $this->buildCSVScaffold($actDict, $locDict);
+            $this->csvScaffold = $this->buildCSVScaffold($actDict, $locDict, $actGrpDict);
         }
 
         // Populate hour summary scaffold
