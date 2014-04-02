@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 class LocationModel
 {
@@ -30,7 +30,7 @@ class LocationModel
             $this->_metadata[$key] = $value;
         }
         */
-        
+
         $this->_id = $id;
     }
 
@@ -38,7 +38,7 @@ class LocationModel
     {
         //TODO: Re-enable caching, it is disabled for now.
         $metadata = array();
-        
+
         if (empty($this->_metadata))
         {
             $select = $this->_db->select()
@@ -52,13 +52,13 @@ class LocationModel
                 $metadata[$index] = $val;
             }
         }
-        
+
         if ($key == null)
         {
             //return $this->_metadata;
             return $metadata;
         }
-        else 
+        else
         {
             //if (isset($this->_metadata[$key]))
             if (isset($metadata[$key]))
@@ -71,13 +71,13 @@ class LocationModel
                 return '';
             }
         }
-    }    
+    }
 
     public function getChildren($filterDisabled = true)
     {
         //TODO: Re-enable caching, it is disabled for now.
         $children = array();
-        
+
         if (isset($this->_children))
         {
             return $this->_children;
@@ -112,7 +112,7 @@ class LocationModel
     {
         //TODO: Re-enable caching, it is disabled for now.
         $parent = $this->getMetadata('fk_parent');
-        
+
         if (isset($this->_parent))
         {
             return $this->_parent;
@@ -139,7 +139,7 @@ class LocationModel
                       'rank'        =>  $data['rank']);
 
         $this->_db->update('location', $hash, 'id = '.$this->_id);
-    }    
+    }
 
     public function enable()
     {
@@ -153,7 +153,7 @@ class LocationModel
         $data = array('enabled'  =>  false);
         $this->_db->update('location', $data, 'id = '.$this->_id);
         Globals::getLog()->info('LOCATION DISABLED - id: '.$this->_id);
-    }    
+    }
 
 
     // ------ STATIC FUNCTIONS ------
@@ -172,7 +172,7 @@ class LocationModel
         $locId = $db->lastInsertId();
         Globals::getLog()->info('LOCATION CREATED - id: '.$locId.', title: '.$data['title']);
         return $locId;
-    }    
+    }
 
     public static function walkTree($root)
     {
@@ -182,7 +182,7 @@ class LocationModel
             $select = $db->select()
                 ->from('location')
                 ->where('enabled = true AND fk_parent = ' . $root);
-            $locations = $select->query()->fetchAll(); 
+            $locations = $select->query()->fetchAll();
 
             if (empty($locations))
             {
@@ -197,14 +197,14 @@ class LocationModel
                 {
                     $s .= $location['id'] . ',' . $children;
                 }
-                else 
+                else
                 {
                     $s .= $location['id'];
                 }
                 if ($key+1 < $size)
                 {
                     $s .= ',';
-                }             
+                }
             }
 
             return $s;
@@ -239,20 +239,20 @@ class LocationModel
     public static function validateLocTree($locTree)
     {
         $retValue = false;
-        if (isset($locTree['id']) && (is_numeric($locTree['id']) 
+        if (isset($locTree['id']) && (is_numeric($locTree['id'])
             || ($locTree['id'] === 'new-loc')))
         {
-            if ((isset($locTree['title']) && strlen($locTree['title'] > 0)) 
-                && isset($locTree['description']) 
+            if ((isset($locTree['title']) && strlen($locTree['title']) > 0)
+                && isset($locTree['description'])
                 && (isset($locTree['enabled']) && is_bool($locTree['enabled'])))
             {
                 $retValue = true;
 
-                if (isset($locTree['children']) && is_array($locTree['children'])) 
+                if (isset($locTree['children']) && is_array($locTree['children']))
                 {
                     foreach($locTree['children'] as $childLoc)
                     {
-                        if (!self::validateLocTree($childLoc)) 
+                        if (!self::validateLocTree($childLoc))
                         {
                             $retValue = false;
                         }
@@ -266,7 +266,7 @@ class LocationModel
     public static function updateLocTree($locTree, $parentID = null, $rank = 0)
     {
         // FIXME: redundant validation
-        if (self::validateLocTree($locTree)) 
+        if (self::validateLocTree($locTree))
         {
             $locDataArr = Array('fk_parent'   => $parentID,
                                 'title'       => $locTree['title'],
@@ -292,7 +292,7 @@ class LocationModel
                 throw new Exception('Invalid location ID: ' . $locTree['id']);
             }
 
-            if (isset($locTree['children']) && is_array($locTree['children'])) 
+            if (isset($locTree['children']) && is_array($locTree['children']))
             {
                 foreach($locTree['children'] as $locKey => $childLoc)
                 {
