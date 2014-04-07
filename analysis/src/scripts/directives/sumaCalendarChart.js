@@ -188,68 +188,76 @@ angular.module('sumaAnalysis')
 
           // Key
           d3.select('.gKey').remove();
-          keySet = [1, 2, 3, 4, 5];
-          key = d3.select('.gWrap')
-            .append('g')
-            .attr('class', 'gKey')
-            .attr('transform', function () {
-              return 'translate(' + (width - 230) + ',' + (totalHeight - 15) + ')';
-            });
 
-          key.append('text')
-            .attr('x', '0')
-            .attr('y', '9px')
-            .text('Less')
-            .attr('fill', '#000')
-            .attr('alignment', 'baseline');
+          // Only show key if iqr is valid
+          if (!_.isNaN(iqr)) {
+            keySet = [1, 2, 3, 4, 5];
+            key = d3.select('.gWrap')
+              .append('g')
+              .attr('class', 'gKey')
+              .attr('transform', function () {
+                return 'translate(' + (width - 230) + ',' + (totalHeight - 15) + ')';
+              });
 
-          key.selectAll('.rKey')
-            .data(keySet)
-            .enter().append('rect')
-            .attr('class', 'rKey')
-            .attr('width', '10px')
-            .attr('height', '10px')
-            .attr('x', function (d, i) { return (15 * i) + 30; })
-            .attr('y', function () { return 0; })
-            .style('fill', function (d, i) { return setKeyColor(d, i); })
-            .attr('title', function (d, i) { return setKeyTitle(d, i); })
-            .attr('data-toggle', 'tooltip');
+            key.append('text')
+              .attr('x', '0')
+              .attr('y', '9px')
+              .text('Less')
+              .attr('fill', '#000')
+              .attr('alignment', 'baseline');
 
-          key.append('text')
-            .attr('x', '110px')
-            .attr('y', '9px')
-            .text(function () { return 'More (' + quantiles[2].toFixed(2) + '+)'; })
-            .attr('fill', '#000')
-            .attr('alignment', 'baseline');
+            key.selectAll('.rKey')
+              .data(keySet)
+              .enter().append('rect')
+              .attr('class', 'rKey')
+              .attr('width', '10px')
+              .attr('height', '10px')
+              .attr('x', function (d, i) { return (15 * i) + 30; })
+              .attr('y', function () { return 0; })
+              .style('fill', function (d, i) { return setKeyColor(d, i); })
+              .attr('title', function (d, i) { return setKeyTitle(d, i); })
+              .attr('data-toggle', 'tooltip');
+
+            key.append('text')
+              .attr('x', '110px')
+              .attr('y', '9px')
+              .text(function () { return 'More (' + quantiles[2].toFixed(2) + '+)'; })
+              .attr('fill', '#000')
+              .attr('alignment', 'baseline');
+          }
 
           // Outliers Key
           d3.select('.gOutlier').remove();
-          outlierKeyset = [1, 2];
-          outlierKey = d3.select('.gWrap')
-            .append('g')
-            .attr('class', 'gOutlier')
-            .attr('transform', function () {
-              return 'translate(' + (width - 375) + ',' + (totalHeight - 15) + ')';
-            });
 
-          outlierKey.append('text')
-            .attr('x', '0')
-            .attr('y', '9px')
-            .text('Potential Outliers')
-            .attr('fill', '#000')
-            .attr('alignment', 'baseline');
+          // Only show outliers if iqr is valid
+          if (!_.isNaN(iqr)) {
+            outlierKeyset = [1, 2];
+            outlierKey = d3.select('.gWrap')
+              .append('g')
+              .attr('class', 'gOutlier')
+              .attr('transform', function () {
+                return 'translate(' + (width - 375) + ',' + (totalHeight - 15) + ')';
+              });
 
-          outlierKey.selectAll('.rOutlier')
-            .data(outlierKeyset)
-            .enter().append('rect')
-            .attr('class', 'rOutlier')
-            .attr('width', '10px')
-            .attr('height', '10px')
-            .attr('x', function (d, i) { return (15 * i) + 85; })
-            .attr('y', function () { return 0; })
-            .style('fill', function (d, i) { return setOutlierColor(d, i); })
-            .attr('title', function (d, i) { return setOutlierTitle(d, i); })
-            .attr('data-toggle', 'tooltip');
+            outlierKey.append('text')
+              .attr('x', '0')
+              .attr('y', '9px')
+              .text('Potential Outliers')
+              .attr('fill', '#000')
+              .attr('alignment', 'baseline');
+
+            outlierKey.selectAll('.rOutlier')
+              .data(outlierKeyset)
+              .enter().append('rect')
+              .attr('class', 'rOutlier')
+              .attr('width', '10px')
+              .attr('height', '10px')
+              .attr('x', function (d, i) { return (15 * i) + 85; })
+              .attr('y', function () { return 0; })
+              .style('fill', function (d, i) { return setOutlierColor(d, i); })
+              .attr('title', function (d, i) { return setOutlierTitle(d, i); })
+              .attr('data-toggle', 'tooltip');
+          }
 
           // Create day rects
           rect = gWrap.selectAll('.day')
@@ -340,12 +348,17 @@ angular.module('sumaAnalysis')
         };
 
         scope.updateStats = function () {
-          scope.stats = {};
-          scope.stats.quartiles = '(' + quantiles[0].toFixed(2) + ', ' + quantiles[1].toFixed(2) + ', ' + quantiles[2].toFixed(2) + ')';
-          scope.stats.iqr = iqr.toFixed(2);
-          scope.stats.upperOutlier = upperOutlier.toFixed(2);
-          scope.stats.lowerOutlier = (lowerOutlier.toFixed(2) > 0) ? lowerOutlier.toFixed(2) : 'No Threshold';
-          scope.stats.median = quantiles[1].toFixed(2);
+          scope.stats = null;
+
+          // Only set stats if iqr is valid
+          if (!_.isNaN(iqr)) {
+            scope.stats = {};
+            scope.stats.quartiles = '(' + quantiles[0].toFixed(2) + ', ' + quantiles[1].toFixed(2) + ', ' + quantiles[2].toFixed(2) + ')';
+            scope.stats.iqr = iqr.toFixed(2);
+            scope.stats.upperOutlier = upperOutlier.toFixed(2);
+            scope.stats.lowerOutlier = (lowerOutlier.toFixed(2) > 0) ? lowerOutlier.toFixed(2) : 'No Threshold';
+            scope.stats.median = quantiles[1].toFixed(2);
+          }
         };
 
         scope.$watch('data', function (newData) {
