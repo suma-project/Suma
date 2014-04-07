@@ -836,7 +836,7 @@ $(function() {
 
         $(".activityGroup.requiredGroup").each(function() {
             if ($(this).find("input.activityButton:checked").length < 1) {
-                $(this).add("input#goesup").effect("pulsate", {times:3}, 500);
+                $(this).add("input#goesup").stop(true,true).effect("pulsate", {times:3}, 500);
                 hasRequiredActivities = false;
             }
         });
