@@ -137,7 +137,7 @@ class Data
 
         for ($i = 0; $i <= 23; $i++)
         {
-            $array[$i] = 0;
+            $array[$i] = null;
         }
 
         return $array;
@@ -983,6 +983,10 @@ class Data
             if ($location['avg'] / $location['divisor'] > 0)
             {
                 $countHash['locationsAvgAvg'][$locationID] = $location['avg'] / $location['divisor'];
+            }
+            elseif ($location['avg'] / $location['divisor'] === 0)
+            {
+                $countHash['locationsAvgAvg'][$locationID] = 0;
             }
         }
 
