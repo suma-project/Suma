@@ -50398,8 +50398,14 @@ angular.module('sumaAnalysis').directive('sumaCalendarChart', function () {
         }
         return 'Greater than ' + upperOutlier.toFixed(2);
       }
+      // FIXME: TEMPORARY METHOD UNTIL
+      // https://github.com/mbostock/d3/pull/1834
+      // is applied to master in D3
+      function d3_number(x) {
+        return x !== null && x !== undefined && !isNaN(x);
+      }
       selection.each(function (counts) {
-        var svg, range, gWrap, gWrapEnter, rect;
+        var domain, svg, range, gWrap, gWrapEnter, rect;
         // Actual display data
         data = d3.nest().key(function (d) {
           return d.date;
@@ -50408,8 +50414,15 @@ angular.module('sumaAnalysis').directive('sumaCalendarChart', function () {
         }).map(counts);
         // Data range
         range = d3.range(parseInt(_.first(counts).date.split('-')[0], 10), parseInt(_.last(counts).date.split('-')[0], 10) + 1).reverse();
+        // Color scale domain
+        // FIXME: TEMPORARY FIX until
+        // https://github.com/mbostock/d3/pull/1834
+        // is applied to master
+        domain = _.filter(d3.values(data), function (e) {
+          return d3_number(e);
+        });
         // Color scale
-        color = d3.scale.quantile().domain(_.compact(d3.values(data))).range(colorRange);
+        color = d3.scale.quantile().domain(domain).range(colorRange);
         // Stats
         quantiles = color.quantiles();
         iqr = quantiles[2] - quantiles[0];
@@ -50923,11 +50936,24 @@ angular.module('sumaAnalysis').directive('sumaHourlyCalendarChart', function () 
         }
         return 'Greater than ' + upperOutlier.toFixed(2);
       }
+      // FIXME: TEMPORARY METHOD UNTIL
+      // https://github.com/mbostock/d3/pull/1834
+      // is applied to master in D3
+      function d3_number(x) {
+        return x !== null && x !== undefined && !isNaN(x);
+      }
       selection.each(function (counts) {
-        var heatMap, gRect, svg, svgEnter;
+        var domain, heatMap, gRect, svg, svgEnter;
         data = counts;
+        // Color scale domain
+        // FIXME: TEMPORARY FIX until
+        // https://github.com/mbostock/d3/pull/1834
+        // is applied to master
+        domain = _.filter(_.pluck(data, 'value'), function (e) {
+          return d3_number(e);
+        });
         // Color Scale
-        color = d3.scale.quantile().domain(_.compact(_.pluck(data, 'value'))).range(colorRange);
+        color = d3.scale.quantile().domain(domain).range(colorRange);
         // Stats
         quantiles = color.quantiles();
         iqr = quantiles[2] - quantiles[0];

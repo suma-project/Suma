@@ -125,8 +125,16 @@ angular.module('sumaAnalysis')
           return 'Greater than ' + upperOutlier.toFixed(2);
         }
 
+        // FIXME: TEMPORARY METHOD UNTIL
+        // https://github.com/mbostock/d3/pull/1834
+        // is applied to master in D3
+        function d3_number(x) {
+          return x !== null && x !== undefined && !isNaN(x);
+        }
+
         selection.each(function (counts) {
-          var svg,
+          var domain,
+          svg,
           range,
           gWrap,
           gWrapEnter,
@@ -144,9 +152,17 @@ angular.module('sumaAnalysis')
             parseInt(_.last(counts).date.split('-')[0], 10) + 1
           ).reverse();
 
+          // Color scale domain
+          // FIXME: TEMPORARY FIX until
+          // https://github.com/mbostock/d3/pull/1834
+          // is applied to master
+          domain = _.filter(d3.values(data), function (e) {
+            return d3_number(e);
+          });
+
           // Color scale
           color = d3.scale.quantile()
-            .domain(_.compact(d3.values(data)))
+            .domain(domain)
             .range(colorRange);
 
           // Stats
