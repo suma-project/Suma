@@ -127,8 +127,20 @@
           <table class="table table-hover table-condensed">
             <tbody>
               <tr>
+                <td>Min</td>
+                <td>{{stats.min}}</td>
+              </tr>
+              <tr>
+                <td>Max</td>
+                <td>{{stats.max}}</td>
+              </tr>
+              <tr>
                 <td>Quartiles</td>
                 <td>{{stats.quartiles}}</td>
+              </tr>
+              <tr>
+                <td>Median</td>
+                <td>{{stats.median}}</td>
               </tr>
               <tr>
                 <td>Interquartile Range</td>
@@ -142,10 +154,7 @@
                 <td>Upper Outlier Threshold</td>
                 <td>{{stats.upperOutlier}}</td>
               </tr>
-              <tr>
-                <td>Median</td>
-                <td>{{stats.median}}</td>
-              </tr>
+            </tbody>
             </tbody>
           </table>
         </div>

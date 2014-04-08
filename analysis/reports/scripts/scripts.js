@@ -50308,7 +50308,7 @@ angular.module('sumaAnalysis').factory('processCalendarData', [
 ]);
 'use strict';
 angular.module('sumaAnalysis').directive('sumaCalendarChart', function () {
-  var iqr, quantiles, upperOutlier, lowerOutlier;
+  var iqr, quantiles, upperOutlier, lowerOutlier, min, max;
   var Calendar = function () {
     var width = 960, height = 136, totalHeight;
     function chart(selection) {
@@ -50428,6 +50428,8 @@ angular.module('sumaAnalysis').directive('sumaCalendarChart', function () {
         iqr = quantiles[2] - quantiles[0];
         upperOutlier = quantiles[2] + 1.5 * iqr;
         lowerOutlier = quantiles[0] - 1.5 * iqr;
+        min = d3.min(domain);
+        max = d3.max(domain);
         // Define svg wrapper
         svg = d3.select(this).selectAll('svg').data([data]);
         // Append gWrap g element
@@ -50577,6 +50579,8 @@ angular.module('sumaAnalysis').directive('sumaCalendarChart', function () {
           scope.stats.upperOutlier = upperOutlier.toFixed(2);
           scope.stats.lowerOutlier = lowerOutlier.toFixed(2) > 0 ? lowerOutlier.toFixed(2) : 'No Threshold';
           scope.stats.median = quantiles[1].toFixed(2);
+          scope.stats.min = min;
+          scope.stats.max = max;
         }
       };
       scope.$watch('data', function (newData) {
@@ -50830,7 +50834,7 @@ angular.module('sumaAnalysis').directive('sumaHourlyLineChart', function () {
 });
 'use strict';
 angular.module('sumaAnalysis').directive('sumaHourlyCalendarChart', function () {
-  var iqr, quantiles, upperOutlier, lowerOutlier;
+  var iqr, quantiles, upperOutlier, lowerOutlier, min, max;
   var HourlyCalendar = function () {
     function chart(selection) {
       var margin = {
@@ -50959,6 +50963,8 @@ angular.module('sumaAnalysis').directive('sumaHourlyCalendarChart', function () 
         iqr = quantiles[2] - quantiles[0];
         upperOutlier = quantiles[2] + 1.5 * iqr;
         lowerOutlier = quantiles[0] - 1.5 * iqr;
+        min = d3.min(domain);
+        max = d3.max(domain);
         // Select SVG container and join data
         svg = d3.select(this).selectAll('svg').data([data]);
         // Append containers
@@ -51074,6 +51080,8 @@ angular.module('sumaAnalysis').directive('sumaHourlyCalendarChart', function () 
           scope.stats.upperOutlier = upperOutlier.toFixed(2);
           scope.stats.lowerOutlier = lowerOutlier.toFixed(2) > 0 ? lowerOutlier.toFixed(2) : 'No Threshold';
           scope.stats.median = quantiles[1].toFixed(2);
+          scope.stats.min = min;
+          scope.stats.max = max;
         }
       };
       scope.$watch('data', function (newData) {

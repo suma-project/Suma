@@ -5,7 +5,9 @@ angular.module('sumaAnalysis')
     var iqr,
         quantiles,
         upperOutlier,
-        lowerOutlier;
+        lowerOutlier,
+        min,
+        max;
 
     var Calendar = function () {
       var width = 960,
@@ -170,6 +172,8 @@ angular.module('sumaAnalysis')
           iqr = quantiles[2] - quantiles[0];
           upperOutlier = quantiles[2] + (1.5 * iqr);
           lowerOutlier = quantiles[0] - (1.5 * iqr);
+          min = d3.min(domain);
+          max = d3.max(domain);
 
           // Define svg wrapper
           svg = d3.select(this).selectAll('svg').data([data]);
@@ -374,6 +378,8 @@ angular.module('sumaAnalysis')
             scope.stats.upperOutlier = upperOutlier.toFixed(2);
             scope.stats.lowerOutlier = (lowerOutlier.toFixed(2) > 0) ? lowerOutlier.toFixed(2) : 'No Threshold';
             scope.stats.median = quantiles[1].toFixed(2);
+            scope.stats.min = min;
+            scope.stats.max = max;
           }
         };
 
