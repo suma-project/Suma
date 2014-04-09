@@ -1059,6 +1059,45 @@ class Data
             }
         }
 
+        // Avg of Avgs
+        $avgAvgsDivisor = 0;
+        $avgAvgsTotal = 0;
+        foreach ($countHash['periodAvg'] as $dayKey => $day)
+        {
+            $avgAvgsDivisor = $avgAvgsDivisor += 1;
+            $avgAvgsTotal = $avgAvgsTotal += $day['count'];
+        }
+
+        if ($avgAvgsDivisor > 0)
+        {
+            $countHash['totalAvgAvg'] = $avgAvgsTotal / $avgAvgsDivisor;
+        }
+        else
+        {
+            $countHash['totalAvgAvg'] = 0;
+        }
+
+        // Avg of Sums
+        $avgSumsDivisor = 0;
+        $avgSumsTotal = 0;
+        foreach ($countHash['periodSum'] as $dayKey => $day)
+        {
+            $avgSumsDivisor = $avgSumsDivisor += 1;
+            $avgSumsTotal = $avgSumsTotal += $day['count'];
+        }
+
+        if ($avgSumsDivisor > 0)
+        {
+            $countHash['totalAvgSum'] = $avgSumsTotal / $avgSumsDivisor;
+        }
+        else
+        {
+            $countHash['totalAvgSum'] = 0;
+        }
+
+        // Number of days with counts
+        $countHash['daysWithObservations'] = $avgSumsDivisor;
+
         return $countHash;
     }
     /**
@@ -1122,50 +1161,6 @@ class Data
                 }
             }
         }
-
-        // Avg of Avgs
-        $avgAvgsDivisor = 0;
-        $avgAvgsTotal = 0;
-        foreach ($data['periodAvg'] as $dayKey => $day)
-        {
-            if ($day['count'] !== null) {
-                $avgAvgsDivisor = $avgAvgsDivisor += 1;
-                $avgAvgsTotal = $avgAvgsTotal += $day['count'];
-            }
-        }
-
-        if ($avgAvgsDivisor > 0)
-        {
-            $data['totalAvgAvg'] = $avgAvgsTotal / $avgAvgsDivisor;
-        }
-        else
-        {
-            $data['totalAvgAvg'] = 0;
-        }
-
-        // Avg of Sums
-        $avgSumsDivisor = 0;
-        $avgSumsTotal = 0;
-        foreach ($data['periodSum'] as $dayKey => $day)
-        {
-            if ($day['count'] !== null)
-            {
-                $avgSumsDivisor = $avgSumsDivisor += 1;
-                $avgSumsTotal = $avgSumsTotal += $day['count'];
-            }
-        }
-
-        if ($avgSumsDivisor > 0)
-        {
-            $data['totalAvgSum'] = $avgSumsTotal / $avgSumsDivisor;
-        }
-        else
-        {
-            $data['totalAvgSum'] = 0;
-        }
-
-        // Number of days with counts
-        $data['daysWithObservations'] = $avgSumsDivisor;
 
         return $data;
     }
