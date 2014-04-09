@@ -49480,7 +49480,7 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
         return {
           name: index,
           count: element,
-          percent: calcPct(element, response.total)
+          percent: calcPct(element.total, response.total)
         };
       }), function (item) {
         return weekdays[item.name];

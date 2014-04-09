@@ -246,14 +246,16 @@
             <tr>
               <th>Weekday</th>
               <th>Total</th>
+              <th>Avg</th>
               <th>Percentage</th>
             </tr>
           </thead>
           <tbody>
             <tr data-ng-repeat="weekday in data.dayOfWeekSummary">
-              <td>{{weekday.name}}</td>
-              <td>{{weekday.count | countFormat}}</td>
-              <td>{{weekday.percent}}%</td>
+                <td>{{weekday.name}}</td>
+                <td>{{weekday.count.total}}</td>
+                <td>{{weekday.count.avg.toFixed(2)}}</td>
+                <td>{{weekday.percent}}%</td>
             </tr>
           </tbody>
         </table>

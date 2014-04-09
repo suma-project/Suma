@@ -747,11 +747,24 @@ class Data
         // Build weekday Summary array
         if(!isset($this->countHash['weekdaySummary'][$weekday]))
         {
-            $this->countHash['weekdaySummary'][$weekday] = $count['number'];
+            $this->countHash['weekdaySummary'][$weekday] = array(
+                'avg' => null,
+                'total' => $count['number'],
+                'divisor' => array()
+            );
+
+            if (!in_array($day, $this->countHash['weekdaySummary'][$weekday]['divisor']))
+            {
+                array_push($this->countHash['weekdaySummary'][$weekday]['divisor'], $day);
+            }
         }
         else
         {
-            $this->countHash['weekdaySummary'][$weekday] += $count['number'];
+            $this->countHash['weekdaySummary'][$weekday]['total'] = $this->countHash['weekdaySummary'][$weekday]['total'] += $count['number'];
+            if (!in_array($day, $this->countHash['weekdaySummary'][$weekday]['divisor']))
+            {
+                array_push($this->countHash['weekdaySummary'][$weekday]['divisor'], $day);
+            }
         }
 
         // Build hour summary array
@@ -1077,13 +1090,27 @@ class Data
             $countHash['totalAvgAvg'] = 0;
         }
 
+        // $countHash['dailyAvg'] = array(
+        //     'Monday' => array('avg' => null, 'total' => null, 'divisor' => 0),
+        //     'Tuesday' => array('avg' => null, 'total' => null, 'divisor' => 0),
+        //     'Wednesday' => array('avg' => null, 'total' => null, 'divisor' => 0),
+        //     'Thursday' => array('avg' => null, 'total' => null, 'divisor' => 0),
+        //     'Friday' => array('avg' => null, 'total' => null, 'divisor' => 0),
+        //     'Saturday' => array('avg' => null, 'total' => null, 'divisor' => 0),
+        //     'Sunday' => array('avg' => null, 'total' => null, 'divisor' => 0)
+        // );
+
         // Avg of Sums
         $avgSumsDivisor = 0;
         $avgSumsTotal = 0;
         foreach ($countHash['periodSum'] as $dayKey => $day)
         {
+
             $avgSumsDivisor = $avgSumsDivisor += 1;
             $avgSumsTotal = $avgSumsTotal += $day['count'];
+
+            // $countHash['dailyAvg'][date("l", strtotime($dayKey))]['divisor'] += 1;
+            // $countHash['dailyAvg'][date("l", strtotime($dayKey))]['total'] += $day['count'];
         }
 
         if ($avgSumsDivisor > 0)
@@ -1093,6 +1120,21 @@ class Data
         else
         {
             $countHash['totalAvgSum'] = 0;
+        }
+
+        // Weekday Avgs
+        foreach ($countHash['weekdaySummary'] as $dayKey => $day)
+        {
+            $numberOfDays = count($day['divisor']);
+
+            if ($numberOfDays > 0)
+            {
+                $countHash['weekdaySummary'][$dayKey]['avg'] = $day['total'] / $numberOfDays;
+            }
+            else
+            {
+                $countHash['weekdaySummary'][$dayKey]['avg'] = 0;
+            }
         }
 
         // Number of days with counts
