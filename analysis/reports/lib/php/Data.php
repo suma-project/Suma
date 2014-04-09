@@ -1164,6 +1164,9 @@ class Data
             $data['totalAvgSum'] = 0;
         }
 
+        // Number of days with counts
+        $data['daysWithObservations'] = $avgSumsDivisor;
+
         return $data;
     }
     private function processData($sumaParams, $queryType, $params)

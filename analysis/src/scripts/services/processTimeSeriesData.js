@@ -149,6 +149,11 @@ angular.module('sumaAnalysis')
         count: response.totalAvgAvg
       }];
 
+      // Days with Observations
+      counts.daysWithObservations = [{
+        count: response.daysWithObservations
+      }];
+
       // Locations related data
       counts.locationsTable = buildTableArray(locations, response.locationsSum, response.total, 'parent');
       counts.locationsSum = buildArray(locations, response.locationsSum, response.total);
