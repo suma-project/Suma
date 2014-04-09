@@ -49414,6 +49414,10 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
       counts.csv = response.csv;
       // Total Sum
       counts.total = [{ count: response.total }];
+      // Total Avg Sum
+      counts.totalAvgSum = [{ count: response.totalAvgSum }];
+      // Total AvgAvg
+      counts.totalAvgAvg = [{ count: response.totalAvgAvg }];
       // Locations related data
       counts.locationsTable = buildTableArray(locations, response.locationsSum, response.total, 'parent');
       counts.locationsSum = buildArray(locations, response.locationsSum, response.total);

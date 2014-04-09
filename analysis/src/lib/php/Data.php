@@ -1123,6 +1123,47 @@ class Data
             }
         }
 
+        // Avg of Avgs
+        $avgAvgsDivisor = 0;
+        $avgAvgsTotal = 0;
+        foreach ($data['periodAvg'] as $dayKey => $day)
+        {
+            if ($day['count'] !== null) {
+                $avgAvgsDivisor = $avgAvgsDivisor += 1;
+                $avgAvgsTotal = $avgAvgsTotal += $day['count'];
+            }
+        }
+
+        if ($avgAvgsDivisor > 0)
+        {
+            $data['totalAvgAvg'] = $avgAvgsTotal / $avgAvgsDivisor;
+        }
+        else
+        {
+            $data['totalAvgAvg'] = 0;
+        }
+
+        // Avg of Sums
+        $avgSumsDivisor = 0;
+        $avgSumsTotal = 0;
+        foreach ($data['periodSum'] as $dayKey => $day)
+        {
+            if ($day['count'] !== null)
+            {
+                $avgSumsDivisor = $avgSumsDivisor += 1;
+                $avgSumsTotal = $avgSumsTotal += $day['count'];
+            }
+        }
+
+        if ($avgSumsDivisor > 0)
+        {
+            $data['totalAvgSum'] = $avgSumsTotal / $avgSumsDivisor;
+        }
+        else
+        {
+            $data['totalAvgSum'] = 0;
+        }
+
         return $data;
     }
     private function processData($sumaParams, $queryType, $params)
