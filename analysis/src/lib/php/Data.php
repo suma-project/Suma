@@ -1220,64 +1220,30 @@ class Data
         }
     }
     public function checkData($data) {
-        if (!isset($data['activitiesAvgAvg'])) {
-            return false;
-        }
+        $names = array(
+            'activitiesAvgAvg',
+            'activitiesAvgSum',
+            'activitiesSum',
+            'csv',
+            'dailyHourSummary',
+            'hourSummary',
+            'locationsAvgAvg',
+            'locationsAvgSum',
+            'locationsSum',
+            'monthSummary',
+            'periodAvg',
+            'periodSum',
+            'total',
+            'weekdaySummary',
+            'yearSummary'
+        );
 
-        if (!isset($data['activitiesAvgSum'])) {
-            return false;
-        }
-
-        if (!isset($data['activitiesSum'])) {
-            return false;
-        }
-
-        if (!isset($data['csv'])) {
-            return false;
-        }
-
-        if (!isset($data['dailyHourSummary'])) {
-            return false;
-        }
-
-        if (!isset($data['hourSummary'])) {
-            return false;
-        }
-
-        if (!isset($data['locationsAvgAvg'])) {
-            return false;
-        }
-
-        if (!isset($data['locationsAvgSum'])) {
-            return false;
-        }
-
-        if (!isset($data['locationsSum'])) {
-            return false;
-        }
-
-        if (!isset($data['monthSummary'])) {
-            return false;
-        }
-
-        if (!isset($data['periodAvg'])) {
-            return false;
-        }
-        if (!isset($data['periodSum'])) {
-            return false;
-        }
-
-        if (!isset($data['total'])) {
-            return false;
-        }
-
-        if (!isset($data['weekdaySummary'])) {
-            return false;
-        }
-
-        if (!isset($data['yearSummary'])) {
-            return false;
-        }
+       foreach($names as $name)
+       {
+            if (!isset($data[$name])) {
+                return false;
+            }
+       }
 
         return true;
     }
