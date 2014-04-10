@@ -21,7 +21,15 @@ class Data
      * @var array
      * @access  private
      */
-    private $daysScaffold = array('mo' => 'Monday', 'tu' => 'Tuesday', 'we' => 'Wednesday', 'th' => 'Thursday', 'fr' => 'Friday', 'sa' => 'Saturday', 'su' => 'Sunday');
+    private $daysScaffold = array(
+        'mo' => 'Monday',
+        'tu' => 'Tuesday',
+        'we' => 'Wednesday',
+        'th' => 'Thursday',
+        'fr' => 'Friday',
+        'sa' => 'Saturday',
+        'su' => 'Sunday'
+    );
     /**
      * Main hash to store data as it is retrieved from the server
      *
@@ -48,10 +56,10 @@ class Data
      * @var array
      * @access private
      */
+    private $csvScaffold = NULL;
     private $actHash = array();
     private $locHash = array();
     private $actGrpHash = array();
-    private $csvScaffold = NULL;
     private $hourSumScaffold = NULL;
     /**
      * Method to populate $csvScaffold, used for csv count collection
@@ -1090,27 +1098,14 @@ class Data
             $countHash['totalAvgAvg'] = 0;
         }
 
-        // $countHash['dailyAvg'] = array(
-        //     'Monday' => array('avg' => null, 'total' => null, 'divisor' => 0),
-        //     'Tuesday' => array('avg' => null, 'total' => null, 'divisor' => 0),
-        //     'Wednesday' => array('avg' => null, 'total' => null, 'divisor' => 0),
-        //     'Thursday' => array('avg' => null, 'total' => null, 'divisor' => 0),
-        //     'Friday' => array('avg' => null, 'total' => null, 'divisor' => 0),
-        //     'Saturday' => array('avg' => null, 'total' => null, 'divisor' => 0),
-        //     'Sunday' => array('avg' => null, 'total' => null, 'divisor' => 0)
-        // );
-
         // Avg of Sums
         $avgSumsDivisor = 0;
         $avgSumsTotal = 0;
+
         foreach ($countHash['periodSum'] as $dayKey => $day)
         {
-
             $avgSumsDivisor = $avgSumsDivisor += 1;
             $avgSumsTotal = $avgSumsTotal += $day['count'];
-
-            // $countHash['dailyAvg'][date("l", strtotime($dayKey))]['divisor'] += 1;
-            // $countHash['dailyAvg'][date("l", strtotime($dayKey))]['total'] += $day['count'];
         }
 
         if ($avgSumsDivisor > 0)
