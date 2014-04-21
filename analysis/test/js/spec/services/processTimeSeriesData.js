@@ -13,7 +13,9 @@ describe('Service: Processtimeseriesdata', function () {
       MockLocations,
       MockActivities,
       MockResponse,
-      MockProcessedData;
+      MockResponseZeros,
+      MockProcessedData,
+      MockProcessedZeros;
 
   beforeEach(inject(function (
     _processTimeSeriesData_,
@@ -21,14 +23,18 @@ describe('Service: Processtimeseriesdata', function () {
     mockLocations,
     mockActivities,
     mockResponse,
-    mockTimeSeriesProcessedData) {
+    mockResponseZeros,
+    mockTimeSeriesProcessedData,
+    mockTimeSeriesProcessedZeros) {
 
     Processtimeseriesdata = _processTimeSeriesData_;
     $httpBackend = _$httpBackend_;
     MockLocations = mockLocations;
     MockActivities = mockActivities;
     MockResponse = mockResponse;
+    MockResponseZeros = mockResponseZeros;
     MockProcessedData = mockTimeSeriesProcessedData;
+    MockProcessedZeros = mockTimeSeriesProcessedZeros;
   }));
 
   it('should build an object of data objects', function (done) {
@@ -49,6 +55,16 @@ describe('Service: Processtimeseriesdata', function () {
     Processtimeseriesdata.get(resp, acts, locs)
       .then(function (data) {
         expect(data).to.be.an('object');
+        done();
+      });
+
+    $httpBackend.flush();
+  });
+
+  it('should handle zero/NaN conditions', function (done) {
+    Processtimeseriesdata.get(MockResponseZeros, MockActivities, MockLocations)
+      .then(function (data) {
+        expect(MockProcessedZeros).to.deep.equal(data);
         done();
       });
 

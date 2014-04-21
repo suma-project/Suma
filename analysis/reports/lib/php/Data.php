@@ -21,7 +21,15 @@ class Data
      * @var array
      * @access  private
      */
-    private $daysScaffold = array('mo' => 'Monday', 'tu' => 'Tuesday', 'we' => 'Wednesday', 'th' => 'Thursday', 'fr' => 'Friday', 'sa' => 'Saturday', 'su' => 'Sunday');
+    private $daysScaffold = array(
+        'mo' => 'Monday',
+        'tu' => 'Tuesday',
+        'we' => 'Wednesday',
+        'th' => 'Thursday',
+        'fr' => 'Friday',
+        'sa' => 'Saturday',
+        'su' => 'Sunday'
+    );
     /**
      * Main hash to store data as it is retrieved from the server
      *
@@ -48,10 +56,10 @@ class Data
      * @var array
      * @access private
      */
+    private $csvScaffold = NULL;
     private $actHash = array();
     private $locHash = array();
     private $actGrpHash = array();
-    private $csvScaffold = NULL;
     private $hourSumScaffold = NULL;
     /**
      * Method to populate $csvScaffold, used for csv count collection
@@ -80,7 +88,7 @@ class Data
         {
             foreach($actDict as $act)
             {
-                $this->actHash[$act['id']] = $this->actGrpHash[$act['activityGroup']] . "-" . $act['title'];
+                $this->actHash[$act['id']] = $this->actGrpHash[$act['activityGroup']] . ": " . $act['title'];
             }
         }
 
@@ -96,7 +104,7 @@ class Data
         {
             foreach($actDict as $act)
             {
-                $name = $this->actGrpHash[$act['activityGroup']] . "-" . $act['title'];
+                $name = $this->actGrpHash[$act['activityGroup']] . ": " . $act['title'];
                 $scaffoldArray['activities'][$name] = NULL;
             }
         }
@@ -104,7 +112,7 @@ class Data
         {
             foreach($this->actListIds as $act)
             {
-                $name = $this->actGrpHash[$act['activityGroup']] . "-" . $act['title'];
+                $name = $this->actGrpHash[$act['activityGroup']] . ": " . $act['title'];
                 $scaffoldArray['activities'][$name] = NULL;
             }
         }
@@ -137,7 +145,7 @@ class Data
 
         for ($i = 0; $i <= 23; $i++)
         {
-            $array[$i] = 0;
+            $array[$i] = null;
         }
 
         return $array;
@@ -747,11 +755,24 @@ class Data
         // Build weekday Summary array
         if(!isset($this->countHash['weekdaySummary'][$weekday]))
         {
-            $this->countHash['weekdaySummary'][$weekday] = $count['number'];
+            $this->countHash['weekdaySummary'][$weekday] = array(
+                'avg' => null,
+                'total' => $count['number'],
+                'divisor' => array()
+            );
+
+            if (!in_array($day, $this->countHash['weekdaySummary'][$weekday]['divisor']))
+            {
+                array_push($this->countHash['weekdaySummary'][$weekday]['divisor'], $day);
+            }
         }
         else
         {
-            $this->countHash['weekdaySummary'][$weekday] += $count['number'];
+            $this->countHash['weekdaySummary'][$weekday]['total'] = $this->countHash['weekdaySummary'][$weekday]['total'] += $count['number'];
+            if (!in_array($day, $this->countHash['weekdaySummary'][$weekday]['divisor']))
+            {
+                array_push($this->countHash['weekdaySummary'][$weekday]['divisor'], $day);
+            }
         }
 
         // Build hour summary array
@@ -984,6 +1005,10 @@ class Data
             {
                 $countHash['locationsAvgAvg'][$locationID] = $location['avg'] / $location['divisor'];
             }
+            elseif ($location['avg'] / $location['divisor'] === 0)
+            {
+                $countHash['locationsAvgAvg'][$locationID] = 0;
+            }
         }
 
         // activitiesAvgAvg
@@ -1054,6 +1079,61 @@ class Data
                 unset($countHash['dailyHourSummary'][$dayKey][$hourKey]['hourCounts']);
             }
         }
+
+        // Avg of Avgs
+        $avgAvgsDivisor = 0;
+        $avgAvgsTotal = 0;
+        foreach ($countHash['periodAvg'] as $dayKey => $day)
+        {
+            $avgAvgsDivisor = $avgAvgsDivisor += 1;
+            $avgAvgsTotal = $avgAvgsTotal += $day['count'];
+        }
+
+        if ($avgAvgsDivisor > 0)
+        {
+            $countHash['totalAvgAvg'] = $avgAvgsTotal / $avgAvgsDivisor;
+        }
+        else
+        {
+            $countHash['totalAvgAvg'] = 0;
+        }
+
+        // Avg of Sums
+        $avgSumsDivisor = 0;
+        $avgSumsTotal = 0;
+
+        foreach ($countHash['periodSum'] as $dayKey => $day)
+        {
+            $avgSumsDivisor = $avgSumsDivisor += 1;
+            $avgSumsTotal = $avgSumsTotal += $day['count'];
+        }
+
+        if ($avgSumsDivisor > 0)
+        {
+            $countHash['totalAvgSum'] = $avgSumsTotal / $avgSumsDivisor;
+        }
+        else
+        {
+            $countHash['totalAvgSum'] = 0;
+        }
+
+        // Weekday Avgs
+        foreach ($countHash['weekdaySummary'] as $dayKey => $day)
+        {
+            $numberOfDays = count($day['divisor']);
+
+            if ($numberOfDays > 0)
+            {
+                $countHash['weekdaySummary'][$dayKey]['avg'] = $day['total'] / $numberOfDays;
+            }
+            else
+            {
+                $countHash['weekdaySummary'][$dayKey]['avg'] = 0;
+            }
+        }
+
+        // Number of days with counts
+        $countHash['daysWithObservations'] = $avgSumsDivisor;
 
         return $countHash;
     }
@@ -1140,64 +1220,30 @@ class Data
         }
     }
     public function checkData($data) {
-        if (!isset($data['activitiesAvgAvg'])) {
-            return false;
-        }
+        $names = array(
+            'activitiesAvgAvg',
+            'activitiesAvgSum',
+            'activitiesSum',
+            'csv',
+            'dailyHourSummary',
+            'hourSummary',
+            'locationsAvgAvg',
+            'locationsAvgSum',
+            'locationsSum',
+            'monthSummary',
+            'periodAvg',
+            'periodSum',
+            'total',
+            'weekdaySummary',
+            'yearSummary'
+        );
 
-        if (!isset($data['activitiesAvgSum'])) {
-            return false;
-        }
-
-        if (!isset($data['activitiesSum'])) {
-            return false;
-        }
-
-        if (!isset($data['csv'])) {
-            return false;
-        }
-
-        if (!isset($data['dailyHourSummary'])) {
-            return false;
-        }
-
-        if (!isset($data['hourSummary'])) {
-            return false;
-        }
-
-        if (!isset($data['locationsAvgAvg'])) {
-            return false;
-        }
-
-        if (!isset($data['locationsAvgSum'])) {
-            return false;
-        }
-
-        if (!isset($data['locationsSum'])) {
-            return false;
-        }
-
-        if (!isset($data['monthSummary'])) {
-            return false;
-        }
-
-        if (!isset($data['periodAvg'])) {
-            return false;
-        }
-        if (!isset($data['periodSum'])) {
-            return false;
-        }
-
-        if (!isset($data['total'])) {
-            return false;
-        }
-
-        if (!isset($data['weekdaySummary'])) {
-            return false;
-        }
-
-        if (!isset($data['yearSummary'])) {
-            return false;
-        }
+       foreach($names as $name)
+       {
+            if (!isset($data[$name])) {
+                return false;
+            }
+       }
 
         return true;
     }

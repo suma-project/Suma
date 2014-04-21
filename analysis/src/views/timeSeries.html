@@ -155,6 +155,12 @@
       <div>
         <h4>Total Sum</h4>
         <p>{{data.total[0].count | countFormat}}</p>
+        <h4>Avg of Sums</h4>
+        <p>{{data.totalAvgSum[0].count.toFixed(2) | countFormat}}</p>
+        <h4>Avg of Avgs</h4>
+        <p>{{data.totalAvgAvg[0].count.toFixed(2) | countFormat}}</p>
+        <h4>Days with Observations</h4>
+        <p>{{data.daysWithObservations[0].count | countFormat}} *includes zero counts</p>
       </div>
       <div>
         <h4>Totals by Location</h4>
@@ -240,14 +246,16 @@
             <tr>
               <th>Weekday</th>
               <th>Total</th>
+              <th>Avg</th>
               <th>Percentage</th>
             </tr>
           </thead>
           <tbody>
             <tr data-ng-repeat="weekday in data.dayOfWeekSummary">
-              <td>{{weekday.name}}</td>
-              <td>{{weekday.count | countFormat}}</td>
-              <td>{{weekday.percent}}%</td>
+                <td>{{weekday.name}}</td>
+                <td>{{weekday.count.total}}</td>
+                <td>{{weekday.count.avg.toFixed(2)}}</td>
+                <td>{{weekday.percent}}%</td>
             </tr>
           </tbody>
         </table>

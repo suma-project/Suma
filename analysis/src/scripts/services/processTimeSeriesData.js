@@ -12,6 +12,12 @@ angular.module('sumaAnalysis')
       Saturday: 6
     };
 
+    function calcPct(count, total) {
+      var pct = count / total * 100;
+
+      return _.isNaN(pct) ? 0 : pct.toFixed(2);
+    }
+
     function calcCount(obj, coll, prop) {
       var hasChildren;
 
@@ -39,17 +45,17 @@ angular.module('sumaAnalysis')
         o.name = o.title;
 
         if (trunc) {
-          o.count = response[o.id] ? response[o.id].toFixed(2) : null;
+          o.count = _.isNumber(response[o.id]) ? response[o.id].toFixed(2) : null;
         } else {
           if (o.type === 'activityGroup') {
             o.count = null;
           } else {
-            o.count = response[o.id] || null;
+            o.count = _.isNumber(response[o.id]) ? response[o.id] : null;
           }
         }
 
         if (o.count !== null) {
-          o.percent = (o.count / total * 100).toFixed(2);
+          o.percent = calcPct(o.count, total);
         } else {
           o.percent = null;
         }
@@ -67,17 +73,18 @@ angular.module('sumaAnalysis')
     function buildTableArray (source, response, total, flag) {
       var counts;
 
-      counts = _.map(_.cloneDeep(source), function (loc) {
+      counts = _.filter(_.map(_.cloneDeep(source), function (loc) {
         loc.name = loc.title;
-        loc.count = response[loc.id] || null;
-
+        loc.count = _.isNumber(response[loc.id]) ? response[loc.id] : null;
         return loc;
+      }), function (obj) {
+        return obj.count !== null;
       });
 
       // Calculate counts for children
       return _.map(counts, function (loc, index, coll) {
         loc.count = calcCount(loc, coll, flag);
-        loc.percent = (loc.count / total * 100).toFixed(2);
+        loc.percent = calcPct(loc.count, total);
 
         return loc;
       });
@@ -130,6 +137,21 @@ angular.module('sumaAnalysis')
       // Total Sum
       counts.total = [{
         count : response.total
+      }];
+
+      // Total Avg Sum
+      counts.totalAvgSum = [{
+        count: response.totalAvgSum
+      }];
+
+      // Total AvgAvg
+      counts.totalAvgAvg = [{
+        count: response.totalAvgAvg
+      }];
+
+      // Days with Observations
+      counts.daysWithObservations = [{
+        count: response.daysWithObservations
       }];
 
       // Locations related data
@@ -185,12 +207,14 @@ angular.module('sumaAnalysis')
       });
 
       // Hourly Summary
-      counts.hourlySummary = _.map(response.hourSummary, function (element, index) {
+      counts.hourlySummary = _.filter(_.map(_.cloneDeep(response.hourSummary), function (element, index) {
         return {
           name: index,
           count: element,
-          percent: (element / response.total * 100).toFixed(2)
+          percent: calcPct(element, response.total)
         };
+      }), function (hour) {
+        return hour.count !== null;
       });
 
       // Day of Week Summary
@@ -198,7 +222,7 @@ angular.module('sumaAnalysis')
         return {
           name: index,
           count: element,
-          percent: (element / response.total * 100).toFixed(2)
+          percent: calcPct(element.total, response.total)
         };
       }), function (item) {
         return weekdays[item.name];
@@ -211,7 +235,7 @@ angular.module('sumaAnalysis')
             date: month + ' ' + '1' + ', ' + year,
             name: month + ' ' + year,
             count: count,
-            percent: (count / response.total * 100).toFixed(2)
+            percent: calcPct(count, response.total)
           };
         });
       })), function (item) {
@@ -223,7 +247,7 @@ angular.module('sumaAnalysis')
         return {
           name: index,
           count: element,
-          percent: (element / response.total * 100).toFixed(2)
+          percent: calcPct(element, response.total)
         };
       }), function (item) {
         return item.name;

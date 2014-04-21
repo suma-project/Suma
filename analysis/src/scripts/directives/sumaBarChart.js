@@ -144,7 +144,7 @@ angular.module('sumaAnalysis')
             .attr('width', function (d) {
               var width;
               // Give really small counts a minimum width
-              if (x(d.count) < 5 && x(d.count) > 0) {
+              if (x(d.count) < 5 && x(d.count) >= 0) {
                 width = 5 + x(d.count);
               } else {
                 width = x(d.count);

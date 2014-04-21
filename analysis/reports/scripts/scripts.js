@@ -49322,6 +49322,10 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
         Friday: 5,
         Saturday: 6
       };
+    function calcPct(count, total) {
+      var pct = count / total * 100;
+      return _.isNaN(pct) ? 0 : pct.toFixed(2);
+    }
     function calcCount(obj, coll, prop) {
       var hasChildren;
       hasChildren = _.filter(coll, function (item) {
@@ -49343,16 +49347,16 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
       return _.filter(_.map(_.cloneDeep(source), function (o) {
         o.name = o.title;
         if (trunc) {
-          o.count = response[o.id] ? response[o.id].toFixed(2) : null;
+          o.count = _.isNumber(response[o.id]) ? response[o.id].toFixed(2) : null;
         } else {
           if (o.type === 'activityGroup') {
             o.count = null;
           } else {
-            o.count = response[o.id] || null;
+            o.count = _.isNumber(response[o.id]) ? response[o.id] : null;
           }
         }
         if (o.count !== null) {
-          o.percent = (o.count / total * 100).toFixed(2);
+          o.percent = calcPct(o.count, total);
         } else {
           o.percent = null;
         }
@@ -49366,15 +49370,17 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
     }
     function buildTableArray(source, response, total, flag) {
       var counts;
-      counts = _.map(_.cloneDeep(source), function (loc) {
+      counts = _.filter(_.map(_.cloneDeep(source), function (loc) {
         loc.name = loc.title;
-        loc.count = response[loc.id] || null;
+        loc.count = _.isNumber(response[loc.id]) ? response[loc.id] : null;
         return loc;
+      }), function (obj) {
+        return obj.count !== null;
       });
       // Calculate counts for children
       return _.map(counts, function (loc, index, coll) {
         loc.count = calcCount(loc, coll, flag);
-        loc.percent = (loc.count / total * 100).toFixed(2);
+        loc.percent = calcPct(loc.count, total);
         return loc;
       });
     }
@@ -49408,6 +49414,12 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
       counts.csv = response.csv;
       // Total Sum
       counts.total = [{ count: response.total }];
+      // Total Avg Sum
+      counts.totalAvgSum = [{ count: response.totalAvgSum }];
+      // Total AvgAvg
+      counts.totalAvgAvg = [{ count: response.totalAvgAvg }];
+      // Days with Observations
+      counts.daysWithObservations = [{ count: response.daysWithObservations }];
       // Locations related data
       counts.locationsTable = buildTableArray(locations, response.locationsSum, response.total, 'parent');
       counts.locationsSum = buildArray(locations, response.locationsSum, response.total);
@@ -49454,19 +49466,21 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
         return new Date(item.date).getTime();
       });
       // Hourly Summary
-      counts.hourlySummary = _.map(response.hourSummary, function (element, index) {
+      counts.hourlySummary = _.filter(_.map(_.cloneDeep(response.hourSummary), function (element, index) {
         return {
           name: index,
           count: element,
-          percent: (element / response.total * 100).toFixed(2)
+          percent: calcPct(element, response.total)
         };
+      }), function (hour) {
+        return hour.count !== null;
       });
       // Day of Week Summary
       counts.dayOfWeekSummary = _.sortBy(_.map(response.weekdaySummary, function (element, index) {
         return {
           name: index,
           count: element,
-          percent: (element / response.total * 100).toFixed(2)
+          percent: calcPct(element.total, response.total)
         };
       }), function (item) {
         return weekdays[item.name];
@@ -49478,7 +49492,7 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
             date: month + ' ' + '1' + ', ' + year,
             name: month + ' ' + year,
             count: count,
-            percent: (count / response.total * 100).toFixed(2)
+            percent: calcPct(count, response.total)
           };
         });
       })), function (item) {
@@ -49489,7 +49503,7 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
         return {
           name: index,
           count: element,
-          percent: (element / response.total * 100).toFixed(2)
+          percent: calcPct(element, response.total)
         };
       }), function (item) {
         return item.name;
@@ -49968,7 +49982,7 @@ angular.module('sumaAnalysis').directive('sumaBarChart', function () {
         }).transition().delay(750).duration(500).attr('width', function (d) {
           var width;
           // Give really small counts a minimum width
-          if (x(d.count) < 5 && x(d.count) > 0) {
+          if (x(d.count) < 5 && x(d.count) >= 0) {
             width = 5 + x(d.count);
           } else {
             width = x(d.count);
@@ -50300,7 +50314,7 @@ angular.module('sumaAnalysis').factory('processCalendarData', [
 ]);
 'use strict';
 angular.module('sumaAnalysis').directive('sumaCalendarChart', function () {
-  var iqr, quantiles, upperOutlier, lowerOutlier;
+  var iqr, quantiles, upperOutlier, lowerOutlier, min, max;
   var Calendar = function () {
     var width = 960, height = 136, totalHeight;
     function chart(selection) {
@@ -50390,8 +50404,14 @@ angular.module('sumaAnalysis').directive('sumaCalendarChart', function () {
         }
         return 'Greater than ' + upperOutlier.toFixed(2);
       }
+      // FIXME: TEMPORARY METHOD UNTIL
+      // https://github.com/mbostock/d3/pull/1834
+      // is applied to master in D3
+      function d3_number(x) {
+        return x !== null && x !== undefined && !isNaN(x);
+      }
       selection.each(function (counts) {
-        var svg, range, gWrap, gWrapEnter, rect;
+        var domain, svg, range, gWrap, gWrapEnter, rect;
         // Actual display data
         data = d3.nest().key(function (d) {
           return d.date;
@@ -50400,13 +50420,22 @@ angular.module('sumaAnalysis').directive('sumaCalendarChart', function () {
         }).map(counts);
         // Data range
         range = d3.range(parseInt(_.first(counts).date.split('-')[0], 10), parseInt(_.last(counts).date.split('-')[0], 10) + 1).reverse();
+        // Color scale domain
+        // FIXME: TEMPORARY FIX until
+        // https://github.com/mbostock/d3/pull/1834
+        // is applied to master
+        domain = _.filter(d3.values(data), function (e) {
+          return d3_number(e);
+        });
         // Color scale
-        color = d3.scale.quantile().domain(d3.values(data)).range(colorRange);
+        color = d3.scale.quantile().domain(domain).range(colorRange);
         // Stats
         quantiles = color.quantiles();
         iqr = quantiles[2] - quantiles[0];
         upperOutlier = quantiles[2] + 1.5 * iqr;
         lowerOutlier = quantiles[0] - 1.5 * iqr;
+        min = d3.min(domain);
+        max = d3.max(domain);
         // Define svg wrapper
         svg = d3.select(this).selectAll('svg').data([data]);
         // Append gWrap g element
@@ -50428,48 +50457,54 @@ angular.module('sumaAnalysis').directive('sumaCalendarChart', function () {
         });
         // Key
         d3.select('.gKey').remove();
-        keySet = [
-          1,
-          2,
-          3,
-          4,
-          5
-        ];
-        key = d3.select('.gWrap').append('g').attr('class', 'gKey').attr('transform', function () {
-          return 'translate(' + (width - 230) + ',' + (totalHeight - 15) + ')';
-        });
-        key.append('text').attr('x', '0').attr('y', '9px').text('Less').attr('fill', '#000').attr('alignment', 'baseline');
-        key.selectAll('.rKey').data(keySet).enter().append('rect').attr('class', 'rKey').attr('width', '10px').attr('height', '10px').attr('x', function (d, i) {
-          return 15 * i + 30;
-        }).attr('y', function () {
-          return 0;
-        }).style('fill', function (d, i) {
-          return setKeyColor(d, i);
-        }).attr('title', function (d, i) {
-          return setKeyTitle(d, i);
-        }).attr('data-toggle', 'tooltip');
-        key.append('text').attr('x', '110px').attr('y', '9px').text(function () {
-          return 'More (' + quantiles[2].toFixed(2) + '+)';
-        }).attr('fill', '#000').attr('alignment', 'baseline');
+        // Only show key if iqr is valid
+        if (!_.isNaN(iqr)) {
+          keySet = [
+            1,
+            2,
+            3,
+            4,
+            5
+          ];
+          key = d3.select('.gWrap').append('g').attr('class', 'gKey').attr('transform', function () {
+            return 'translate(' + (width - 230) + ',' + (totalHeight - 15) + ')';
+          });
+          key.append('text').attr('x', '0').attr('y', '9px').text('Less').attr('fill', '#000').attr('alignment', 'baseline');
+          key.selectAll('.rKey').data(keySet).enter().append('rect').attr('class', 'rKey').attr('width', '10px').attr('height', '10px').attr('x', function (d, i) {
+            return 15 * i + 30;
+          }).attr('y', function () {
+            return 0;
+          }).style('fill', function (d, i) {
+            return setKeyColor(d, i);
+          }).attr('title', function (d, i) {
+            return setKeyTitle(d, i);
+          }).attr('data-toggle', 'tooltip');
+          key.append('text').attr('x', '110px').attr('y', '9px').text(function () {
+            return 'More (' + quantiles[2].toFixed(2) + '+)';
+          }).attr('fill', '#000').attr('alignment', 'baseline');
+        }
         // Outliers Key
         d3.select('.gOutlier').remove();
-        outlierKeyset = [
-          1,
-          2
-        ];
-        outlierKey = d3.select('.gWrap').append('g').attr('class', 'gOutlier').attr('transform', function () {
-          return 'translate(' + (width - 375) + ',' + (totalHeight - 15) + ')';
-        });
-        outlierKey.append('text').attr('x', '0').attr('y', '9px').text('Potential Outliers').attr('fill', '#000').attr('alignment', 'baseline');
-        outlierKey.selectAll('.rOutlier').data(outlierKeyset).enter().append('rect').attr('class', 'rOutlier').attr('width', '10px').attr('height', '10px').attr('x', function (d, i) {
-          return 15 * i + 85;
-        }).attr('y', function () {
-          return 0;
-        }).style('fill', function (d, i) {
-          return setOutlierColor(d, i);
-        }).attr('title', function (d, i) {
-          return setOutlierTitle(d, i);
-        }).attr('data-toggle', 'tooltip');
+        // Only show outliers if iqr is valid
+        if (!_.isNaN(iqr)) {
+          outlierKeyset = [
+            1,
+            2
+          ];
+          outlierKey = d3.select('.gWrap').append('g').attr('class', 'gOutlier').attr('transform', function () {
+            return 'translate(' + (width - 375) + ',' + (totalHeight - 15) + ')';
+          });
+          outlierKey.append('text').attr('x', '0').attr('y', '9px').text('Potential Outliers').attr('fill', '#000').attr('alignment', 'baseline');
+          outlierKey.selectAll('.rOutlier').data(outlierKeyset).enter().append('rect').attr('class', 'rOutlier').attr('width', '10px').attr('height', '10px').attr('x', function (d, i) {
+            return 15 * i + 85;
+          }).attr('y', function () {
+            return 0;
+          }).style('fill', function (d, i) {
+            return setOutlierColor(d, i);
+          }).attr('title', function (d, i) {
+            return setOutlierTitle(d, i);
+          }).attr('data-toggle', 'tooltip');
+        }
         // Create day rects
         rect = gWrap.selectAll('.day').data(function (d) {
           return d3.time.days(new Date(d, 0, 1), new Date(d + 1, 0, 1));
@@ -50541,12 +50576,18 @@ angular.module('sumaAnalysis').directive('sumaCalendarChart', function () {
         d3.select(element[0]).datum(data.data).call(chart);
       };
       scope.updateStats = function () {
-        scope.stats = {};
-        scope.stats.quartiles = '(' + quantiles[0].toFixed(2) + ', ' + quantiles[1].toFixed(2) + ', ' + quantiles[2].toFixed(2) + ')';
-        scope.stats.iqr = iqr.toFixed(2);
-        scope.stats.upperOutlier = upperOutlier.toFixed(2);
-        scope.stats.lowerOutlier = lowerOutlier.toFixed(2) > 0 ? lowerOutlier.toFixed(2) : 'No Threshold';
-        scope.stats.median = quantiles[1].toFixed(2);
+        scope.stats = null;
+        // Only set stats if iqr is valid
+        if (!_.isNaN(iqr)) {
+          scope.stats = {};
+          scope.stats.quartiles = '(' + quantiles[0].toFixed(2) + ', ' + quantiles[1].toFixed(2) + ', ' + quantiles[2].toFixed(2) + ')';
+          scope.stats.iqr = iqr.toFixed(2);
+          scope.stats.upperOutlier = upperOutlier.toFixed(2);
+          scope.stats.lowerOutlier = lowerOutlier.toFixed(2) > 0 ? lowerOutlier.toFixed(2) : 'No Threshold';
+          scope.stats.median = quantiles[1].toFixed(2);
+          scope.stats.min = min;
+          scope.stats.max = max;
+        }
       };
       scope.$watch('data', function (newData) {
         if (!newData) {
@@ -50799,7 +50840,7 @@ angular.module('sumaAnalysis').directive('sumaHourlyLineChart', function () {
 });
 'use strict';
 angular.module('sumaAnalysis').directive('sumaHourlyCalendarChart', function () {
-  var iqr, quantiles, upperOutlier, lowerOutlier;
+  var iqr, quantiles, upperOutlier, lowerOutlier, min, max;
   var HourlyCalendar = function () {
     function chart(selection) {
       var margin = {
@@ -50905,16 +50946,31 @@ angular.module('sumaAnalysis').directive('sumaHourlyCalendarChart', function () 
         }
         return 'Greater than ' + upperOutlier.toFixed(2);
       }
+      // FIXME: TEMPORARY METHOD UNTIL
+      // https://github.com/mbostock/d3/pull/1834
+      // is applied to master in D3
+      function d3_number(x) {
+        return x !== null && x !== undefined && !isNaN(x);
+      }
       selection.each(function (counts) {
-        var heatMap, gRect, svg, svgEnter;
+        var domain, heatMap, gRect, svg, svgEnter;
         data = counts;
+        // Color scale domain
+        // FIXME: TEMPORARY FIX until
+        // https://github.com/mbostock/d3/pull/1834
+        // is applied to master
+        domain = _.filter(_.pluck(data, 'value'), function (e) {
+          return d3_number(e);
+        });
         // Color Scale
-        color = d3.scale.quantile().domain(_.compact(_.pluck(data, 'value'))).range(colorRange);
+        color = d3.scale.quantile().domain(domain).range(colorRange);
         // Stats
         quantiles = color.quantiles();
         iqr = quantiles[2] - quantiles[0];
         upperOutlier = quantiles[2] + 1.5 * iqr;
         lowerOutlier = quantiles[0] - 1.5 * iqr;
+        min = d3.min(domain);
+        max = d3.max(domain);
         // Select SVG container and join data
         svg = d3.select(this).selectAll('svg').data([data]);
         // Append containers
@@ -50951,44 +51007,50 @@ angular.module('sumaAnalysis').directive('sumaHourlyCalendarChart', function () 
         });
         // Key
         d3.select('.gKey').remove();
-        keySet = [
-          1,
-          2,
-          3,
-          4,
-          5
-        ];
-        key = d3.select('#calendar').append('g').attr('class', 'gKey').attr('transform', 'translate(765, 335)');
-        key.append('text').attr('x', '0').attr('y', '9px').text('Less').attr('fill', '#000').attr('alignment', 'baseline');
-        key.selectAll('.rKey').data(keySet).enter().append('rect').attr('class', 'rKey').attr('width', '10px').attr('height', '10px').attr('x', function (d, i) {
-          return 15 * i + 30;
-        }).attr('y', function () {
-          return 0;
-        }).style('fill', function (d, i) {
-          return setKeyColor(d, i);
-        }).attr('title', function (d, i) {
-          return setKeyTitle(d, i);
-        }).attr('data-toggle', 'tooltip');
-        key.append('text').attr('x', '110px').attr('y', '9px').text(function () {
-          return 'More (' + quantiles[2].toFixed(2) + '+)';
-        }).attr('fill', '#000').attr('alignment', 'baseline');
+        // Only show key if iqr is valid
+        if (!_.isNaN(iqr)) {
+          keySet = [
+            1,
+            2,
+            3,
+            4,
+            5
+          ];
+          key = d3.select('#calendar').append('g').attr('class', 'gKey').attr('transform', 'translate(765, 335)');
+          key.append('text').attr('x', '0').attr('y', '9px').text('Less').attr('fill', '#000').attr('alignment', 'baseline');
+          key.selectAll('.rKey').data(keySet).enter().append('rect').attr('class', 'rKey').attr('width', '10px').attr('height', '10px').attr('x', function (d, i) {
+            return 15 * i + 30;
+          }).attr('y', function () {
+            return 0;
+          }).style('fill', function (d, i) {
+            return setKeyColor(d, i);
+          }).attr('title', function (d, i) {
+            return setKeyTitle(d, i);
+          }).attr('data-toggle', 'tooltip');
+          key.append('text').attr('x', '110px').attr('y', '9px').text(function () {
+            return 'More (' + quantiles[2].toFixed(2) + '+)';
+          }).attr('fill', '#000').attr('alignment', 'baseline');
+        }
         // Outliers Key
         d3.select('.gOutlier').remove();
-        outlierKeyset = [
-          1,
-          2
-        ];
-        outlierKey = d3.select('#calendar').append('g').attr('class', 'gOutlier').attr('transform', 'translate(615, 335)');
-        outlierKey.append('text').attr('x', '0').attr('y', '9px').text('Potential Outliers').attr('fill', '#000').attr('alignment', 'baseline');
-        outlierKey.selectAll('.rOutlier').data(outlierKeyset).enter().append('rect').attr('class', 'rOutlier').attr('width', '10px').attr('height', '10px').attr('x', function (d, i) {
-          return 15 * i + 85;
-        }).attr('y', function () {
-          return 0;
-        }).style('fill', function (d, i) {
-          return setOutlierColor(d, i);
-        }).attr('title', function (d, i) {
-          return setOutlierTitle(d, i);
-        }).attr('data-toggle', 'tooltip');
+        // Only show outliers if iqr is valid
+        if (!_.isNaN(iqr)) {
+          outlierKeyset = [
+            1,
+            2
+          ];
+          outlierKey = d3.select('#calendar').append('g').attr('class', 'gOutlier').attr('transform', 'translate(615, 335)');
+          outlierKey.append('text').attr('x', '0').attr('y', '9px').text('Potential Outliers').attr('fill', '#000').attr('alignment', 'baseline');
+          outlierKey.selectAll('.rOutlier').data(outlierKeyset).enter().append('rect').attr('class', 'rOutlier').attr('width', '10px').attr('height', '10px').attr('x', function (d, i) {
+            return 15 * i + 85;
+          }).attr('y', function () {
+            return 0;
+          }).style('fill', function (d, i) {
+            return setOutlierColor(d, i);
+          }).attr('title', function (d, i) {
+            return setOutlierTitle(d, i);
+          }).attr('data-toggle', 'tooltip');
+        }
         //Initialize Tooltips
         $('.hour, .rKey, .rOutlier').tooltip({
           container: 'body',
@@ -51015,12 +51077,18 @@ angular.module('sumaAnalysis').directive('sumaHourlyCalendarChart', function () 
         d3.select(element[0]).datum(data.data).call(chart);
       };
       scope.updateStats = function () {
-        scope.stats = {};
-        scope.stats.quartiles = '(' + quantiles[0].toFixed(2) + ', ' + quantiles[1].toFixed(2) + ', ' + quantiles[2].toFixed(2) + ')';
-        scope.stats.iqr = iqr.toFixed(2);
-        scope.stats.upperOutlier = upperOutlier.toFixed(2);
-        scope.stats.lowerOutlier = lowerOutlier.toFixed(2) > 0 ? lowerOutlier.toFixed(2) : 'No Threshold';
-        scope.stats.median = quantiles[1].toFixed(2);
+        scope.stats = null;
+        // Only show stats if iqr is valid
+        if (!_.isNaN(iqr)) {
+          scope.stats = {};
+          scope.stats.quartiles = '(' + quantiles[0].toFixed(2) + ', ' + quantiles[1].toFixed(2) + ', ' + quantiles[2].toFixed(2) + ')';
+          scope.stats.iqr = iqr.toFixed(2);
+          scope.stats.upperOutlier = upperOutlier.toFixed(2);
+          scope.stats.lowerOutlier = lowerOutlier.toFixed(2) > 0 ? lowerOutlier.toFixed(2) : 'No Threshold';
+          scope.stats.median = quantiles[1].toFixed(2);
+          scope.stats.min = min;
+          scope.stats.max = max;
+        }
       };
       scope.$watch('data', function (newData) {
         if (!newData) {
