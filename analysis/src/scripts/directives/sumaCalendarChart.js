@@ -127,13 +127,6 @@ angular.module('sumaAnalysis')
           return 'Greater than ' + upperOutlier.toFixed(2);
         }
 
-        // FIXME: TEMPORARY METHOD UNTIL
-        // https://github.com/mbostock/d3/pull/1834
-        // is applied to master in D3
-        function d3_number(x) {
-          return x !== null && x !== undefined && !isNaN(x);
-        }
-
         selection.each(function (counts) {
           var domain,
           svg,
@@ -155,12 +148,7 @@ angular.module('sumaAnalysis')
           ).reverse();
 
           // Color scale domain
-          // FIXME: TEMPORARY FIX until
-          // https://github.com/mbostock/d3/pull/1834
-          // is applied to master
-          domain = _.filter(d3.values(data), function (e) {
-            return d3_number(e);
-          });
+          domain = d3.values(data);
 
           // Color scale
           color = d3.scale.quantile()
