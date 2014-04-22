@@ -3,10 +3,7 @@
 require_once 'ServerIO.php';
 require_once 'Gump.php';
 require_once 'SumaGump.php';
-
-// Suppress Error Reporting
-error_reporting(0);
-ini_set('display_errors', 0);
+require_once 'spyc/Spyc.php';
 
 /**
  * Class to create an hourly report on previous
@@ -22,6 +19,33 @@ class SessionsData
      * @access  private
      */
     private $countHash = array();
+    /**
+     * [__construct]
+     */
+    function __construct() {
+        $config = Spyc::YAMLLoad(realpath(dirname(__FILE__)) . '/../../../config/config.yaml');
+
+        if (isset($config['showErrors']))
+        {
+            if ($config['showErrors'] === true)
+            {
+                error_reporting(1);
+                ini_set('display_errors', 1);
+            }
+            else
+            {
+                error_reporting(0);
+                ini_set('display_errors', 0);
+            }
+        }
+        else
+        {
+            // Set error reporting to false so json is returned to client with error message
+            error_reporting(0);
+            ini_set('display_errors', 0);
+            throw new Exception('Error loading config.yaml. Please verify config.yaml exists.', 500);
+        }
+    }
     /**
      * Form input validation.
      * @param  array $input

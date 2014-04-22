@@ -5,10 +5,10 @@ header('Content-type: application/json');
 require_once 'Data.php';
 require_once 'setHttpCode.php';
 
-// Instantiate Data class
-$data = new Data();
-
 try {
+    // Instantiate Data class
+    $data = new Data();
+
     // $_GET superglobal is only used to read
     // input parameters. It is not modified by
     // Data.php and extraneous parameters will
@@ -19,7 +19,6 @@ try {
 }
 catch (Exception $e)
 {
-
     $message = (string)$e->getMessage();
     $code = (int)$e->getCode();
     $header = setHttpCode($code);
