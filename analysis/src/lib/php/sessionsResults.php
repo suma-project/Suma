@@ -5,10 +5,10 @@ header('Content-type: application/json');
 require_once 'SessionsData.php';
 require_once 'setHttpCode.php';
 
-// Initialize class and retrieve data
-$data = new SessionsData();
-
 try {
+    // Initialize class and retrieve data
+    $data = new SessionsData();
+
     // $_GET superglobal is only used to read
     // input parameters. It is not modified by
     // SessionsData.php and extraneous parameters
@@ -21,7 +21,6 @@ catch (Exception $e)
 {
     $message = (string)$e->getMessage();
     $code = (int)$e->getCode();
-
     $header = setHttpCode($code);
 
     // Set Header

@@ -1,5 +1,8 @@
 # Copy this file to a new file `config.yaml`
 
+# Display errors. Valid values are true or false.
+showErrors: false
+
 # Change baseUrl to the URL for your Suma Query Server. If you
 # used a directory other than `sumaserver` in the "Suma Software Installation"
 # section in `INSTALL.md`, that should be reflected in this URL.
