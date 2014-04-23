@@ -50403,8 +50403,8 @@ angular.module('sumaAnalysis').directive('sumaCalendarChart', function () {
         return 'Greater than ' + upperOutlier.toFixed(2);
       }
       selection.each(function (counts) {
-        var domain, svg, range, gWrap, gWrapEnter, rect;
-        // Actual display data
+        var domain, svg, range, gWrap, rect;
+        // Display data
         data = d3.nest().key(function (d) {
           return d.date;
         }).rollup(function (d) {
@@ -50426,12 +50426,11 @@ angular.module('sumaAnalysis').directive('sumaCalendarChart', function () {
         // Define svg wrapper
         svg = d3.select(this).selectAll('svg').data([data]);
         // Append gWrap g element
-        svg.enter().append('svg').append('g').attr('class', 'gWrap');
-        svg.attr('font-size', '10px');
+        svg.enter().append('svg').append('g').attr('class', 'gWrap').attr('font-size', '10px');
         // Select gWrap
         gWrap = svg.select('.gWrap').selectAll('g').data(range);
         // Append inner g elements
-        gWrapEnter = gWrap.enter().append('g').attr('class', 'gInner').attr('transform', function (d, i) {
+        gWrap.enter().append('g').attr('class', 'gInner').attr('transform', function (d, i) {
           var rowHeight;
           if (i > 0) {
             rowHeight = height - cellSize * 7 - 1 + (height * i + 30 * i);
@@ -50442,8 +50441,24 @@ angular.module('sumaAnalysis').directive('sumaCalendarChart', function () {
           }
           return 'translate(' + 60 + ',' + rowHeight + ')';
         });
-        // Key
-        d3.select('.gKey').remove();
+        // Create day rects
+        rect = gWrap.selectAll('.day').data(function (d) {
+          return d3.time.days(new Date(d, 0, 1), new Date(d + 1, 0, 1));
+        });
+        // ENTER
+        rect.enter().append('rect').attr('x', function (d) {
+          return week(d) * cellSize;
+        }).attr('y', function (d) {
+          return day(d) * cellSize;
+        }).attr('width', cellSize).attr('height', cellSize).attr('class', 'day').attr('stroke', '#fff').attr('stroke-width', '2px').style('fill', '#eee');
+        // UPDATE
+        rect.attr('data-original-title', function (d) {
+          return setTitle(format(d));
+        }).transition().duration(750).style('fill', function (d) {
+          return setColor(format(d));
+        });
+        // Remove labels for redraw
+        d3.selectAll('.chartLabel, .gOutlier, .gKey').remove();
         // Only show key if iqr is valid
         if (!_.isNaN(iqr)) {
           keySet = [
@@ -50470,9 +50485,7 @@ angular.module('sumaAnalysis').directive('sumaCalendarChart', function () {
             return 'More (' + quantiles[2].toFixed(2) + '+)';
           }).attr('fill', '#000').attr('alignment', 'baseline');
         }
-        // Outliers Key
-        d3.select('.gOutlier').remove();
-        // Only show outliers if iqr is valid
+        // Only show outliers key if iqr is valid
         if (!_.isNaN(iqr)) {
           outlierKeyset = [
             1,
@@ -50492,41 +50505,25 @@ angular.module('sumaAnalysis').directive('sumaCalendarChart', function () {
             return setOutlierTitle(d, i);
           }).attr('data-toggle', 'tooltip');
         }
-        // Create day rects
-        rect = gWrap.selectAll('.day').data(function (d) {
-          return d3.time.days(new Date(d, 0, 1), new Date(d + 1, 0, 1));
-        });
-        // ENTER
-        rect.enter().append('rect').attr('class', 'day').attr('width', cellSize).attr('height', cellSize).attr('x', function (d) {
-          return week(d) * cellSize;
-        }).attr('y', function (d) {
-          return day(d) * cellSize;
-        }).attr('stroke', '#fff').attr('stroke-width', '2px').style('fill', '#eee');
-        // UPDATE
-        rect.attr('data-original-title', function (d) {
-          return setTitle(format(d));
-        }).transition().duration(750).style('fill', function (d) {
-          return setColor(format(d));
-        });
         // Year label
-        gWrapEnter.append('text').attr('transform', 'translate(-40,' + cellSize * 3.5 + ')rotate(-90)').style('text-anchor', 'middle').text(function (d) {
+        gWrap.append('text').attr('class', 'chartLabel').attr('transform', 'translate(-40,' + cellSize * 3.5 + ')rotate(-90)').style('text-anchor', 'middle').text(function (d) {
           return d;
         });
         // Month Label
-        gWrapEnter.selectAll('monthName').data(function (d) {
+        gWrap.selectAll('monthName').data(function (d) {
           return d3.time.months(new Date(d, 0, 1), new Date(d + 1, 0, 1));
-        }).enter().append('text').attr('x', function (d) {
+        }).enter().append('text').attr('class', 'chartLabel').attr('x', function (d) {
           return setMonthLabelPos(d);
         }).attr('y', -10).text(month_name);
         // Day of the Week Label
-        gWrapEnter.selectAll('dayOfWeek').data(days).enter().append('text').attr('x', -20).attr('opacity', function (d, i) {
+        gWrap.selectAll('dayOfWeek').data(days).enter().append('text').attr('class', 'chartLabel').attr('x', -20).attr('opacity', function (d, i) {
           return setDayVisibility(i);
         }).attr('y', function (d, i) {
           return cellSize * i + 12;
         }).text(function (d) {
           return d;
         });
-        //Initialize Tooltips
+        // Initialize Tooltips
         $('.day, .rKey, .rOutlier').tooltip({
           container: 'body',
           html: true,
@@ -50559,7 +50556,6 @@ angular.module('sumaAnalysis').directive('sumaCalendarChart', function () {
         $('.day, .rKey, .rOutlier').tooltip('hide');
       });
       scope.render = function (data) {
-        d3.select(element[0]).select('svg, div').remove();
         d3.select(element[0]).datum(data.data).call(chart);
       };
       scope.updateStats = function () {
