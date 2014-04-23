@@ -54,25 +54,15 @@ class NightlyData
     function __construct() {
         $config = Spyc::YAMLLoad(realpath(dirname(__FILE__)) . '/../../../config/config.yaml');
 
-        if (isset($config['showErrors']))
+        if (isset($config['showErrors']) && $config['showErrors'] === true)
         {
-            if ($config['showErrors'] === true)
-            {
-                error_reporting(1);
-                ini_set('display_errors', 1);
-            }
-            else
-            {
-                error_reporting(0);
-                ini_set('display_errors', 0);
-            }
+            error_reporting(1);
+            ini_set('display_errors', 1);
         }
         else
         {
-            // Set error reporting to false so json is returned to client with error message
             error_reporting(0);
             ini_set('display_errors', 0);
-            throw new Exception('Error loading config.yaml. Please verify config.yaml exists.', 500);
         }
     }
     /**
