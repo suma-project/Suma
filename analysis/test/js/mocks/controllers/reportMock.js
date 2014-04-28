@@ -13,6 +13,10 @@ angular.module('reportMock', [])
       {id: 'no', title: 'No'},
       {id: 'yes', title: 'Yes'}
     ],
+    zeroOptions: [
+      {id: 'no', title: 'No'},
+      {id: 'yes', title: 'Yes'}
+    ],
     startDate: [moment().subtract('months', 6).add('days', 1).format('YYYY-MM-DD')],
     endDate: [moment().add('days', 1).format('YYYY-MM-DD')],
     startTime: [''],
@@ -21,6 +25,7 @@ angular.module('reportMock', [])
   formDefaults: {
     classifyCounts: 'countOptions',
     wholeSession: 'sessionOptions',
+    zeroCounts: 'zeroOptions',
     sdate: 'startDate',
     edate: 'endDate',
     stime: 'startTime',
@@ -34,6 +39,7 @@ angular.module('reportMock', [])
     classifyCounts: true,
     days: true,
     wholeSession: true,
+    zeroCounts: true,
     activities: true,
     locations: true
   },

@@ -38,7 +38,7 @@ describe('Service: Processtimeseriesdata', function () {
   }));
 
   it('should build an object of data objects', function (done) {
-    Processtimeseriesdata.get(MockResponse, MockActivities, MockLocations)
+    Processtimeseriesdata.get(MockResponse, MockActivities, MockLocations, {zeroCounts: {id: 'no'}})
       .then(function (data) {
         expect(MockProcessedData).to.deep.equal(data);
         done();
@@ -52,7 +52,7 @@ describe('Service: Processtimeseriesdata', function () {
         acts = [],
         resp = {};
 
-    Processtimeseriesdata.get(resp, acts, locs)
+    Processtimeseriesdata.get(resp, acts, locs, {zeroCounts: {id: 'yes'}})
       .then(function (data) {
         expect(data).to.be.an('object');
         done();
@@ -62,7 +62,7 @@ describe('Service: Processtimeseriesdata', function () {
   });
 
   it('should handle zero/NaN conditions', function (done) {
-    Processtimeseriesdata.get(MockResponseZeros, MockActivities, MockLocations)
+    Processtimeseriesdata.get(MockResponseZeros, MockActivities, MockLocations, {zeroCounts: {id: 'no'}})
       .then(function (data) {
         expect(MockProcessedZeros).to.deep.equal(data);
         done();

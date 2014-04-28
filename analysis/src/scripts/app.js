@@ -16,6 +16,10 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
           {id: 'no', title: 'No'},
           {id: 'yes', title: 'Yes'}
         ],
+        zeroOptions: [
+          {id: 'no', title: 'No'},
+          {id: 'yes', title: 'Yes'}
+        ],
         startDate: [moment().subtract('months', 4).format('YYYY-MM-DD')],
         endDate: [moment().format('YYYY-MM-DD')],
         startTime: [''],
@@ -24,6 +28,7 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
       formDefaults: {
         classifyCounts: 'countOptions',
         wholeSession: 'sessionOptions',
+        zeroCounts: 'zeroOptions',
         sdate: 'startDate',
         edate: 'endDate',
         stime: 'startTime',
@@ -37,6 +42,7 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
         classifyCounts: true,
         days: true,
         wholeSession: true,
+        zeroCounts: true,
         activities: true,
         locations: true
       },
@@ -105,6 +111,7 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
             newConfig.formFields.classifyCounts = false;
             newConfig.formFields.days = false;
             newConfig.formFields.wholeSession = false;
+            newConfig.formFields.zeroCounts = false;
             newConfig.formFields.activities = false;
             newConfig.formFields.locations = false;
 

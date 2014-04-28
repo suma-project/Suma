@@ -67,6 +67,7 @@ describe('Service: ScopeUtils', function () {
       classifyCounts: 'count',
       days: 'mo,tu,we,th,fr,sa,su',
       wholeSession: 'no',
+      zeroCounts: 'no',
       sdate: '20131111',
       edate: '20140101',
       stime: '0400',
@@ -80,6 +81,7 @@ describe('Service: ScopeUtils', function () {
       init: {id: 4},
       classifyCounts: {id: 'count', title: 'Count Date'},
       wholeSession: {id: 'no', title: 'No'},
+      zeroCounts: {id: 'no', title: 'No'},
       days: ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su'],
       activity: {id: 'all'},
       location: {id: 'all'},
@@ -124,6 +126,7 @@ describe('Service: ScopeUtils', function () {
       classifyCounts: 'count',
       days: 'mo,tu,we,th,fr,sa,su',
       wholeSession: 'no',
+      zeroCounts: 'no',
       sdate: '20131111',
       edate: '20140101',
       stime: '0400',
@@ -137,6 +140,7 @@ describe('Service: ScopeUtils', function () {
       init: {id: 4},
       classifyCounts: {id: 'count', title: 'Count Date'},
       wholeSession: {id: 'no', title: 'No'},
+      zeroCounts: {id: 'no', title: 'No'},
       days: ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su'],
       activity: {id: '4', type: 'activity'},
       location: {id: 'all'},
@@ -265,7 +269,8 @@ describe('Service: ScopeUtils', function () {
     // Call ScopeUtils.set
     ScopeUtils.set(urlParams, SumaConfig, inits).then(function (response) {
       // Assertions
-      expect(response.errorMessage).to.equal('Query parameter input error. Invalid value for classifyCounts. Valid values are "count", "start", or "end". Invalid value for wholeSession. Valid values are "yes" or "no". At least one calendar day should be selected. Valid values are "mo", "tu", "we", "th", "fr", "sa", "su". Values should be separated by a comma. Invalid value for activity. Invalid value for location. Invalid value for sdate. Should be numeric and either 0 or 8 characters in length, not counting punctuation. Invalid value for edate. Should be numeric and either 0 or 8 characters in length, not counting punctuation. Invalid value for stime. Should be numeric and either 0 or 4 characters in length, not counting punctuation. Invalid value for etime. Should be numeric and either 0 or 4 characters in length, not counting punctuation. ');
+      //expect(response.errorMessage).to.equal('Query parameter input error. Invalid value for classifyCounts. Valid values are "count", "start", or "end". Invalid value for wholeSession. Valid values are "yes" or "no". At least one calendar day should be selected. Valid values are "mo", "tu", "we", "th", "fr", "sa", "su". Values should be separated by a comma. Invalid value for activity. Invalid value for location. Invalid value for sdate. Should be numeric and either 0 or 8 characters in length, not counting punctuation. Invalid value for edate. Should be numeric and either 0 or 8 characters in length, not counting punctuation. Invalid value for stime. Should be numeric and either 0 or 4 characters in length, not counting punctuation. Invalid value for etime. Should be numeric and either 0 or 4 characters in length, not counting punctuation. ');
+      expect(response.errorMessage).to.equal('Query parameter input error. Invalid value for classifyCounts. Valid values are "count", "start", or "end". Invalid value for wholeSession. Valid values are "yes" or "no". Invalid value for zeroCounts. Valid values are "yes" or "no". At least one calendar day should be selected. Valid values are "mo", "tu", "we", "th", "fr", "sa", "su". Values should be separated by a comma. Invalid value for activity. Invalid value for location. Invalid value for sdate. Should be numeric and either 0 or 8 characters in length, not counting punctuation. Invalid value for edate. Should be numeric and either 0 or 8 characters in length, not counting punctuation. Invalid value for stime. Should be numeric and either 0 or 4 characters in length, not counting punctuation. Invalid value for etime. Should be numeric and either 0 or 4 characters in length, not counting punctuation. ');
     });
 
     scope.$digest();

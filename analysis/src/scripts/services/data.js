@@ -91,7 +91,7 @@ angular.module('sumaAnalysis')
         };
 
         this.httpSuccess = function (response) {
-          processor.get(response.data, cfg.acts, cfg.locs).then(function (processedData) {
+          processor.get(response.data, cfg.acts, cfg.locs, cfg.params).then(function (processedData) {
             dfd.resolve(processedData);
           }, self.processorError);
         };

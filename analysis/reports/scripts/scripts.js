@@ -48606,6 +48606,16 @@ angular.module('sumaAnalysis', [
               title: 'Yes'
             }
           ],
+          zeroOptions: [
+            {
+              id: 'no',
+              title: 'No'
+            },
+            {
+              id: 'yes',
+              title: 'Yes'
+            }
+          ],
           startDate: [moment().subtract('months', 4).format('YYYY-MM-DD')],
           endDate: [moment().format('YYYY-MM-DD')],
           startTime: [''],
@@ -48614,6 +48624,7 @@ angular.module('sumaAnalysis', [
         formDefaults: {
           classifyCounts: 'countOptions',
           wholeSession: 'sessionOptions',
+          zeroCounts: 'zeroOptions',
           sdate: 'startDate',
           edate: 'endDate',
           stime: 'startTime',
@@ -48627,6 +48638,7 @@ angular.module('sumaAnalysis', [
           classifyCounts: true,
           days: true,
           wholeSession: true,
+          zeroCounts: true,
           activities: true,
           locations: true
         },
@@ -48679,6 +48691,7 @@ angular.module('sumaAnalysis', [
           newConfig.formFields.classifyCounts = false;
           newConfig.formFields.days = false;
           newConfig.formFields.wholeSession = false;
+          newConfig.formFields.zeroCounts = false;
           newConfig.formFields.activities = false;
           newConfig.formFields.locations = false;
           newConfig.dataSource = 'getSessionsData';
@@ -48867,6 +48880,7 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
         etime: $scope.params.etime || $scope.params.etime === '' ? $scope.params.etime : null,
         classifyCounts: $scope.params.classifyCounts ? $scope.params.classifyCounts.id : null,
         wholeSession: $scope.params.wholeSession ? $scope.params.wholeSession.id : null,
+        zeroCounts: $scope.params.zeroCounts ? $scope.params.zeroCounts.id : null,
         activity: $scope.params.activity ? $scope.params.activity.type ? $scope.params.activity.type + '-' + $scope.params.activity.id : $scope.params.activity.id : null,
         location: $scope.params.location ? $scope.params.location.id : null,
         days: scopeUtils.stringifyDays($scope.params.days)
@@ -49105,7 +49119,7 @@ angular.module('sumaAnalysis').factory('data', [
           timeout: cfg.timeoutPromise.promise
         };
         this.httpSuccess = function (response) {
-          processor.get(response.data, cfg.acts, cfg.locs).then(function (processedData) {
+          processor.get(response.data, cfg.acts, cfg.locs, cfg.params).then(function (processedData) {
             dfd.resolve(processedData);
           }, self.processorError);
         };
@@ -49210,6 +49224,14 @@ angular.module('sumaAnalysis').factory('scopeUtils', [
             });
             if (!newParams.wholeSession) {
               errors.push('Invalid value for wholeSession. Valid values are "yes" or "no".');
+            }
+          }
+          if (sumaConfig.formFields.zeroCounts) {
+            newParams.zeroCounts = _.find(sumaConfig.formData.zeroOptions, function (e, i) {
+              return String(e.id) === String(urlParams.zeroCounts);
+            });
+            if (!newParams.zeroCounts) {
+              errors.push('Invalid value for zeroCounts. Valid values are "yes" or "no".');
             }
           }
           if (sumaConfig.formFields.days) {
@@ -49404,10 +49426,16 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
       }
       return false;
     }
-    function processData(response, activities, locations) {
-      var noActsSum, noActsAvgSum, noActsAvgAvg, counts;
+    function processData(response, activities, locations, zeroCounts) {
+      var noActsSum, noActsAvgSum, noActsAvgAvg, counts, divisor;
       // Convert response into arrays of objects
       counts = {};
+      // Configure divisor for avg/pct calculations
+      if (zeroCounts.id === 'no') {
+        divisor = response.total;
+      } else {
+        divisor = response.zeroDivisor;
+      }
       // CSV
       counts.csv = response.csv;
       // Total Sum
@@ -49419,11 +49447,11 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
       // Days with Observations
       counts.daysWithObservations = [{ count: response.daysWithObservations }];
       // Locations related data
-      counts.locationsTable = buildTableArray(locations, response.locationsSum, response.total, 'parent');
-      counts.locationsSum = buildArray(locations, response.locationsSum, response.total);
-      counts.locationsAvgSum = buildArray(locations, response.locationsAvgSum, response.total, true);
-      counts.locationsAvgAvg = buildArray(locations, response.locationsAvgAvg, response.total, true);
-      counts.locationsPct = buildArray(locations, response.locationsSum, response.total, false, true);
+      counts.locationsTable = buildTableArray(locations, response.locationsSum, divisor, 'parent');
+      counts.locationsSum = buildArray(locations, response.locationsSum, divisor);
+      counts.locationsAvgSum = buildArray(locations, response.locationsAvgSum, divisor, true);
+      counts.locationsAvgAvg = buildArray(locations, response.locationsAvgAvg, divisor, true);
+      counts.locationsPct = buildArray(locations, response.locationsSum, divisor, false, true);
       // Activities related data
       counts.activitiesTable = buildTableArray(activities, response.activitiesSum, response.total, 'activityGroup');
       counts.activitiesSum = buildArray(activities, response.activitiesSum, response.total);
@@ -49468,7 +49496,7 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
         return {
           name: index,
           count: element,
-          percent: calcPct(element, response.total)
+          percent: calcPct(element, divisor)
         };
       }), function (hour) {
         return hour.count !== null;
@@ -49478,7 +49506,7 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
         return {
           name: index,
           count: element,
-          percent: calcPct(element.total, response.total)
+          percent: calcPct(element.total, divisor)
         };
       }), function (item) {
         return weekdays[item.name];
@@ -49490,7 +49518,7 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
             date: month + ' ' + '1' + ', ' + year,
             name: month + ' ' + year,
             count: count,
-            percent: calcPct(count, response.total)
+            percent: calcPct(count, divisor)
           };
         });
       })), function (item) {
@@ -49501,7 +49529,7 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
         return {
           name: index,
           count: element,
-          percent: calcPct(element, response.total)
+          percent: calcPct(element, divisor)
         };
       }), function (item) {
         return item.name;
@@ -49570,7 +49598,7 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
       return counts;
     }
     return {
-      get: function (response, acts, locs) {
+      get: function (response, acts, locs, params) {
         var dfd = $q.defer();
         acts = _.filter(acts, function (act) {
           return act.id !== 'all';
@@ -49578,7 +49606,7 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
         locs = _.filter(locs, function (loc) {
           return loc.id !== 'all';
         });
-        dfd.resolve(processData(response, acts, locs));
+        dfd.resolve(processData(response, acts, locs, params.zeroCounts));
         return dfd.promise;
       }
     };

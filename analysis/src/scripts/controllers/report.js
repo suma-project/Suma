@@ -182,6 +182,7 @@ angular.module('sumaAnalysis')
         etime: $scope.params.etime || $scope.params.etime === '' ? $scope.params.etime : null,
         classifyCounts: $scope.params.classifyCounts ? $scope.params.classifyCounts.id : null,
         wholeSession: $scope.params.wholeSession ? $scope.params.wholeSession.id : null,
+        zeroCounts: $scope.params.zeroCounts ? $scope.params.zeroCounts.id : null,
         activity: $scope.params.activity ? $scope.params.activity.type ? $scope.params.activity.type + '-' + $scope.params.activity.id : $scope.params.activity.id : null,
         location: $scope.params.location ? $scope.params.location.id : null,
         days: scopeUtils.stringifyDays($scope.params.days)

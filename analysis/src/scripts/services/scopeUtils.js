@@ -54,6 +54,16 @@ angular.module('sumaAnalysis')
             }
           }
 
+          if (sumaConfig.formFields.zeroCounts) {
+            newParams.zeroCounts = _.find(sumaConfig.formData.zeroOptions, function (e, i) {
+              return String(e.id) === String(urlParams.zeroCounts);
+            });
+
+            if (!newParams.zeroCounts) {
+              errors.push('Invalid value for zeroCounts. Valid values are "yes" or "no".');
+            }
+          }
+
           if (sumaConfig.formFields.days) {
             if (urlParams.days) {
               var days = urlParams.days.split(',');

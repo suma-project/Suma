@@ -746,6 +746,31 @@ class Data
             $this->countHash['total'] += $count['number'];
         }
 
+        // Increment Zero Divisor, used for calcuations that
+        // should include zero. Useful for locations.
+        if (!isset($this->countHash['zeroDivisor']))
+        {
+            if ($count['number'] === 0)
+            {
+                $this->countHash['zeroDivisor'] = 1;
+            }
+            else
+            {
+                $this->countHash['zeroDivisor'] = $count['number'];
+            }
+        }
+        else
+        {
+            if ($count['number'] === 0)
+            {
+                $this->countHash['zeroDivisor'] += 1;
+            }
+            else
+            {
+                $this->countHash['zeroDivisor'] += $count['number'];
+            }
+        }
+
         // Build year summary array
         if(!isset($this->countHash['yearSummary'][$year]))
         {

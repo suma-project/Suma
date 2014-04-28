@@ -122,15 +122,22 @@ angular.module('sumaAnalysis')
       return false;
     }
 
-    function processData (response, activities, locations) {
+    function processData (response, activities, locations, zeroCounts) {
       var noActsSum,
         noActsAvgSum,
         noActsAvgAvg,
-        counts;
+        counts,
+        divisor;
 
       // Convert response into arrays of objects
       counts = {};
 
+      // Configure divisor for avg/pct calculations
+      if (zeroCounts.id === 'no') {
+        divisor = response.total;
+      } else {
+        divisor = response.zeroDivisor;
+      }
       // CSV
       counts.csv = response.csv;
 
@@ -155,11 +162,11 @@ angular.module('sumaAnalysis')
       }];
 
       // Locations related data
-      counts.locationsTable = buildTableArray(locations, response.locationsSum, response.total, 'parent');
-      counts.locationsSum = buildArray(locations, response.locationsSum, response.total);
-      counts.locationsAvgSum = buildArray(locations, response.locationsAvgSum, response.total, true);
-      counts.locationsAvgAvg = buildArray(locations, response.locationsAvgAvg, response.total, true);
-      counts.locationsPct = buildArray(locations, response.locationsSum, response.total, false, true);
+      counts.locationsTable = buildTableArray(locations, response.locationsSum, divisor, 'parent');
+      counts.locationsSum = buildArray(locations, response.locationsSum, divisor);
+      counts.locationsAvgSum = buildArray(locations, response.locationsAvgSum, divisor, true);
+      counts.locationsAvgAvg = buildArray(locations, response.locationsAvgAvg, divisor, true);
+      counts.locationsPct = buildArray(locations, response.locationsSum, divisor, false, true);
 
       // Activities related data
       counts.activitiesTable = buildTableArray(activities, response.activitiesSum, response.total, 'activityGroup');
@@ -211,7 +218,7 @@ angular.module('sumaAnalysis')
         return {
           name: index,
           count: element,
-          percent: calcPct(element, response.total)
+          percent: calcPct(element, divisor)
         };
       }), function (hour) {
         return hour.count !== null;
@@ -222,7 +229,7 @@ angular.module('sumaAnalysis')
         return {
           name: index,
           count: element,
-          percent: calcPct(element.total, response.total)
+          percent: calcPct(element.total, divisor)
         };
       }), function (item) {
         return weekdays[item.name];
@@ -235,7 +242,7 @@ angular.module('sumaAnalysis')
             date: month + ' ' + '1' + ', ' + year,
             name: month + ' ' + year,
             count: count,
-            percent: calcPct(count, response.total)
+            percent: calcPct(count, divisor)
           };
         });
       })), function (item) {
@@ -247,7 +254,7 @@ angular.module('sumaAnalysis')
         return {
           name: index,
           count: element,
-          percent: calcPct(element, response.total)
+          percent: calcPct(element, divisor)
         };
       }), function (item) {
         return item.name;
@@ -283,7 +290,7 @@ angular.module('sumaAnalysis')
     }
 
     return {
-      get: function (response, acts, locs) {
+      get: function (response, acts, locs, params) {
         var dfd = $q.defer();
 
         acts = _.filter(acts, function (act) {
@@ -294,7 +301,7 @@ angular.module('sumaAnalysis')
           return loc.id !== 'all';
         });
 
-        dfd.resolve(processData(response, acts, locs));
+        dfd.resolve(processData(response, acts, locs, params.zeroCounts));
 
         return dfd.promise;
       }
