@@ -52,6 +52,7 @@ class ServerIO
     function __construct() {
         $config = Spyc::YAMLLoad(realpath(dirname(__FILE__)) . '/../../../config/config.yaml');
 
+        // Verify that config exists
         if (isset($config['serverIO']['baseUrl']))
         {
             $this->_baseUrl = $config['serverIO']['baseUrl'];
@@ -59,6 +60,12 @@ class ServerIO
         else
         {
             throw new Exception('Error loading config.yaml. Please verify config.yaml exists and contains a valid baseUrl.');
+        }
+
+        // Verify that cURL is available
+        if (!function_exists('curl_init'))
+        {
+            throw new Exception('The cURL extension was not found and is required for the Suma analysis tools.');
         }
     }
     /**
