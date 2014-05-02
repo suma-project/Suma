@@ -5,7 +5,7 @@ angular.module('sumaAnalysis')
     return function (input) {
       var depth = input.depth,
         indent = '',
-        title  = input.title || input.name;
+        title  = input.hasOwnProperty('title') ? input.title : input.name;
 
       while (depth > 0) {
         depth -= 1;
