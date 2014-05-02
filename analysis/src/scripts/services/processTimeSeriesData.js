@@ -143,7 +143,12 @@ angular.module('sumaAnalysis')
 
       // Total Sum
       counts.total = [{
-        count : response.total
+        count: response.total
+      }];
+
+      // Total Counts
+      counts.totalCounts = [{
+        count: response.zeroDivisor
       }];
 
       // Total Avg Sum

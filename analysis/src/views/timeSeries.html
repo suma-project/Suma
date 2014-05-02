@@ -60,7 +60,7 @@
       <fieldset data-ng-disabled="state.loading">
         <div class="col-xs-3">
           <div class="form-group">
-            <label class="suma-popover" data-title="Select Initiative" data-content="Select an initiative to reveal additional filters." data-suma-popover>Select an Initiative</label>
+            <label class="suma-popover" data-title="Select Initiative" data-content="Select an initiative to reveal additional filters." data-suma-popover>Select Initiative</label>
             <select name="initiative" data-ng-model="params.init" data-ng-options="init.title for init in inits" data-ng-change="updateMetadata()" class="form-control">
               <option value="">Select an Initiative</option>
             </select>
@@ -79,7 +79,7 @@
           </div>
 
           <div class="form-group">
-            <label class="suma-popover" data-title="Use Zero Counts" data-content="Select yes if you would like to include counts with a number of 0 in the percentage and average calculations for the summary data and locations and activities chart." data-suma-popover>Use Zero Counts</label>
+            <label class="suma-popover" data-title="Use Zero Counts" data-content="Select yes if you would like to include counts with a number of 0 in the percentage and average calculations for the summary data and locations and activities chart." data-suma-popover>Use Zero Counts for Locations </label>
             <select name="zeroCounts" id="zeroCounts" class="form-control" data-ng-model="params.zeroCounts" data-ng-options="opt.title for opt in zeroOptions">
             </select>
           </div>
@@ -161,6 +161,8 @@
       <div>
         <h4>Total Sum</h4>
         <p>{{data.total[0].count | countFormat}}</p>
+        <h4>Total # of Counts</h4>
+        <p>{{data.totalCounts[0].count | countFormat}}</p>
         <h4>Avg of Sums</h4>
         <p>{{data.totalAvgSum[0].count.toFixed(2) | countFormat}}</p>
         <h4>Avg of Avgs</h4>

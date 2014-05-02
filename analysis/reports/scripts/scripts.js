@@ -49440,6 +49440,8 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
       counts.csv = response.csv;
       // Total Sum
       counts.total = [{ count: response.total }];
+      // Total Counts
+      counts.totalCounts = [{ count: response.zeroDivisor }];
       // Total Avg Sum
       counts.totalAvgSum = [{ count: response.totalAvgSum }];
       // Total AvgAvg
