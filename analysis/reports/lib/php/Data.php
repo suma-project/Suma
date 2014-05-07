@@ -616,60 +616,29 @@ class Data
             $this->countHash['csv'][$day]['total'] = $count['number'];
             $this->countHash['csv'][$day]['locations'][$this->locHash[$locId]] = $count['number'];
 
-            if (!empty($intersect))
+            foreach($count['activities'] as $countAct)
             {
-                foreach($intersect as $x)
+                // CSV
+                $this->countHash['csv'][$day]['activities'][$this->actHash[$countAct]] = $count['number'];
+
+                // activitiesSum
+                if (!isset($this->countHash['activitiesSum'][$countAct]))
                 {
-                    // CSV
-                    $this->countHash['csv'][$day]['activities'][$this->actHash[$x]] = $count['number'];
-
-                    //activitiesSum
-                    if (!isset($this->countHash['activitiesSum'][$x]))
-                    {
-                        $this->countHash['activitiesSum'][$x] = $count['number'];
-                    }
-                    else
-                    {
-                        $this->countHash['activitiesSum'][$x] += $count['number'];
-                    }
-
-                    //activitiesAvgAvg
-                    if (!isset($this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sessId][$x]))
-                    {
-                        $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sessId][$x] = $count['number'];
-                    }
-                    else
-                    {
-                        $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sessId][$x] += $count['number'];
-                    }
+                    $this->countHash['activitiesSum'][$countAct] = $count['number'];
                 }
-            }
-            else
-            {
-                foreach($count['activities'] as $countAct)
+                else
                 {
-                    // CSV
-                    $this->countHash['csv'][$day]['activities'][$this->actHash[$countAct]] = $count['number'];
+                    $this->countHash['activitiesSum'][$countAct] += $count['number'];
+                }
 
-                    // activitiesSum
-                    if (!isset($this->countHash['activitiesSum'][$countAct]))
-                    {
-                        $this->countHash['activitiesSum'][$countAct] = $count['number'];
-                    }
-                    else
-                    {
-                        $this->countHash['activitiesSum'][$countAct] += $count['number'];
-                    }
-
-                    // activitiesAvgAvg
-                    if (!isset($this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sessId][$countAct]))
-                    {
-                        $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sessId][$countAct] = $count['number'];
-                    }
-                    else
-                    {
-                        $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sessId][$countAct] += $count['number'];
-                    }
+                // activitiesAvgAvg
+                if (!isset($this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sessId][$countAct]))
+                {
+                    $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sessId][$countAct] = $count['number'];
+                }
+                else
+                {
+                    $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sessId][$countAct] += $count['number'];
                 }
             }
         }
@@ -678,60 +647,29 @@ class Data
             $this->countHash['csv'][$day]['total'] += $count['number'];
             $this->countHash['csv'][$day]['locations'][$this->locHash[$locId]] += $count['number'];
 
-            if (!empty($intersect))
+            foreach($count['activities'] as $countAct)
             {
-                foreach($intersect as $x)
+                // CSV
+                $this->countHash['csv'][$day]['activities'][$this->actHash[$countAct]] += $count['number'];
+
+                // activitiesSum
+                if (!isset($this->countHash['activitiesSum'][$countAct]))
                 {
-                    // CSV
-                    $this->countHash['csv'][$day]['activities'][$this->actHash[$x]] += $count['number'];
-
-                    //activitiesSum
-                    if (!isset($this->countHash['activitiesSum'][$x]))
-                    {
-                        $this->countHash['activitiesSum'][$x] = $count['number'];
-                    }
-                    else
-                    {
-                        $this->countHash['activitiesSum'][$x] += $count['number'];
-                    }
-
-                    //activitiesAvgAvg
-                    if (!isset($this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sessId][$x]))
-                    {
-                        $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sessId][$x] = $count['number'];
-                    }
-                    else
-                    {
-                        $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sessId][$x] += $count['number'];
-                    }
+                    $this->countHash['activitiesSum'][$countAct] = $count['number'];
                 }
-            }
-            else
-            {
-                foreach($count['activities'] as $countAct)
+                else
                 {
-                    // CSV
-                    $this->countHash['csv'][$day]['activities'][$this->actHash[$countAct]] += $count['number'];
+                    $this->countHash['activitiesSum'][$countAct] += $count['number'];
+                }
 
-                    // activitiesSum
-                    if (!isset($this->countHash['activitiesSum'][$countAct]))
-                    {
-                        $this->countHash['activitiesSum'][$countAct] = $count['number'];
-                    }
-                    else
-                    {
-                        $this->countHash['activitiesSum'][$countAct] += $count['number'];
-                    }
-
-                    // activitiesAvgAvg
-                    if (!isset($this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sessId][$countAct]))
-                    {
-                        $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sessId][$countAct] = $count['number'];
-                    }
-                    else
-                    {
-                        $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sessId][$countAct] += $count['number'];
-                    }
+                // activitiesAvgAvg
+                if (!isset($this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sessId][$countAct]))
+                {
+                    $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sessId][$countAct] = $count['number'];
+                }
+                else
+                {
+                    $this->countHash['activitiesAvgAvg']['days'][$day]['sessions'][$sessId][$countAct] += $count['number'];
                 }
             }
         }
