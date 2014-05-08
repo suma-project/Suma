@@ -66,7 +66,7 @@ angular.module('sumaAnalysis')
                     .attr('transorm', 'translate(160,15(');
 
           //Append lines for scale
-          line = gRule.selectAll('line').data(x.ticks(4));
+          line = gRule.selectAll('line').data(x.ticks(3));
 
           // ENTER
           line.enter()
@@ -96,7 +96,7 @@ angular.module('sumaAnalysis')
             .remove();
 
           // Append line labels
-          rule = gBar.selectAll('.rule').data(x.ticks(4));
+          rule = gBar.selectAll('.rule').data(x.ticks(3));
 
           // ENTER
           rule.enter().append('text')
@@ -111,7 +111,7 @@ angular.module('sumaAnalysis')
             .style('opacity', 0.000001)
             .transition().delay(750).duration(500)
             .attr('x', x)
-            .attr('y', 0)
+            .attr('y', -3)
             .attr('dy', -3)
             .attr('text-anchor', 'middle')
             .text(String)
