@@ -49981,7 +49981,7 @@ angular.module('sumaAnalysis').directive('sumaBarChart', function () {
         gBar = svg.select('.gBar').attr('transform', 'translate(160,15)');
         gRule = svg.select('.gRule').attr('transorm', 'translate(160,15(');
         //Append lines for scale
-        line = gRule.selectAll('line').data(x.ticks(6));
+        line = gRule.selectAll('line').data(x.ticks(3));
         // ENTER
         line.enter().append('line').attr('class', 'line').style('stroke', '#ccc');
         // UPDATE
@@ -49991,11 +49991,11 @@ angular.module('sumaAnalysis').directive('sumaBarChart', function () {
         // EXIT
         line.exit().transition().duration(500).attr('x1', 0).attr('x2', 0).style('opacity', 0.000001).remove();
         // Append line labels
-        rule = gBar.selectAll('.rule').data(x.ticks(6));
+        rule = gBar.selectAll('.rule').data(x.ticks(3));
         // ENTER
         rule.enter().append('text').attr('class', 'rule').style('font-size', '12px').style('font-family', 'Verdana');
         // UPDATE
-        rule.transition().duration(500).attr('x', 0).style('opacity', 0.000001).transition().delay(750).duration(500).attr('x', x).attr('y', 0).attr('dy', -3).attr('text-anchor', 'middle').text(String).style('opacity', 1);
+        rule.transition().duration(500).attr('x', 0).style('opacity', 0.000001).transition().delay(750).duration(500).attr('x', x).attr('y', -3).attr('dy', -3).attr('text-anchor', 'middle').text(String).style('opacity', 1);
         // EXIT
         rule.exit().transition().duration(500).attr('x', 0).style('opacity', 0.000001).remove();
         // Append bar rectangles
