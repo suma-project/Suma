@@ -119,19 +119,6 @@
 
         <div class="col-xs-3" data-ng-show="params.init && !processMetadata">
           <div class="form-group">
-            <label class="suma-popover" data-title="Limit Days of the Week" data-content="Filter by weekday." data-suma-popover>Limit Days of the Week</label>
-            <div class="controls">
-              <div class="row" >
-                <div class="col-xs-3" ng-repeat="day in dayOptions">
-                  <label class="checkbox-inline">
-                    <input type="checkbox" value="{{day}}" check-list="params.days" suma-checklist>{{day | capitalize}}
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="form-group">
             <label class="suma-popover" data-title="Limit Locations" data-content="Select which locations to include in your analysis. Selecting a location with children will include all children in the data set." data-suma-popover>Limit Locations</label>
             <div class="controls">
               <select name="locations" data-ng-model="params.location" data-ng-options="loc | depth for loc in locations" class="form-control">
@@ -142,8 +129,44 @@
           <div class="form-group">
             <label class="suma-popover" data-title="Limit Activities" data-content="Select which activities to include in your analysis. Selecting an Activity Group will include all group activities." data-suma-popover>Limit Activities</label>
             <div class="controls">
-              <select name="activities" data-ng-model="params.activity" data-ng-options="act | depth for act in activities" class="form-control">
-              </select>
+              <button type="button" class="btn btn-default" ng-click='toggleModal()'>Limit Activities</button>
+              <modal-dialog show='modalShown' dialog-title='Limit Activities'>
+                <div data-ng-repeat="act in activities">
+                  <div suma-activity-filter act="act"></div>
+                </div>
+              </modal-dialog>
+            </div>
+          </div>
+
+
+          <div class="form-group">
+            <label class="suma-popover">Required Activities</label>
+            <p ng-repeat="act in activities | filter: {filter: 'require'}">{{act.title}}</p>
+            <span ng-repeat="act in activities">
+              <p ng-repeat="child in act.children | filter: {filter: 'require'}">{{child.title}}</p>
+            </span>
+
+
+          </div>
+
+          <div class="form-group">
+            <label class="suma-popover">Excluded Activities</label>
+            <p ng-repeat="act in activities | filter: {filter: 'exclude'}">{{act.title}}</p>
+            <span ng-repeat="act in activities">
+              <p ng-repeat="child in act.children | filter: {filter: 'exclude'}">{{child.title}}</p>
+            </span>
+          </div>
+
+          <div class="form-group">
+            <label class="suma-popover" data-title="Limit Days of the Week" data-content="Filter by weekday." data-suma-popover>Limit Days of the Week</label>
+            <div class="controls">
+              <div class="row" >
+                <div class="col-xs-3" ng-repeat="day in dayOptions">
+                  <label class="checkbox-inline">
+                    <input type="checkbox" value="{{day}}" check-list="params.days" suma-checklist>{{day | capitalize}}
+                  </label>
+                </div>
+              </div>
             </div>
           </div>
 

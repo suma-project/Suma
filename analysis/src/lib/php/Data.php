@@ -3,7 +3,7 @@
 require_once 'ServerIO.php';
 require_once 'Gump.php';
 require_once 'SumaGump.php';
-require_once "spyc/Spyc.php";
+require_once 'spyc/Spyc.php';
 
 /**
  * Data - Class to process data for display in a variety of charts.
@@ -47,7 +47,9 @@ class Data
      * @var array
      * @access  private
      */
-    private $actListIds = array();
+    private $excludeActs = array();
+    private $requireActs = array();
+    private $requireOneOfEach = array();
     /**
      * Stores scaffold array for csvArray
      * @var array
@@ -286,6 +288,7 @@ class Data
 
         return $array;
     }
+
     /**
      * Validates form input from client
      *
@@ -293,7 +296,7 @@ class Data
      * @param  array $input Form input from client
      * @return array
      */
-    private function validateInput($input)
+    private function populateParams($input)
     {
         // Initialize SumaGump class
         $validator = new SumaGump();
@@ -325,8 +328,7 @@ class Data
             'classifyCounts' => 'alpha|contains, count start end',
             'wholeSession'   => 'alpha|contains, yes no',
             'days'           => 'day_of_week',
-            'locations'      => 'alpha_numeric',
-            'activities'     => 'alpha_dash'
+            'locations'      => 'alpha_numeric'
         );
 
         // Filter input
@@ -348,25 +350,41 @@ class Data
                 'wholeSession' => $input['wholeSession'],
                 'days'   => $input['days'],
                 'locations'  => $input['locations'],
-                'activities' => $input['activities']
+                'excludeActs' => $input['excludeActs'],
+                'requireActs' => $input['requireActs'],
+                'excludeActGrps' => $input['excludeActGrps'],
+                'requireActGrps' => $input['requireActGrps']
             );
 
-            // Manipulate activities field, maybe not the best place for this
-            // but this is where the main params array is being built
-            if ($params['activities'] !== 'all')
-            {
-                $actSplit = explode("-", $params['activities']);
-                $actType  = $actSplit[0];
-                $actId    = $actSplit[1];
-            }
-            else
-            {
-                $actType = NULL;
-                $actId   = 'all';
-            }
+            // // Manipulate activities field, maybe not the best place for this
+            // // but this is where the main params array is being built
+            // if ($params['activities'] !== 'all')
+            // {
+            //     $actSplit = explode("-", $params['activities']);
+            //     $actType  = $actSplit[0];
+            //     $actId    = $actSplit[1];
+            // }
+            // else
+            // {
+            //     $actType = NULL;
+            //     $actId   = 'all';
+            // }
 
-            $params['actType'] = $actType;
-            $params['actId']   = $actId;
+            // $params['actType'] = $actType;
+            // $params['actId']   = $actId;
+
+            // Set query type and format
+            $params['format'] = 'lca';
+
+            // Set days of the week
+            $days = explode(",", $input['days']);
+            $params['days'] = array();
+
+            foreach ($days as $day) {
+                if (array_key_exists($day, $this->daysScaffold)) {
+                    array_push($params['days'], $this->daysScaffold[$day]);
+                }
+            }
 
             return $params;
         }
@@ -503,11 +521,34 @@ class Data
 
         return $actArray;
     }
-    private function filterCount($count, $day, $params, $weekday, $intersect)
+    private function rejectBasedOnActs($count)
+    {
+
+        // Reject if no count acts in exclude acts
+        if (count(array_intersect($count['activities'], $this->excludeActs)) > 0) {
+            return true;
+        }
+
+        // Reject if count acts doesn't have all of the requireActs
+        if (count(array_intersect($this->requireActs, $count['activities'])) !== count($this->requireActs))  {
+            return true;
+        }
+
+        // Reject if no countActs in each of the requiredOneOfEach arrays
+        foreach ($this->requireOneOfEach as $actGroup)
+        {
+            if (count(array_intersect($count['activities'], $actGroup)) === 0 && !empty($actGroup)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    private function includeCount($count, $day, $params, $weekday)
     {
         if (!in_array($weekday, $params['days']))
         {
-            return true;
+            return false;
         }
 
         if ($params['wholeSession'] === 'no')
@@ -520,13 +561,13 @@ class Data
             // Enforce start date filter
             if (!empty($sDate) && $tDate < $sDate)
             {
-                return true;
+                return false;
             }
 
             // Enforce end date filter
             if (!empty($eDate) && $tDate > $eDate)
             {
-                return true;
+                return false;
             }
 
             // Honor time filters using count time and input params
@@ -542,7 +583,7 @@ class Data
                 {
                     if ($cTime < $sTime || $cTime > $eTime)
                     {
-                        return true;
+                        return false;
                     }
                 }
                 // Unordered time range
@@ -550,7 +591,7 @@ class Data
                 {
                     if ($cTime < $sTime && $cTime > $eTime)
                     {
-                        return true;
+                        return false;
                     }
                 }
             }
@@ -559,7 +600,7 @@ class Data
             {
                 if ($cTime < $sTime)
                 {
-                    return true;
+                    return false;
                 }
             }
             // eTime is present
@@ -567,22 +608,17 @@ class Data
             {
                 if ($cTime > $eTime)
                 {
-                    return true;
+                    return false;
                 }
             }
         }
 
-        if ($params['activities'] === 'all')
+        if ($this->rejectBasedOnActs($count))
         {
             return false;
         }
 
-        if (empty($intersect))
-        {
-            return true;
-        }
-
-        return false;
+        return true;
     }
     private function setDay($count, $params, $sess)
     {
@@ -598,7 +634,7 @@ class Data
             return substr($sess['end'], 0, -9);
         }
     }
-    private function addCount($count, $day, $locId, $sessId, $weekday, $intersect)
+    private function addCount($count, $day, $locId, $sessId, $weekday)
     {
         $weekdayInt = date('w', strtotime($day));
         $year = date('Y', strtotime($day));
@@ -812,6 +848,77 @@ class Data
             $this->countHash['periodAvg'][$day]['sessions'][$sessId][$locId] += $count['number'];
         }
     }
+    private function buildExcludeActs($excludeActs, $excludeActGrps, $actDict)
+    {
+        if ($excludeActs === "" && $excludeActGrps === "")
+        {
+            return array();
+        }
+
+        $returnAry = array();
+
+        if ($excludeActs !== "")
+        {
+            $actsAry = explode(",", $excludeActs);
+            foreach ($actsAry as $act)
+            {
+                $returnAry[] = (int)$act;
+            }
+        }
+
+        if ($excludeActGrps !== "")
+        {
+            $actGrpsAry = explode(",", $excludeActGrps);
+            foreach ($actDict as $act)
+            {
+                if (in_array((string)$act['activityGroup'], $actGrpsAry))
+                {
+                    $returnAry[] = (int)$act['id'];
+                }
+            }
+        }
+
+        return $returnAry;
+    }
+    private function buildRequireActs($requireActs)
+    {
+        if ($requireActs === "")
+        {
+            return array();
+        }
+
+        $returnAry = array();
+        $actsAry = explode(",", $requireActs);
+
+        foreach($actsAry as $act)
+        {
+            $returnAry[] = (int)$act;
+        }
+
+        return $returnAry;
+    }
+
+    private function buildRequireOneOfEach($requireActGrps, $actDict)
+    {
+        $returnAry = array();
+        $actGrps = explode(",", $requireActGrps);
+
+        foreach ($actGrps as $actGrp)
+        {
+            $acts = array();
+            foreach($actDict as $act)
+            {
+                if ((string)$act['activityGroup'] === (string)$actGrp)
+                {
+                    $acts[] = (int)$act['id'];
+                }
+            }
+
+            $returnAry[] = $acts;
+        }
+
+        return $returnAry;
+    }
     /**
      * Populates countHash class variable with data from Server
      *
@@ -843,13 +950,23 @@ class Data
                 $this->locListIds = $this->pluck($locList, 'id');
             }
         }
-        // Populate activity list for filters
-        if (empty($this->actListIds))
+
+        // Populate activity lists for filters
+        if (empty($this->excludeActs))
         {
-            if ($actID !== 'all'){
-                $this->actListIds = $this->populateActivities($actDict, $actID, $actType);
-            }
+            $this->excludeActs = $this->buildExcludeActs($params['excludeActs'], $params['excludeActGrps'], $actDict);
         }
+
+        if (empty($this->requireActs))
+        {
+            $this->requireActs = $this->buildRequireActs($params['requireActs']);
+        }
+
+        if (empty($this->requireOneOfEach))
+        {
+            $this->requireOneOfEach = $this->buildRequireOneOfEach($params['requireActGrps'], $actDict);
+        }
+
         // Populate $csvScaffold for csv array
         if (!isset($this->csvScaffold))
         {
@@ -881,11 +998,10 @@ class Data
                         // Get date based on count or session
                         $day = $this->setDay($count, $params, $sess);
                         $weekday = date('l', strtotime($day));
-                        $intersect = array_intersect($count['activities'], $this->actListIds);
 
-                        if (!$this->filterCount($count, $day, $params, $weekday, $intersect))
+                        if ($this->includeCount($count, $day, $params, $weekday))
                         {
-                            $this->addCount($count, $day, $loc['id'], $sess['id'], $weekday, $intersect);
+                            $this->addCount($count, $day, $loc['id'], $sess['id'], $weekday);
                         }
                     }
                 }
@@ -1227,27 +1343,13 @@ class Data
     public function getData($input)
     {
         // Validate form input
-        $params = $this->validateInput($input);
-
-        // Set query type and format
-        $params['format'] = 'lca';
-        $queryType        = 'sessions';
-
-        // Set days of the week
-        $days = explode(",", $params['days']);
-        $params['days'] = array();
-
-        foreach ($days as $day) {
-            if (array_key_exists($day, $this->daysScaffold)) {
-                array_push($params['days'], $this->daysScaffold[$day]);
-            }
-        }
+        $params = $this->populateParams($input);
 
         // Create params array for Suma server
         $sumaParams = $this->populateSumaParams($params);
 
         // Process Data
-        $this->processData($sumaParams, $queryType, $params);
+        $this->processData($sumaParams, 'sessions', $params);
 
         // Calculate averages for appropriate sub-arrays of countHash
         $returnData = $this->calculateAvg($this->countHash, $params);

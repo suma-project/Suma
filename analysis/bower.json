@@ -14,6 +14,7 @@
     "json3": "~3.3.0",
     "lodash": "~2.4.1",
     "moment": "~2.5.1",
+    "ngModal": "1.2.2",
     "canvg": "https://canvg.googlecode.com/files/canvg-1.3.zip"
   },
   "devDependencies": {

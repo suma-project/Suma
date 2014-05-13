@@ -18,7 +18,7 @@ angular.module('sumaAnalysis')
     }
 
     function processActivities (activities, activityGroups) {
-      var activityList = [];
+      var activityGroupList = [];
 
       // Sort activities and activity groups
       activities = _.sortBy(activities, 'rank');
@@ -26,35 +26,40 @@ angular.module('sumaAnalysis')
 
       // For each activity group, build a list of activities
       _.each(activityGroups, function (activityGroup) {
-          // Add activity group metadata to activityList array
-          activityList.push({
+          var children = [];
+          // Add activity group metadata to activityGroupList array
+          var activityGroup ={
             'id'   : activityGroup.id,
             'rank' : activityGroup.rank,
             'title': activityGroup.title,
             'type' : 'activityGroup',
-            'depth': 0
-          });
+            'depth': 0,
+            'filter': 'allow',
+            'enabled': true
+          };
 
           // Loop over activities and add the ones belonging to the current activityGroup
           _.each(activities, function (activity) {
             if (activity.activityGroup === activityGroup.id) {
               // Add activities to activityList array behind proper activityGroup
-              activityList.push({
+              children.push({
                 'id'   : activity.id,
                 'rank' : activity.rank,
                 'title': activity.title,
                 'type' : 'activity',
                 'depth': 1,
-                'activityGroup': activityGroup.id
+                'activityGroup': activityGroup.id,
+                'filter': 'allow',
+                'enabled': true
               });
             }
           });
+
+          activityGroup.children = children;
+          activityGroupList.push(activityGroup)
         });
 
-      return [{
-        title: 'All',
-        id: 'all'
-      }].concat(activityList);
+      return activityGroupList;
     }
 
     function processLocations (locations, root) {

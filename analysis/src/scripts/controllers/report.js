@@ -94,11 +94,8 @@ angular.module('sumaAnalysis')
     // Get initiative metadata
     $scope.getMetadata = function () {
       $scope.actsLocs = actsLocs.get($scope.params.init);
-
       $scope.activities = $scope.actsLocs.activities;
       $scope.locations = $scope.actsLocs.locations;
-
-      $scope.params.activity = $scope.activities[0];
       $scope.params.location = $scope.locations[0];
     };
 
@@ -183,7 +180,10 @@ angular.module('sumaAnalysis')
         classifyCounts: $scope.params.classifyCounts ? $scope.params.classifyCounts.id : null,
         wholeSession: $scope.params.wholeSession ? $scope.params.wholeSession.id : null,
         zeroCounts: $scope.params.zeroCounts ? $scope.params.zeroCounts.id : null,
-        activity: $scope.params.activity ? $scope.params.activity.type ? $scope.params.activity.type + '-' + $scope.params.activity.id : $scope.params.activity.id : null,
+        requireActs: scopeUtils.stringifyActs($scope.activities, 'require'),
+        excludeActs: scopeUtils.stringifyActs($scope.activities, 'exclude'),
+        requireActGrps: scopeUtils.stringifyActs($scope.activities, 'require', true),
+        excludeActGrps: scopeUtils.stringifyActs($scope.activities, 'exclude', true),
         location: $scope.params.location ? $scope.params.location.id : null,
         days: scopeUtils.stringifyDays($scope.params.days)
       };
@@ -234,6 +234,12 @@ angular.module('sumaAnalysis')
 
       // Reset to old to suppress routing logic
       $location.hash(old);
+    };
+
+    // Modal
+    $scope.modalShown = false;
+    $scope.toggleModal = function() {
+      $scope.modalShown = !$scope.modalShown;
     };
 
     // Initialize controller

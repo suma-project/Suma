@@ -2,10 +2,6 @@
 
 angular.module('sumaAnalysis')
   .factory('scopeUtils', function ($q, actsLocs, validation) {
-    var metadata,
-        activities,
-        locations;
-
     return {
       stringifyDays: function (days) {
         var string;
@@ -18,14 +14,52 @@ angular.module('sumaAnalysis')
 
         return string;
       },
+      stringifyActs: function (actGrps, filter, actGrpMode) {
+        var actAry = [];
+
+        if (actGrpMode) {
+          _.each(actGrps, function (actGrp) {
+            if (actGrp.filter === filter) {
+              actAry.push(actGrp.id);
+            }
+          });
+        } else {
+          _.each(actGrps, function (actGrp) {
+            _.each(actGrp.children, function (child) {
+              if (child.filter === filter && child.enabled === true) {
+                actAry.push(child.id);
+              }
+            });
+          });
+        }
+
+        return actAry.join();
+      },
       getMetadata: function (init) {
         return actsLocs.get(init);
       },
       set: function (urlParams, sumaConfig, inits) {
-        var dfd = $q.defer(),
+        function testAct (id, exclude, require) {
+          if (_.contains(exclude, id)) {
+            return 'exclude';
+          } else if (_.contains(require, id)) {
+            return 'require';
+          } else {
+            return 'allow';
+          }
+        }
+
+        var activities,
+            dfd = $q.defer(),
             errors = [],
             errorMessage,
-            newParams = {};
+            excludeActsAry,
+            excludeActGrpsAry,
+            locations,
+            metadata,
+            newParams = {},
+            requireActsAry,
+            requireActGrpsAry;
 
         newParams.init = _.find(inits, function (e, i) {
           return String(e.id) === String(urlParams.id);
@@ -84,23 +118,26 @@ angular.module('sumaAnalysis')
           }
 
           if (sumaConfig.formFields.activities) {
-            newParams.activity = _.find(activities, function (e, i) {
-              var type,
-                  id;
+            excludeActsAry = urlParams.excludeActs.split(',');
+            requireActsAry = urlParams.requireActs.split(',');
+            excludeActGrpsAry = urlParams.excludeActGrps.split(',');
+            requireActGrpsAry = urlParams.requireActGrps.split(',');
 
-              if (urlParams.activity === 'all') {
-                return String(e.id) === String(urlParams.activity);
-              } else {
-                type = urlParams.activity.split('-')[0];
-                id = urlParams.activity.split('-')[1];
+            newParams.excludeActs = excludeActsAry;
+            newParams.requireActs = requireActsAry;
+            newParams.requireActGrps = requireActGrpsAry;
+            newParams.excludeActGrps = excludeActGrpsAry;
 
-                return String(e.id) === String(id) && String(e.type) === String(type);
-              }
+            // Set act.filter property based on exclude/require arrays
+            activities = _.map(activities, function (actGrp, i) {
+              actGrp.filter = testAct(String(actGrp.id), excludeActGrpsAry, requireActGrpsAry);
+              actGrp.children = _.map(actGrp.children, function(act) {
+                act.filter = testAct(String(act.id), excludeActsAry, requireActsAry);
+                return act;
+              });
+
+              return actGrp;
             });
-
-            if (!newParams.activity) {
-              errors.push('Invalid value for activity.');
-            }
           }
 
           if (sumaConfig.formFields.locations) {
