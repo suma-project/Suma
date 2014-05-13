@@ -1,8 +1,8 @@
 <span ng-if="act.type === 'activityGroup'"><br></span>
 {{act | depth}}
-<input type="radio" ng-model="filter" value="allow"> Allow
-<input type="radio" ng-model="filter" value="require"> Require
-<input type="radio" ng-model="filter" value="exclude" > Exclude
+<label><input type="radio" ng-model="filter" value="allow"> Allow</label>
+<label><input type="radio" ng-model="filter" value="require"> Require</label>
+<label><input type="radio" ng-model="filter" value="exclude" > Exclude</label>
 <div data-ng-repeat="child in act.children">
   <div suma-child-activity-filter act="child" disable="act.filter === 'exclude'"></div>
 </div>
