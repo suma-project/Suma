@@ -129,12 +129,20 @@
           <div class="form-group">
             <label class="suma-popover" data-title="Limit Activities" data-content="Select which activities to include in your analysis. Selecting an Activity Group will include all group activities." data-suma-popover>Limit Activities</label>
             <div class="controls">
-              <button type="button" class="btn btn-default" ng-click='toggleModal()'>Limit Activities</button>
-              <modal-dialog show='modalShown' dialog-title='Limit Activities'>
+<!--               <button type="button" class="btn btn-default" ng-click='toggleModal()'>Limit Activities</button>
+ -->              <button type="button" class="btn btn-default" data-toggle="modal" data-target="#sumaModal">
+                Limit Activities
+              </button>
+              <div suma-modal modal-id="sumaModal" modal-title="Limit Activities">
                 <div data-ng-repeat="act in activities">
                   <div suma-activity-filter act="act"></div>
                 </div>
-              </modal-dialog>
+              </div>
+              <!-- <modal-dialog show='modalShown' dialog-title='Limit Activities' width="60%" height="80%">
+                <div data-ng-repeat="act in activities">
+                  <div suma-activity-filter act="act"></div>
+                </div>
+              </modal-dialog> -->
             </div>
           </div>
 

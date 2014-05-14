@@ -236,12 +236,6 @@ angular.module('sumaAnalysis')
       $location.hash(old);
     };
 
-    // Modal
-    $scope.modalShown = false;
-    $scope.toggleModal = function() {
-      $scope.modalShown = !$scope.modalShown;
-    };
-
     // Initialize controller
     $scope.initialize();
   });

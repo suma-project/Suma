@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker', 'ngModal'])
+angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
   .config(function ($routeProvider, $compileProvider) {
     // Configuration options for the display of form fields, assignment
     // of data processor, and display of supplemental charts
