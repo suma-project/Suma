@@ -6,6 +6,14 @@ angular.module('sumaAnalysis')
       restrict: 'A',
       templateUrl: 'views/directives/activityFilter.html',
       scope: {acts: '='},
+      controller: ['$scope', function ($scope) {
+        $scope.reset = function () {
+          _.each($scope.acts, function (act) {
+            act.enabled = true;
+            act.filter = 'allow';
+          });
+        };
+      }],
       link: function (scope, ele, attrs, depthFilter) {
         function setFilterStatus () {
           var actGrps = _.filter(scope.acts, {type: 'activityGroup'});
