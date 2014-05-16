@@ -1,5 +1,5 @@
 <table class="table table-hover">
-  <tr ng-repeat="act in flatActs" ng-class="{success: act.type === 'activityGroup'}">
+  <tr ng-repeat="act in acts" ng-class="{success: act.type === 'activityGroup'}">
     <td>{{act | depth}}</td>
     <td>
       <label class="radio-inline"><input type="radio" ng-model="act.filter" ng-disabled="!act.enabled" value="allow"> Allow</label>

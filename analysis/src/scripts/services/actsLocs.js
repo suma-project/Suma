@@ -18,7 +18,7 @@ angular.module('sumaAnalysis')
     }
 
     function processActivities (activities, activityGroups) {
-      var activityGroupList = [];
+      var activityList = [];
 
       // Sort activities and activity groups
       activities = _.sortBy(activities, 'rank');
@@ -26,9 +26,8 @@ angular.module('sumaAnalysis')
 
       // For each activity group, build a list of activities
       _.each(activityGroups, function (activityGroup) {
-          var children = [];
           // Add activity group metadata to activityGroupList array
-          var activityGroup ={
+         activityList.push({
             'id'   : activityGroup.id,
             'rank' : activityGroup.rank,
             'title': activityGroup.title,
@@ -36,13 +35,13 @@ angular.module('sumaAnalysis')
             'depth': 0,
             'filter': 'allow',
             'enabled': true
-          };
+          });
 
           // Loop over activities and add the ones belonging to the current activityGroup
           _.each(activities, function (activity) {
             if (activity.activityGroup === activityGroup.id) {
               // Add activities to activityList array behind proper activityGroup
-              children.push({
+              activityList.push({
                 'id'   : activity.id,
                 'rank' : activity.rank,
                 'title': activity.title,
@@ -54,12 +53,9 @@ angular.module('sumaAnalysis')
               });
             }
           });
-
-          activityGroup.children = children;
-          activityGroupList.push(activityGroup)
         });
 
-      return activityGroupList;
+      return activityList;
     }
 
     function processLocations (locations, root) {

@@ -14,22 +14,20 @@ angular.module('sumaAnalysis')
 
         return string;
       },
-      stringifyActs: function (actGrps, filter, actGrpMode) {
+      stringifyActs: function (acts, filter, actGrpMode) {
         var actAry = [];
 
         if (actGrpMode) {
-          _.each(actGrps, function (actGrp) {
-            if (actGrp.filter === filter) {
-              actAry.push(actGrp.id);
+          _.each(acts, function (act) {
+            if (act.type === 'activityGroup' && act.filter === filter) {
+              actAry.push(act.id);
             }
           });
         } else {
-          _.each(actGrps, function (actGrp) {
-            _.each(actGrp.children, function (child) {
-              if (child.filter === filter && child.enabled === true) {
-                actAry.push(child.id);
-              }
-            });
+          _.each(acts, function (act) {
+            if (act.type === 'activity' && act.filter === filter && act.enabled === true) {
+              actAry.push(act.id);
+            }
           });
         }
 
@@ -128,15 +126,26 @@ angular.module('sumaAnalysis')
             newParams.requireActGrps = requireActGrpsAry;
             newParams.excludeActGrps = excludeActGrpsAry;
 
-            // Set act.filter property based on exclude/require arrays
-            activities = _.map(activities, function (actGrp, i) {
-              actGrp.filter = testAct(String(actGrp.id), excludeActGrpsAry, requireActGrpsAry);
-              actGrp.children = _.map(actGrp.children, function(act) {
-                act.filter = testAct(String(act.id), excludeActsAry, requireActsAry);
-                return act;
-              });
+            activities = _.map(activities, function (act) {
+              if (act.type === 'activityGroup') {
+                if (_.contains(excludeActGrpsAry, String(act.id))) {
+                  act.filter = 'exclude';
+                } else if (_.contains(requireActGrpsAry, String(act.id))) {
+                  act.filter = 'require';
+                } else {
+                  act.filter = 'allow';
+                }
+              } else {
+                if (_.contains(excludeActsAry, String(act.id))) {
+                  act.filter = 'exclude';
+                } else if (_.contains(requireActsAry, String(act.id))) {
+                  act.filter = 'require';
+                } else {
+                  act.filter = 'allow';
+                }
+              }
 
-              return actGrp;
+              return act;
             });
           }
 

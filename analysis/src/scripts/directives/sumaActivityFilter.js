@@ -7,32 +7,23 @@ angular.module('sumaAnalysis')
       templateUrl: 'views/directives/activityFilter.html',
       scope: {acts: '='},
       link: function (scope, ele, attrs, depthFilter) {
-        scope.flatActs = [];
+        function setFilterStatus () {
+          var actGrps = _.filter(scope.acts, {type: 'activityGroup'});
 
-        scope.$watch('acts', function (change) {
-          var newFlatActs = [];
-          if (scope.acts) {
-            _.each(scope.acts, function (act) {
-              _.each(act.children, function (child) {
-                if (act.filter === 'exclude') {
-                  child.enabled = false;
-                } else {
-                  child.enabled = true;
-                }
-              });
+          _.each(actGrps, function (actGrp) {
+            var acts = _.filter(scope.acts, {type: 'activity', activityGroup: actGrp.id});
+
+            _.each(acts, function (act) {
+              if (actGrp.filter === 'exclude') {
+                act.enabled = false;
+              } else {
+                act.enabled = true;
+              }
             });
+          });
+        }
 
-            _.each(scope.acts, function (act) {
-              newFlatActs.push(act);
-
-              _.each(act.children, function (child) {
-                newFlatActs.push(child);
-              });
-            });
-
-            scope.flatActs = newFlatActs;
-          }
-        }, true);
+        scope.$watch('acts', setFilterStatus, true);
       }
     };
   });
