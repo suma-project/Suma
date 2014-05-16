@@ -11,6 +11,6 @@ angular.module('sumaAnalysis')
     }
 
     return function (input, n, useWordBoundary) {
-     return truncate(input, n, useWordBoundary);
+      return truncate(input, n, useWordBoundary);
     };
   });

@@ -27,7 +27,7 @@ angular.module('sumaAnalysis')
       // For each activity group, build a list of activities
       _.each(activityGroups, function (activityGroup) {
           // Add activity group metadata to activityGroupList array
-         activityList.push({
+          activityList.push({
             'id'   : activityGroup.id,
             'rank' : activityGroup.rank,
             'title': activityGroup.title,
