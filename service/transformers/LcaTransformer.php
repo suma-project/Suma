@@ -120,14 +120,14 @@ class LcaTransformer extends BaseTransformer
         {
             foreach($activities as &$activity)
             {
-                if ($activity['id'] == '_No Activity')
+                if ($activity['id'] == -1)
                 {
                     unset($activity);
                     return null;
                 }
             }
 
-            $activities[] = '_No Activity';
+            $activities[] = -1;
         }
     }
 

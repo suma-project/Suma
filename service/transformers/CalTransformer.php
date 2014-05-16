@@ -80,7 +80,7 @@ class CalTransformer extends BaseTransformer
         foreach($activities as &$activity)
         {
             if ((isset($row['act']) && $activity['id'] == $row['act']) ||
-                (! isset($row['act']) && $activity['id'] == $row['_No Activity']))
+                (! isset($row['act']) && $activity['id'] == $row[-1]))
             {
                 unset($activity);
                 return;
@@ -93,7 +93,7 @@ class CalTransformer extends BaseTransformer
         }
         else
         {
-            $activities[] = '_No Activity';
+            $activities[] = -1;
         }
     }
 

@@ -83,7 +83,7 @@ class AlcTransformer extends BaseTransformer
         {
             foreach($activities as &$activity)
             {
-                if ($activity['id'] == '_No Activity')
+                if ($activity['id'] == -1)
                 {
                     $selected =& $activity;
                     unset($activity);
@@ -96,7 +96,7 @@ class AlcTransformer extends BaseTransformer
                 return $selected;
             }
 
-            $addition = array('id'        => '_No Activity',
+            $addition = array('id'        => -1,
                               'locations' => array());
 
             $activities[] =& $addition;
