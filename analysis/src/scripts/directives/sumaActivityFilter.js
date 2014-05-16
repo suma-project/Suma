@@ -5,15 +5,34 @@ angular.module('sumaAnalysis')
     return {
       restrict: 'A',
       templateUrl: 'views/directives/activityFilter.html',
-      scope: {act: '='},
+      scope: {acts: '='},
       link: function (scope, ele, attrs, depthFilter) {
-        scope.filter = scope.act.filter;
+        scope.flatActs = [];
 
-        scope.$watch('filter', function (updatedFilter) {
-          if (updatedFilter) {
-            scope.act.filter = updatedFilter;
+        scope.$watch('acts', function (change) {
+          var newFlatActs = [];
+          if (scope.acts) {
+            _.each(scope.acts, function (act) {
+              _.each(act.children, function (child) {
+                if (act.filter === 'exclude') {
+                  child.enabled = false;
+                } else {
+                  child.enabled = true;
+                }
+              });
+            });
+
+            _.each(scope.acts, function (act) {
+              newFlatActs.push(act);
+
+              _.each(act.children, function (child) {
+                newFlatActs.push(child);
+              });
+            });
+
+            scope.flatActs = newFlatActs;
           }
-        });
+        }, true);
       }
     };
   });

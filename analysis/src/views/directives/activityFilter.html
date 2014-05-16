@@ -1,8 +1,10 @@
-<span ng-if="act.type === 'activityGroup'"><br></span>
-{{act | depth}}
-<label><input type="radio" ng-model="filter" value="allow"> Allow</label>
-<label><input type="radio" ng-model="filter" value="require"> Require</label>
-<label><input type="radio" ng-model="filter" value="exclude" > Exclude</label>
-<div data-ng-repeat="child in act.children">
-  <div suma-child-activity-filter act="child" disable="act.filter === 'exclude'"></div>
-</div>
+<table class="table table-hover">
+  <tr ng-repeat="act in flatActs" ng-class="{success: act.type === 'activityGroup'}">
+    <td>{{act | depth}}</td>
+    <td>
+      <label class="radio-inline"><input type="radio" ng-model="act.filter" ng-disabled="!act.enabled" value="allow"> Allow</label>
+      <label class="radio-inline"><input type="radio" ng-model="act.filter" ng-disabled="!act.enabled" value="require"> Require</label>
+      <label class="radio-inline"><input type="radio" ng-model="act.filter" ng-disabled="!act.enabled" value="exclude" > Exclude</label>
+    </td>
+  </tr>
+</table>

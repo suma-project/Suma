@@ -43,6 +43,7 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
         days: true,
         wholeSession: true,
         zeroCounts: true,
+        activities: true,
         locations: true
       },
       dataSource: 'getData',
