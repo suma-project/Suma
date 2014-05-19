@@ -8,9 +8,9 @@
   <tr ng-repeat="act in acts" ng-class="{success: act.type === 'activityGroup'}">
     <td>{{act | depth | truncate:25:true}}</td>
     <td>
-      <label class="radio-inline"><input type="radio" ng-model="act.filter" ng-disabled="!act.enabled" value="allow"> Allow</label>
-      <label class="radio-inline"><input type="radio" ng-model="act.filter" ng-disabled="!act.enabled" value="require"> Require</label>
-      <label class="radio-inline"><input type="radio" ng-model="act.filter" ng-disabled="!act.enabled" value="exclude"> Exclude</label>
+      <label class="radio-inline" ng-disabled="!act.enabled"><input type="radio" ng-model="act.filter" ng-disabled="!act.enabled" value="allow"> Allow</label>
+      <label class="radio-inline" ng-disabled="!act.enabled"><input type="radio" ng-model="act.filter" ng-disabled="!act.enabled" value="require"> Require</label>
+      <label class="radio-inline" ng-disabled="!act.enabled"><input type="radio" ng-model="act.filter" ng-disabled="!act.enabled" value="exclude"> Exclude</label>
     </td>
   </tr>
 </table>
