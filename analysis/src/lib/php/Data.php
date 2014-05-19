@@ -149,10 +149,6 @@ class Data
             }
         }
 
-        // Add _No Activity key to both arrays
-        $this->actHash['_No Activity'] = '_No Activity';
-        $scaffoldArray['activities']['_No Activity'] = NULL;
-
         return $scaffoldArray;
     }
     private function buildHourSummaryScaffold()
