@@ -197,6 +197,13 @@ class Data
 
         return $scaffoldArray;
     }
+
+    /**
+     * Scaffold array for hours data
+     *
+     * @access private
+     * @return array
+     */
     private function buildHourSummaryScaffold()
     {
         $array = array();
@@ -208,6 +215,13 @@ class Data
 
         return $array;
     }
+
+    /**
+     * Scaffold sub-array for hours data
+     *
+     * @access private
+     * @return array
+     */
     private function buildHourSummaryScaffoldAvg()
     {
         $array = array();
@@ -225,6 +239,13 @@ class Data
 
         return $array;
     }
+
+    /**
+     * Scaffold daily hourly data array
+     *
+     * @access private
+     * @return array
+     */
     private function buildDailyHourSummaryScaffold()
     {
         $array = array();
