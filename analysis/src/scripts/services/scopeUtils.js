@@ -121,10 +121,37 @@ angular.module('sumaAnalysis')
             excludeActGrpsAry = urlParams.excludeActGrps.split(',');
             requireActGrpsAry = urlParams.requireActGrps.split(',');
 
-            newParams.excludeActs = excludeActsAry;
-            newParams.requireActs = requireActsAry;
-            newParams.requireActGrps = requireActGrpsAry;
-            newParams.excludeActGrps = excludeActGrpsAry;
+            // validate excludeActs
+            if (validation.validateAct(excludeActsAry, activities, 'activity')) {
+              newParams.excludeActs = excludeActsAry;
+            } else {
+              newParams.excludeActs = '';
+              errors.push('Invalid value for excludeActs');
+            }
+
+            // validate requireActs
+            if (validation.validateAct(requireActsAry, activities, 'activity')) {
+              newParams.requireActs = requireActsAry;
+            } else {
+              newParams.requireActs = '';
+              errors.push('Invalid value for requireActs');
+            }
+
+            // validate excludeActGrps
+            if (validation.validateAct(excludeActGrpsAry, activities, 'activityGroup')) {
+              newParams.excludeActGrps = excludeActGrpsAry;
+            } else {
+              newParams.excludeActGrps = '';
+              errors.push('Invalid value for excludeActGrps');
+            }
+
+            // validate requireActGrps
+            if (validation.validateAct(requireActGrpsAry, activities, 'activityGroup')) {
+              newParams.requireActGrps = requireActGrpsAry;
+            } else {
+              newParams.requireActGrps = '';
+              errors.push('Invalid value for requireActGrps');
+            }
 
             activities = _.map(activities, function (act) {
               if (act.type === 'activityGroup') {
