@@ -7,9 +7,13 @@
         <strong>Whole Session: </strong> {{summaryParams.wholeSession.title}} <br>
         <strong>Dates: </strong> {{summaryParams.sdate}} - {{summaryParams.edate}}
         <strong>Subset: </strong> {{summaryParams.stime || '00:00'}} - {{summaryParams.etime || '23:59'}} <br>
-        <strong>Days: </strong> {{summaryParams.days}} <br>
-        <strong>Locations: </strong> {{summaryParams.location.title}}
-        <strong>Activities: </strong> {{summaryParams.activity.title}}
+        <strong>Days: </strong> <span ng-repeat="day in summaryParams.days">{{day}}<span ng-show="!$last">,</span> </span>
+        <strong>Locations: </strong> {{summaryParams.location.title}} <br>
+        <strong>EA: </strong> {{summaryParams.excludeActs | activityTitle:activities:'activity' }}
+        <strong>RA: </strong> {{summaryParams.requireActs | activityTitle:activities:'activity' }}
+        <strong>EAG: </strong> {{summaryParams.excludeActGrps | activityTitle:activities:'activityGroup' }}
+        <strong>RAG: </strong> {{summaryParams.requireActGrps | activityTitle:activities:'activityGroup' }}
+
       </p>
     </div>
     <div class="col-xs-7">
@@ -140,7 +144,7 @@
           </div>
 
           <div class="form-group">
-            <label class="suma-popover" data-title="Limit Activities" data-content="Select which activities to include in your analysis. Selecting an Activity Group will include all group activities." data-suma-popover="">Limit Activities</label>
+            <label class="suma-popover" data-title="Limit Activities" data-content="Select which activities or Activity Groups to require or exclude in your analysis. Excluding Activity Groups will also exclude their children activities. Requiring an Activity Group while allowing all children will require at least one of the children. All required fields must be present in each count, and all excluded fields must be absent from each count." data-suma-popover="">Limit Activities</label>
             <div class="controls">
               <button type="button" class="btn btn-default" data-toggle="modal" data-target="#sumaModal">
                 Limit Activities
