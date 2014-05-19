@@ -13,6 +13,14 @@ require_once 'spyc/Spyc.php';
 class Data
 {
     /**
+     * Main hash to store data as it is retrieved from the server
+     *
+     * @var array
+     * @access  private
+     */
+    private $countHash = array();
+
+    /**
      * Define day names
      *
      * @var array
@@ -27,13 +35,7 @@ class Data
         'sa' => 'Saturday',
         'su' => 'Sunday'
     );
-    /**
-     * Main hash to store data as it is retrieved from the server
-     *
-     * @var array
-     * @access  private
-     */
-    private $countHash = array();
+
     /**
      * Stores location ids for filtering
      *
@@ -41,25 +43,74 @@ class Data
      * @access  private
      */
     private $locListIds = array();
+
     /**
-     * Stores activity ids for filtering
+     * Stores activity ids to exclude
      *
      * @var array
      * @access  private
      */
     private $excludeActs = array();
+
+    /**
+     * Stores activity ids to require
+     *
+     * @var array
+     * @access private
+     */
     private $requireActs = array();
+
+    /**
+     * Stores array of arrays of activity ids
+     * based on required activity groups
+     * returns [[1, 2, 3], [4, 5], [6, 7]] where
+     * array 1 is activity group 1, array two is
+     * activity group 2, etc.
+     *
+     * @var array
+     * @access private
+     */
     private $requireOneOfEach = array();
+
     /**
      * Stores scaffold array for csvArray
      * @var array
      * @access private
      */
     private $csvScaffold = NULL;
+
+    /**
+     * Stores hash of activities
+     *
+     * @var array
+     * @access private
+     */
     private $actHash = array();
+
+    /**
+     * Stores hash of locations
+     *
+     * @var array
+     * @access private
+     */
     private $locHash = array();
+
+    /**
+     * Stores hash of activity groups
+     *
+     * @var array
+     * @access private
+     */
     private $actGrpHash = array();
+
+    /**
+     * Stores scaffold for hour summary
+     *
+     * @var [type]
+     * @access private
+     */
     private $hourSumScaffold = NULL;
+
     /**
      * [__construct]
      */
@@ -77,8 +128,11 @@ class Data
             ini_set('display_errors', 0);
         }
     }
+
     /**
      * Method to populate $csvScaffold, used for csv count collection
+     *
+     * @access private
      * @param  array $locListIds
      * @param  array $actListIds
      * @return array
@@ -190,10 +244,13 @@ class Data
 
         return $array;
     }
+
     /**
      * Builds a hash of divisors for calculating
      * daily averages within the dailyHourSummary
      * dataset.
+     *
+     * @access private
      * @param  array $params Form parameters
      * @return array         Array with day indices and divisor values
      */
@@ -259,8 +316,11 @@ class Data
 
         return $hash;
     }
+
     /**
      * Basic pluck method
+     *
+     * @access private
      * @param  array $input
      * @param  string $key
      * @return array
@@ -352,23 +412,6 @@ class Data
                 'requireActGrps' => $input['requireActGrps']
             );
 
-            // // Manipulate activities field, maybe not the best place for this
-            // // but this is where the main params array is being built
-            // if ($params['activities'] !== 'all')
-            // {
-            //     $actSplit = explode("-", $params['activities']);
-            //     $actType  = $actSplit[0];
-            //     $actId    = $actSplit[1];
-            // }
-            // else
-            // {
-            //     $actType = NULL;
-            //     $actId   = 'all';
-            // }
-
-            // $params['actType'] = $actType;
-            // $params['actId']   = $actId;
-
             // Set query type and format
             $params['format'] = 'lca';
 
@@ -395,6 +438,7 @@ class Data
             throw new Exception($message, 500);
         }
     }
+
     /**
      * Builds params to pass to Suma server
      *
@@ -425,6 +469,7 @@ class Data
 
         return $sumaParams;
     }
+
     /**
      * Creates a date range array from
      * two dates formatted as YYYYMMDD
@@ -452,6 +497,7 @@ class Data
 
         return $dateRange;
     }
+
     /**
      * Creates an array of location ids for filtering
      *
@@ -487,36 +533,14 @@ class Data
 
         return $locArray;
     }
-    /**
-     * Creates an array of activity ids for filtering
-     *
-     * @access  private
-     * @param  array $actDict
-     * @param  string $actID
-     * @param  string $actType
-     * @return array
-     */
-    private function populateActivities($actDict, $actID, $actType) {
-        $actArray = array();
-        // If actID is an activityGroup, find its children
-        // otherwise, return the actID
-        if ($actType === 'activityGroup')
-        {
-            foreach ($actDict as $act)
-            {
-                if ($act['activityGroup'] === (int)$actID)
-                {
-                    $actArray[] = $act['id'];
-                }
-            }
-        }
-        else
-        {
-            $actArray[] = (int)$actID;
-        }
 
-        return $actArray;
-    }
+    /**
+     * Reject count based on exclude acts, require acts, or require one of each arrays
+     *
+     * @access private
+     * @param  object $count Count object
+     * @return boolean
+     */
     private function rejectBasedOnActs($count)
     {
 
@@ -540,6 +564,17 @@ class Data
 
         return false;
     }
+
+    /**
+     * Evaluate count for inclusion in data set
+     *
+     * @access private
+     * @param  object $count   Count object
+     * @param  string $day     Date of count (set by setDay)
+     * @param  array  $params  Params from client
+     * @param  string $weekday Day of week
+     * @return boolean
+     */
     private function includeCount($count, $day, $params, $weekday)
     {
         if (!in_array($weekday, $params['days']))
@@ -616,6 +651,15 @@ class Data
 
         return true;
     }
+
+    /**
+     * Determine which date to assign to count
+     *
+     * @access private
+     * @param object $count  Count object
+     * @param array $params  Params from client
+     * @param array $sess    Session object
+     */
     private function setDay($count, $params, $sess)
     {
         if ($params['classifyCounts'] === 'count')
@@ -630,6 +674,17 @@ class Data
             return substr($sess['end'], 0, -9);
         }
     }
+
+    /**
+     * Add individual count to return data
+     *
+     * @access private
+     * @param object $count    Count object
+     * @param string $day      Date of count, could be session start, session end, count date
+     * @param integer $locId   Location ID for count
+     * @param integer $sessId  Session ID for count
+     * @param string  $weekday  Day of week
+     */
     private function addCount($count, $day, $locId, $sessId, $weekday)
     {
         $weekdayInt = date('w', strtotime($day));
@@ -844,6 +899,16 @@ class Data
             $this->countHash['periodAvg'][$day]['sessions'][$sessId][$locId] += $count['number'];
         }
     }
+
+    /**
+     * Builds array of exluded activities
+     *
+     * @access private
+     * @param  string $excludeActs    Comma delimited string of acts
+     * @param  string $excludeActGrps Comma delimited string of act grps
+     * @param  array $actDict        Dictionary of activities
+     * @return array                 Array of acts to exclude
+     */
     private function buildExcludeActs($excludeActs, $excludeActGrps, $actDict)
     {
         if ($excludeActs === "" && $excludeActGrps === "")
@@ -876,6 +941,14 @@ class Data
 
         return $returnAry;
     }
+
+    /**
+     * Builds array of required activities
+     *
+     * @access private
+     * @param  array $requireActs Comma delimted string of required acts
+     * @return array              Array of required acts
+     */
     private function buildRequireActs($requireActs)
     {
         if ($requireActs === "")
@@ -894,6 +967,18 @@ class Data
         return $returnAry;
     }
 
+    /**
+     * Builds array of arrays of activity ids
+     * based on required activity groups
+     * returns [[1, 2, 3], [4, 5], [6, 7]] where
+     * array 1 is activity group 1, array two is
+     * activity group 2, etc.
+     *
+     * @access private
+     * @param  string $requireActGrps Comma delimited string of required activity groups
+     * @param  array $actDict        Dictionary of activities
+     * @return array                 Array of arrays of acts in required act groups
+     */
     private function buildRequireOneOfEach($requireActGrps, $actDict)
     {
         $returnAry = array();
@@ -915,6 +1000,7 @@ class Data
 
         return $returnAry;
     }
+
     /**
      * Populates countHash class variable with data from Server
      *
@@ -924,8 +1010,6 @@ class Data
      */
     private function populateHash($response, $params)
     {
-        $actID   = $params['actId'];
-        $actType = $params['actType'];
         $locID   = $params['locations'];
         $actDict = $response['initiative']['dictionary']['activities'];
         $actGrpDict = $response['initiative']['dictionary']['activityGroups'];
@@ -1004,6 +1088,7 @@ class Data
             }
         }
     }
+
     /**
      * Returns array with calculations of mean based on locations
      *
@@ -1226,6 +1311,7 @@ class Data
 
         return $countHash;
     }
+
     /**
      * Function that removes days outside of the
      * query range that might have been pulled in
@@ -1233,7 +1319,7 @@ class Data
      * zero values for any days in the range/filter set
      * that doesn't have a count.
      *
-     * @access  public
+     * @access  private
      * @param  array $data
      * @param  array $params
      * @return array
@@ -1290,6 +1376,15 @@ class Data
 
         return $data;
     }
+
+    /**
+     * Initiate request to Suma server
+     *
+     * @access private
+     * @param  array $sumaParams Parameters sent to suma server, subset of params
+     * @param  string $queryType  Query type, 'sessions' or 'counts'
+     * @param  array $params     Full parameters object
+     */
     private function processData($sumaParams, $queryType, $params)
     {
         // Instantiate ServerIO class, begin retrieval of data from Suma Server,
@@ -1308,7 +1403,15 @@ class Data
             throw new Exception($e->getMessage());
         }
     }
-    public function checkData($data) {
+
+    /**
+     * Checks that data exists for required fields
+     *
+     * @access private
+     * @param  array $data Processed data set to be returned to client
+     * @return boolen
+     */
+    private function checkData($data) {
         $names = array(
             'activitiesAvgAvg',
             'activitiesAvgSum',
@@ -1336,6 +1439,14 @@ class Data
 
         return true;
     }
+
+    /**
+     * Function to request data from suma server
+     *
+     * @access public
+     * @param  array $input Input parameters from client
+     * @return array        Processed data set
+     */
     public function getData($input)
     {
         // Validate form input
@@ -1348,14 +1459,14 @@ class Data
         $this->processData($sumaParams, 'sessions', $params);
 
         // Calculate averages for appropriate sub-arrays of countHash
-        $returnData = $this->calculateAvg($this->countHash, $params);
+        $data = $this->calculateAvg($this->countHash, $params);
 
         // Pad days as necessary
-        $returnData = $this->padData($returnData, $params);
+        $data = $this->padData($data, $params);
 
         // Ensure sufficient results to return
-        if ($this->checkData($returnData)) {
-            return $returnData;
+        if ($this->checkData($data)) {
+            return $data;
         } else {
             throw new Exception("No data found for that combination of filters. Please try a broader search.");
         }
