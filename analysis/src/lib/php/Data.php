@@ -104,14 +104,6 @@ class Data
     private $actGrpHash = array();
 
     /**
-     * Stores scaffold for hour summary
-     *
-     * @var [type]
-     * @access private
-     */
-    private $hourSumScaffold = NULL;
-
-    /**
      * [__construct]
      */
     function __construct() {
