@@ -25919,6 +25919,177 @@
   };
 }(jQuery);
 /* ========================================================================
+ * Bootstrap: modal.js v3.0.2
+ * http://getbootstrap.com/javascript/#modals
+ * ========================================================================
+ * Copyright 2013 Twitter, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ======================================================================== */
++function ($) {
+  'use strict';
+  // MODAL CLASS DEFINITION
+  // ======================
+  var Modal = function (element, options) {
+    this.options = options;
+    this.$element = $(element);
+    this.$backdrop = this.isShown = null;
+    if (this.options.remote)
+      this.$element.load(this.options.remote);
+  };
+  Modal.DEFAULTS = {
+    backdrop: true,
+    keyboard: true,
+    show: true
+  };
+  Modal.prototype.toggle = function (_relatedTarget) {
+    return this[!this.isShown ? 'show' : 'hide'](_relatedTarget);
+  };
+  Modal.prototype.show = function (_relatedTarget) {
+    var that = this;
+    var e = $.Event('show.bs.modal', { relatedTarget: _relatedTarget });
+    this.$element.trigger(e);
+    if (this.isShown || e.isDefaultPrevented())
+      return;
+    this.isShown = true;
+    this.escape();
+    this.$element.on('click.dismiss.modal', '[data-dismiss="modal"]', $.proxy(this.hide, this));
+    this.backdrop(function () {
+      var transition = $.support.transition && that.$element.hasClass('fade');
+      if (!that.$element.parent().length) {
+        that.$element.appendTo(document.body);
+      }
+      that.$element.show();
+      if (transition) {
+        that.$element[0].offsetWidth;
+      }
+      that.$element.addClass('in').attr('aria-hidden', false);
+      that.enforceFocus();
+      var e = $.Event('shown.bs.modal', { relatedTarget: _relatedTarget });
+      transition ? that.$element.find('.modal-dialog').one($.support.transition.end, function () {
+        that.$element.focus().trigger(e);
+      }).emulateTransitionEnd(300) : that.$element.focus().trigger(e);
+    });
+  };
+  Modal.prototype.hide = function (e) {
+    if (e)
+      e.preventDefault();
+    e = $.Event('hide.bs.modal');
+    this.$element.trigger(e);
+    if (!this.isShown || e.isDefaultPrevented())
+      return;
+    this.isShown = false;
+    this.escape();
+    $(document).off('focusin.bs.modal');
+    this.$element.removeClass('in').attr('aria-hidden', true).off('click.dismiss.modal');
+    $.support.transition && this.$element.hasClass('fade') ? this.$element.one($.support.transition.end, $.proxy(this.hideModal, this)).emulateTransitionEnd(300) : this.hideModal();
+  };
+  Modal.prototype.enforceFocus = function () {
+    $(document).off('focusin.bs.modal').on('focusin.bs.modal', $.proxy(function (e) {
+      if (this.$element[0] !== e.target && !this.$element.has(e.target).length) {
+        this.$element.focus();
+      }
+    }, this));
+  };
+  Modal.prototype.escape = function () {
+    if (this.isShown && this.options.keyboard) {
+      this.$element.on('keyup.dismiss.bs.modal', $.proxy(function (e) {
+        e.which == 27 && this.hide();
+      }, this));
+    } else if (!this.isShown) {
+      this.$element.off('keyup.dismiss.bs.modal');
+    }
+  };
+  Modal.prototype.hideModal = function () {
+    var that = this;
+    this.$element.hide();
+    this.backdrop(function () {
+      that.removeBackdrop();
+      that.$element.trigger('hidden.bs.modal');
+    });
+  };
+  Modal.prototype.removeBackdrop = function () {
+    this.$backdrop && this.$backdrop.remove();
+    this.$backdrop = null;
+  };
+  Modal.prototype.backdrop = function (callback) {
+    var that = this;
+    var animate = this.$element.hasClass('fade') ? 'fade' : '';
+    if (this.isShown && this.options.backdrop) {
+      var doAnimate = $.support.transition && animate;
+      this.$backdrop = $('<div class="modal-backdrop ' + animate + '" />').appendTo(document.body);
+      this.$element.on('click.dismiss.modal', $.proxy(function (e) {
+        if (e.target !== e.currentTarget)
+          return;
+        this.options.backdrop == 'static' ? this.$element[0].focus.call(this.$element[0]) : this.hide.call(this);
+      }, this));
+      if (doAnimate)
+        this.$backdrop[0].offsetWidth;
+      // force reflow
+      this.$backdrop.addClass('in');
+      if (!callback)
+        return;
+      doAnimate ? this.$backdrop.one($.support.transition.end, callback).emulateTransitionEnd(150) : callback();
+    } else if (!this.isShown && this.$backdrop) {
+      this.$backdrop.removeClass('in');
+      $.support.transition && this.$element.hasClass('fade') ? this.$backdrop.one($.support.transition.end, callback).emulateTransitionEnd(150) : callback();
+    } else if (callback) {
+      callback();
+    }
+  };
+  // MODAL PLUGIN DEFINITION
+  // =======================
+  var old = $.fn.modal;
+  $.fn.modal = function (option, _relatedTarget) {
+    return this.each(function () {
+      var $this = $(this);
+      var data = $this.data('bs.modal');
+      var options = $.extend({}, Modal.DEFAULTS, $this.data(), typeof option == 'object' && option);
+      if (!data)
+        $this.data('bs.modal', data = new Modal(this, options));
+      if (typeof option == 'string')
+        data[option](_relatedTarget);
+      else if (options.show)
+        data.show(_relatedTarget);
+    });
+  };
+  $.fn.modal.Constructor = Modal;
+  // MODAL NO CONFLICT
+  // =================
+  $.fn.modal.noConflict = function () {
+    $.fn.modal = old;
+    return this;
+  };
+  // MODAL DATA-API
+  // ==============
+  $(document).on('click.bs.modal.data-api', '[data-toggle="modal"]', function (e) {
+    var $this = $(this);
+    var href = $this.attr('href');
+    var $target = $($this.attr('data-target') || href && href.replace(/.*(?=#[^\s]+$)/, ''));
+    //strip for ie7
+    var option = $target.data('modal') ? 'toggle' : $.extend({ remote: !/#/.test(href) && href }, $target.data(), $this.data());
+    e.preventDefault();
+    $target.modal(option, this).one('hide', function () {
+      $this.is(':visible') && $this.focus();
+    });
+  });
+  $(document).on('show.bs.modal', '.modal', function () {
+    $(document.body).addClass('modal-open');
+  }).on('hidden.bs.modal', '.modal', function () {
+    $(document.body).removeClass('modal-open');
+  });
+}(jQuery);
+/* ========================================================================
  * Bootstrap: popover.js v3.0.2
  * http://getbootstrap.com/javascript/#popovers
  * ========================================================================
@@ -48809,7 +48980,6 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
       $scope.actsLocs = actsLocs.get($scope.params.init);
       $scope.activities = $scope.actsLocs.activities;
       $scope.locations = $scope.actsLocs.locations;
-      $scope.params.activity = $scope.activities[0];
       $scope.params.location = $scope.locations[0];
     };
     // Submit request and draw chart
@@ -48881,7 +49051,10 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
         classifyCounts: $scope.params.classifyCounts ? $scope.params.classifyCounts.id : null,
         wholeSession: $scope.params.wholeSession ? $scope.params.wholeSession.id : null,
         zeroCounts: $scope.params.zeroCounts ? $scope.params.zeroCounts.id : null,
-        activity: $scope.params.activity ? $scope.params.activity.type ? $scope.params.activity.type + '-' + $scope.params.activity.id : $scope.params.activity.id : null,
+        requireActs: scopeUtils.stringifyActs($scope.activities, 'require'),
+        excludeActs: scopeUtils.stringifyActs($scope.activities, 'exclude'),
+        requireActGrps: scopeUtils.stringifyActs($scope.activities, 'require', true),
+        excludeActGrps: scopeUtils.stringifyActs($scope.activities, 'exclude', true),
         location: $scope.params.location ? $scope.params.location.id : null,
         days: scopeUtils.stringifyDays($scope.params.days)
       };
@@ -48990,13 +49163,15 @@ angular.module('sumaAnalysis').factory('actsLocs', function () {
     activityGroups = _.sortBy(activityGroups, 'rank');
     // For each activity group, build a list of activities
     _.each(activityGroups, function (activityGroup) {
-      // Add activity group metadata to activityList array
+      // Add activity group metadata to activityGroupList array
       activityList.push({
         'id': activityGroup.id,
         'rank': activityGroup.rank,
         'title': activityGroup.title,
         'type': 'activityGroup',
-        'depth': 0
+        'depth': 0,
+        'filter': 'allow',
+        'enabled': true
       });
       // Loop over activities and add the ones belonging to the current activityGroup
       _.each(activities, function (activity) {
@@ -49008,15 +49183,14 @@ angular.module('sumaAnalysis').factory('actsLocs', function () {
             'title': activity.title,
             'type': 'activity',
             'depth': 1,
-            'activityGroup': activityGroup.id
+            'activityGroup': activityGroup.id,
+            'filter': 'allow',
+            'enabled': true
           });
         }
       });
     });
-    return [{
-        title: 'All',
-        id: 'all'
-      }].concat(activityList);
+    return activityList;
   }
   function processLocations(locations, root) {
     return [{
@@ -49114,7 +49288,10 @@ angular.module('sumaAnalysis').factory('data', [
             wholeSession: cfg.params.wholeSession ? cfg.params.wholeSession.id : null,
             days: cfg.params.days ? cfg.params.days.join(',') : null,
             locations: cfg.params.location ? cfg.params.location.id : 'all',
-            activities: cfg.params.activity.type ? cfg.params.activity.type + '-' + cfg.params.activity.id : 'all'
+            excludeActs: cfg.params.excludeActs ? cfg.params.excludeActs.join(',') : null,
+            requireActs: cfg.params.requireActs ? cfg.params.requireActs.join(',') : null,
+            excludeActGrps: cfg.params.excludeActGrps ? cfg.params.excludeActGrps.join(',') : null,
+            requireActGrps: cfg.params.requireActGrps ? cfg.params.requireActGrps.join(',') : null
           },
           timeout: cfg.timeoutPromise.promise
         };
@@ -49158,6 +49335,20 @@ angular.module('sumaAnalysis').service('validation', function Validation() {
   this.isNumber = function (n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
   };
+  this.validateAct = function (acts, dict, mode) {
+    var test, validIds;
+    // Get list of valid ids
+    validIds = _.pluck(_.filter(dict, { type: mode }), 'id');
+    // Default to valid
+    test = true;
+    // Is each activity a member of the validIds array?
+    _.each(acts, function (act) {
+      if (!_.contains(validIds, parseInt(act, 10)) && act !== '') {
+        test = false;
+      }
+    });
+    return test;
+  };
   this.validateDateTime = function (value, maxLength, pad) {
     var stripped, val;
     // Cast value to string
@@ -49186,7 +49377,6 @@ angular.module('sumaAnalysis').factory('scopeUtils', [
   'actsLocs',
   'validation',
   function ($q, actsLocs, validation) {
-    var metadata, activities, locations;
     return {
       stringifyDays: function (days) {
         var string;
@@ -49196,11 +49386,37 @@ angular.module('sumaAnalysis').factory('scopeUtils', [
         string = days.join(',');
         return string;
       },
+      stringifyActs: function (acts, filter, actGrpMode) {
+        var actAry = [];
+        if (actGrpMode) {
+          _.each(acts, function (act) {
+            if (act.type === 'activityGroup' && act.filter === filter) {
+              actAry.push(act.id);
+            }
+          });
+        } else {
+          _.each(acts, function (act) {
+            if (act.type === 'activity' && act.filter === filter && act.enabled === true) {
+              actAry.push(act.id);
+            }
+          });
+        }
+        return actAry.join();
+      },
       getMetadata: function (init) {
         return actsLocs.get(init);
       },
       set: function (urlParams, sumaConfig, inits) {
-        var dfd = $q.defer(), errors = [], errorMessage, newParams = {};
+        function testAct(id, exclude, require) {
+          if (_.contains(exclude, id)) {
+            return 'exclude';
+          } else if (_.contains(require, id)) {
+            return 'require';
+          } else {
+            return 'allow';
+          }
+        }
+        var activities, dfd = $q.defer(), errors = [], errorMessage, excludeActsAry, excludeActGrpsAry, locations, metadata, newParams = {}, requireActsAry, requireActGrpsAry;
         newParams.init = _.find(inits, function (e, i) {
           return String(e.id) === String(urlParams.id);
         });
@@ -49251,19 +49467,58 @@ angular.module('sumaAnalysis').factory('scopeUtils', [
             locations = metadata.locations;
           }
           if (sumaConfig.formFields.activities) {
-            newParams.activity = _.find(activities, function (e, i) {
-              var type, id;
-              if (urlParams.activity === 'all') {
-                return String(e.id) === String(urlParams.activity);
-              } else {
-                type = urlParams.activity.split('-')[0];
-                id = urlParams.activity.split('-')[1];
-                return String(e.id) === String(id) && String(e.type) === String(type);
-              }
-            });
-            if (!newParams.activity) {
-              errors.push('Invalid value for activity.');
+            excludeActsAry = urlParams.excludeActs.split(',');
+            requireActsAry = urlParams.requireActs.split(',');
+            excludeActGrpsAry = urlParams.excludeActGrps.split(',');
+            requireActGrpsAry = urlParams.requireActGrps.split(',');
+            // validate excludeActs
+            if (validation.validateAct(excludeActsAry, activities, 'activity')) {
+              newParams.excludeActs = excludeActsAry;
+            } else {
+              newParams.excludeActs = '';
+              errors.push('Invalid value for excludeActs');
             }
+            // validate requireActs
+            if (validation.validateAct(requireActsAry, activities, 'activity')) {
+              newParams.requireActs = requireActsAry;
+            } else {
+              newParams.requireActs = '';
+              errors.push('Invalid value for requireActs');
+            }
+            // validate excludeActGrps
+            if (validation.validateAct(excludeActGrpsAry, activities, 'activityGroup')) {
+              newParams.excludeActGrps = excludeActGrpsAry;
+            } else {
+              newParams.excludeActGrps = '';
+              errors.push('Invalid value for excludeActGrps');
+            }
+            // validate requireActGrps
+            if (validation.validateAct(requireActGrpsAry, activities, 'activityGroup')) {
+              newParams.requireActGrps = requireActGrpsAry;
+            } else {
+              newParams.requireActGrps = '';
+              errors.push('Invalid value for requireActGrps');
+            }
+            activities = _.map(activities, function (act) {
+              if (act.type === 'activityGroup') {
+                if (_.contains(excludeActGrpsAry, String(act.id))) {
+                  act.filter = 'exclude';
+                } else if (_.contains(requireActGrpsAry, String(act.id))) {
+                  act.filter = 'require';
+                } else {
+                  act.filter = 'allow';
+                }
+              } else {
+                if (_.contains(excludeActsAry, String(act.id))) {
+                  act.filter = 'exclude';
+                } else if (_.contains(requireActsAry, String(act.id))) {
+                  act.filter = 'require';
+                } else {
+                  act.filter = 'allow';
+                }
+              }
+              return act;
+            });
           }
           if (sumaConfig.formFields.locations) {
             newParams.location = _.find(locations, function (e, i) {
@@ -49426,6 +49681,16 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
       }
       return false;
     }
+    function flattenActs(acts) {
+      var flatActs = [];
+      _.each(acts, function (act) {
+        flatActs.push(act);
+        _.each(act.children, function (child) {
+          flatActs.push(child);
+        });
+      });
+      return flatActs;
+    }
     function processData(response, activities, locations, zeroCounts) {
       var noActsSum, noActsAvgSum, noActsAvgAvg, counts, divisor;
       // Convert response into arrays of objects
@@ -49455,11 +49720,11 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
       counts.locationsAvgAvg = buildArray(locations, response.locationsAvgAvg, divisor, true);
       counts.locationsPct = buildArray(locations, response.locationsSum, divisor, false, true);
       // Activities related data
-      counts.activitiesTable = buildTableArray(activities, response.activitiesSum, response.total, 'activityGroup');
-      counts.activitiesSum = buildArray(activities, response.activitiesSum, response.total);
-      counts.activitiesAvgSum = buildArray(activities, response.activitiesAvgSum, response.total, true);
-      counts.activitiesAvgAvg = buildArray(activities, response.activitiesAvgAvg, response.total, true);
-      counts.activitiesPct = buildArray(activities, response.activitiesSum, response.total, false, true);
+      counts.activitiesTable = buildTableArray(flattenActs(_.cloneDeep(activities)), response.activitiesSum, response.total, 'activityGroup');
+      counts.activitiesSum = buildArray(flattenActs(_.cloneDeep(activities)), response.activitiesSum, response.total);
+      counts.activitiesAvgSum = buildArray(flattenActs(_.cloneDeep(activities)), response.activitiesAvgSum, response.total, true);
+      counts.activitiesAvgAvg = buildArray(flattenActs(_.cloneDeep(activities)), response.activitiesAvgAvg, response.total, true);
+      counts.activitiesPct = buildArray(flattenActs(_.cloneDeep(activities)), response.activitiesSum, response.total, false, true);
       // Handle insertion of no activity values
       noActsSum = insertNoActs(response.activitiesSum, response.total, 'sum');
       if (noActsSum) {
@@ -49670,6 +49935,23 @@ angular.module('sumaAnalysis').filter('capitalize', function () {
   return function (str) {
     str = str === undefined || str === null ? '' : String(str);
     return str.charAt(0).toUpperCase() + str.slice(1);
+  };
+});
+'use strict';
+angular.module('sumaAnalysis').filter('unescape', function () {
+  return function (input) {
+    return _.unescape(input);
+  };
+});
+'use strict';
+angular.module('sumaAnalysis').filter('truncate', function () {
+  function truncate(string, n, useWordBoundary) {
+    var tooLong = string.length > n, s_ = tooLong ? string.substr(0, n - 1) : string;
+    s_ = useWordBoundary && tooLong ? s_.substr(0, s_.lastIndexOf(' ')) : s_;
+    return tooLong ? s_ + '...' : s_;
+  }
+  return function (input, n, useWordBoundary) {
+    return truncate(input, n, useWordBoundary);
   };
 });
 'use strict';
@@ -51241,6 +51523,79 @@ angular.module('sumaAnalysis').directive('sumaChecklist', function () {
         scope.$apply(changeHandler);
       });
       scope.$watch('list', setupHandler, true);
+    }
+  };
+});
+'use strict';
+angular.module('sumaAnalysis').directive('sumaModal', function () {
+  return {
+    restrict: 'A',
+    templateUrl: 'views/directives/modal.html',
+    transclude: true,
+    scope: {
+      modalId: '@',
+      modalTitle: '@'
+    },
+    link: function (scope, el, attrs) {
+      $('#' + scope.modalId).modal({ show: false });
+    }
+  };
+});
+'use strict';
+angular.module('sumaAnalysis').directive('sumaActivityFilter', function () {
+  return {
+    restrict: 'A',
+    templateUrl: 'views/directives/activityFilter.html',
+    scope: { acts: '=' },
+    controller: [
+      '$scope',
+      function ($scope) {
+        $scope.reset = function () {
+          _.each($scope.acts, function (act) {
+            act.enabled = true;
+            act.filter = 'allow';
+          });
+        };
+      }
+    ],
+    link: function (scope, ele, attrs, depthFilter) {
+      function setFilterStatus() {
+        var actGrps = _.filter(scope.acts, { type: 'activityGroup' });
+        _.each(actGrps, function (actGrp) {
+          var acts = _.filter(scope.acts, {
+              type: 'activity',
+              activityGroup: actGrp.id
+            });
+          _.each(acts, function (act) {
+            if (actGrp.filter === 'exclude') {
+              act.enabled = false;
+            } else {
+              act.enabled = true;
+            }
+          });
+        });
+      }
+      scope.$watch('acts', setFilterStatus, true);
+    }
+  };
+});
+'use strict';
+angular.module('sumaAnalysis').directive('sumaActiveActs', function () {
+  return {
+    restrict: 'A',
+    templateUrl: 'views/directives/activeActs.html',
+    scope: { acts: '=' },
+    link: function (scope, ele, attrs, depthFilter) {
+      scope.display = false;
+      function setDisplayStatus() {
+        var states = _.uniq(_.pluck(scope.acts, 'filter'));
+        if (_.contains(states, 'require') || _.contains(states, 'exclude')) {
+          scope.display = true;
+        } else {
+          scope.display = false;
+        }
+      }
+      scope.$watch('acts', setDisplayStatus, true);
     }
   };
 });

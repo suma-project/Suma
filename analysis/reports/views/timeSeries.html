@@ -99,7 +99,7 @@
           </div>
         </div>
 
-        <div class="col-xs-3">
+        <div class="col-xs-3" data-ng-show="params.init && !processMetadata">
           <div class="form-group">
             <label class="suma-popover" data-title="Select Subset of Day" data-content="Include only data gathered during a certain time of day in your analysis, e.g. 20:00-22:00." data-suma-popover="">Start Time</label>
             <div data-suma-timepicker="" data-model="params.stime" data-placeholder="00:00"></div>
@@ -142,10 +142,16 @@
           <div class="form-group">
             <label class="suma-popover" data-title="Limit Activities" data-content="Select which activities to include in your analysis. Selecting an Activity Group will include all group activities." data-suma-popover="">Limit Activities</label>
             <div class="controls">
-              <select name="activities" data-ng-model="params.activity" data-ng-options="act | depth for act in activities" class="form-control">
-              </select>
+              <button type="button" class="btn btn-default" data-toggle="modal" data-target="#sumaModal">
+                Limit Activities
+              </button>
+              <div data-suma-modal="" modal-id="sumaModal" data-modal-title="Limit Activities">
+                <div data-suma-activity-filter="" acts="activities"></div>
+              </div>
             </div>
           </div>
+
+          <div data-suma-active-acts="" acts="activities"></div>
 
           <div>
             <input type="submit" id="submit" class="btn btn-success" value="{{state.loading ? 'Loading...' : 'Submit'}}">
