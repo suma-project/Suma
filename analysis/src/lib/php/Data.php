@@ -384,7 +384,10 @@ class Data
             'wholeSession'   => 'trim',
             'days'           => 'trim',
             'locations'      => 'trim',
-            'activities'     => 'trim'
+            'requireActs'    => 'trim',
+            'excludeActs'    => 'trim',
+            'requireActGrps' => 'trim',
+            'excludeActGrps' => 'trim'
         );
 
         // Define validation rules
@@ -397,7 +400,11 @@ class Data
             'classifyCounts' => 'alpha|contains, count start end',
             'wholeSession'   => 'alpha|contains, yes no',
             'days'           => 'day_of_week',
-            'locations'      => 'alpha_numeric'
+            'locations'      => 'alpha_numeric',
+            'requireActs'    => 'activities',
+            'excludeActs'    => 'activities',
+            'requireActGrps' => 'activities',
+            'excludeActGrps' => 'activities'
         );
 
         // Filter input
@@ -410,17 +417,17 @@ class Data
         if ($validated === TRUE)
         {
             $params = array(
-                'id'         => $input['id'],
-                'sdate'      => $input['sdate'],
-                'edate'      => $input['edate'],
-                'stime'      => $input['stime'],
-                'etime'      => $input['etime'],
-                'classifyCounts'    => $input['classifyCounts'],
-                'wholeSession' => $input['wholeSession'],
-                'days'   => $input['days'],
-                'locations'  => $input['locations'],
-                'excludeActs' => $input['excludeActs'],
-                'requireActs' => $input['requireActs'],
+                'id'             => $input['id'],
+                'sdate'          => $input['sdate'],
+                'edate'          => $input['edate'],
+                'stime'          => $input['stime'],
+                'etime'          => $input['etime'],
+                'classifyCounts' => $input['classifyCounts'],
+                'wholeSession'   => $input['wholeSession'],
+                'days'           => $input['days'],
+                'locations'      => $input['locations'],
+                'excludeActs'    => $input['excludeActs'],
+                'requireActs'    => $input['requireActs'],
                 'excludeActGrps' => $input['excludeActGrps'],
                 'requireActGrps' => $input['requireActGrps']
             );

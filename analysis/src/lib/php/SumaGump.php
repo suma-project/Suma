@@ -19,7 +19,8 @@ class SumaGump extends GUMP
     // Add leading zero to 3 digit string
     public function filter_pad_time($value)
     {
-      if (strlen($value) === 3) {
+      if (strlen($value) === 3)
+      {
         return '0' . $value;
       } else {
         return $value;
@@ -34,12 +35,13 @@ class SumaGump extends GUMP
 
       $param = explode(chr(32), $param);
 
-      if(in_array($len, $param)) { // valid, return nothing
+      if(in_array($len, $param))
+      { // valid, return nothing
         return;
       } else {
         return array(
           'field' => $field,
-          'value' => $value,
+          'value' => $input[$field],
           'rule'  => __FUNCTION__,
           'param' => $param
         );
@@ -54,7 +56,7 @@ class SumaGump extends GUMP
       // Error array
       $error = array(
         'field' => $field,
-        'value' => $value,
+        'value' => $input[$field],
         'rule'  => __FUNCTION__,
         'param' => $param
       );
@@ -63,18 +65,49 @@ class SumaGump extends GUMP
       $days = explode(",", $input[$field]);
 
       // Extra value, generate error
-      if (count($days) > 7) {
+      if (count($days) > 7)
+      {
         return $error;
       }
 
       // If $days contains invalid value, generate error
-      foreach ($days as $day) {
+      foreach ($days as $day)
+      {
         if (!in_array($day, $validDays)) {
           return $error;
         }
       }
 
       // All values valid
+      return;
+    }
+
+    public function validate_activities($field, $input, $param = NULL)
+    {
+      // Error array
+      $error = array(
+        'field' => $field,
+        'value' => $input[$field],
+        'rule'  => __FUNCTION__,
+        'param' => $param
+      );
+
+      if ($input[$field] === "" || $input[$field] === '')
+      {
+        return;
+      }
+
+      $acts = explode(",", $input[$field]);
+
+      foreach ($acts as $act)
+      {
+        if (!is_numeric($act))
+        {
+          return $error;
+        }
+      }
+
+      // Valid
       return;
     }
 }

@@ -51,7 +51,6 @@ class SumaGumpTest extends PHPUnit_Framework_TestCase {
 
   public function testValidatorMultiExactLengthTrue () {
     $original = array('stime' => '0300');
-    $expected = array('stime' => '0300');
 
     $rules = array(
       'stime' => 'multi_exact_len, 0 4',
@@ -125,6 +124,48 @@ class SumaGumpTest extends PHPUnit_Framework_TestCase {
 
     $rules = array(
       'days' => 'day_of_week',
+    );
+
+    $gump = new SumaGump();
+
+    $validated = $gump->validate($original, $rules);
+
+    $this->assertTrue(is_array($validated));
+  }
+
+  public function testValidatorActivitiesEmptyString () {
+    $original = array('acts' => '');
+
+    $rules = array(
+      'acts' => 'activities',
+    );
+
+    $gump = new SumaGump();
+
+    $validated = $gump->validate($original, $rules);
+
+    $this->assertEquals($validated, TRUE);
+  }
+
+  public function testValidatorActivitiesValidValues () {
+    $original = array('acts' => '1,2,3,-1');
+
+    $rules = array(
+      'acts' => 'activities',
+    );
+
+    $gump = new SumaGump();
+
+    $validated = $gump->validate($original, $rules);
+
+    $this->assertEquals($validated, TRUE);
+  }
+
+  public function testValidatorActivitiesInvalidValues () {
+    $original = array('acts' => 'a,b,c');
+
+    $rules = array(
+      'acts' => 'activities',
     );
 
     $gump = new SumaGump();
