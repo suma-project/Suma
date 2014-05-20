@@ -37,16 +37,6 @@ angular.module('sumaAnalysis')
         return actsLocs.get(init);
       },
       set: function (urlParams, sumaConfig, inits) {
-        function testAct (id, exclude, require) {
-          if (_.contains(exclude, id)) {
-            return 'exclude';
-          } else if (_.contains(require, id)) {
-            return 'require';
-          } else {
-            return 'allow';
-          }
-        }
-
         var activities,
             dfd = $q.defer(),
             errors = [],
@@ -116,17 +106,17 @@ angular.module('sumaAnalysis')
           }
 
           if (sumaConfig.formFields.activities) {
-            excludeActsAry = urlParams.excludeActs.split(',');
-            requireActsAry = urlParams.requireActs.split(',');
-            excludeActGrpsAry = urlParams.excludeActGrps.split(',');
-            requireActGrpsAry = urlParams.requireActGrps.split(',');
+            excludeActsAry = urlParams.excludeActs || urlParams.excludeActs === '' ? urlParams.excludeActs.split(',') : null;
+            requireActsAry = urlParams.requireActs || urlParams.requireActs === '' ? urlParams.requireActs.split(',') : null;
+            excludeActGrpsAry = urlParams.excludeActGrps || urlParams.excludeActGrps === '' ? urlParams.excludeActGrps.split(',') : null;
+            requireActGrpsAry = urlParams.requireActGrps || urlParams.requireActGrps === '' ? urlParams.requireActGrps.split(',') : null;
 
             // validate excludeActs
             if (validation.validateAct(excludeActsAry, activities, 'activity')) {
               newParams.excludeActs = excludeActsAry;
             } else {
               newParams.excludeActs = '';
-              errors.push('Invalid value for excludeActs');
+              errors.push('Invalid value for excludeActs.');
             }
 
             // validate requireActs
@@ -134,7 +124,7 @@ angular.module('sumaAnalysis')
               newParams.requireActs = requireActsAry;
             } else {
               newParams.requireActs = '';
-              errors.push('Invalid value for requireActs');
+              errors.push('Invalid value for requireActs.');
             }
 
             // validate excludeActGrps
@@ -142,7 +132,7 @@ angular.module('sumaAnalysis')
               newParams.excludeActGrps = excludeActGrpsAry;
             } else {
               newParams.excludeActGrps = '';
-              errors.push('Invalid value for excludeActGrps');
+              errors.push('Invalid value for excludeActGrps.');
             }
 
             // validate requireActGrps
@@ -150,7 +140,7 @@ angular.module('sumaAnalysis')
               newParams.requireActGrps = requireActGrpsAry;
             } else {
               newParams.requireActGrps = '';
-              errors.push('Invalid value for requireActGrps');
+              errors.push('Invalid value for requireActGrps.');
             }
 
             activities = _.map(activities, function (act) {
