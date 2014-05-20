@@ -816,6 +816,20 @@ class Data
             }
         }
 
+        // Capture number of zero counts
+        if (!isset($this->countHash['zeroCounts']))
+        {
+            if ($count['number'] === 0) {
+                $this->countHash['zeroCounts'] = 1;
+            }
+        }
+        else
+        {
+            if ($count['number'] === 0) {
+                $this->countHash['zeroCounts'] += 1;
+            }
+        }
+
         // Build year summary array
         if(!isset($this->countHash['yearSummary'][$year]))
         {
