@@ -822,6 +822,10 @@ class Data
             if ($count['number'] === 0) {
                 $this->countHash['zeroCounts'] = 1;
             }
+            else
+            {
+                $this->countHash['zeroCounts'] = 0;
+            }
         }
         else
         {
