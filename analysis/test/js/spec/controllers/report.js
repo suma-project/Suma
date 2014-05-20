@@ -256,7 +256,6 @@ describe('Controller: ReportCtrl', function () {
     initiativesStub.restore();
   });
 
-
   it(':scrollTo should set locationHash', function () {
     var initiativesStub;
 
@@ -281,20 +280,19 @@ describe('Controller: ReportCtrl', function () {
     initiativesStub.restore();
   });
 
-  it(':updateMetadata should respond to init changes', function () {
+  it(':getMetadata should set metadata on scope', function () {
     var actsLocsStub,
         initiativesStub,
-        response;
+        mock;
 
-    // Mock response object
-    response = {
-      activities: ['first', 'second'],
-      locations: ['third', 'fourth']
+    mock = {
+      activities: [{}, {}],
+      locations: [{}, {}]
     };
 
     // Stub actsLocs service
     actsLocsStub = sinon.stub(ActsLocs, 'get');
-    actsLocsStub.returns(response);
+    actsLocsStub.returns(mock);
 
     // Stub initiatives service
     initiativesStub = sinon.stub(Initiatives, 'get');
@@ -306,7 +304,46 @@ describe('Controller: ReportCtrl', function () {
       sumaConfig: SumaConfig
     });
 
-    // Check branch if params.init is undefined
+    // Assertions
+    expect(scope.actsLocs).to.equal(undefined);
+    expect(scope.activities).to.equal(undefined);
+    expect(scope.locations).to.equal(undefined);
+    expect(scope.params.location).to.equal(undefined);
+
+    // Call getMetadata
+    scope.getMetadata();
+
+    // Assertions
+    expect(scope.actsLocs).to.equal(mock);
+    expect(scope.activities).to.equal(mock.activities);
+    expect(scope.locations).to.equal(mock.locations);
+    expect(scope.params.location).to.equal(mock.locations[0]);
+
+    // Restore stubs
+    initiativesStub.restore();
+    actsLocsStub.restore();
+  });
+
+  it(':updateMetadata should respond to init changes', function () {
+    var getMetadataStub,
+        initiativesStub,
+        response;
+
+    // Stub initiatives service
+    initiativesStub = sinon.stub(Initiatives, 'get');
+    initiativesStub.returns(okResponse());
+
+    // Instantiate controller
+    ReportCtrl = Controller('ReportCtrl', {
+      $scope: scope,
+      sumaConfig: SumaConfig
+    });
+
+    // Stub getMetadata()
+    getMetadataStub = sinon.stub(scope, 'getMetadata');
+    getMetadataStub.returns(true);
+
+    //Check branch if params.init is undefined
     scope.updateMetadata();
     scope.$digest();
     expect(scope.processMetadata).to.equal(undefined);
@@ -315,14 +352,10 @@ describe('Controller: ReportCtrl', function () {
     scope.params = {};
     scope.params.init = {};
     scope.updateMetadata();
-    scope.$digest();
+    // scope.$digest();
 
     // Assertions
     expect(scope.processMetadata).to.equal(true);
-    expect(scope.activities).to.equal(response.activities);
-    expect(scope.locations).to.equal(response.locations);
-    expect(scope.params.activity).to.equal(response.activities[0]);
-    expect(scope.params.location).to.equal(response.locations[0]);
 
     // Flush timeout to test state
     Timeout.flush();
@@ -331,8 +364,8 @@ describe('Controller: ReportCtrl', function () {
     expect(scope.processMetadata).to.equal(false);
 
     // Restore stubs
-    actsLocsStub.restore();
     initiativesStub.restore();
+    getMetadataStub.restore();
   });
 
   it(':submit should call getData if currentScope equals currentUrl', function () {
@@ -346,7 +379,11 @@ describe('Controller: ReportCtrl', function () {
       sdate: '20140101',
       edate: '20140104',
       stime: '',
-      etime: ''
+      etime: '',
+      excludeActs: '',
+      requireActs: '',
+      excludeActGrps: '',
+      requireActGrps: ''
     });
 
     // Instantiate controller
@@ -367,57 +404,13 @@ describe('Controller: ReportCtrl', function () {
     scope.params.etime = '';
     scope.params.classifyCounts = null;
     scope.params.wholeSession = null;
-    scope.params.activity = null;
     scope.params.location = null;
     scope.params.daygroup = null;
-
-    // Call submit method
-    scope.submit();
-
-    // Assertions
-    expect(getDataStub).to.be.calledOnce;
-
-    // Restore stubs
-    getDataStub.restore();
-    locationSearchStub.restore();
-  });
-
-  it(':submit should call getData if currentScope equals currentUrl (activity with type)', function () {
-    var getDataStub,
-        locationSearchStub;
-
-    // Stub location.search
-    locationSearchStub = sinon.stub(location, 'search');
-    locationSearchStub.returns({
-      id: '4',
-      sdate: '',
-      edate: '',
-      stime: '',
-      etime: '',
-      activity: 'activity-47'
-    });
-
-    // Instantiate controller
-    ReportCtrl = Controller('ReportCtrl', {
-      $scope: scope,
-      sumaConfig: SumaConfig
-    });
-
-    // Stub data
-    getDataStub = sinon.stub(scope, 'getData');
-
-    // Populate Scope
-    scope.params = {};
-    scope.params.init = {id: '4'};
-    scope.params.sdate = '';
-    scope.params.edate = '';
-    scope.params.stime = '';
-    scope.params.etime = '';
-    scope.params.classifyCounts = null;
-    scope.params.wholeSession = null;
-    scope.params.activity = {id: 47, type: 'activity'};
-    scope.params.location = null;
-    scope.params.daygroup = null;
+    scope.params.zeroCounts = true;
+    scope.params.excludeActs = '';
+    scope.params.requireActs = '';
+    scope.params.excludeActGrps = '';
+    scope.params.requireActGrps = '';
 
     // Call submit method
     scope.submit();
