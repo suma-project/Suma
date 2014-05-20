@@ -8,7 +8,8 @@ angular.module('sumaAnalysis')
       transclude: true,
       scope: {
         modalId: '@',
-        modalTitle: '@'
+        modalTitle: '@',
+        modalSaveText: '@'
       },
       link: function (scope, el, attrs) {
         // Initialize modal
