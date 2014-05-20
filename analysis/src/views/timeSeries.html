@@ -9,10 +9,10 @@
         <strong>Subset: </strong> {{summaryParams.stime || '00:00'}} - {{summaryParams.etime || '23:59'}} <br/>
         <strong>Days: </strong> <span ng-repeat="day in summaryParams.days">{{day}}<span ng-show="!$last">,</span> </span>
         <strong>Locations: </strong> {{summaryParams.location.title}} <br/>
-        <strong>EA: </strong> {{summaryParams.excludeActs | activityTitle:activities:'activity' }}
-        <strong>RA: </strong> {{summaryParams.requireActs | activityTitle:activities:'activity' }}
-        <strong>EAG: </strong> {{summaryParams.excludeActGrps | activityTitle:activities:'activityGroup' }}
-        <strong>RAG: </strong> {{summaryParams.requireActGrps | activityTitle:activities:'activityGroup' }}
+        <strong>EA: </strong> {{summaryParams.excludeActs | activityTitle:activities:'activity'}}
+        <strong>RA: </strong> {{summaryParams.requireActs | activityTitle:activities:'activity'}}
+        <strong>EAG: </strong> {{summaryParams.excludeActGrps | activityTitle:activities:'activityGroup'}}
+        <strong>RAG: </strong> {{summaryParams.requireActGrps | activityTitle:activities:'activityGroup'}}
       </p>
     </div>
     <div class="col-xs-7">
