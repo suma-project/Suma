@@ -49403,6 +49403,28 @@ angular.module('sumaAnalysis').factory('scopeUtils', [
         }
         return actAry.join();
       },
+      mapActs: function (acts, excludeActGrpsAry, requireActGrpsAry, excludeActsAry, requireActsAry) {
+        return _.map(acts, function (act) {
+          if (act.type === 'activityGroup') {
+            if (_.contains(excludeActGrpsAry, String(act.id))) {
+              act.filter = 'exclude';
+            } else if (_.contains(requireActGrpsAry, String(act.id))) {
+              act.filter = 'require';
+            } else {
+              act.filter = 'allow';
+            }
+          } else {
+            if (_.contains(excludeActsAry, String(act.id))) {
+              act.filter = 'exclude';
+            } else if (_.contains(requireActsAry, String(act.id))) {
+              act.filter = 'require';
+            } else {
+              act.filter = 'allow';
+            }
+          }
+          return act;
+        });
+      },
       getMetadata: function (init) {
         return actsLocs.get(init);
       },
@@ -49490,26 +49512,7 @@ angular.module('sumaAnalysis').factory('scopeUtils', [
               newParams.requireActGrps = '';
               errors.push('Invalid value for requireActGrps.');
             }
-            activities = _.map(activities, function (act) {
-              if (act.type === 'activityGroup') {
-                if (_.contains(excludeActGrpsAry, String(act.id))) {
-                  act.filter = 'exclude';
-                } else if (_.contains(requireActGrpsAry, String(act.id))) {
-                  act.filter = 'require';
-                } else {
-                  act.filter = 'allow';
-                }
-              } else {
-                if (_.contains(excludeActsAry, String(act.id))) {
-                  act.filter = 'exclude';
-                } else if (_.contains(requireActsAry, String(act.id))) {
-                  act.filter = 'require';
-                } else {
-                  act.filter = 'allow';
-                }
-              }
-              return act;
-            });
+            activities = this.mapActs(activities, excludeActGrpsAry, requireActGrpsAry, excludeActsAry, requireActsAry);
           }
           if (sumaConfig.formFields.locations) {
             newParams.location = _.find(locations, function (e, i) {
