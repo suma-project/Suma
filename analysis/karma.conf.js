@@ -18,6 +18,7 @@ module.exports = function(config) {
       'src/bower_components/angular-promise-tracker/promise-tracker.js',
       'src/bower_components/moment/moment.js',
       'src/bower_components/bootstrap-sass/js/tooltip.js',
+      'src/bower_components/bootstrap-sass/js/modal.js',
       'src/bower_components/bootstrap-sass/js/popover.js',
       'src/bower_components/bootstrap3-datetimepicker/src/js/bootstrap-datetimepicker.js',
       'src/bower_components/lodash/dist/lodash.js',

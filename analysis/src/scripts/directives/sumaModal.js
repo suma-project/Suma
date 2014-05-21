@@ -12,14 +12,16 @@ angular.module('sumaAnalysis')
         modalSaveText: '@'
       },
       link: function (scope, el, attrs) {
+        var tgt = $('#' + scope.modalId);
+
         // Initialize modal
-        $('#' + scope.modalId).modal({
+        $(tgt).modal({
           show: false
         });
 
         // Hide modal when navigating between pages
         scope.$on('$locationChangeSuccess', function (e) {
-          $('#' + scope.modalId).modal('hide');
+          $(tgt).modal('hide');
         });
       }
     };
