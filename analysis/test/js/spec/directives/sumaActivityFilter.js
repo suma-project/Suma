@@ -87,15 +87,15 @@ describe('Directive: sumaActivityFilter', function () {
     actGrpExclude = element.find('input[type=radio]')[2];
 
     // Assert about initial state
-    $(actGrpAllow).should.be.checked
-    $(actGrpRequire).should.not.be.checked
-    $(actGrpExclude).should.not.be.checked
+    $(actGrpAllow).should.be.checked;
+    $(actGrpRequire).should.not.be.checked;
+    $(actGrpExclude).should.not.be.checked;
 
     // Require activity group
     actGrpRequire.click();
-    $(actGrpAllow).should.not.be.checked
-    $(actGrpRequire).should.be.checked
-    $(actGrpExclude).should.not.be.checked
+    $(actGrpAllow).should.not.be.checked;
+    $(actGrpRequire).should.be.checked;
+    $(actGrpExclude).should.not.be.checked;
 
     _.each(scope.activities, function (act, i) {
       expect(act.filter).to.equal(expectedRequire[i].filter);
@@ -104,9 +104,9 @@ describe('Directive: sumaActivityFilter', function () {
 
     // Exclude activity group
     actGrpExclude.click();
-    $(actGrpAllow).should.not.be.checked
-    $(actGrpRequire).should.not.be.checked
-    $(actGrpExclude).should.be.checked
+    $(actGrpAllow).should.not.be.checked;
+    $(actGrpRequire).should.not.be.checked;
+    $(actGrpExclude).should.be.checked;
 
     _.each(scope.activities, function (act, i) {
       expect(act.filter).to.equal(expectedExclude[i].filter);
