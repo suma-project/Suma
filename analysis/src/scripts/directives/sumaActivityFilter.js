@@ -13,13 +13,12 @@ angular.module('sumaAnalysis')
             act.filter = 'allow';
           });
         };
-      }],
-      link: function (scope, ele, attrs, depthFilter) {
-        function setFilterStatus () {
-          var actGrps = _.filter(scope.acts, {type: 'activityGroup'});
+
+        $scope.setStatus = function () {
+          var actGrps = _.filter($scope.acts, {type: 'activityGroup'});
 
           _.each(actGrps, function (actGrp) {
-            var acts = _.filter(scope.acts, {type: 'activity', activityGroup: actGrp.id});
+            var acts = _.filter($scope.acts, {type: 'activity', activityGroup: actGrp.id});
 
             _.each(acts, function (act) {
               if (actGrp.filter === 'exclude') {
@@ -29,9 +28,7 @@ angular.module('sumaAnalysis')
               }
             });
           });
-        }
-
-        scope.$watch('acts', setFilterStatus, true);
-      }
+        };
+      }]
     };
   });
