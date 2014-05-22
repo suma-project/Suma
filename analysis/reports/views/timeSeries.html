@@ -17,11 +17,11 @@
     </div>
     <div class="col-xs-7">
       <div class="row">
-        <div data-suma-buttons-radio="" class="btn-group col-xs-4 pull-right" data-model="data.timeSeriesData" data-options="data.timeSeriesOptions"></div>
+        <div data-suma-buttons-radio class="btn-group col-xs-4 pull-right" data-model="data.timeSeriesData" data-options="data.timeSeriesOptions"></div>
         <div class="pull-right">
           <a class="btn btn-default btn-sm" data-ng-click="scrollTo('export-data')">Export Raw Data</a>
           <a class="btn btn-default btn-sm" data-ng-click="scrollTo('summary-data')">Summary Data</a>
-          <span data-suma-chart-download="" data-chart="#chart-1" title="suma_timeseries_chart.png" data-filter=".sub-graph"></span>
+          <span data-suma-chart-download data-chart="#chart-1" title="suma_timeseries_chart.png" data-filter=".sub-graph"></span>
         </div>
       </div>
     </div>
@@ -40,7 +40,7 @@
         <p>Error Code: {{errorCode}}</p>
         <p>Error Message: {{errorMessage}}</p>
       </div>
-      <div data-suma-time-series-chart="" id="chart-1" data-data="data.timeSeriesData" data-ng-show="state.success"></div>
+      <div data-suma-time-series-chart id="chart-1" data-data="data.timeSeriesData" data-ng-show="state.success"></div>
     </div>
   </div>
 
@@ -63,26 +63,26 @@
       <fieldset data-ng-disabled="state.loading">
         <div class="col-xs-3">
           <div class="form-group">
-            <label class="suma-popover" data-title="Select Initiative" data-content="Select an initiative to reveal additional filters." data-suma-popover="">Select Initiative</label>
+            <label class="suma-popover" data-title="Select Initiative" data-content="Select an initiative to reveal additional filters." data-suma-popover>Select Initiative</label>
             <select name="initiative" data-ng-model="params.init" data-ng-options="init.title for init in inits" data-ng-change="updateMetadata()" class="form-control">
               <option value="">Select an Initiative</option>
             </select>
           </div>
 
           <div class="form-group">
-            <label class="suma-popover" data-title="Classify Counts By" data-content="Choose the date to use for grouping counts by date. &quot;Count Date&quot; shows the actual date of the count, while &quot;Session Start&quot; and &quot;Session End&quot; use the respective date on the collection session containing each count." data-suma-popover="">Classify Counts By</label>
+            <label class="suma-popover" data-title="Classify Counts By" data-content="Choose the date to use for grouping counts by date. &quot;Count Date&quot; shows the actual date of the count, while &quot;Session Start&quot; and &quot;Session End&quot; use the respective date on the collection session containing each count." data-suma-popover>Classify Counts By</label>
             <select name="session" id="classifyCounts" class="form-control" data-ng-model="params.classifyCounts" data-ng-options="opt.title for opt in countOptions">
             </select>
           </div>
 
           <div class="form-group">
-            <label class="suma-popover" data-title="Always Include Whole Session" data-content="Select yes if you would like to include counts inside of sessions that may fall outside of your other filters." data-suma-popover="">Always Include Whole Session</label>
+            <label class="suma-popover" data-title="Always Include Whole Session" data-content="Select yes if you would like to include counts inside of sessions that may fall outside of your other filters." data-suma-popover>Always Include Whole Session</label>
             <select name="session_filter" id="wholeSession" class="form-control" data-ng-model="params.wholeSession" data-ng-options="opt.title for opt in sessionOptions">
             </select>
           </div>
 
           <div class="form-group">
-            <label class="suma-popover" data-title="Use Zero Counts" data-content="Select yes if you would like to include counts with a number of 0 in the percentage and average calculations for the summary data and locations and activities chart." data-suma-popover="">Use Zero Counts for Locations </label>
+            <label class="suma-popover" data-title="Use Zero Counts" data-content="Select yes if you would like to include counts with a number of 0 in the percentage and average calculations for the summary data and locations and activities chart." data-suma-popover>Use Zero Counts for Locations </label>
             <select name="zeroCounts" id="zeroCounts" class="form-control" data-ng-model="params.zeroCounts" data-ng-options="opt.title for opt in zeroOptions">
             </select>
           </div>
@@ -90,28 +90,28 @@
 
         <div class="col-xs-3">
           <div class="form-group">
-            <label class="suma-popover" data-title="Choose Date Range" data-content="Select a start date for your analysis. Defaults to 4 months from current day. Clear fields to retrieve the complete data set." data-suma-popover="">Start Date</label>
-            <div data-suma-datepicker="" data-model="params.sdate"></div>
+            <label class="suma-popover" data-title="Choose Date Range" data-content="Select a start date for your analysis. Defaults to 4 months from current day. Clear fields to retrieve the complete data set." data-suma-popover>Start Date</label>
+            <div data-suma-datepicker data-model="params.sdate"></div>
             <span class="help-block">YYYY-MM-DD</span>
           </div>
 
           <div class="form-group">
-            <label class="suma-popover" data-title="Choose Date Range" data-content="Select an end date for your analysis. Clear fields to retrieve complete data set." data-suma-popover="">End Date</label>
-            <div data-suma-datepicker="" data-model="params.edate"></div>
+            <label class="suma-popover" data-title="Choose Date Range" data-content="Select an end date for your analysis. Clear fields to retrieve complete data set." data-suma-popover>End Date</label>
+            <div data-suma-datepicker data-model="params.edate"></div>
             <span class="help-block">YYYY-MM-DD</span>
           </div>
         </div>
 
         <div class="col-xs-3">
           <div class="form-group">
-            <label class="suma-popover" data-title="Select Subset of Day" data-content="Include only data gathered during a certain time of day in your analysis, e.g. 20:00-22:00." data-suma-popover="">Start Time</label>
-            <div data-suma-timepicker="" data-model="params.stime" data-placeholder="00:00"></div>
+            <label class="suma-popover" data-title="Select Subset of Day" data-content="Include only data gathered during a certain time of day in your analysis, e.g. 20:00-22:00." data-suma-popover>Start Time</label>
+            <div data-suma-timepicker data-model="params.stime" data-placeholder="00:00"></div>
             <span class="help-block">24-hour format, e.g. 08:00</span>
           </div>
 
           <div class="form-group">
-            <label class="suma-popover" data-title="Select Subset of Day" data-content="Include only data gathered during a certain time of day in your analysis, e.g. 20:00-22:00." data-suma-popover="">End Time</label>
-            <div data-suma-timepicker="" data-model="params.etime" data-placeholder="23:59"></div>
+            <label class="suma-popover" data-title="Select Subset of Day" data-content="Include only data gathered during a certain time of day in your analysis, e.g. 20:00-22:00." data-suma-popover>End Time</label>
+            <div data-suma-timepicker data-model="params.etime" data-placeholder="23:59"></div>
             <span class="help-block">24-hour format, e.g. 08:00</span>
           </div>
         </div>
@@ -122,12 +122,12 @@
 
         <div class="col-xs-3" data-ng-show="params.init && !processMetadata">
           <div class="form-group">
-            <label class="suma-popover" data-title="Limit Days of the Week" data-content="Filter by weekday." data-suma-popover="">Limit Days of the Week</label>
+            <label class="suma-popover" data-title="Limit Days of the Week" data-content="Filter by weekday." data-suma-popover>Limit Days of the Week</label>
             <div class="controls">
               <div class="row">
                 <div class="col-xs-3" ng-repeat="day in dayOptions">
                   <label class="checkbox-inline">
-                    <input type="checkbox" value="{{day}}" check-list="params.days" suma-checklist="">{{day | capitalize}}
+                    <input type="checkbox" value="{{day}}" check-list="params.days" suma-checklist>{{day | capitalize}}
                   </label>
                 </div>
               </div>
@@ -135,7 +135,7 @@
           </div>
 
           <div class="form-group">
-            <label class="suma-popover" data-title="Limit Locations" data-content="Select which locations to include in your analysis. Selecting a location with children will include all children in the data set." data-suma-popover="">Limit Locations</label>
+            <label class="suma-popover" data-title="Limit Locations" data-content="Select which locations to include in your analysis. Selecting a location with children will include all children in the data set." data-suma-popover>Limit Locations</label>
             <div class="controls">
               <select name="locations" data-ng-model="params.location" data-ng-options="loc | depth for loc in locations" class="form-control">
               </select>
@@ -143,18 +143,18 @@
           </div>
 
           <div class="form-group" ng-show="activities.length > 2">
-            <label class="suma-popover" data-title="Limit Activities" data-content="Select which activities or Activity Groups to require or exclude in your analysis. Excluding Activity Groups will also exclude their child activities. Requiring an Activity Group while allowing all children will require at least one of the children. All required fields must be present in each count, and all excluded fields must be absent from each count." data-suma-popover="">Limit Activities</label>
+            <label class="suma-popover" data-title="Limit Activities" data-content="Select which activities or Activity Groups to require or exclude in your analysis. Excluding Activity Groups will also exclude their child activities. Requiring an Activity Group while allowing all children will require at least one of the children. All required fields must be present in each count, and all excluded fields must be absent from each count." data-suma-popover>Limit Activities</label>
             <div class="controls">
               <button type="button" class="btn btn-default" data-toggle="modal" data-target="#sumaModal">
                 Limit Activities
               </button>
-              <div data-suma-modal="" data-modal-id="sumaModal" data-modal-title="Limit Activities" data-modal-save-text="Update">
-                <div data-suma-activity-filter="" acts="activities"></div>
+              <div data-suma-modal data-modal-id="sumaModal" data-modal-title="Limit Activities" data-modal-save-text="Update">
+                <div data-suma-activity-filter acts="activities"></div>
               </div>
             </div>
           </div>
 
-          <div data-suma-active-acts="" acts="activities" ng-show="activities.length > 2"></div>
+          <div data-suma-active-acts acts="activities" ng-show="activities.length > 2"></div>
 
           <div>
             <input type="submit" id="submit" class="btn btn-success" value="{{state.loading ? 'Loading...' : 'Submit'}}">
@@ -305,16 +305,16 @@
         <h3>Locations and Activities</h3>
       </div>
       <div class="col-xs-12">
-        <span data-suma-buttons-radio="" class="btn-group" data-toggle="buttons" data-model="data.actsLocsData" data-options="data.actsLocsOptions"></span>
-        <span data-suma-buttons-radio="" class="btn-group" data-toggle="buttons" data-model="data.barChartData" data-options="data.actsLocsData.items"></span>
-        <span data-suma-chart-download="" data-chart="#chart-2" data-title="suma_bar_chart.png"></span>
+        <span data-suma-buttons-radio class="btn-group" data-toggle="buttons" data-model="data.actsLocsData" data-options="data.actsLocsOptions"></span>
+        <span data-suma-buttons-radio class="btn-group" data-toggle="buttons" data-model="data.barChartData" data-options="data.actsLocsData.items"></span>
+        <span data-suma-chart-download data-chart="#chart-2" data-title="suma_bar_chart.png"></span>
       </div>
       <div class="col-xs-12 bar-chart-wrapper">
-        <div data-suma-bar-chart="" id="chart-2" data-data="data.barChartData"></div>
+        <div data-suma-bar-chart id="chart-2" data-data="data.barChartData"></div>
       </div>
       <div id="export-data" class="col-xs-12">
         <h3>Export Raw Data</h3>
-        <div data-suma-csv="" data-data="data"></div>
+        <div data-suma-csv data-data="data"></div>
       </div>
     </div>
   </div>

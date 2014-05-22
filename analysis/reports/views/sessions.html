@@ -24,7 +24,7 @@
       <fieldset data-ng-disabled="state.loading">
         <div class="col-xs-3">
           <div class="form-group">
-            <label class="suma-popover" data-title="Select Initiative" data-content="Select an initiative to reveal additional filters." data-suma-popover="">Select an Initiative</label>
+            <label class="suma-popover" data-title="Select Initiative" data-content="Select an initiative to reveal additional filters." data-suma-popover>Select an Initiative</label>
             <select name="initiative" data-ng-model="params.init" data-ng-options="init.title for init in inits" class="form-control">
               <option value="">Select an Initiative</option>
             </select>
@@ -33,28 +33,28 @@
 
         <div class="col-xs-3">
           <div class="form-group">
-            <label class="suma-popover" data-title="Choose Date Range" data-content="Select a start date for your analysis. Defaults to 4 months from current day. Clear fields to retrieve the complete data set." data-suma-popover="">Start Date</label>
-            <div data-suma-datepicker="" data-model="params.sdate"></div>
+            <label class="suma-popover" data-title="Choose Date Range" data-content="Select a start date for your analysis. Defaults to 4 months from current day. Clear fields to retrieve the complete data set." data-suma-popover>Start Date</label>
+            <div data-suma-datepicker data-model="params.sdate"></div>
             <span class="help-block">YYYY-MM-DD</span>
           </div>
 
           <div class="form-group">
-            <label class="suma-popover" data-title="Choose Date Range" data-content="Select an end date for your analysis. Clear fields to retrieve complete data set." data-suma-popover="">End Date</label>
-            <div data-suma-datepicker="" data-model="params.edate"></div>
+            <label class="suma-popover" data-title="Choose Date Range" data-content="Select an end date for your analysis. Clear fields to retrieve complete data set." data-suma-popover>End Date</label>
+            <div data-suma-datepicker data-model="params.edate"></div>
             <span class="help-block">YYYY-MM-DD</span>
           </div>
         </div>
 
         <div class="col-xs-3">
           <div class="form-group">
-            <label class="suma-popover" data-title="Select Subset of Day" data-content="Include only data gathered during a certain time of day in your analysis, e.g. 20:00-22:00." data-suma-popover="">Start Time</label>
-            <div data-suma-timepicker="" data-model="params.stime" data-placeholder="00:00"></div>
+            <label class="suma-popover" data-title="Select Subset of Day" data-content="Include only data gathered during a certain time of day in your analysis, e.g. 20:00-22:00." data-suma-popover>Start Time</label>
+            <div data-suma-timepicker data-model="params.stime" data-placeholder="00:00"></div>
             <span class="help-block">24-hour format, e.g. 08:00</span>
           </div>
 
           <div class="form-group">
-            <label class="suma-popover" data-title="Select Subset of Day" data-content="Include only data gathered during a certain time of day in your analysis, e.g. 20:00-22:00." data-suma-popover="">End Time</label>
-            <div data-suma-timepicker="" data-model="params.etime" data-placeholder="23:59"></div>
+            <label class="suma-popover" data-title="Select Subset of Day" data-content="Include only data gathered during a certain time of day in your analysis, e.g. 20:00-22:00." data-suma-popover>End Time</label>
+            <div data-suma-timepicker data-model="params.etime" data-placeholder="23:59"></div>
             <span class="help-block">24-hour format, e.g. 08:00</span>
           </div>
           <div data-ng-show="params.init">
