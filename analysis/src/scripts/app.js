@@ -135,6 +135,9 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
       //
 
     // whitelist data for csv download
-    $compileProvider.aHrefSanitizationWhitelist(/^\s*(data):/);
-
+    if (angular.isDefined($compileProvider.urlSanitizationWhitelist)) {
+          $compileProvider.urlSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|data):/);
+        } else {
+          $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|data):/);
+        }
   });

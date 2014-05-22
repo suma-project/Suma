@@ -48879,7 +48879,11 @@ angular.module('sumaAnalysis', [
     // });
     //
     // whitelist data for csv download
-    $compileProvider.aHrefSanitizationWhitelist(/^\s*(data):/);
+    if (angular.isDefined($compileProvider.urlSanitizationWhitelist)) {
+      $compileProvider.urlSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|data):/);
+    } else {
+      $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|data):/);
+    }
   }
 ]);
 'use strict';
@@ -50491,7 +50495,7 @@ angular.module('sumaAnalysis').directive('sumaCsv', function () {
             finalData += space;
           });
           // Build download URL
-          base = 'data:application/csv;charset=utf-8,';
+          base = 'data:text/csv;charset=utf-8,';
           href = encodeURI(base + _.unescape(finalData));
           return href;
         };
