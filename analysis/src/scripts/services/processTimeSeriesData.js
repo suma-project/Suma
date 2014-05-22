@@ -122,20 +122,6 @@ angular.module('sumaAnalysis')
       return false;
     }
 
-    function flattenActs (acts) {
-      var flatActs = [];
-
-      _.each(acts, function (act) {
-        flatActs.push(act);
-
-        _.each(act.children, function (child) {
-          flatActs.push(child);
-        });
-      });
-
-      return flatActs;
-    }
-
     function processData (response, activities, locations, zeroCounts) {
       var noActsSum,
         noActsAvgSum,
@@ -193,11 +179,11 @@ angular.module('sumaAnalysis')
       counts.locationsPct = buildArray(locations, response.locationsSum, divisor, false, true);
 
       // Activities related data
-      counts.activitiesTable = buildTableArray(flattenActs(_.cloneDeep(activities)), response.activitiesSum, response.total, 'activityGroup');
-      counts.activitiesSum = buildArray(flattenActs(_.cloneDeep(activities)), response.activitiesSum, response.total);
-      counts.activitiesAvgSum = buildArray(flattenActs(_.cloneDeep(activities)), response.activitiesAvgSum, response.total, true);
-      counts.activitiesAvgAvg = buildArray(flattenActs(_.cloneDeep(activities)), response.activitiesAvgAvg, response.total, true);
-      counts.activitiesPct = buildArray(flattenActs(_.cloneDeep(activities)), response.activitiesSum, response.total, false, true);
+      counts.activitiesTable = buildTableArray(_.cloneDeep(activities), response.activitiesSum, response.total, 'activityGroup');
+      counts.activitiesSum = buildArray(_.cloneDeep(activities), response.activitiesSum, response.total);
+      counts.activitiesAvgSum = buildArray(_.cloneDeep(activities), response.activitiesAvgSum, response.total, true);
+      counts.activitiesAvgAvg = buildArray(_.cloneDeep(activities), response.activitiesAvgAvg, response.total, true);
+      counts.activitiesPct = buildArray(_.cloneDeep(activities), response.activitiesSum, response.total, false, true);
 
       // Handle insertion of no activity values
       noActsSum = insertNoActs(response.activitiesSum, response.total, 'sum');
