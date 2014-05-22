@@ -7,7 +7,7 @@
         <strong>Whole Session: </strong> {{summaryParams.wholeSession.title}} <br>
         <strong>Dates: </strong> {{summaryParams.sdate}} - {{summaryParams.edate}}
         <strong>Subset: </strong> {{summaryParams.stime || '00:00'}} - {{summaryParams.etime || '23:59'}} <br>
-        <strong>Days: </strong> <span ng-repeat="day in summaryParams.days">{{day}}<span ng-show="!$last">,</span> </span>
+        <strong>Days: </strong> <span ng-repeat="day in summaryParams.days">{{day | capitalize}}<span ng-show="!$last">,</span> </span>
         <strong>Locations: </strong> {{summaryParams.location.title}} <br>
         <strong>EA: </strong> {{summaryParams.excludeActs | activityTitle:activities:'activity'}}
         <strong>RA: </strong> {{summaryParams.requireActs | activityTitle:activities:'activity'}}
