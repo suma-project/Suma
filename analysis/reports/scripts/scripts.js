@@ -49675,16 +49675,6 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
       }
       return false;
     }
-    function flattenActs(acts) {
-      var flatActs = [];
-      _.each(acts, function (act) {
-        flatActs.push(act);
-        _.each(act.children, function (child) {
-          flatActs.push(child);
-        });
-      });
-      return flatActs;
-    }
     function processData(response, activities, locations, zeroCounts) {
       var noActsSum, noActsAvgSum, noActsAvgAvg, counts, divisor;
       // Convert response into arrays of objects
@@ -49716,11 +49706,11 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
       counts.locationsAvgAvg = buildArray(locations, response.locationsAvgAvg, divisor, true);
       counts.locationsPct = buildArray(locations, response.locationsSum, divisor, false, true);
       // Activities related data
-      counts.activitiesTable = buildTableArray(flattenActs(_.cloneDeep(activities)), response.activitiesSum, response.total, 'activityGroup');
-      counts.activitiesSum = buildArray(flattenActs(_.cloneDeep(activities)), response.activitiesSum, response.total);
-      counts.activitiesAvgSum = buildArray(flattenActs(_.cloneDeep(activities)), response.activitiesAvgSum, response.total, true);
-      counts.activitiesAvgAvg = buildArray(flattenActs(_.cloneDeep(activities)), response.activitiesAvgAvg, response.total, true);
-      counts.activitiesPct = buildArray(flattenActs(_.cloneDeep(activities)), response.activitiesSum, response.total, false, true);
+      counts.activitiesTable = buildTableArray(_.cloneDeep(activities), response.activitiesSum, response.total, 'activityGroup');
+      counts.activitiesSum = buildArray(_.cloneDeep(activities), response.activitiesSum, response.total);
+      counts.activitiesAvgSum = buildArray(_.cloneDeep(activities), response.activitiesAvgSum, response.total, true);
+      counts.activitiesAvgAvg = buildArray(_.cloneDeep(activities), response.activitiesAvgAvg, response.total, true);
+      counts.activitiesPct = buildArray(_.cloneDeep(activities), response.activitiesSum, response.total, false, true);
       // Handle insertion of no activity values
       noActsSum = insertNoActs(response.activitiesSum, response.total, 'sum');
       if (noActsSum) {
@@ -50962,7 +50952,6 @@ angular.module('sumaAnalysis').factory('processHourlyData', [
       data.data = data.options[0];
       return data;
     }
-    // Public API here
     return {
       get: function (response) {
         var dfd = $q.defer();
@@ -51552,11 +51541,12 @@ angular.module('sumaAnalysis').directive('sumaModal', function () {
       modalSaveText: '@'
     },
     link: function (scope, el, attrs) {
+      var tgt = $('#' + scope.modalId);
       // Initialize modal
-      $('#' + scope.modalId).modal({ show: false });
+      $(tgt).modal({ show: false });
       // Hide modal when navigating between pages
       scope.$on('$locationChangeSuccess', function (e) {
-        $('#' + scope.modalId).modal('hide');
+        $(tgt).modal('hide');
       });
     }
   };
@@ -51576,27 +51566,24 @@ angular.module('sumaAnalysis').directive('sumaActivityFilter', function () {
             act.filter = 'allow';
           });
         };
-      }
-    ],
-    link: function (scope, ele, attrs, depthFilter) {
-      function setFilterStatus() {
-        var actGrps = _.filter(scope.acts, { type: 'activityGroup' });
-        _.each(actGrps, function (actGrp) {
-          var acts = _.filter(scope.acts, {
-              type: 'activity',
-              activityGroup: actGrp.id
+        $scope.setStatus = function () {
+          var actGrps = _.filter($scope.acts, { type: 'activityGroup' });
+          _.each(actGrps, function (actGrp) {
+            var acts = _.filter($scope.acts, {
+                type: 'activity',
+                activityGroup: actGrp.id
+              });
+            _.each(acts, function (act) {
+              if (actGrp.filter === 'exclude') {
+                act.enabled = false;
+              } else {
+                act.enabled = true;
+              }
             });
-          _.each(acts, function (act) {
-            if (actGrp.filter === 'exclude') {
-              act.enabled = false;
-            } else {
-              act.enabled = true;
-            }
           });
-        });
+        };
       }
-      scope.$watch('acts', setFilterStatus, true);
-    }
+    ]
   };
 });
 'use strict';
