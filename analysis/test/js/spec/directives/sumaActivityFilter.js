@@ -52,20 +52,25 @@ describe('Directive: sumaActivityFilter', function () {
   });
 
   it('should modify activities array when clicked', function () {
-    var actGrpAllow,
-        actGrpRequire,
-        actGrpExclude,
+    var inputs,
         expectedRequire,
-        expectedExclude;
+        expectedExclude,
+        testRequire,
+        testExclude;
 
-    scope.$apply(function () {
-      scope.activities = [
-        {id: 4, type: 'activityGroup', filter: 'allow', activityGroup: 4, title: 'Type', enabled: true},
-        {id: 1, type: 'activity', filter: 'allow', activityGroup: 4, title: 'One', enabled: true},
-        {id: 2, type: 'activity', filter: 'allow', activityGroup: 4, title: 'Two', enabled: true},
-        {id: 3, type: 'activity', filter: 'allow', activityGroup: 4, title: 'Three', enabled: true}
-      ];
-    });
+    testRequire = [
+      {id: 4, type: 'activityGroup', filter: 'require', activityGroup: 4, title: 'Type', enabled: true},
+      {id: 1, type: 'activity', filter: 'allow', activityGroup: 4, title: 'One', enabled: false},
+      {id: 2, type: 'activity', filter: 'allow', activityGroup: 4, title: 'Two', enabled: false},
+      {id: 3, type: 'activity', filter: 'allow', activityGroup: 4, title: 'Three', enabled: false}
+    ];
+
+    testExclude = [
+      {id: 4, type: 'activityGroup', filter: 'exclude', activityGroup: 4, title: 'Type', enabled: true},
+      {id: 1, type: 'activity', filter: 'allow', activityGroup: 4, title: 'One', enabled: true},
+      {id: 2, type: 'activity', filter: 'allow', activityGroup: 4, title: 'Two', enabled: true},
+      {id: 3, type: 'activity', filter: 'allow', activityGroup: 4, title: 'Three', enabled: true}
+    ];
 
     expectedRequire = [
       {id: 4, type: 'activityGroup', filter: 'require', activityGroup: 4, title: 'Type', enabled: true},
@@ -81,33 +86,25 @@ describe('Directive: sumaActivityFilter', function () {
       {id: 3, type: 'activity', filter: 'allow', activityGroup: 4, title: 'Three', enabled: false}
     ];
 
+    scope.$apply(function () {
+      scope.activities = testRequire;
+    });
 
-    actGrpAllow = element.find('input[type=radio]')[0];
-    actGrpRequire = element.find('input[type=radio]')[1];
-    actGrpExclude = element.find('input[type=radio]')[2];
+    isolateScope.setStatus();
 
-    // Assert about initial state
-    $(actGrpAllow).should.be.checked;
-    $(actGrpRequire).should.not.be.checked;
-    $(actGrpExclude).should.not.be.checked;
-
-    // Require activity group
-    actGrpRequire.click();
-    $(actGrpAllow).should.not.be.checked;
-    $(actGrpRequire).should.be.checked;
-    $(actGrpExclude).should.not.be.checked;
-
+    // Assertions
     _.each(scope.activities, function (act, i) {
       expect(act.filter).to.equal(expectedRequire[i].filter);
       expect(act.enabled).to.equal(expectedRequire[i].enabled);
     });
 
-    // Exclude activity group
-    actGrpExclude.click();
-    $(actGrpAllow).should.not.be.checked;
-    $(actGrpRequire).should.not.be.checked;
-    $(actGrpExclude).should.be.checked;
+    scope.$apply(function () {
+      scope.activities = testExclude;
+    });
 
+    isolateScope.setStatus();
+
+    // Assertions
     _.each(scope.activities, function (act, i) {
       expect(act.filter).to.equal(expectedExclude[i].filter);
       expect(act.enabled).to.equal(expectedExclude[i].enabled);
