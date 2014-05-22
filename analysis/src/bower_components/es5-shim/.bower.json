@@ -9,6 +9,6 @@
     "commit": "16e070c763588290718a907d0fa0a132993e5d6a"
   },
   "_source": "git://github.com/es-shims/es5-shim.git",
-  "_target": "~2.3.0",
+  "_target": "2.3.0",
   "_originalSource": "es5-shim"
 }

@@ -72,8 +72,11 @@ describe('Service: ScopeUtils', function () {
       edate: '20140101',
       stime: '0400',
       etime: '1600',
-      activity: 'all',
-      location: 'all'
+      location: 'all',
+      requireActs: '',
+      excludeActs: '',
+      requireActGrps: '',
+      excludeActGrps: ''
     };
 
     // expected Scope
@@ -83,12 +86,15 @@ describe('Service: ScopeUtils', function () {
       wholeSession: {id: 'no', title: 'No'},
       zeroCounts: {id: 'no', title: 'No'},
       days: ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su'],
-      activity: {id: 'all'},
       location: {id: 'all'},
       sdate: '20131111',
       edate: '20140101',
       stime: '0400',
-      etime: '1600'
+      etime: '1600',
+      requireActs: [''],
+      excludeActs: [''],
+      requireActGrps: [''],
+      excludeActGrps: ['']
     };
 
     // mock inits
@@ -101,8 +107,8 @@ describe('Service: ScopeUtils', function () {
     // Call ScopeUtils.set
     ScopeUtils.set(urlParams, SumaConfig, inits).then(function (response) {
       // Assertions
-      expect(response.actsLocs).to.deep.equal({activities: [{id: 'all'}], locations: [{id: 'all'}]});
-      expect(response.activities).to.deep.equal([{id: 'all'}]);
+      expect(response.actsLocs).to.deep.equal({activities: [{id: 'all', filter: 'allow'}], locations: [{id: 'all'}]});
+      expect(response.activities).to.deep.equal([{id: 'all', filter: 'allow'}]);
       expect(response.locations).to.deep.equal([{id: 'all'}]);
       expect(response.errorMessage).to.equal(undefined);
       expect(response.params).to.deep.equal(expectedScope);
@@ -131,8 +137,11 @@ describe('Service: ScopeUtils', function () {
       edate: '20140101',
       stime: '0400',
       etime: '1600',
-      activity: 'activity-4',
-      location: 'all'
+      location: 'all',
+      requireActs: '',
+      excludeActs: '',
+      requireActGrps: '',
+      excludeActGrps: ''
     };
 
     // expected Scope
@@ -142,12 +151,15 @@ describe('Service: ScopeUtils', function () {
       wholeSession: {id: 'no', title: 'No'},
       zeroCounts: {id: 'no', title: 'No'},
       days: ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su'],
-      activity: {id: '4', type: 'activity'},
       location: {id: 'all'},
       sdate: '20131111',
       edate: '20140101',
       stime: '0400',
-      etime: '1600'
+      etime: '1600',
+      requireActs: [''],
+      excludeActs: [''],
+      requireActGrps: [''],
+      excludeActGrps: ['']
     };
 
     // mock inits
@@ -159,9 +171,10 @@ describe('Service: ScopeUtils', function () {
 
     // Call ScopeUtils.set
     ScopeUtils.set(urlParams, SumaConfig, inits).then(function (response) {
+
       // Assertions
-      expect(response.actsLocs).to.deep.equal({activities: [{id: '4', type: 'activity'}], locations: [{id: 'all'}]});
-      expect(response.activities).to.deep.equal([{id: '4', type: 'activity'}]);
+      expect(response.actsLocs).to.deep.equal({activities: [{id: '4', type: 'activity', filter: 'allow'}], locations: [{id: 'all'}]});
+      expect(response.activities).to.deep.equal([{id: '4', type: 'activity', filter: 'allow'}]);
       expect(response.locations).to.deep.equal([{id: 'all'}]);
       expect(response.errorMessage).to.equal(undefined);
       expect(response.params).to.deep.equal(expectedScope);
@@ -255,8 +268,11 @@ describe('Service: ScopeUtils', function () {
       edate: 'mouse',
       stime: 'mouse',
       etime: 'mouse',
-      activity: 'mouse',
-      location: 'mouse'
+      location: 'mouse',
+      requireActs: 'mouse',
+      excludeActs: 'mouse',
+      requireActGrps: 'mouse',
+      excludeActGrps: 'mouse'
     };
 
     // mock inits
@@ -269,13 +285,115 @@ describe('Service: ScopeUtils', function () {
     // Call ScopeUtils.set
     ScopeUtils.set(urlParams, SumaConfig, inits).then(function (response) {
       // Assertions
-      //expect(response.errorMessage).to.equal('Query parameter input error. Invalid value for classifyCounts. Valid values are "count", "start", or "end". Invalid value for wholeSession. Valid values are "yes" or "no". At least one calendar day should be selected. Valid values are "mo", "tu", "we", "th", "fr", "sa", "su". Values should be separated by a comma. Invalid value for activity. Invalid value for location. Invalid value for sdate. Should be numeric and either 0 or 8 characters in length, not counting punctuation. Invalid value for edate. Should be numeric and either 0 or 8 characters in length, not counting punctuation. Invalid value for stime. Should be numeric and either 0 or 4 characters in length, not counting punctuation. Invalid value for etime. Should be numeric and either 0 or 4 characters in length, not counting punctuation. ');
-      expect(response.errorMessage).to.equal('Query parameter input error. Invalid value for classifyCounts. Valid values are "count", "start", or "end". Invalid value for wholeSession. Valid values are "yes" or "no". Invalid value for zeroCounts. Valid values are "yes" or "no". At least one calendar day should be selected. Valid values are "mo", "tu", "we", "th", "fr", "sa", "su". Values should be separated by a comma. Invalid value for activity. Invalid value for location. Invalid value for sdate. Should be numeric and either 0 or 8 characters in length, not counting punctuation. Invalid value for edate. Should be numeric and either 0 or 8 characters in length, not counting punctuation. Invalid value for stime. Should be numeric and either 0 or 4 characters in length, not counting punctuation. Invalid value for etime. Should be numeric and either 0 or 4 characters in length, not counting punctuation. ');
+      expect(response.errorMessage).to.equal('Query parameter input error. Invalid value for classifyCounts. Valid values are "count", "start", or "end". Invalid value for wholeSession. Valid values are "yes" or "no". Invalid value for zeroCounts. Valid values are "yes" or "no". At least one calendar day should be selected. Valid values are "mo", "tu", "we", "th", "fr", "sa", "su". Values should be separated by a comma. Invalid value for excludeActs. Invalid value for requireActs. Invalid value for excludeActGrps. Invalid value for requireActGrps. Invalid value for location. Invalid value for sdate. Should be numeric and either 0 or 8 characters in length, not counting punctuation. Invalid value for edate. Should be numeric and either 0 or 8 characters in length, not counting punctuation. Invalid value for stime. Should be numeric and either 0 or 4 characters in length, not counting punctuation. Invalid value for etime. Should be numeric and either 0 or 4 characters in length, not counting punctuation. ');
     });
 
     scope.$digest();
 
     // Restore Stubs
     getMetadataStub.restore();
+  });
+
+  it('ScopeUtils:set return error message with null acts', function () {
+    var expectedScope,
+        getMetadataStub,
+        urlParams,
+        inits;
+
+    // mock urlParams
+    urlParams = {
+      id: 4,
+      classifyCounts: 'mouse',
+      daygroup: 'mouse',
+      wholeSession: 'mouse',
+      sdate: 'mouse',
+      edate: 'mouse',
+      stime: 'mouse',
+      etime: 'mouse',
+      location: 'mouse',
+      requireActs: null,
+      excludeActs: null,
+      requireActGrps: null,
+      excludeActGrps: null
+    };
+
+    // mock inits
+    inits = [{id: 4}, {id: 5}];
+
+    // Stub ScopeUtils.getMetadata
+    getMetadataStub = sinon.stub(ScopeUtils, 'getMetadata');
+    getMetadataStub.returns({activities: [{id: 'all'}], locations: [{id: 'all'}]});
+
+    // Call ScopeUtils.set
+    ScopeUtils.set(urlParams, SumaConfig, inits).then(function (response) {
+      // Assertions
+      expect(response.errorMessage).to.equal('Query parameter input error. Invalid value for classifyCounts. Valid values are "count", "start", or "end". Invalid value for wholeSession. Valid values are "yes" or "no". Invalid value for zeroCounts. Valid values are "yes" or "no". At least one calendar day should be selected. Valid values are "mo", "tu", "we", "th", "fr", "sa", "su". Values should be separated by a comma. Invalid value for location. Invalid value for sdate. Should be numeric and either 0 or 8 characters in length, not counting punctuation. Invalid value for edate. Should be numeric and either 0 or 8 characters in length, not counting punctuation. Invalid value for stime. Should be numeric and either 0 or 4 characters in length, not counting punctuation. Invalid value for etime. Should be numeric and either 0 or 4 characters in length, not counting punctuation. ');
+    });
+
+    scope.$digest();
+
+    // Restore Stubs
+    getMetadataStub.restore();
+  });
+
+  it('ScopeUtils:stringifyActs should return a string of acts or act grps', function () {
+    var acts,
+        actGrps,
+        requireActs,
+        excludeActGrps;
+
+    acts = [
+      {id: 1, filter: 'require', enabled: true, type: 'activity'},
+      {id: 2, filter: 'require', enabled: true, type: 'activity'},
+      {id: 3, filter: 'exclude', enabled: true, type: 'activityGroup'},
+      {id: 4, filter: 'exclude', enabled: true, type: 'activityGroup'},
+      {id: 5, filter: 'require', enabled: false, type: 'activity'},
+      {id: 6, filter: 'exclude', enabled: false, type: 'activity'}
+    ];
+
+    requireActs = ScopeUtils.stringifyActs(acts, 'require');
+    excludeActGrps = ScopeUtils.stringifyActs(acts, 'exclude', true);
+
+    // Assertions
+    expect(requireActs).to.equal('1,2');
+    expect(excludeActGrps).to.equal('3,4');
+  });
+
+  it('ScopeUtils:mapActs should return an array of acts', function () {
+    var acts,
+        newActs,
+        expectedNewActs,
+        excludeActs,
+        excludeActGrps,
+        requireActs,
+        requireActGrps;
+
+    acts = [
+      {id: 1, filter: 'allow', enabled: true, type: 'activity'},
+      {id: 2, filter: 'allow', enabled: true, type: 'activity'},
+      {id: 3, filter: 'allow', enabled: true, type: 'activity'},
+      {id: 4, filter: 'allow', enabled: true, type: 'activityGroup'},
+      {id: 5, filter: 'allow', enabled: true, type: 'activityGroup'},
+      {id: 6, filter: 'allow', enabled: true, type: 'activityGroup'}
+    ];
+
+    expectedNewActs = [
+      {'id':1,'filter':'allow','enabled':true,'type':'activity'},
+      {'id':2,'filter':'exclude','enabled':true,'type':'activity'},
+      {'id':3,'filter':'require','enabled':true,'type':'activity'},
+      {'id':4,'filter':'allow','enabled':true,'type':'activityGroup'},
+      {'id':5,'filter':'exclude','enabled':true,'type':'activityGroup'},
+      {'id':6,'filter':'require','enabled':true,'type':'activityGroup'}
+    ];
+
+    excludeActs = ['2'];
+    excludeActGrps = ['5'];
+    requireActs = ['3'];
+    requireActGrps = ['6'];
+
+    newActs = ScopeUtils.mapActs(acts, excludeActGrps, requireActGrps, excludeActs, requireActs);
+
+    // Assertions
+    expect(newActs).to.deep.equal(expectedNewActs);
   });
 });

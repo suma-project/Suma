@@ -2,7 +2,6 @@
 
 angular.module('sumaAnalysis')
   .factory('processCalendarData', function ($q, $rootScope) {
-
     function sortData(response) {
       return _.sortBy(
         _.map(response, function (count, date) {

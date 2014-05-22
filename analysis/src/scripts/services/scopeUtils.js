@@ -2,10 +2,6 @@
 
 angular.module('sumaAnalysis')
   .factory('scopeUtils', function ($q, actsLocs, validation) {
-    var metadata,
-        activities,
-        locations;
-
     return {
       stringifyDays: function (days) {
         var string;
@@ -18,14 +14,63 @@ angular.module('sumaAnalysis')
 
         return string;
       },
+      stringifyActs: function (acts, filter, actGrpMode) {
+        var actAry = [];
+
+        if (actGrpMode) {
+          _.each(acts, function (act) {
+            if (act.type === 'activityGroup' && act.filter === filter) {
+              actAry.push(act.id);
+            }
+          });
+        } else {
+          _.each(acts, function (act) {
+            if (act.type === 'activity' && act.filter === filter && act.enabled === true) {
+              actAry.push(act.id);
+            }
+          });
+        }
+
+        return actAry.join();
+      },
+      mapActs: function (acts, excludeActGrpsAry, requireActGrpsAry, excludeActsAry, requireActsAry) {
+        return _.map(acts, function (act) {
+          if (act.type === 'activityGroup') {
+            if (_.contains(excludeActGrpsAry, String(act.id))) {
+              act.filter = 'exclude';
+            } else if (_.contains(requireActGrpsAry, String(act.id))) {
+              act.filter = 'require';
+            } else {
+              act.filter = 'allow';
+            }
+          } else {
+            if (_.contains(excludeActsAry, String(act.id))) {
+              act.filter = 'exclude';
+            } else if (_.contains(requireActsAry, String(act.id))) {
+              act.filter = 'require';
+            } else {
+              act.filter = 'allow';
+            }
+          }
+
+          return act;
+        });
+      },
       getMetadata: function (init) {
         return actsLocs.get(init);
       },
       set: function (urlParams, sumaConfig, inits) {
-        var dfd = $q.defer(),
+        var activities,
+            dfd = $q.defer(),
             errors = [],
             errorMessage,
-            newParams = {};
+            excludeActsAry,
+            excludeActGrpsAry,
+            locations,
+            metadata,
+            newParams = {},
+            requireActsAry,
+            requireActGrpsAry;
 
         newParams.init = _.find(inits, function (e, i) {
           return String(e.id) === String(urlParams.id);
@@ -84,23 +129,44 @@ angular.module('sumaAnalysis')
           }
 
           if (sumaConfig.formFields.activities) {
-            newParams.activity = _.find(activities, function (e, i) {
-              var type,
-                  id;
+            excludeActsAry = urlParams.excludeActs || urlParams.excludeActs === '' ? urlParams.excludeActs.split(',') : null;
+            requireActsAry = urlParams.requireActs || urlParams.requireActs === '' ? urlParams.requireActs.split(',') : null;
+            excludeActGrpsAry = urlParams.excludeActGrps || urlParams.excludeActGrps === '' ? urlParams.excludeActGrps.split(',') : null;
+            requireActGrpsAry = urlParams.requireActGrps || urlParams.requireActGrps === '' ? urlParams.requireActGrps.split(',') : null;
 
-              if (urlParams.activity === 'all') {
-                return String(e.id) === String(urlParams.activity);
-              } else {
-                type = urlParams.activity.split('-')[0];
-                id = urlParams.activity.split('-')[1];
-
-                return String(e.id) === String(id) && String(e.type) === String(type);
-              }
-            });
-
-            if (!newParams.activity) {
-              errors.push('Invalid value for activity.');
+            // validate excludeActs
+            if (validation.validateAct(excludeActsAry, activities, 'activity')) {
+              newParams.excludeActs = excludeActsAry;
+            } else {
+              newParams.excludeActs = '';
+              errors.push('Invalid value for excludeActs.');
             }
+
+            // validate requireActs
+            if (validation.validateAct(requireActsAry, activities, 'activity')) {
+              newParams.requireActs = requireActsAry;
+            } else {
+              newParams.requireActs = '';
+              errors.push('Invalid value for requireActs.');
+            }
+
+            // validate excludeActGrps
+            if (validation.validateAct(excludeActGrpsAry, activities, 'activityGroup')) {
+              newParams.excludeActGrps = excludeActGrpsAry;
+            } else {
+              newParams.excludeActGrps = '';
+              errors.push('Invalid value for excludeActGrps.');
+            }
+
+            // validate requireActGrps
+            if (validation.validateAct(requireActGrpsAry, activities, 'activityGroup')) {
+              newParams.requireActGrps = requireActGrpsAry;
+            } else {
+              newParams.requireActGrps = '';
+              errors.push('Invalid value for requireActGrps.');
+            }
+
+            activities = this.mapActs(activities, excludeActGrpsAry, requireActGrpsAry, excludeActsAry, requireActsAry);
           }
 
           if (sumaConfig.formFields.locations) {

@@ -85,7 +85,10 @@ angular.module('sumaAnalysis')
             wholeSession: cfg.params.wholeSession ? cfg.params.wholeSession.id : null,
             days: cfg.params.days ? cfg.params.days.join(',') : null,
             locations: cfg.params.location ? cfg.params.location.id : 'all',
-            activities: cfg.params.activity.type ? (cfg.params.activity.type + '-' + cfg.params.activity.id) : 'all'
+            excludeActs: cfg.params.excludeActs ? cfg.params.excludeActs.join(',') : null,
+            requireActs: cfg.params.requireActs ? cfg.params.requireActs.join(',') : null,
+            excludeActGrps: cfg.params.excludeActGrps ? cfg.params.excludeActGrps.join(',') : null,
+            requireActGrps: cfg.params.requireActGrps ? cfg.params.requireActGrps.join(',') : null
           },
           timeout: cfg.timeoutPromise.promise
         };

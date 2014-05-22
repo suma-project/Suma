@@ -39,6 +39,6 @@
     "commit": "c26e5bba153e597be00c94082ab55cd4a2ad789b"
   },
   "_source": "git://github.com/Eonasdan/bootstrap-datetimepicker.git",
-  "_target": "~3.0.0",
+  "_target": "3.0.0",
   "_originalSource": "bootstrap3-datetimepicker"
 }

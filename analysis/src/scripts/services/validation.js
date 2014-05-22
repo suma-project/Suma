@@ -6,6 +6,26 @@ angular.module('sumaAnalysis')
       return !isNaN(parseFloat(n)) && isFinite(n);
     };
 
+    this.validateAct = function (acts, dict, mode) {
+      var test,
+          validIds;
+
+      // Get list of valid ids
+      validIds = _.pluck(_.filter(dict, {type: mode}), 'id');
+
+      // Default to valid
+      test = true;
+
+      // Is each activity a member of the validIds array?
+      _.each(acts, function (act) {
+        if (!_.contains(validIds, parseInt(act, 10)) && act !== '') {
+          test = false;
+        }
+      });
+
+      return test;
+    };
+
     this.validateDateTime = function (value, maxLength, pad) {
       var stripped,
           val;

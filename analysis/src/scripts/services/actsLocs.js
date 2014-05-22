@@ -26,13 +26,15 @@ angular.module('sumaAnalysis')
 
       // For each activity group, build a list of activities
       _.each(activityGroups, function (activityGroup) {
-          // Add activity group metadata to activityList array
+          // Add activity group metadata to activityGroupList array
           activityList.push({
             'id'   : activityGroup.id,
             'rank' : activityGroup.rank,
             'title': activityGroup.title,
             'type' : 'activityGroup',
-            'depth': 0
+            'depth': 0,
+            'filter': 'allow',
+            'enabled': true
           });
 
           // Loop over activities and add the ones belonging to the current activityGroup
@@ -45,16 +47,15 @@ angular.module('sumaAnalysis')
                 'title': activity.title,
                 'type' : 'activity',
                 'depth': 1,
-                'activityGroup': activityGroup.id
+                'activityGroup': activityGroup.id,
+                'filter': 'allow',
+                'enabled': true
               });
             }
           });
         });
 
-      return [{
-        title: 'All',
-        id: 'all'
-      }].concat(activityList);
+      return activityList;
     }
 
     function processLocations (locations, root) {

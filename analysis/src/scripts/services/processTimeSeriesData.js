@@ -151,6 +151,11 @@ angular.module('sumaAnalysis')
         count: response.zeroDivisor
       }];
 
+      // Total Zero Counts
+      counts.totalZeroCounts = [{
+        count: response.zeroCounts
+      }];
+
       // Total Avg Sum
       counts.totalAvgSum = [{
         count: response.totalAvgSum
@@ -174,11 +179,11 @@ angular.module('sumaAnalysis')
       counts.locationsPct = buildArray(locations, response.locationsSum, divisor, false, true);
 
       // Activities related data
-      counts.activitiesTable = buildTableArray(activities, response.activitiesSum, response.total, 'activityGroup');
-      counts.activitiesSum = buildArray(activities, response.activitiesSum, response.total);
-      counts.activitiesAvgSum = buildArray(activities, response.activitiesAvgSum, response.total, true);
-      counts.activitiesAvgAvg = buildArray(activities, response.activitiesAvgAvg, response.total, true);
-      counts.activitiesPct = buildArray(activities, response.activitiesSum, response.total, false, true);
+      counts.activitiesTable = buildTableArray(_.cloneDeep(activities), response.activitiesSum, response.total, 'activityGroup');
+      counts.activitiesSum = buildArray(_.cloneDeep(activities), response.activitiesSum, response.total);
+      counts.activitiesAvgSum = buildArray(_.cloneDeep(activities), response.activitiesAvgSum, response.total, true);
+      counts.activitiesAvgAvg = buildArray(_.cloneDeep(activities), response.activitiesAvgAvg, response.total, true);
+      counts.activitiesPct = buildArray(_.cloneDeep(activities), response.activitiesSum, response.total, false, true);
 
       // Handle insertion of no activity values
       noActsSum = insertNoActs(response.activitiesSum, response.total, 'sum');

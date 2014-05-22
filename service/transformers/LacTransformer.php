@@ -119,7 +119,7 @@ class LacTransformer extends BaseTransformer
         {
             foreach($activities as &$activity)
             {
-                if ($activity['id'] == '_No Activity')
+                if ($activity['id'] == -1)
                 {
                     $selected =& $activity;
                     unset($activity);
@@ -134,12 +134,12 @@ class LacTransformer extends BaseTransformer
 
             if ($this->_sum == true)
             {
-                $addition = array('id'     => '_No Activity',
+                $addition = array('id'     => -1,
                                   'counts' => 0);
             }
             else
             {
-                $addition = array('id'     => '_No Activity',
+                $addition = array('id'     => -1,
                                   'counts' => array());
             }
 

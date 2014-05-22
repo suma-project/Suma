@@ -1,0 +1,15 @@
+<div class="modal fade" id="{{modalId}}" tabindex="-1" role="dialog" aria-labelledby="sumaModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{modalTitle}}</h4>
+      </div>
+      <div class="modal-body">
+        <div data-ng-transclude></div>
+        <div style="height:40px;">
+          <button type="button" class="btn btn-success pull-right" data-dismiss="modal" aria-hidden="true">{{modalSaveText}}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

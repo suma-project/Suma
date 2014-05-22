@@ -7,9 +7,12 @@
         <strong>Whole Session: </strong> {{summaryParams.wholeSession.title}} <br/>
         <strong>Dates: </strong> {{summaryParams.sdate}} - {{summaryParams.edate}}
         <strong>Subset: </strong> {{summaryParams.stime || '00:00'}} - {{summaryParams.etime || '23:59'}} <br/>
-        <strong>Days: </strong> {{summaryParams.days}} <br/>
-        <strong>Locations: </strong> {{summaryParams.location.title}}
-        <strong>Activities: </strong> {{summaryParams.activity.title}}
+        <strong>Days: </strong> <span ng-repeat="day in summaryParams.days">{{day | capitalize}}<span ng-show="!$last">,</span> </span>
+        <strong>Locations: </strong> {{summaryParams.location.title}} <br/>
+        <strong>EA: </strong> {{summaryParams.excludeActs | activityTitle:activities:'activity'}}
+        <strong>RA: </strong> {{summaryParams.requireActs | activityTitle:activities:'activity'}}
+        <strong>EAG: </strong> {{summaryParams.excludeActGrps | activityTitle:activities:'activityGroup'}}
+        <strong>RAG: </strong> {{summaryParams.requireActGrps | activityTitle:activities:'activityGroup'}}
       </p>
     </div>
     <div class="col-xs-7">
@@ -139,13 +142,19 @@
             </div>
           </div>
 
-          <div class="form-group">
-            <label class="suma-popover" data-title="Limit Activities" data-content="Select which activities to include in your analysis. Selecting an Activity Group will include all group activities." data-suma-popover>Limit Activities</label>
+          <div class="form-group" ng-show="activities.length > 2">
+            <label class="suma-popover" data-title="Limit Activities" data-content="Select which activities or Activity Groups to require or exclude in your analysis. Excluding Activity Groups will also exclude their child activities. Requiring an Activity Group while allowing all children will require at least one of the children. All required fields must be present in each count, and all excluded fields must be absent from each count." data-suma-popover>Limit Activities</label>
             <div class="controls">
-              <select name="activities" data-ng-model="params.activity" data-ng-options="act | depth for act in activities" class="form-control">
-              </select>
+              <button type="button" class="btn btn-default" data-toggle="modal" data-target="#sumaModal">
+                Limit Activities
+              </button>
+              <div data-suma-modal data-modal-id="sumaModal" data-modal-title="Limit Activities" data-modal-save-text="Update">
+                <div data-suma-activity-filter acts="activities"></div>
+              </div>
             </div>
           </div>
+
+          <div data-suma-active-acts acts="activities" ng-show="activities.length > 2"></div>
 
           <div>
             <input type="submit" id="submit" class="btn btn-success" value="{{state.loading ? 'Loading...' : 'Submit'}}" />
@@ -163,6 +172,8 @@
         <p>{{data.total[0].count | countFormat}}</p>
         <h4>Total # of Counts</h4>
         <p>{{data.totalCounts[0].count | countFormat}}</p>
+        <h4>Total # of Zero Counts</h4>
+        <p>{{data.totalZeroCounts[0].count | countFormat}}</p>
         <h4>Avg of Sums</h4>
         <p>{{data.totalAvgSum[0].count.toFixed(2) | countFormat}}</p>
         <h4>Avg of Avgs</h4>

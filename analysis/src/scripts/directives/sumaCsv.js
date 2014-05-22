@@ -73,7 +73,7 @@ angular.module('sumaAnalysis')
           });
 
           // Build download URL
-          base = 'data:application/csv;charset=utf-8,';
+          base = 'data:text/csv;charset=utf-8,';
           href = encodeURI(base + _.unescape(finalData));
 
           return href;

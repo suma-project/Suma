@@ -113,6 +113,15 @@ class QueryModel
                 }
                 $this->_initActs[] = $act;
             }
+
+            // Add dummy No Activity object
+            $this->_initActs[] = array(
+                'id'    => -1,
+                'title' => 'No Activity',
+                'rank'  => 0,
+                'description' => '',
+                'activityGroup' => -2
+            );
         }
 
         return $this->_initActs;
@@ -146,6 +155,16 @@ class QueryModel
                 }
                 $this->_initActGroups[] = $grp;
             }
+
+            // Add dummy No Activity group object
+            $this->_initActGroups[] = array(
+                'id'    => -2,
+                'title' => 'No Activity',
+                'rank'  => 9999,
+                'description' => '',
+                'required' => FALSE,
+                'allowedMulti' => FALSE
+            );
         }
 
         return $this->_initActGroups;

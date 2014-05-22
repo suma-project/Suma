@@ -1,6 +1,6 @@
 {
   "name": "json3",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "main": "lib/json3.min.js",
   "repository": {
     "type": "git",
@@ -19,13 +19,13 @@
     "vendor"
   ],
   "homepage": "https://github.com/bestiejs/json3",
-  "_release": "3.3.0",
+  "_release": "3.3.1",
   "_resolution": {
     "type": "version",
-    "tag": "v3.3.0",
-    "commit": "6a1f5dcd030ffb9dc02f9161aab1a9d6be78ca8c"
+    "tag": "v3.3.1",
+    "commit": "5fbfe36a589da7e226e1ea2a030d890fd387c79f"
   },
   "_source": "git://github.com/bestiejs/json3.git",
-  "_target": "~3.3.0",
+  "_target": "3.3.1",
   "_originalSource": "json3"
 }

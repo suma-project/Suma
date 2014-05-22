@@ -16,11 +16,13 @@ describe('Service: Data', function () {
     Params2,
     Params3,
     Params4,
+    Params5,
     MockUrl1,
     MockUrl2,
     MockUrl3,
     MockUrl4,
     MockUrl5,
+    MockUrl6,
     Processtimeseriesdata,
     Processcalendardata,
     Processhourlydata,
@@ -44,11 +46,13 @@ describe('Service: Data', function () {
     mockParams2,
     mockParams3,
     mockParams4,
+    mockParams5,
     mockUrl1,
     mockUrl2,
     mockUrl3,
     mockUrl4,
-    mockUrl5) {
+    mockUrl5,
+    mockUrl6) {
 
     Data = _data_;
     Processtimeseriesdata = _processTimeSeriesData_;
@@ -60,11 +64,13 @@ describe('Service: Data', function () {
     Params2 = mockParams2;
     Params3 = mockParams3;
     Params4 = mockParams4;
+    Params5 = mockParams5;
     MockUrl1 = mockUrl1;
     MockUrl2 = mockUrl2;
     MockUrl3 = mockUrl3;
     MockUrl4 = mockUrl4;
     MockUrl5 = mockUrl5;
+    MockUrl6 = mockUrl6;
     Timeout = $timeout;
 
     tPromise = $q.defer();
@@ -93,6 +99,31 @@ describe('Service: Data', function () {
     };
 
     $httpBackend.whenGET(MockUrl1)
+      .respond([{}, {}]);
+
+    timeseriesStub = sinon.stub(Processtimeseriesdata, 'get');
+    timeseriesStub.returns(okResponse());
+
+    Data.getData(cfg).then(function (result) {
+      expect(result.success).to.equal(true);
+      done();
+    });
+
+    $httpBackend.flush();
+    timeseriesStub.restore();
+  });
+
+  it(':getData should make an AJAX call with processTimeSeriesData with acts', function (done) {
+    var cfg = {
+      params: Params5,
+      acts: [],
+      locs: [],
+      dataProcessor: 'processTimeSeriesData',
+      timeoutPromise: tPromise,
+      timeout: 180000
+    };
+
+    $httpBackend.whenGET(MockUrl6)
       .respond([{}, {}]);
 
     timeseriesStub = sinon.stub(Processtimeseriesdata, 'get');

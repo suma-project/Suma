@@ -25919,6 +25919,177 @@
   };
 }(jQuery);
 /* ========================================================================
+ * Bootstrap: modal.js v3.0.2
+ * http://getbootstrap.com/javascript/#modals
+ * ========================================================================
+ * Copyright 2013 Twitter, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ======================================================================== */
++function ($) {
+  'use strict';
+  // MODAL CLASS DEFINITION
+  // ======================
+  var Modal = function (element, options) {
+    this.options = options;
+    this.$element = $(element);
+    this.$backdrop = this.isShown = null;
+    if (this.options.remote)
+      this.$element.load(this.options.remote);
+  };
+  Modal.DEFAULTS = {
+    backdrop: true,
+    keyboard: true,
+    show: true
+  };
+  Modal.prototype.toggle = function (_relatedTarget) {
+    return this[!this.isShown ? 'show' : 'hide'](_relatedTarget);
+  };
+  Modal.prototype.show = function (_relatedTarget) {
+    var that = this;
+    var e = $.Event('show.bs.modal', { relatedTarget: _relatedTarget });
+    this.$element.trigger(e);
+    if (this.isShown || e.isDefaultPrevented())
+      return;
+    this.isShown = true;
+    this.escape();
+    this.$element.on('click.dismiss.modal', '[data-dismiss="modal"]', $.proxy(this.hide, this));
+    this.backdrop(function () {
+      var transition = $.support.transition && that.$element.hasClass('fade');
+      if (!that.$element.parent().length) {
+        that.$element.appendTo(document.body);
+      }
+      that.$element.show();
+      if (transition) {
+        that.$element[0].offsetWidth;
+      }
+      that.$element.addClass('in').attr('aria-hidden', false);
+      that.enforceFocus();
+      var e = $.Event('shown.bs.modal', { relatedTarget: _relatedTarget });
+      transition ? that.$element.find('.modal-dialog').one($.support.transition.end, function () {
+        that.$element.focus().trigger(e);
+      }).emulateTransitionEnd(300) : that.$element.focus().trigger(e);
+    });
+  };
+  Modal.prototype.hide = function (e) {
+    if (e)
+      e.preventDefault();
+    e = $.Event('hide.bs.modal');
+    this.$element.trigger(e);
+    if (!this.isShown || e.isDefaultPrevented())
+      return;
+    this.isShown = false;
+    this.escape();
+    $(document).off('focusin.bs.modal');
+    this.$element.removeClass('in').attr('aria-hidden', true).off('click.dismiss.modal');
+    $.support.transition && this.$element.hasClass('fade') ? this.$element.one($.support.transition.end, $.proxy(this.hideModal, this)).emulateTransitionEnd(300) : this.hideModal();
+  };
+  Modal.prototype.enforceFocus = function () {
+    $(document).off('focusin.bs.modal').on('focusin.bs.modal', $.proxy(function (e) {
+      if (this.$element[0] !== e.target && !this.$element.has(e.target).length) {
+        this.$element.focus();
+      }
+    }, this));
+  };
+  Modal.prototype.escape = function () {
+    if (this.isShown && this.options.keyboard) {
+      this.$element.on('keyup.dismiss.bs.modal', $.proxy(function (e) {
+        e.which == 27 && this.hide();
+      }, this));
+    } else if (!this.isShown) {
+      this.$element.off('keyup.dismiss.bs.modal');
+    }
+  };
+  Modal.prototype.hideModal = function () {
+    var that = this;
+    this.$element.hide();
+    this.backdrop(function () {
+      that.removeBackdrop();
+      that.$element.trigger('hidden.bs.modal');
+    });
+  };
+  Modal.prototype.removeBackdrop = function () {
+    this.$backdrop && this.$backdrop.remove();
+    this.$backdrop = null;
+  };
+  Modal.prototype.backdrop = function (callback) {
+    var that = this;
+    var animate = this.$element.hasClass('fade') ? 'fade' : '';
+    if (this.isShown && this.options.backdrop) {
+      var doAnimate = $.support.transition && animate;
+      this.$backdrop = $('<div class="modal-backdrop ' + animate + '" />').appendTo(document.body);
+      this.$element.on('click.dismiss.modal', $.proxy(function (e) {
+        if (e.target !== e.currentTarget)
+          return;
+        this.options.backdrop == 'static' ? this.$element[0].focus.call(this.$element[0]) : this.hide.call(this);
+      }, this));
+      if (doAnimate)
+        this.$backdrop[0].offsetWidth;
+      // force reflow
+      this.$backdrop.addClass('in');
+      if (!callback)
+        return;
+      doAnimate ? this.$backdrop.one($.support.transition.end, callback).emulateTransitionEnd(150) : callback();
+    } else if (!this.isShown && this.$backdrop) {
+      this.$backdrop.removeClass('in');
+      $.support.transition && this.$element.hasClass('fade') ? this.$backdrop.one($.support.transition.end, callback).emulateTransitionEnd(150) : callback();
+    } else if (callback) {
+      callback();
+    }
+  };
+  // MODAL PLUGIN DEFINITION
+  // =======================
+  var old = $.fn.modal;
+  $.fn.modal = function (option, _relatedTarget) {
+    return this.each(function () {
+      var $this = $(this);
+      var data = $this.data('bs.modal');
+      var options = $.extend({}, Modal.DEFAULTS, $this.data(), typeof option == 'object' && option);
+      if (!data)
+        $this.data('bs.modal', data = new Modal(this, options));
+      if (typeof option == 'string')
+        data[option](_relatedTarget);
+      else if (options.show)
+        data.show(_relatedTarget);
+    });
+  };
+  $.fn.modal.Constructor = Modal;
+  // MODAL NO CONFLICT
+  // =================
+  $.fn.modal.noConflict = function () {
+    $.fn.modal = old;
+    return this;
+  };
+  // MODAL DATA-API
+  // ==============
+  $(document).on('click.bs.modal.data-api', '[data-toggle="modal"]', function (e) {
+    var $this = $(this);
+    var href = $this.attr('href');
+    var $target = $($this.attr('data-target') || href && href.replace(/.*(?=#[^\s]+$)/, ''));
+    //strip for ie7
+    var option = $target.data('modal') ? 'toggle' : $.extend({ remote: !/#/.test(href) && href }, $target.data(), $this.data());
+    e.preventDefault();
+    $target.modal(option, this).one('hide', function () {
+      $this.is(':visible') && $this.focus();
+    });
+  });
+  $(document).on('show.bs.modal', '.modal', function () {
+    $(document.body).addClass('modal-open');
+  }).on('hidden.bs.modal', '.modal', function () {
+    $(document.body).removeClass('modal-open');
+  });
+}(jQuery);
+/* ========================================================================
  * Bootstrap: popover.js v3.0.2
  * http://getbootstrap.com/javascript/#popovers
  * ========================================================================
@@ -32141,7 +32312,7 @@ _.mixin({
   }
 });
 !function () {
-  var d3 = { version: '3.4.6' };
+  var d3 = { version: '3.4.8' };
   if (!Date.now)
     Date.now = function () {
       return +new Date();
@@ -33709,7 +33880,7 @@ _.mixin({
       }
     }
     function touchstarted() {
-      var that = this, dispatch = event.of(that, arguments), locations0 = {}, distance0 = 0, scale0, zoomName = '.zoom-' + d3.event.changedTouches[0].identifier, touchmove = 'touchmove' + zoomName, touchend = 'touchend' + zoomName, target = d3.select(d3.event.target).on(touchmove, moved).on(touchend, ended), subject = d3.select(that).on(mousedown, null).on(touchstart, started), dragRestore = d3_event_dragSuppress();
+      var that = this, dispatch = event.of(that, arguments), locations0 = {}, distance0 = 0, scale0, zoomName = '.zoom-' + d3.event.changedTouches[0].identifier, touchmove = 'touchmove' + zoomName, touchend = 'touchend' + zoomName, targets = [], subject = d3.select(that).on(mousedown, null).on(touchstart, started), dragRestore = d3_event_dragSuppress();
       d3_selection_interrupt.call(that);
       started();
       zoomstarted(dispatch);
@@ -33723,6 +33894,9 @@ _.mixin({
         return touches;
       }
       function started() {
+        var target = d3.event.target;
+        d3.select(target).on(touchmove, moved).on(touchend, ended);
+        targets.push(target);
         var changed = d3.event.changedTouches;
         for (var i = 0, n = changed.length; i < n; ++i) {
           locations0[changed[i].identifier] = null;
@@ -33778,7 +33952,7 @@ _.mixin({
             return void relocate();
           }
         }
-        target.on(zoomName, null);
+        d3.selectAll(targets).on(zoomName, null);
         subject.on(mousedown, mousedowned).on(touchstart, touchstarted);
         dragRestore();
         zoomended(dispatch);
@@ -39629,45 +39803,34 @@ _.mixin({
   var d3_layout_forceLinkDistance = 20, d3_layout_forceLinkStrength = 1, d3_layout_forceChargeDistance2 = Infinity;
   d3.layout.hierarchy = function () {
     var sort = d3_layout_hierarchySort, children = d3_layout_hierarchyChildren, value = d3_layout_hierarchyValue;
-    function recurse(node, depth, nodes) {
-      var childs = children.call(hierarchy, node, depth);
-      node.depth = depth;
-      nodes.push(node);
-      if (childs && (n = childs.length)) {
-        var i = -1, n, c = node.children = new Array(n), v = 0, j = depth + 1, d;
-        while (++i < n) {
-          d = c[i] = recurse(childs[i], j, nodes);
-          d.parent = node;
-          v += d.value;
-        }
-        if (sort)
-          c.sort(sort);
-        if (value)
-          node.value = v;
-      } else {
-        delete node.children;
-        if (value) {
-          node.value = +value.call(hierarchy, node, depth) || 0;
+    function hierarchy(root) {
+      var stack = [root], nodes = [], node;
+      root.depth = 0;
+      while ((node = stack.pop()) != null) {
+        nodes.push(node);
+        if ((childs = children.call(hierarchy, node, node.depth)) && (n = childs.length)) {
+          var n, childs, child;
+          while (--n >= 0) {
+            stack.push(child = childs[n]);
+            child.parent = node;
+            child.depth = node.depth + 1;
+          }
+          if (value)
+            node.value = 0;
+          node.children = childs;
+        } else {
+          if (value)
+            node.value = +value.call(hierarchy, node, node.depth) || 0;
+          delete node.children;
         }
       }
-      return node;
-    }
-    function revalue(node, depth) {
-      var children = node.children, v = 0;
-      if (children && (n = children.length)) {
-        var i = -1, n, j = depth + 1;
-        while (++i < n)
-          v += revalue(children[i], j);
-      } else if (value) {
-        v = +value.call(hierarchy, node, depth) || 0;
-      }
-      if (value)
-        node.value = v;
-      return v;
-    }
-    function hierarchy(d) {
-      var nodes = [];
-      recurse(d, 0, nodes);
+      d3_layout_hierarchyVisitAfter(root, function (node) {
+        var childs, parent;
+        if (sort && (childs = node.children))
+          childs.sort(sort);
+        if (value && (parent = node.parent))
+          parent.value += node.value;
+      });
       return nodes;
     }
     hierarchy.sort = function (x) {
@@ -39689,7 +39852,19 @@ _.mixin({
       return hierarchy;
     };
     hierarchy.revalue = function (root) {
-      revalue(root, 0);
+      if (value) {
+        d3_layout_hierarchyVisitBefore(root, function (node) {
+          if (node.children)
+            node.value = 0;
+        });
+        d3_layout_hierarchyVisitAfter(root, function (node) {
+          var parent;
+          if (!node.children)
+            node.value = +value.call(hierarchy, node, node.depth) || 0;
+          if (parent = node.parent)
+            parent.value += node.value;
+        });
+      }
       return root;
     };
     return hierarchy;
@@ -39699,6 +39874,31 @@ _.mixin({
     object.nodes = object;
     object.links = d3_layout_hierarchyLinks;
     return object;
+  }
+  function d3_layout_hierarchyVisitBefore(node, callback) {
+    var nodes = [node];
+    while ((node = nodes.pop()) != null) {
+      callback(node);
+      if ((children = node.children) && (n = children.length)) {
+        var n, children;
+        while (--n >= 0)
+          nodes.push(children[n]);
+      }
+    }
+  }
+  function d3_layout_hierarchyVisitAfter(node, callback) {
+    var nodes = [node], nodes2 = [];
+    while ((node = nodes.pop()) != null) {
+      nodes2.push(node);
+      if ((children = node.children) && (n = children.length)) {
+        var i = -1, n, children;
+        while (++i < n)
+          nodes.push(children[i]);
+      }
+    }
+    while ((node = nodes2.pop()) != null) {
+      callback(node);
+    }
   }
   function d3_layout_hierarchyChildren(d) {
     return d.children;
@@ -40055,191 +40255,6 @@ _.mixin({
       d3.max(values)
     ];
   }
-  d3.layout.tree = function () {
-    var hierarchy = d3.layout.hierarchy().sort(null).value(null), separation = d3_layout_treeSeparation, size = [
-        1,
-        1
-      ], nodeSize = false;
-    function tree(d, i) {
-      var nodes = hierarchy.call(this, d, i), root = nodes[0];
-      function firstWalk(node, previousSibling) {
-        var children = node.children, layout = node._tree;
-        if (children && (n = children.length)) {
-          var n, firstChild = children[0], previousChild, ancestor = firstChild, child, i = -1;
-          while (++i < n) {
-            child = children[i];
-            firstWalk(child, previousChild);
-            ancestor = apportion(child, previousChild, ancestor);
-            previousChild = child;
-          }
-          d3_layout_treeShift(node);
-          var midpoint = 0.5 * (firstChild._tree.prelim + child._tree.prelim);
-          if (previousSibling) {
-            layout.prelim = previousSibling._tree.prelim + separation(node, previousSibling);
-            layout.mod = layout.prelim - midpoint;
-          } else {
-            layout.prelim = midpoint;
-          }
-        } else {
-          if (previousSibling) {
-            layout.prelim = previousSibling._tree.prelim + separation(node, previousSibling);
-          }
-        }
-      }
-      function secondWalk(node, x) {
-        node.x = node._tree.prelim + x;
-        var children = node.children;
-        if (children && (n = children.length)) {
-          var i = -1, n;
-          x += node._tree.mod;
-          while (++i < n) {
-            secondWalk(children[i], x);
-          }
-        }
-      }
-      function apportion(node, previousSibling, ancestor) {
-        if (previousSibling) {
-          var vip = node, vop = node, vim = previousSibling, vom = node.parent.children[0], sip = vip._tree.mod, sop = vop._tree.mod, sim = vim._tree.mod, som = vom._tree.mod, shift;
-          while (vim = d3_layout_treeRight(vim), vip = d3_layout_treeLeft(vip), vim && vip) {
-            vom = d3_layout_treeLeft(vom);
-            vop = d3_layout_treeRight(vop);
-            vop._tree.ancestor = node;
-            shift = vim._tree.prelim + sim - vip._tree.prelim - sip + separation(vim, vip);
-            if (shift > 0) {
-              d3_layout_treeMove(d3_layout_treeAncestor(vim, node, ancestor), node, shift);
-              sip += shift;
-              sop += shift;
-            }
-            sim += vim._tree.mod;
-            sip += vip._tree.mod;
-            som += vom._tree.mod;
-            sop += vop._tree.mod;
-          }
-          if (vim && !d3_layout_treeRight(vop)) {
-            vop._tree.thread = vim;
-            vop._tree.mod += sim - sop;
-          }
-          if (vip && !d3_layout_treeLeft(vom)) {
-            vom._tree.thread = vip;
-            vom._tree.mod += sip - som;
-            ancestor = node;
-          }
-        }
-        return ancestor;
-      }
-      d3_layout_treeVisitAfter(root, function (node, previousSibling) {
-        node._tree = {
-          ancestor: node,
-          prelim: 0,
-          mod: 0,
-          change: 0,
-          shift: 0,
-          number: previousSibling ? previousSibling._tree.number + 1 : 0
-        };
-      });
-      firstWalk(root);
-      secondWalk(root, -root._tree.prelim);
-      var left = d3_layout_treeSearch(root, d3_layout_treeLeftmost), right = d3_layout_treeSearch(root, d3_layout_treeRightmost), deep = d3_layout_treeSearch(root, d3_layout_treeDeepest), x0 = left.x - separation(left, right) / 2, x1 = right.x + separation(right, left) / 2, y1 = deep.depth || 1;
-      d3_layout_treeVisitAfter(root, nodeSize ? function (node) {
-        node.x *= size[0];
-        node.y = node.depth * size[1];
-        delete node._tree;
-      } : function (node) {
-        node.x = (node.x - x0) / (x1 - x0) * size[0];
-        node.y = node.depth / y1 * size[1];
-        delete node._tree;
-      });
-      return nodes;
-    }
-    tree.separation = function (x) {
-      if (!arguments.length)
-        return separation;
-      separation = x;
-      return tree;
-    };
-    tree.size = function (x) {
-      if (!arguments.length)
-        return nodeSize ? null : size;
-      nodeSize = (size = x) == null;
-      return tree;
-    };
-    tree.nodeSize = function (x) {
-      if (!arguments.length)
-        return nodeSize ? size : null;
-      nodeSize = (size = x) != null;
-      return tree;
-    };
-    return d3_layout_hierarchyRebind(tree, hierarchy);
-  };
-  function d3_layout_treeSeparation(a, b) {
-    return a.parent == b.parent ? 1 : 2;
-  }
-  function d3_layout_treeLeft(node) {
-    var children = node.children;
-    return children && children.length ? children[0] : node._tree.thread;
-  }
-  function d3_layout_treeRight(node) {
-    var children = node.children, n;
-    return children && (n = children.length) ? children[n - 1] : node._tree.thread;
-  }
-  function d3_layout_treeSearch(node, compare) {
-    var children = node.children;
-    if (children && (n = children.length)) {
-      var child, n, i = -1;
-      while (++i < n) {
-        if (compare(child = d3_layout_treeSearch(children[i], compare), node) > 0) {
-          node = child;
-        }
-      }
-    }
-    return node;
-  }
-  function d3_layout_treeRightmost(a, b) {
-    return a.x - b.x;
-  }
-  function d3_layout_treeLeftmost(a, b) {
-    return b.x - a.x;
-  }
-  function d3_layout_treeDeepest(a, b) {
-    return a.depth - b.depth;
-  }
-  function d3_layout_treeVisitAfter(node, callback) {
-    function visit(node, previousSibling) {
-      var children = node.children;
-      if (children && (n = children.length)) {
-        var child, previousChild = null, i = -1, n;
-        while (++i < n) {
-          child = children[i];
-          visit(child, previousChild);
-          previousChild = child;
-        }
-      }
-      callback(node, previousSibling);
-    }
-    visit(node, null);
-  }
-  function d3_layout_treeShift(node) {
-    var shift = 0, change = 0, children = node.children, i = children.length, child;
-    while (--i >= 0) {
-      child = children[i]._tree;
-      child.prelim += shift;
-      child.mod += shift;
-      shift += child.shift + (change += child.change);
-    }
-  }
-  function d3_layout_treeMove(ancestor, node, shift) {
-    ancestor = ancestor._tree;
-    node = node._tree;
-    var change = shift / (node.number - ancestor.number);
-    ancestor.change += change;
-    node.change -= change;
-    node.shift += shift;
-    node.prelim += shift;
-    node.mod += shift;
-  }
-  function d3_layout_treeAncestor(vim, node, ancestor) {
-    return vim._tree.ancestor.parent == node.parent ? vim._tree.ancestor : ancestor;
-  }
   d3.layout.pack = function () {
     var hierarchy = d3.layout.hierarchy().sort(d3_layout_packSort), padding = 0, size = [
         1,
@@ -40250,17 +40265,17 @@ _.mixin({
           return radius;
         };
       root.x = root.y = 0;
-      d3_layout_treeVisitAfter(root, function (d) {
+      d3_layout_hierarchyVisitAfter(root, function (d) {
         d.r = +r(d.value);
       });
-      d3_layout_treeVisitAfter(root, d3_layout_packSiblings);
+      d3_layout_hierarchyVisitAfter(root, d3_layout_packSiblings);
       if (padding) {
         var dr = padding * (radius ? 1 : Math.max(2 * root.r / w, 2 * root.r / h)) / 2;
-        d3_layout_treeVisitAfter(root, function (d) {
+        d3_layout_hierarchyVisitAfter(root, function (d) {
           d.r += dr;
         });
-        d3_layout_treeVisitAfter(root, d3_layout_packSiblings);
-        d3_layout_treeVisitAfter(root, function (d) {
+        d3_layout_hierarchyVisitAfter(root, d3_layout_packSiblings);
+        d3_layout_hierarchyVisitAfter(root, function (d) {
           d.r -= dr;
         });
       }
@@ -40405,6 +40420,164 @@ _.mixin({
       c.y = a.y;
     }
   }
+  d3.layout.tree = function () {
+    var hierarchy = d3.layout.hierarchy().sort(null).value(null), separation = d3_layout_treeSeparation, size = [
+        1,
+        1
+      ], nodeSize = null;
+    function tree(d, i) {
+      var nodes = hierarchy.call(this, d, i), root0 = nodes[0], root1 = wrapTree(root0);
+      d3_layout_hierarchyVisitAfter(root1, firstWalk), root1.parent.m = -root1.z;
+      d3_layout_hierarchyVisitBefore(root1, secondWalk);
+      if (nodeSize)
+        d3_layout_hierarchyVisitBefore(root0, sizeNode);
+      else {
+        var left = root0, right = root0, bottom = root0;
+        d3_layout_hierarchyVisitBefore(root0, function (node) {
+          if (node.x < left.x)
+            left = node;
+          if (node.x > right.x)
+            right = node;
+          if (node.depth > bottom.depth)
+            bottom = node;
+        });
+        var tx = separation(left, right) / 2 - left.x, kx = size[0] / (right.x + separation(right, left) / 2 + tx), ky = size[1] / (bottom.depth || 1);
+        d3_layout_hierarchyVisitBefore(root0, function (node) {
+          node.x = (node.x + tx) * kx;
+          node.y = node.depth * ky;
+        });
+      }
+      return nodes;
+    }
+    function wrapTree(root0) {
+      var root1 = {
+          A: null,
+          children: [root0]
+        }, queue = [root1], node1;
+      while ((node1 = queue.pop()) != null) {
+        for (var children = node1.children, child, i = 0, n = children.length; i < n; ++i) {
+          queue.push((children[i] = child = {
+            _: children[i],
+            parent: node1,
+            children: (child = children[i].children) && child.slice() || [],
+            A: null,
+            a: null,
+            z: 0,
+            m: 0,
+            c: 0,
+            s: 0,
+            t: null,
+            i: i
+          }).a = child);
+        }
+      }
+      return root1.children[0];
+    }
+    function firstWalk(v) {
+      var children = v.children, siblings = v.parent.children, w = v.i ? siblings[v.i - 1] : null;
+      if (children.length) {
+        d3_layout_treeShift(v);
+        var midpoint = (children[0].z + children[children.length - 1].z) / 2;
+        if (w) {
+          v.z = w.z + separation(v._, w._);
+          v.m = v.z - midpoint;
+        } else {
+          v.z = midpoint;
+        }
+      } else if (w) {
+        v.z = w.z + separation(v._, w._);
+      }
+      v.parent.A = apportion(v, w, v.parent.A || siblings[0]);
+    }
+    function secondWalk(v) {
+      v._.x = v.z + v.parent.m;
+      v.m += v.parent.m;
+    }
+    function apportion(v, w, ancestor) {
+      if (w) {
+        var vip = v, vop = v, vim = w, vom = vip.parent.children[0], sip = vip.m, sop = vop.m, sim = vim.m, som = vom.m, shift;
+        while (vim = d3_layout_treeRight(vim), vip = d3_layout_treeLeft(vip), vim && vip) {
+          vom = d3_layout_treeLeft(vom);
+          vop = d3_layout_treeRight(vop);
+          vop.a = v;
+          shift = vim.z + sim - vip.z - sip + separation(vim._, vip._);
+          if (shift > 0) {
+            d3_layout_treeMove(d3_layout_treeAncestor(vim, v, ancestor), v, shift);
+            sip += shift;
+            sop += shift;
+          }
+          sim += vim.m;
+          sip += vip.m;
+          som += vom.m;
+          sop += vop.m;
+        }
+        if (vim && !d3_layout_treeRight(vop)) {
+          vop.t = vim;
+          vop.m += sim - sop;
+        }
+        if (vip && !d3_layout_treeLeft(vom)) {
+          vom.t = vip;
+          vom.m += sip - som;
+          ancestor = v;
+        }
+      }
+      return ancestor;
+    }
+    function sizeNode(node) {
+      node.x *= size[0];
+      node.y = node.depth * size[1];
+    }
+    tree.separation = function (x) {
+      if (!arguments.length)
+        return separation;
+      separation = x;
+      return tree;
+    };
+    tree.size = function (x) {
+      if (!arguments.length)
+        return nodeSize ? null : size;
+      nodeSize = (size = x) == null ? sizeNode : null;
+      return tree;
+    };
+    tree.nodeSize = function (x) {
+      if (!arguments.length)
+        return nodeSize ? size : null;
+      nodeSize = (size = x) == null ? null : sizeNode;
+      return tree;
+    };
+    return d3_layout_hierarchyRebind(tree, hierarchy);
+  };
+  function d3_layout_treeSeparation(a, b) {
+    return a.parent == b.parent ? 1 : 2;
+  }
+  function d3_layout_treeLeft(v) {
+    var children = v.children;
+    return children.length ? children[0] : v.t;
+  }
+  function d3_layout_treeRight(v) {
+    var children = v.children, n;
+    return (n = children.length) ? children[n - 1] : v.t;
+  }
+  function d3_layout_treeMove(wm, wp, shift) {
+    var change = shift / (wp.i - wm.i);
+    wp.c -= change;
+    wp.s += shift;
+    wm.c += change;
+    wp.z += shift;
+    wp.m += shift;
+  }
+  function d3_layout_treeShift(v) {
+    var shift = 0, change = 0, children = v.children, i = children.length, w;
+    while (--i >= 0) {
+      w = children[i];
+      w.z += shift;
+      w.m += shift;
+      shift += w.s + (change += w.c);
+    }
+  }
+  function d3_layout_treeAncestor(vim, v, ancestor) {
+    return vim.a.parent === v.parent ? vim.a : ancestor;
+  }
   d3.layout.cluster = function () {
     var hierarchy = d3.layout.hierarchy().sort(null).value(null), separation = d3_layout_treeSeparation, size = [
         1,
@@ -40412,7 +40585,7 @@ _.mixin({
       ], nodeSize = false;
     function cluster(d, i) {
       var nodes = hierarchy.call(this, d, i), root = nodes[0], previousNode, x = 0;
-      d3_layout_treeVisitAfter(root, function (node) {
+      d3_layout_hierarchyVisitAfter(root, function (node) {
         var children = node.children;
         if (children && children.length) {
           node.x = d3_layout_clusterX(children);
@@ -40424,7 +40597,7 @@ _.mixin({
         }
       });
       var left = d3_layout_clusterLeft(root), right = d3_layout_clusterRight(root), x0 = left.x - separation(left, right) / 2, x1 = right.x + separation(right, left) / 2;
-      d3_layout_treeVisitAfter(root, nodeSize ? function (node) {
+      d3_layout_hierarchyVisitAfter(root, nodeSize ? function (node) {
         node.x = (node.x - root.x) * size[0];
         node.y = (root.y - node.y) * size[1];
       } : function (node) {
@@ -48706,7 +48879,11 @@ angular.module('sumaAnalysis', [
     // });
     //
     // whitelist data for csv download
-    $compileProvider.aHrefSanitizationWhitelist(/^\s*(data):/);
+    if (angular.isDefined($compileProvider.urlSanitizationWhitelist)) {
+      $compileProvider.urlSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|data):/);
+    } else {
+      $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|data):/);
+    }
   }
 ]);
 'use strict';
@@ -48809,7 +48986,6 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
       $scope.actsLocs = actsLocs.get($scope.params.init);
       $scope.activities = $scope.actsLocs.activities;
       $scope.locations = $scope.actsLocs.locations;
-      $scope.params.activity = $scope.activities[0];
       $scope.params.location = $scope.locations[0];
     };
     // Submit request and draw chart
@@ -48881,7 +49057,10 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
         classifyCounts: $scope.params.classifyCounts ? $scope.params.classifyCounts.id : null,
         wholeSession: $scope.params.wholeSession ? $scope.params.wholeSession.id : null,
         zeroCounts: $scope.params.zeroCounts ? $scope.params.zeroCounts.id : null,
-        activity: $scope.params.activity ? $scope.params.activity.type ? $scope.params.activity.type + '-' + $scope.params.activity.id : $scope.params.activity.id : null,
+        requireActs: scopeUtils.stringifyActs($scope.activities, 'require'),
+        excludeActs: scopeUtils.stringifyActs($scope.activities, 'exclude'),
+        requireActGrps: scopeUtils.stringifyActs($scope.activities, 'require', true),
+        excludeActGrps: scopeUtils.stringifyActs($scope.activities, 'exclude', true),
         location: $scope.params.location ? $scope.params.location.id : null,
         days: scopeUtils.stringifyDays($scope.params.days)
       };
@@ -48990,13 +49169,15 @@ angular.module('sumaAnalysis').factory('actsLocs', function () {
     activityGroups = _.sortBy(activityGroups, 'rank');
     // For each activity group, build a list of activities
     _.each(activityGroups, function (activityGroup) {
-      // Add activity group metadata to activityList array
+      // Add activity group metadata to activityGroupList array
       activityList.push({
         'id': activityGroup.id,
         'rank': activityGroup.rank,
         'title': activityGroup.title,
         'type': 'activityGroup',
-        'depth': 0
+        'depth': 0,
+        'filter': 'allow',
+        'enabled': true
       });
       // Loop over activities and add the ones belonging to the current activityGroup
       _.each(activities, function (activity) {
@@ -49008,15 +49189,14 @@ angular.module('sumaAnalysis').factory('actsLocs', function () {
             'title': activity.title,
             'type': 'activity',
             'depth': 1,
-            'activityGroup': activityGroup.id
+            'activityGroup': activityGroup.id,
+            'filter': 'allow',
+            'enabled': true
           });
         }
       });
     });
-    return [{
-        title: 'All',
-        id: 'all'
-      }].concat(activityList);
+    return activityList;
   }
   function processLocations(locations, root) {
     return [{
@@ -49114,7 +49294,10 @@ angular.module('sumaAnalysis').factory('data', [
             wholeSession: cfg.params.wholeSession ? cfg.params.wholeSession.id : null,
             days: cfg.params.days ? cfg.params.days.join(',') : null,
             locations: cfg.params.location ? cfg.params.location.id : 'all',
-            activities: cfg.params.activity.type ? cfg.params.activity.type + '-' + cfg.params.activity.id : 'all'
+            excludeActs: cfg.params.excludeActs ? cfg.params.excludeActs.join(',') : null,
+            requireActs: cfg.params.requireActs ? cfg.params.requireActs.join(',') : null,
+            excludeActGrps: cfg.params.excludeActGrps ? cfg.params.excludeActGrps.join(',') : null,
+            requireActGrps: cfg.params.requireActGrps ? cfg.params.requireActGrps.join(',') : null
           },
           timeout: cfg.timeoutPromise.promise
         };
@@ -49158,6 +49341,20 @@ angular.module('sumaAnalysis').service('validation', function Validation() {
   this.isNumber = function (n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
   };
+  this.validateAct = function (acts, dict, mode) {
+    var test, validIds;
+    // Get list of valid ids
+    validIds = _.pluck(_.filter(dict, { type: mode }), 'id');
+    // Default to valid
+    test = true;
+    // Is each activity a member of the validIds array?
+    _.each(acts, function (act) {
+      if (!_.contains(validIds, parseInt(act, 10)) && act !== '') {
+        test = false;
+      }
+    });
+    return test;
+  };
   this.validateDateTime = function (value, maxLength, pad) {
     var stripped, val;
     // Cast value to string
@@ -49186,7 +49383,6 @@ angular.module('sumaAnalysis').factory('scopeUtils', [
   'actsLocs',
   'validation',
   function ($q, actsLocs, validation) {
-    var metadata, activities, locations;
     return {
       stringifyDays: function (days) {
         var string;
@@ -49196,11 +49392,50 @@ angular.module('sumaAnalysis').factory('scopeUtils', [
         string = days.join(',');
         return string;
       },
+      stringifyActs: function (acts, filter, actGrpMode) {
+        var actAry = [];
+        if (actGrpMode) {
+          _.each(acts, function (act) {
+            if (act.type === 'activityGroup' && act.filter === filter) {
+              actAry.push(act.id);
+            }
+          });
+        } else {
+          _.each(acts, function (act) {
+            if (act.type === 'activity' && act.filter === filter && act.enabled === true) {
+              actAry.push(act.id);
+            }
+          });
+        }
+        return actAry.join();
+      },
+      mapActs: function (acts, excludeActGrpsAry, requireActGrpsAry, excludeActsAry, requireActsAry) {
+        return _.map(acts, function (act) {
+          if (act.type === 'activityGroup') {
+            if (_.contains(excludeActGrpsAry, String(act.id))) {
+              act.filter = 'exclude';
+            } else if (_.contains(requireActGrpsAry, String(act.id))) {
+              act.filter = 'require';
+            } else {
+              act.filter = 'allow';
+            }
+          } else {
+            if (_.contains(excludeActsAry, String(act.id))) {
+              act.filter = 'exclude';
+            } else if (_.contains(requireActsAry, String(act.id))) {
+              act.filter = 'require';
+            } else {
+              act.filter = 'allow';
+            }
+          }
+          return act;
+        });
+      },
       getMetadata: function (init) {
         return actsLocs.get(init);
       },
       set: function (urlParams, sumaConfig, inits) {
-        var dfd = $q.defer(), errors = [], errorMessage, newParams = {};
+        var activities, dfd = $q.defer(), errors = [], errorMessage, excludeActsAry, excludeActGrpsAry, locations, metadata, newParams = {}, requireActsAry, requireActGrpsAry;
         newParams.init = _.find(inits, function (e, i) {
           return String(e.id) === String(urlParams.id);
         });
@@ -49251,19 +49486,39 @@ angular.module('sumaAnalysis').factory('scopeUtils', [
             locations = metadata.locations;
           }
           if (sumaConfig.formFields.activities) {
-            newParams.activity = _.find(activities, function (e, i) {
-              var type, id;
-              if (urlParams.activity === 'all') {
-                return String(e.id) === String(urlParams.activity);
-              } else {
-                type = urlParams.activity.split('-')[0];
-                id = urlParams.activity.split('-')[1];
-                return String(e.id) === String(id) && String(e.type) === String(type);
-              }
-            });
-            if (!newParams.activity) {
-              errors.push('Invalid value for activity.');
+            excludeActsAry = urlParams.excludeActs || urlParams.excludeActs === '' ? urlParams.excludeActs.split(',') : null;
+            requireActsAry = urlParams.requireActs || urlParams.requireActs === '' ? urlParams.requireActs.split(',') : null;
+            excludeActGrpsAry = urlParams.excludeActGrps || urlParams.excludeActGrps === '' ? urlParams.excludeActGrps.split(',') : null;
+            requireActGrpsAry = urlParams.requireActGrps || urlParams.requireActGrps === '' ? urlParams.requireActGrps.split(',') : null;
+            // validate excludeActs
+            if (validation.validateAct(excludeActsAry, activities, 'activity')) {
+              newParams.excludeActs = excludeActsAry;
+            } else {
+              newParams.excludeActs = '';
+              errors.push('Invalid value for excludeActs.');
             }
+            // validate requireActs
+            if (validation.validateAct(requireActsAry, activities, 'activity')) {
+              newParams.requireActs = requireActsAry;
+            } else {
+              newParams.requireActs = '';
+              errors.push('Invalid value for requireActs.');
+            }
+            // validate excludeActGrps
+            if (validation.validateAct(excludeActGrpsAry, activities, 'activityGroup')) {
+              newParams.excludeActGrps = excludeActGrpsAry;
+            } else {
+              newParams.excludeActGrps = '';
+              errors.push('Invalid value for excludeActGrps.');
+            }
+            // validate requireActGrps
+            if (validation.validateAct(requireActGrpsAry, activities, 'activityGroup')) {
+              newParams.requireActGrps = requireActGrpsAry;
+            } else {
+              newParams.requireActGrps = '';
+              errors.push('Invalid value for requireActGrps.');
+            }
+            activities = this.mapActs(activities, excludeActGrpsAry, requireActGrpsAry, excludeActsAry, requireActsAry);
           }
           if (sumaConfig.formFields.locations) {
             newParams.location = _.find(locations, function (e, i) {
@@ -49442,6 +49697,8 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
       counts.total = [{ count: response.total }];
       // Total Counts
       counts.totalCounts = [{ count: response.zeroDivisor }];
+      // Total Zero Counts
+      counts.totalZeroCounts = [{ count: response.zeroCounts }];
       // Total Avg Sum
       counts.totalAvgSum = [{ count: response.totalAvgSum }];
       // Total AvgAvg
@@ -49455,11 +49712,11 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
       counts.locationsAvgAvg = buildArray(locations, response.locationsAvgAvg, divisor, true);
       counts.locationsPct = buildArray(locations, response.locationsSum, divisor, false, true);
       // Activities related data
-      counts.activitiesTable = buildTableArray(activities, response.activitiesSum, response.total, 'activityGroup');
-      counts.activitiesSum = buildArray(activities, response.activitiesSum, response.total);
-      counts.activitiesAvgSum = buildArray(activities, response.activitiesAvgSum, response.total, true);
-      counts.activitiesAvgAvg = buildArray(activities, response.activitiesAvgAvg, response.total, true);
-      counts.activitiesPct = buildArray(activities, response.activitiesSum, response.total, false, true);
+      counts.activitiesTable = buildTableArray(_.cloneDeep(activities), response.activitiesSum, response.total, 'activityGroup');
+      counts.activitiesSum = buildArray(_.cloneDeep(activities), response.activitiesSum, response.total);
+      counts.activitiesAvgSum = buildArray(_.cloneDeep(activities), response.activitiesAvgSum, response.total, true);
+      counts.activitiesAvgAvg = buildArray(_.cloneDeep(activities), response.activitiesAvgAvg, response.total, true);
+      counts.activitiesPct = buildArray(_.cloneDeep(activities), response.activitiesSum, response.total, false, true);
       // Handle insertion of no activity values
       noActsSum = insertNoActs(response.activitiesSum, response.total, 'sum');
       if (noActsSum) {
@@ -49670,6 +49927,41 @@ angular.module('sumaAnalysis').filter('capitalize', function () {
   return function (str) {
     str = str === undefined || str === null ? '' : String(str);
     return str.charAt(0).toUpperCase() + str.slice(1);
+  };
+});
+'use strict';
+angular.module('sumaAnalysis').filter('unescape', function () {
+  return function (input) {
+    return _.unescape(input);
+  };
+});
+'use strict';
+angular.module('sumaAnalysis').filter('truncate', function () {
+  function truncate(string, n, useWordBoundary) {
+    var tooLong = string.length > n, s_ = tooLong ? string.substr(0, n - 1) : string;
+    s_ = useWordBoundary && tooLong ? s_.substr(0, s_.lastIndexOf(' ')) : s_;
+    return tooLong ? s_ + '...' : s_;
+  }
+  return function (input, n, useWordBoundary) {
+    return truncate(input, n, useWordBoundary);
+  };
+});
+'use strict';
+angular.module('sumaAnalysis').filter('activityTitle', function () {
+  return function (input, acts, mode) {
+    function getActGrpTitle(obj) {
+      return _.find(acts, {
+        id: obj.activityGroup,
+        type: 'activityGroup'
+      }).title;
+    }
+    return _.map(input, function (act) {
+      var obj = _.find(acts, {
+          id: parseInt(act, 10),
+          type: mode
+        });
+      return obj ? obj.type === 'activityGroup' ? _.unescape(obj.title) : getActGrpTitle(obj) + '-' + _.unescape(obj.title) : 'None';
+    }).join(', ');
   };
 });
 'use strict';
@@ -50203,7 +50495,7 @@ angular.module('sumaAnalysis').directive('sumaCsv', function () {
             finalData += space;
           });
           // Build download URL
-          base = 'data:application/csv;charset=utf-8,';
+          base = 'data:text/csv;charset=utf-8,';
           href = encodeURI(base + _.unescape(finalData));
           return href;
         };
@@ -50666,7 +50958,6 @@ angular.module('sumaAnalysis').factory('processHourlyData', [
       data.data = data.options[0];
       return data;
     }
-    // Public API here
     return {
       get: function (response) {
         var dfd = $q.defer();
@@ -51241,6 +51532,83 @@ angular.module('sumaAnalysis').directive('sumaChecklist', function () {
         scope.$apply(changeHandler);
       });
       scope.$watch('list', setupHandler, true);
+    }
+  };
+});
+'use strict';
+angular.module('sumaAnalysis').directive('sumaModal', function () {
+  return {
+    restrict: 'A',
+    templateUrl: 'views/directives/modal.html',
+    transclude: true,
+    scope: {
+      modalId: '@',
+      modalTitle: '@',
+      modalSaveText: '@'
+    },
+    link: function (scope, el, attrs) {
+      var tgt = $('#' + scope.modalId);
+      // Initialize modal
+      $(tgt).modal({ show: false });
+      // Hide modal when navigating between pages
+      scope.$on('$locationChangeSuccess', function (e) {
+        $(tgt).modal('hide');
+      });
+    }
+  };
+});
+'use strict';
+angular.module('sumaAnalysis').directive('sumaActivityFilter', function () {
+  return {
+    restrict: 'A',
+    templateUrl: 'views/directives/activityFilter.html',
+    scope: { acts: '=' },
+    controller: [
+      '$scope',
+      function ($scope) {
+        $scope.reset = function () {
+          _.each($scope.acts, function (act) {
+            act.enabled = true;
+            act.filter = 'allow';
+          });
+        };
+        $scope.setStatus = function () {
+          var actGrps = _.filter($scope.acts, { type: 'activityGroup' });
+          _.each(actGrps, function (actGrp) {
+            var acts = _.filter($scope.acts, {
+                type: 'activity',
+                activityGroup: actGrp.id
+              });
+            _.each(acts, function (act) {
+              if (actGrp.filter === 'exclude') {
+                act.enabled = false;
+              } else {
+                act.enabled = true;
+              }
+            });
+          });
+        };
+      }
+    ]
+  };
+});
+'use strict';
+angular.module('sumaAnalysis').directive('sumaActiveActs', function () {
+  return {
+    restrict: 'A',
+    templateUrl: 'views/directives/activeActs.html',
+    scope: { acts: '=' },
+    link: function (scope, ele, attrs, depthFilter) {
+      scope.display = false;
+      function setDisplayStatus() {
+        var states = _.uniq(_.pluck(scope.acts, 'filter'));
+        if (_.contains(states, 'require') || _.contains(states, 'exclude')) {
+          scope.display = true;
+        } else {
+          scope.display = false;
+        }
+      }
+      scope.$watch('acts', setDisplayStatus, true);
     }
   };
 });

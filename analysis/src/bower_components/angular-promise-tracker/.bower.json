@@ -37,6 +37,6 @@
     "commit": "0d860628d1997cf70bb39d7a3f21948d1e269e86"
   },
   "_source": "git://github.com/ajoslin/angular-promise-tracker.git",
-  "_target": "~2.0.0",
+  "_target": "2.0.0",
   "_originalSource": "angular-promise-tracker"
 }
