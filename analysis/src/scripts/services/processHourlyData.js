@@ -45,7 +45,7 @@ angular.module('sumaAnalysis')
 
       return data;
     }
-    // Public API here
+
     return {
       get: function (response) {
         var dfd = $q.defer();
