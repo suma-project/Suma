@@ -62,6 +62,18 @@ class ServerIO
             throw new Exception('Error loading config.yaml. Please verify config.yaml exists and contains a valid baseUrl.');
         }
 
+        // Set Error Handling
+        if (isset($config['showErrors']) && $config['showErrors'] === true)
+        {
+            error_reporting(1);
+            ini_set('display_errors', 1);
+        }
+        else
+        {
+            error_reporting(0);
+            ini_set('display_errors', 0);
+        }
+
         // Verify that cURL is available
         if (!function_exists('curl_init'))
         {
