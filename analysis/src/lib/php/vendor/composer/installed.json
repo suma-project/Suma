@@ -192,7 +192,7 @@
         },
         "time": "2014-03-24 08:18:12",
         "type": "library",
-        "installation-source": "source",
+        "installation-source": "dist",
         "autoload": {
             "files": [
                 "gump.class.php"
