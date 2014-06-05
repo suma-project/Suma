@@ -1,7 +1,6 @@
 <?php
 
-require_once "guzzle.phar";
-require_once "spyc/Spyc.php";
+require_once "vendor/autoload.php";
 
 /**
  * ServerIO - Class that facilitates retrieval of data from Suma server.

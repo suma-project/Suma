@@ -1,7 +1,7 @@
 <?php
 
 require_once 'NightlyData.php';
-require_once 'spyc/Spyc.php';
+require_once 'vendor/autoload.php';
 
 // Configuration
 $config = Spyc::YAMLLoad(realpath(dirname(__FILE__)) . '/../../../config/config.yaml');

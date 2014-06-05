@@ -3,7 +3,7 @@
 require_once 'ServerIO.php';
 require_once 'Gump.php';
 require_once 'SumaGump.php';
-require_once 'spyc/Spyc.php';
+require_once 'vendor/autoload.php';
 
 /**
  * Data - Class to process data for display in a variety of charts.

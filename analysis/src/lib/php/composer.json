@@ -1,0 +1,6 @@
+{
+    "require": {
+        "guzzlehttp/guzzle": "~2.8.3",
+        "mustangostang/spyc": "~0.5.1"
+    }
+}
