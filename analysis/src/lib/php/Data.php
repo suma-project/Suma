@@ -114,13 +114,11 @@ class Data
         {
            $SUMA_ERROR_REPORTING  = E_ERROR | E_WARNING | E_PARSE | E_NOTICE;
            $SUMA_DISPLAY_ERRORS   = 'on';
-           $SUMA_THROW_EXCEPTIONS =  true;
         }
         else
         {
            $SUMA_ERROR_REPORTING  = 0;
            $SUMA_DISPLAY_ERRORS   = 'off';
-           $SUMA_THROW_EXCEPTIONS =  false;
         }
 
         error_reporting($SUMA_ERROR_REPORTING);

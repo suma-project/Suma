@@ -1,7 +1,6 @@
 <?php
 
 require_once 'ServerIO.php';
-require_once 'spyc/Spyc.php';
 
 /**
  * Class to create an hourly report on previous
@@ -48,29 +47,6 @@ class NightlyData
         "22" => "10:00 PM",
         "23" => "11:00 PM",
     );
-    /**
-     * [__construct]
-     */
-    function __construct() {
-        $config = Spyc::YAMLLoad(realpath(dirname(__FILE__)) . '/../../../config/config.yaml');
-
-        // Set Error Reporting Levels
-        if (isset($config['showErrors']) && $config['showErrors'] === true)
-        {
-           $SUMA_ERROR_REPORTING  = E_ERROR | E_WARNING | E_PARSE | E_NOTICE;
-           $SUMA_DISPLAY_ERRORS   = 'on';
-           $SUMA_THROW_EXCEPTIONS =  true;
-        }
-        else
-        {
-           $SUMA_ERROR_REPORTING  = 0;
-           $SUMA_DISPLAY_ERRORS   = 'off';
-           $SUMA_THROW_EXCEPTIONS =  false;
-        }
-
-        error_reporting($SUMA_ERROR_REPORTING);
-        ini_set('display_errors', $SUMA_DISPLAY_ERRORS);
-    }
     /**
      * Builds 24 hour scaffold array for counts
      * @return array
