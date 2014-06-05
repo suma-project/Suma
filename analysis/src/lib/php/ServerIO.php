@@ -52,6 +52,23 @@ class ServerIO
     function __construct() {
         $config = Spyc::YAMLLoad(realpath(dirname(__FILE__)) . '/../../../config/config.yaml');
 
+        // Set Error Reporting Levels
+        if (isset($config['showErrors']) && $config['showErrors'] === true)
+        {
+            $SUMA_ERROR_REPORTING  = E_ERROR | E_WARNING | E_PARSE | E_NOTICE;
+            $SUMA_DISPLAY_ERRORS   = 'on';
+            $SUMA_THROW_EXCEPTIONS =  true;
+        }
+        else
+        {
+            $SUMA_ERROR_REPORTING  = 0;
+            $SUMA_DISPLAY_ERRORS   = 'off';
+            $SUMA_THROW_EXCEPTIONS =  false;
+        }
+
+        error_reporting($SUMA_ERROR_REPORTING);
+        ini_set('display_errors', $SUMA_DISPLAY_ERRORS);
+
         // Verify that config exists
         if (isset($config['serverIO']['baseUrl']))
         {
@@ -60,18 +77,6 @@ class ServerIO
         else
         {
             throw new Exception('Error loading config.yaml. Please verify config.yaml exists and contains a valid baseUrl.');
-        }
-
-        // Set Error Handling
-        if (isset($config['showErrors']) && $config['showErrors'] === true)
-        {
-            error_reporting(1);
-            ini_set('display_errors', 1);
-        }
-        else
-        {
-            error_reporting(0);
-            ini_set('display_errors', 0);
         }
 
         // Verify that cURL is available
