@@ -1,9 +1,8 @@
 <?php
 
-require_once 'ServerIO.php';
-require_once 'Gump.php';
-require_once 'SumaGump.php';
 require_once 'vendor/autoload.php';
+require_once 'ServerIO.php';
+require_once 'SumaGump.php';
 
 /**
  * Data - Class to process data for display in a variety of charts.

@@ -7,4 +7,5 @@ $baseDir = dirname($vendorDir);
 
 return array(
     $vendorDir . '/mustangostang/spyc/Spyc.php',
+    $vendorDir . '/wixel/gump/gump.class.php',
 );

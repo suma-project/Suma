@@ -174,5 +174,62 @@
             "yaml",
             "yml"
         ]
+    },
+    {
+        "name": "wixel/gump",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/Wixel/GUMP.git",
+            "reference": "b16d1e40c4ff0d67522601c5f0b39b10cbb5b35a"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/Wixel/GUMP/zipball/b16d1e40c4ff0d67522601c5f0b39b10cbb5b35a",
+            "reference": "b16d1e40c4ff0d67522601c5f0b39b10cbb5b35a",
+            "shasum": ""
+        },
+        "time": "2014-03-24 08:18:12",
+        "type": "library",
+        "installation-source": "source",
+        "autoload": {
+            "files": [
+                "gump.class.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Rob Crowe",
+                "email": "hello@vivalacrowe.com",
+                "homepage": "http://vivalacrowe.com"
+            },
+            {
+                "name": "Colleen Emryss",
+                "homepage": "http://skitter.tv"
+            },
+            {
+                "name": "Mark Slingsby",
+                "homepage": "http://www.rsaweb.co.za"
+            },
+            {
+                "name": "Roy de Kleijn",
+                "homepage": "http://roydekleijn.com"
+            },
+            {
+                "name": "Christian Klisch",
+                "homepage": "http://www.christian-klisch.de/"
+            },
+            {
+                "name": "Inge Brattaas",
+                "homepage": "http://res.no/"
+            }
+        ],
+        "description": "A fast, extensible & stand-alone PHP input validation class that allows you to validate any data",
+        "homepage": "http://wixelhq.com/"
     }
 ]

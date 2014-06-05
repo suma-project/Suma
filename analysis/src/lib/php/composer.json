@@ -1,6 +1,7 @@
 {
     "require": {
         "guzzlehttp/guzzle": "~2.8.3",
-        "mustangostang/spyc": "~0.5.1"
+        "mustangostang/spyc": "~0.5.1",
+        "wixel/gump": "dev-master#b16d1e40c4ff0d67522601c5f0b39b10cbb5b35a"
     }
 }
