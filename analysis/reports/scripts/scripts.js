@@ -49681,7 +49681,13 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
       }
       return false;
     }
-    function processData(response, activities, locations, zeroCounts) {
+    function addActGrpTitle(acts, actGrps) {
+      return _.map(acts, function (act) {
+        act.activityGroupTitle = actGrps[act.activityGroup];
+        return act;
+      });
+    }
+    function processData(response, activities, activityGroups, locations, zeroCounts) {
       var noActsSum, noActsAvgSum, noActsAvgAvg, counts, divisor;
       // Convert response into arrays of objects
       counts = {};
@@ -49712,11 +49718,11 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
       counts.locationsAvgAvg = buildArray(locations, response.locationsAvgAvg, divisor, true);
       counts.locationsPct = buildArray(locations, response.locationsSum, divisor, false, true);
       // Activities related data
-      counts.activitiesTable = buildTableArray(_.cloneDeep(activities), response.activitiesSum, response.total, 'activityGroup');
-      counts.activitiesSum = buildArray(_.cloneDeep(activities), response.activitiesSum, response.total);
-      counts.activitiesAvgSum = buildArray(_.cloneDeep(activities), response.activitiesAvgSum, response.total, true);
-      counts.activitiesAvgAvg = buildArray(_.cloneDeep(activities), response.activitiesAvgAvg, response.total, true);
-      counts.activitiesPct = buildArray(_.cloneDeep(activities), response.activitiesSum, response.total, false, true);
+      counts.activitiesTable = buildTableArray(activities, response.activitiesSum, response.total, 'activityGroup');
+      counts.activitiesSum = addActGrpTitle(buildArray(activities, response.activitiesSum, response.total), activityGroups);
+      counts.activitiesAvgSum = addActGrpTitle(buildArray(activities, response.activitiesAvgSum, response.total, true), activityGroups);
+      counts.activitiesAvgAvg = addActGrpTitle(buildArray(activities, response.activitiesAvgAvg, response.total, true), activityGroups);
+      counts.activitiesPct = addActGrpTitle(buildArray(activities, response.activitiesSum, response.total, false, true), activityGroups);
       // Handle insertion of no activity values
       noActsSum = insertNoActs(response.activitiesSum, response.total, 'sum');
       if (noActsSum) {
@@ -49858,14 +49864,22 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
     }
     return {
       get: function (response, acts, locs, params) {
-        var dfd = $q.defer();
+        var dfd = $q.defer(), actGrps;
         acts = _.filter(acts, function (act) {
           return act.id !== 'all';
         });
+        actGrps = _.object(_.map(_.filter(acts, function (act) {
+          return act.id !== 'all' && act.type === 'activityGroup';
+        }), function (aGrp) {
+          return [
+            aGrp.id,
+            aGrp.title
+          ];
+        }));
         locs = _.filter(locs, function (loc) {
           return loc.id !== 'all';
         });
-        dfd.resolve(processData(response, acts, locs, params.zeroCounts));
+        dfd.resolve(processData(response, acts, actGrps, locs, params.zeroCounts));
         return dfd.promise;
       }
     };

@@ -6320,21 +6320,11 @@ angular.module('processMock', [])
     'total': [{
       'count': 38
     }],
-    'totalCounts': [{
-      count: undefined
-    }],
-    'totalZeroCounts': [{
-      count: undefined
-    }],
-    'totalAvgSum': [{
-      count: undefined
-    }],
-    'totalAvgAvg': [{
-      count: undefined
-    }],
-    'daysWithObservations': [{
-      count: undefined
-    }],
+    'totalCounts': [{}],
+    'totalZeroCounts': [{}],
+    'totalAvgSum': [{}],
+    'totalAvgAvg': [{}],
+    'daysWithObservations': [{}],
     'locationsTable': [{
       'id': 3,
       'title': 'Ground Floor',
@@ -6614,7 +6604,8 @@ angular.module('processMock', [])
       'activityGroup': 23,
       'name': 'Knitting',
       'count': 3,
-      'percent': '7.89'
+      'percent': '7.89',
+      'activityGroupTitle': 'Test Group'
     }, {
       'id': 64,
       'rank': 0,
@@ -6624,7 +6615,8 @@ angular.module('processMock', [])
       'activityGroup': 24,
       'name': 'Computer',
       'count': 6,
-      'percent': '15.79'
+      'percent': '15.79',
+      'activityGroupTitle': 'Technology'
     }, {
       'id': 66,
       'rank': 2,
@@ -6634,7 +6626,8 @@ angular.module('processMock', [])
       'activityGroup': 24,
       'name': 'Tablet',
       'count': 1,
-      'percent': '2.63'
+      'percent': '2.63',
+      'activityGroupTitle': 'Technology'
     }, {
       'id': 1,
       'rank': 0,
@@ -6644,7 +6637,8 @@ angular.module('processMock', [])
       'activityGroup': 1,
       'name': 'Reading',
       'count': 3,
-      'percent': '7.89'
+      'percent': '7.89',
+      'activityGroupTitle': 'Activities'
     }, {
       'id': 4,
       'rank': 2,
@@ -6654,7 +6648,8 @@ angular.module('processMock', [])
       'activityGroup': 1,
       'name': 'Computing',
       'count': 1,
-      'percent': '2.63'
+      'percent': '2.63',
+      'activityGroupTitle': 'Activities'
     }, {
       'name': 'No Activity',
       'depth': 0,
@@ -6670,7 +6665,8 @@ angular.module('processMock', [])
       'activityGroup': 23,
       'name': 'Knitting',
       'count': '1.00',
-      'percent': '2.63'
+      'percent': '2.63',
+      'activityGroupTitle': 'Test Group'
     }, {
       'id': 64,
       'rank': 0,
@@ -6680,7 +6676,8 @@ angular.module('processMock', [])
       'activityGroup': 24,
       'name': 'Computer',
       'count': '2.00',
-      'percent': '5.26'
+      'percent': '5.26',
+      'activityGroupTitle': 'Technology'
     }, {
       'id': 66,
       'rank': 2,
@@ -6690,7 +6687,8 @@ angular.module('processMock', [])
       'activityGroup': 24,
       'name': 'Tablet',
       'count': '0.33',
-      'percent': '0.87'
+      'percent': '0.87',
+      'activityGroupTitle': 'Technology'
     }, {
       'id': 1,
       'rank': 2,
@@ -6709,7 +6707,8 @@ angular.module('processMock', [])
       'activityGroup': 1,
       'name': 'Reading',
       'count': '1.00',
-      'percent': '2.63'
+      'percent': '2.63',
+      'activityGroupTitle': 'Activities'
     }, {
       'id': 4,
       'rank': 2,
@@ -6719,7 +6718,8 @@ angular.module('processMock', [])
       'activityGroup': 1,
       'name': 'Computing',
       'count': '0.33',
-      'percent': '0.87'
+      'percent': '0.87',
+      'activityGroupTitle': 'Activities'
     }, {
       'name': 'No Activity',
       'depth': 0,
@@ -6735,7 +6735,8 @@ angular.module('processMock', [])
       'activityGroup': 23,
       'name': 'Knitting',
       'count': '1.00',
-      'percent': '2.63'
+      'percent': '2.63',
+      'activityGroupTitle': 'Test Group'
     }, {
       'id': 64,
       'rank': 0,
@@ -6745,7 +6746,8 @@ angular.module('processMock', [])
       'activityGroup': 24,
       'name': 'Computer',
       'count': '1.67',
-      'percent': '4.39'
+      'percent': '4.39',
+      'activityGroupTitle': 'Technology'
     }, {
       'id': 66,
       'rank': 2,
@@ -6755,7 +6757,8 @@ angular.module('processMock', [])
       'activityGroup': 24,
       'name': 'Tablet',
       'count': '1.00',
-      'percent': '2.63'
+      'percent': '2.63',
+      'activityGroupTitle': 'Technology'
     }, {
       'id': 1,
       'rank': 2,
@@ -6774,7 +6777,8 @@ angular.module('processMock', [])
       'activityGroup': 1,
       'name': 'Reading',
       'count': '1.00',
-      'percent': '2.63'
+      'percent': '2.63',
+      'activityGroupTitle': 'Activities'
     }, {
       'id': 4,
       'rank': 2,
@@ -6784,7 +6788,8 @@ angular.module('processMock', [])
       'activityGroup': 1,
       'name': 'Computing',
       'count': '1.00',
-      'percent': '2.63'
+      'percent': '2.63',
+      'activityGroupTitle': 'Activities'
     }, {
       'name': 'No Activity',
       'depth': 0,
@@ -6800,7 +6805,8 @@ angular.module('processMock', [])
       'activityGroup': 23,
       'name': 'Knitting',
       'count': '7.89',
-      'percent': '7.89'
+      'percent': '7.89',
+      'activityGroupTitle': 'Test Group'
     }, {
       'id': 64,
       'rank': 0,
@@ -6810,7 +6816,8 @@ angular.module('processMock', [])
       'activityGroup': 24,
       'name': 'Computer',
       'count': '15.79',
-      'percent': '15.79'
+      'percent': '15.79',
+      'activityGroupTitle': 'Technology'
     }, {
       'id': 66,
       'rank': 2,
@@ -6820,7 +6827,8 @@ angular.module('processMock', [])
       'activityGroup': 24,
       'name': 'Tablet',
       'count': '2.63',
-      'percent': '2.63'
+      'percent': '2.63',
+      'activityGroupTitle': 'Technology'
     }, {
       'id': 1,
       'rank': 0,
@@ -6830,7 +6838,8 @@ angular.module('processMock', [])
       'activityGroup': 1,
       'name': 'Reading',
       'count': '7.89',
-      'percent': '7.89'
+      'percent': '7.89',
+      'activityGroupTitle': 'Activities'
     }, {
       'id': 4,
       'rank': 2,
@@ -6840,7 +6849,8 @@ angular.module('processMock', [])
       'activityGroup': 1,
       'name': 'Computing',
       'count': '2.63',
-      'percent': '2.63'
+      'percent': '2.63',
+      'activityGroupTitle': 'Activities'
     }, {
       'name': 'No Activity',
       'depth': 0,
@@ -6959,7 +6969,8 @@ angular.module('processMock', [])
           'activityGroup': 23,
           'name': 'Knitting',
           'count': '1.00',
-          'percent': '2.63'
+          'percent': '2.63',
+          'activityGroupTitle': 'Test Group'
         }, {
           'id': 64,
           'rank': 0,
@@ -6969,7 +6980,8 @@ angular.module('processMock', [])
           'activityGroup': 24,
           'name': 'Computer',
           'count': '2.00',
-          'percent': '5.26'
+          'percent': '5.26',
+          'activityGroupTitle': 'Technology'
         }, {
           'id': 66,
           'rank': 2,
@@ -6979,7 +6991,8 @@ angular.module('processMock', [])
           'activityGroup': 24,
           'name': 'Tablet',
           'count': '0.33',
-          'percent': '0.87'
+          'percent': '0.87',
+          'activityGroupTitle': 'Technology'
         }, {
           'id': 1,
           'rank': 2,
@@ -6998,7 +7011,8 @@ angular.module('processMock', [])
           'activityGroup': 1,
           'name': 'Reading',
           'count': '1.00',
-          'percent': '2.63'
+          'percent': '2.63',
+          'activityGroupTitle': 'Activities'
         }, {
           'id': 4,
           'rank': 2,
@@ -7008,7 +7022,8 @@ angular.module('processMock', [])
           'activityGroup': 1,
           'name': 'Computing',
           'count': '0.33',
-          'percent': '0.87'
+          'percent': '0.87',
+          'activityGroupTitle': 'Activities'
         }, {
           'name': 'No Activity',
           'depth': 0,
@@ -7026,7 +7041,8 @@ angular.module('processMock', [])
           'activityGroup': 23,
           'name': 'Knitting',
           'count': '1.00',
-          'percent': '2.63'
+          'percent': '2.63',
+          'activityGroupTitle': 'Test Group'
         }, {
           'id': 64,
           'rank': 0,
@@ -7036,7 +7052,8 @@ angular.module('processMock', [])
           'activityGroup': 24,
           'name': 'Computer',
           'count': '1.67',
-          'percent': '4.39'
+          'percent': '4.39',
+          'activityGroupTitle': 'Technology'
         }, {
           'id': 66,
           'rank': 2,
@@ -7046,7 +7063,8 @@ angular.module('processMock', [])
           'activityGroup': 24,
           'name': 'Tablet',
           'count': '1.00',
-          'percent': '2.63'
+          'percent': '2.63',
+          'activityGroupTitle': 'Technology'
         }, {
           'id': 1,
           'rank': 2,
@@ -7065,7 +7083,8 @@ angular.module('processMock', [])
           'activityGroup': 1,
           'name': 'Reading',
           'count': '1.00',
-          'percent': '2.63'
+          'percent': '2.63',
+          'activityGroupTitle': 'Activities'
         }, {
           'id': 4,
           'rank': 2,
@@ -7075,7 +7094,8 @@ angular.module('processMock', [])
           'activityGroup': 1,
           'name': 'Computing',
           'count': '1.00',
-          'percent': '2.63'
+          'percent': '2.63',
+          'activityGroupTitle': 'Activities'
         }, {
           'name': 'No Activity',
           'depth': 0,
@@ -7093,7 +7113,8 @@ angular.module('processMock', [])
           'activityGroup': 23,
           'name': 'Knitting',
           'count': 3,
-          'percent': '7.89'
+          'percent': '7.89',
+          'activityGroupTitle': 'Test Group'
         }, {
           'id': 64,
           'rank': 0,
@@ -7103,7 +7124,8 @@ angular.module('processMock', [])
           'activityGroup': 24,
           'name': 'Computer',
           'count': 6,
-          'percent': '15.79'
+          'percent': '15.79',
+          'activityGroupTitle': 'Technology'
         }, {
           'id': 66,
           'rank': 2,
@@ -7113,7 +7135,8 @@ angular.module('processMock', [])
           'activityGroup': 24,
           'name': 'Tablet',
           'count': 1,
-          'percent': '2.63'
+          'percent': '2.63',
+          'activityGroupTitle': 'Technology'
         }, {
           'id': 1,
           'rank': 0,
@@ -7123,7 +7146,8 @@ angular.module('processMock', [])
           'activityGroup': 1,
           'name': 'Reading',
           'count': 3,
-          'percent': '7.89'
+          'percent': '7.89',
+          'activityGroupTitle': 'Activities'
         }, {
           'id': 4,
           'rank': 2,
@@ -7133,7 +7157,8 @@ angular.module('processMock', [])
           'activityGroup': 1,
           'name': 'Computing',
           'count': 1,
-          'percent': '2.63'
+          'percent': '2.63',
+          'activityGroupTitle': 'Activities'
         }, {
           'name': 'No Activity',
           'depth': 0,
@@ -7151,7 +7176,8 @@ angular.module('processMock', [])
           'activityGroup': 23,
           'name': 'Knitting',
           'count': '7.89',
-          'percent': '7.89'
+          'percent': '7.89',
+          'activityGroupTitle': 'Test Group'
         }, {
           'id': 64,
           'rank': 0,
@@ -7161,7 +7187,8 @@ angular.module('processMock', [])
           'activityGroup': 24,
           'name': 'Computer',
           'count': '15.79',
-          'percent': '15.79'
+          'percent': '15.79',
+          'activityGroupTitle': 'Technology'
         }, {
           'id': 66,
           'rank': 2,
@@ -7171,7 +7198,8 @@ angular.module('processMock', [])
           'activityGroup': 24,
           'name': 'Tablet',
           'count': '2.63',
-          'percent': '2.63'
+          'percent': '2.63',
+          'activityGroupTitle': 'Technology'
         }, {
           'id': 1,
           'rank': 0,
@@ -7181,7 +7209,8 @@ angular.module('processMock', [])
           'activityGroup': 1,
           'name': 'Reading',
           'count': '7.89',
-          'percent': '7.89'
+          'percent': '7.89',
+          'activityGroupTitle': 'Activities'
         }, {
           'id': 4,
           'rank': 2,
@@ -7191,7 +7220,8 @@ angular.module('processMock', [])
           'activityGroup': 1,
           'name': 'Computing',
           'count': '2.63',
-          'percent': '2.63'
+          'percent': '2.63',
+          'activityGroupTitle': 'Activities'
         }, {
           'name': 'No Activity',
           'depth': 0,
@@ -9926,1348 +9956,4 @@ angular.module('processMock', [])
       }
     }
   })
-  .value('mockTimeSeriesProcessedZeros', {
-    'csv': {
-      '2013-08-12': {
-        'date': '2013-08-12',
-        'total': 10,
-        'locations': {
-          'Tower/Stacks': null,
-          'Unity lab': null,
-          '2nd floor': null,
-          '3rd floor': null,
-          '4th floor': null,
-          '5th floor': null,
-          '6th floor': null,
-          '7th floor': null,
-          '8th floor': null,
-          '9th floor': null,
-          'Ground Floor': 6,
-          'Lobby and Mezzanine': 4,
-          'West Wing': null,
-          'Technology Sandbox': null,
-          'Quiet Reading Room': null,
-          'Terrace': null,
-          'ConeZone & Creamery': null,
-          'WW 1st floor': null,
-          'WW 2nd floor': null,
-          'East Wing': null,
-          'EW 1st floor (Learning Commons)': null,
-          'EW 2nd floor': null,
-          'Special Collections Reading Room': null,
-          'Digital Media Lab': null
-        },
-        'activities': {
-          'Activities: Reading': 2,
-          'Test Group: Knitting': 2,
-          'Technology: Computer': 2,
-          'Test Group 3: 0': null,
-          'Test Group 2: 0': null,
-          'Activities: Sleeping': null,
-          'Technology: Laptop': null,
-          'Test Group 3: 1': null,
-          'Test Group 2: 1': null,
-          'Activities: Computing': null,
-          'Technology: Tablet': null,
-          'Test Group 3: 2': null,
-          'Test Group 2: 2': null,
-          'Activities: Collaborating': null,
-          '_No Activity': 8
-        }
-      },
-      '2013-08-14': {
-        'date': '2013-08-14',
-        'total': 0,
-        'locations': {
-          'Tower/Stacks': null,
-          'Unity lab': null,
-          '2nd floor': null,
-          '3rd floor': null,
-          '4th floor': null,
-          '5th floor': null,
-          '6th floor': null,
-          '7th floor': null,
-          '8th floor': null,
-          '9th floor': null,
-          'Ground Floor': 10,
-          'Lobby and Mezzanine': null,
-          'West Wing': null,
-          'Technology Sandbox': null,
-          'Quiet Reading Room': null,
-          'Terrace': null,
-          'ConeZone & Creamery': 6,
-          'WW 1st floor': null,
-          'WW 2nd floor': null,
-          'East Wing': null,
-          'EW 1st floor (Learning Commons)': null,
-          'EW 2nd floor': 4,
-          'Special Collections Reading Room': null,
-          'Digital Media Lab': null
-        },
-        'activities': {
-          'Activities: Reading': null,
-          'Test Group: Knitting': 1,
-          'Technology: Computer': 2,
-          'Test Group 3: 0': null,
-          'Test Group 2: 0': null,
-          'Activities: Sleeping': null,
-          'Technology: Laptop': null,
-          'Test Group 3: 1': null,
-          'Test Group 2: 1': null,
-          'Activities: Computing': 1,
-          'Technology: Tablet': null,
-          'Test Group 3: 2': null,
-          'Test Group 2: 2': null,
-          'Activities: Collaborating': null,
-          '_No Activity': 17
-        }
-      },
-      '2013-08-13': {
-        'date': '2013-08-13',
-        'total': 8,
-        'locations': {
-          'Tower/Stacks': null,
-          'Unity lab': null,
-          '2nd floor': null,
-          '3rd floor': null,
-          '4th floor': null,
-          '5th floor': null,
-          '6th floor': null,
-          '7th floor': null,
-          '8th floor': null,
-          '9th floor': null,
-          'Ground Floor': null,
-          'Lobby and Mezzanine': 8,
-          'West Wing': null,
-          'Technology Sandbox': null,
-          'Quiet Reading Room': null,
-          'Terrace': null,
-          'ConeZone & Creamery': null,
-          'WW 1st floor': null,
-          'WW 2nd floor': null,
-          'East Wing': null,
-          'EW 1st floor (Learning Commons)': null,
-          'EW 2nd floor': null,
-          'Special Collections Reading Room': null,
-          'Digital Media Lab': null
-        },
-        'activities': {
-          'Activities: Reading': 1,
-          'Test Group: Knitting': null,
-          'Technology: Computer': 2,
-          'Test Group 3: 0': null,
-          'Test Group 2: 0': null,
-          'Activities: Sleeping': null,
-          'Technology: Laptop': null,
-          'Test Group 3: 1': null,
-          'Test Group 2: 1': null,
-          'Activities: Computing': null,
-          'Technology: Tablet': 1,
-          'Test Group 3: 2': null,
-          'Test Group 2: 2': null,
-          'Activities: Collaborating': null,
-          '_No Activity': 6
-        }
-      }
-    },
-    'total': [{
-      'count': 0
-    }],
-    'totalCounts': [{
-      count: undefined
-    }],
-    'totalZeroCounts': [{
-      count: undefined
-    }],
-    'totalAvgSum': [{
-      count: undefined
-    }],
-    'totalAvgAvg': [{
-      count: undefined
-    }],
-    'daysWithObservations': [{
-      count: undefined
-    }],
-    'locationsTable': [{
-      'id': 3,
-      'title': 'Ground Floor',
-      'parent': 1,
-      'description': '',
-      'rank': 1,
-      'depth': 0,
-      'name': 'Ground Floor',
-      'count': 0,
-      'percent': 0
-    }, {
-      'id': 18,
-      'title': 'ConeZone & Creamery',
-      'parent': 5,
-      'description': '',
-      'rank': 3,
-      'depth': 1,
-      'name': 'ConeZone & Creamery',
-      'count': 6,
-      'percent': 'Infinity'
-    }, {
-      'id': 22,
-      'title': 'EW 2nd floor',
-      'parent': 6,
-      'description': '',
-      'rank': 1,
-      'depth': 1,
-      'name': 'EW 2nd floor',
-      'count': 4,
-      'percent': 'Infinity'
-    }],
-    'locationsSum': [{
-      'id': 3,
-      'title': 'Ground Floor',
-      'parent': 1,
-      'description': '',
-      'rank': 1,
-      'depth': 0,
-      'name': 'Ground Floor',
-      'count': 0,
-      'percent': 0
-    }, {
-      'id': 18,
-      'title': 'ConeZone & Creamery',
-      'parent': 5,
-      'description': '',
-      'rank': 3,
-      'depth': 1,
-      'name': 'ConeZone & Creamery',
-      'count': 6,
-      'percent': 'Infinity'
-    }, {
-      'id': 22,
-      'title': 'EW 2nd floor',
-      'parent': 6,
-      'description': '',
-      'rank': 1,
-      'depth': 1,
-      'name': 'EW 2nd floor',
-      'count': 4,
-      'percent': 'Infinity'
-    }],
-    'locationsAvgSum': [{
-      'id': 3,
-      'title': 'Ground Floor',
-      'parent': 1,
-      'description': '',
-      'rank': 1,
-      'depth': 0,
-      'name': 'Ground Floor',
-      'count': '5.33',
-      'percent': 'Infinity'
-    }, {
-      'id': 4,
-      'title': 'Lobby and Mezzanine',
-      'parent': 1,
-      'description': '',
-      'rank': 2,
-      'depth': 0,
-      'name': 'Lobby and Mezzanine',
-      'count': '4.00',
-      'percent': 'Infinity'
-    }, {
-      'id': 18,
-      'title': 'ConeZone & Creamery',
-      'parent': 5,
-      'description': '',
-      'rank': 3,
-      'depth': 1,
-      'name': 'ConeZone & Creamery',
-      'count': '2.00',
-      'percent': 'Infinity'
-    }, {
-      'id': 22,
-      'title': 'EW 2nd floor',
-      'parent': 6,
-      'description': '',
-      'rank': 1,
-      'depth': 1,
-      'name': 'EW 2nd floor',
-      'count': '1.33',
-      'percent': 'Infinity'
-    }],
-    'locationsAvgAvg': [{
-      'id': 3,
-      'title': 'Ground Floor',
-      'parent': 1,
-      'description': '',
-      'rank': 1,
-      'depth': 0,
-      'name': 'Ground Floor',
-      'count': '5.50',
-      'percent': 'Infinity'
-    }, {
-      'id': 4,
-      'title': 'Lobby and Mezzanine',
-      'parent': 1,
-      'description': '',
-      'rank': 2,
-      'depth': 0,
-      'name': 'Lobby and Mezzanine',
-      'count': '4.00',
-      'percent': 'Infinity'
-    }, {
-      'id': 18,
-      'title': 'ConeZone & Creamery',
-      'parent': 5,
-      'description': '',
-      'rank': 3,
-      'depth': 1,
-      'name': 'ConeZone & Creamery',
-      'count': '6.00',
-      'percent': 'Infinity'
-    }, {
-      'id': 22,
-      'title': 'EW 2nd floor',
-      'parent': 6,
-      'description': '',
-      'rank': 1,
-      'depth': 1,
-      'name': 'EW 2nd floor',
-      'count': '4.00',
-      'percent': 'Infinity'
-    }],
-    'locationsPct': [{
-      'id': 3,
-      'title': 'Ground Floor',
-      'parent': 1,
-      'description': '',
-      'rank': 1,
-      'depth': 0,
-      'name': 'Ground Floor',
-      'count': 0,
-      'percent': 0
-    }, {
-      'id': 18,
-      'title': 'ConeZone & Creamery',
-      'parent': 5,
-      'description': '',
-      'rank': 3,
-      'depth': 1,
-      'name': 'ConeZone & Creamery',
-      'count': 'Infinity',
-      'percent': 'Infinity'
-    }, {
-      'id': 22,
-      'title': 'EW 2nd floor',
-      'parent': 6,
-      'description': '',
-      'rank': 1,
-      'depth': 1,
-      'name': 'EW 2nd floor',
-      'count': 'Infinity',
-      'percent': 'Infinity'
-    }],
-    'activitiesTable': [{
-      'id': 63,
-      'rank': 0,
-      'title': 'Knitting',
-      'type': 'activity',
-      'depth': 1,
-      'activityGroup': 23,
-      'name': 'Knitting',
-      'count': 3,
-      'percent': 'Infinity'
-    }, {
-      'id': 64,
-      'rank': 0,
-      'title': 'Computer',
-      'type': 'activity',
-      'depth': 1,
-      'activityGroup': 24,
-      'name': 'Computer',
-      'count': 6,
-      'percent': 'Infinity'
-    }, {
-      'id': 66,
-      'rank': 2,
-      'title': 'Tablet',
-      'type': 'activity',
-      'depth': 1,
-      'activityGroup': 24,
-      'name': 'Tablet',
-      'count': 1,
-      'percent': 'Infinity'
-    }, {
-      'id': 1,
-      'rank': 2,
-      'title': 'Activities',
-      'type': 'activityGroup',
-      'depth': 0,
-      'name': 'Activities',
-      'count': 4,
-      'percent': 'Infinity'
-    }, {
-      'id': 1,
-      'rank': 0,
-      'title': 'Reading',
-      'type': 'activity',
-      'depth': 1,
-      'activityGroup': 1,
-      'name': 'Reading',
-      'count': 3,
-      'percent': 'Infinity'
-    }, {
-      'id': 4,
-      'rank': 2,
-      'title': 'Computing',
-      'type': 'activity',
-      'depth': 1,
-      'activityGroup': 1,
-      'name': 'Computing',
-      'count': 1,
-      'percent': 'Infinity'
-    }, {
-      'name': 'No Activity',
-      'depth': 0,
-      'percent': 'Infinity',
-      'count': 31
-    }],
-    'activitiesSum': [{
-      'id': 63,
-      'rank': 0,
-      'title': 'Knitting',
-      'type': 'activity',
-      'depth': 1,
-      'activityGroup': 23,
-      'name': 'Knitting',
-      'count': 3,
-      'percent': 'Infinity'
-    }, {
-      'id': 64,
-      'rank': 0,
-      'title': 'Computer',
-      'type': 'activity',
-      'depth': 1,
-      'activityGroup': 24,
-      'name': 'Computer',
-      'count': 6,
-      'percent': 'Infinity'
-    }, {
-      'id': 66,
-      'rank': 2,
-      'title': 'Tablet',
-      'type': 'activity',
-      'depth': 1,
-      'activityGroup': 24,
-      'name': 'Tablet',
-      'count': 1,
-      'percent': 'Infinity'
-    }, {
-      'id': 1,
-      'rank': 0,
-      'title': 'Reading',
-      'type': 'activity',
-      'depth': 1,
-      'activityGroup': 1,
-      'name': 'Reading',
-      'count': 3,
-      'percent': 'Infinity'
-    }, {
-      'id': 4,
-      'rank': 2,
-      'title': 'Computing',
-      'type': 'activity',
-      'depth': 1,
-      'activityGroup': 1,
-      'name': 'Computing',
-      'count': 1,
-      'percent': 'Infinity'
-    }, {
-      'name': 'No Activity',
-      'depth': 0,
-      'percent': 'Infinity',
-      'count': 31
-    }],
-    'activitiesAvgSum': [{
-      'id': 63,
-      'rank': 0,
-      'title': 'Knitting',
-      'type': 'activity',
-      'depth': 1,
-      'activityGroup': 23,
-      'name': 'Knitting',
-      'count': '1.00',
-      'percent': 'Infinity'
-    }, {
-      'id': 64,
-      'rank': 0,
-      'title': 'Computer',
-      'type': 'activity',
-      'depth': 1,
-      'activityGroup': 24,
-      'name': 'Computer',
-      'count': '2.00',
-      'percent': 'Infinity'
-    }, {
-      'id': 66,
-      'rank': 2,
-      'title': 'Tablet',
-      'type': 'activity',
-      'depth': 1,
-      'activityGroup': 24,
-      'name': 'Tablet',
-      'count': '0.33',
-      'percent': 'Infinity'
-    }, {
-      'id': 1,
-      'rank': 2,
-      'title': 'Activities',
-      'type': 'activityGroup',
-      'depth': 0,
-      'name': 'Activities',
-      'count': '1.00',
-      'percent': 'Infinity'
-    }, {
-      'id': 1,
-      'rank': 0,
-      'title': 'Reading',
-      'type': 'activity',
-      'depth': 1,
-      'activityGroup': 1,
-      'name': 'Reading',
-      'count': '1.00',
-      'percent': 'Infinity'
-    }, {
-      'id': 4,
-      'rank': 2,
-      'title': 'Computing',
-      'type': 'activity',
-      'depth': 1,
-      'activityGroup': 1,
-      'name': 'Computing',
-      'count': '0.33',
-      'percent': 'Infinity'
-    }, {
-      'name': 'No Activity',
-      'depth': 0,
-      'percent': 'Infinity',
-      'count': '10.33'
-    }],
-    'activitiesAvgAvg': [{
-      'id': 63,
-      'rank': 0,
-      'title': 'Knitting',
-      'type': 'activity',
-      'depth': 1,
-      'activityGroup': 23,
-      'name': 'Knitting',
-      'count': '1.00',
-      'percent': 'Infinity'
-    }, {
-      'id': 64,
-      'rank': 0,
-      'title': 'Computer',
-      'type': 'activity',
-      'depth': 1,
-      'activityGroup': 24,
-      'name': 'Computer',
-      'count': '1.67',
-      'percent': 'Infinity'
-    }, {
-      'id': 66,
-      'rank': 2,
-      'title': 'Tablet',
-      'type': 'activity',
-      'depth': 1,
-      'activityGroup': 24,
-      'name': 'Tablet',
-      'count': '1.00',
-      'percent': 'Infinity'
-    }, {
-      'id': 1,
-      'rank': 2,
-      'title': 'Activities',
-      'type': 'activityGroup',
-      'depth': 0,
-      'name': 'Activities',
-      'count': '1.00',
-      'percent': 'Infinity'
-    }, {
-      'id': 1,
-      'rank': 0,
-      'title': 'Reading',
-      'type': 'activity',
-      'depth': 1,
-      'activityGroup': 1,
-      'name': 'Reading',
-      'count': '1.00',
-      'percent': 'Infinity'
-    }, {
-      'id': 4,
-      'rank': 2,
-      'title': 'Computing',
-      'type': 'activity',
-      'depth': 1,
-      'activityGroup': 1,
-      'name': 'Computing',
-      'count': '1.00',
-      'percent': 'Infinity'
-    }, {
-      'name': 'No Activity',
-      'depth': 0,
-      'percent': 'Infinity',
-      'count': '9.00'
-    }],
-    'activitiesPct': [{
-      'id': 63,
-      'rank': 0,
-      'title': 'Knitting',
-      'type': 'activity',
-      'depth': 1,
-      'activityGroup': 23,
-      'name': 'Knitting',
-      'count': 'Infinity',
-      'percent': 'Infinity'
-    }, {
-      'id': 64,
-      'rank': 0,
-      'title': 'Computer',
-      'type': 'activity',
-      'depth': 1,
-      'activityGroup': 24,
-      'name': 'Computer',
-      'count': 'Infinity',
-      'percent': 'Infinity'
-    }, {
-      'id': 66,
-      'rank': 2,
-      'title': 'Tablet',
-      'type': 'activity',
-      'depth': 1,
-      'activityGroup': 24,
-      'name': 'Tablet',
-      'count': 'Infinity',
-      'percent': 'Infinity'
-    }, {
-      'id': 1,
-      'rank': 0,
-      'title': 'Reading',
-      'type': 'activity',
-      'depth': 1,
-      'activityGroup': 1,
-      'name': 'Reading',
-      'count': 'Infinity',
-      'percent': 'Infinity'
-    }, {
-      'id': 4,
-      'rank': 2,
-      'title': 'Computing',
-      'type': 'activity',
-      'depth': 1,
-      'activityGroup': 1,
-      'name': 'Computing',
-      'count': 'Infinity',
-      'percent': 'Infinity'
-    }, {
-      'name': 'No Activity',
-      'depth': 0,
-      'percent': 'Infinity',
-      'count': 'Infinity'
-    }],
-    'periodSum': [{
-      'date': '2013-08-12',
-      'count': 10
-    }, {
-      'date': '2013-08-13',
-      'count': 8
-    }, {
-      'date': '2013-08-14',
-      'count': 20
-    }],
-    'periodAvg': [{
-      'date': '2013-08-12',
-      'count': 10
-    }, {
-      'date': '2013-08-13',
-      'count': 4
-    }, {
-      'date': '2013-08-14',
-      'count': 15
-    }],
-    'hourlySummary': [{
-      'name': 8,
-      'count': 11,
-      'percent': 'Infinity'
-    }, {
-      'name': 10,
-      'count': 8,
-      'percent': 'Infinity'
-    }, {
-      'name': 15,
-      'count': 19,
-      'percent': 'Infinity'
-    }],
-    'dayOfWeekSummary': [{
-      'name': 'Monday',
-      'count': 10,
-      'percent': 0
-    }, {
-      'name': 'Tuesday',
-      'count': 8,
-      'percent': 0
-    }, {
-      'name': 'Wednesday',
-      'count': 20,
-      'percent': 0
-    }],
-    'monthSummary': [{
-      'date': 'August 1, 2013',
-      'name': 'August 2013',
-      'count': 38,
-      'percent': 'Infinity'
-    }],
-    'yearSummary': [{
-      'name': '2013',
-      'count': 38,
-      'percent': 'Infinity'
-    }],
-    'timeSeriesOptions': [{
-      'title': 'Daily Avg',
-      'val': 'avg',
-      'data': [{
-        'date': '2013-08-12',
-        'count': 10
-      }, {
-        'date': '2013-08-13',
-        'count': 4
-      }, {
-        'date': '2013-08-14',
-        'count': 15
-      }]
-    }, {
-      'title': 'Daily Sum',
-      'val': 'sum',
-      'data': [{
-        'date': '2013-08-12',
-        'count': 10
-      }, {
-        'date': '2013-08-13',
-        'count': 8
-      }, {
-        'date': '2013-08-14',
-        'count': 20
-      }]
-    }],
-    'timeSeriesData': {
-      'title': 'Daily Sum',
-      'val': 'sum',
-      'data': [{
-        'date': '2013-08-12',
-        'count': 10
-      }, {
-        'date': '2013-08-13',
-        'count': 8
-      }, {
-        'date': '2013-08-14',
-        'count': 20
-      }]
-    },
-    'actsLocsOptions': [{
-      'title': 'Activities',
-      'val': 'activities',
-      'items': [{
-        'title': 'Avg of Sum',
-        'data': [{
-          'id': 63,
-          'rank': 0,
-          'title': 'Knitting',
-          'type': 'activity',
-          'depth': 1,
-          'activityGroup': 23,
-          'name': 'Knitting',
-          'count': '1.00',
-          'percent': 'Infinity'
-        }, {
-          'id': 64,
-          'rank': 0,
-          'title': 'Computer',
-          'type': 'activity',
-          'depth': 1,
-          'activityGroup': 24,
-          'name': 'Computer',
-          'count': '2.00',
-          'percent': 'Infinity'
-        }, {
-          'id': 66,
-          'rank': 2,
-          'title': 'Tablet',
-          'type': 'activity',
-          'depth': 1,
-          'activityGroup': 24,
-          'name': 'Tablet',
-          'count': '0.33',
-          'percent': 'Infinity'
-        }, {
-          'id': 1,
-          'rank': 2,
-          'title': 'Activities',
-          'type': 'activityGroup',
-          'depth': 0,
-          'name': 'Activities',
-          'count': '1.00',
-          'percent': 'Infinity'
-        }, {
-          'id': 1,
-          'rank': 0,
-          'title': 'Reading',
-          'type': 'activity',
-          'depth': 1,
-          'activityGroup': 1,
-          'name': 'Reading',
-          'count': '1.00',
-          'percent': 'Infinity'
-        }, {
-          'id': 4,
-          'rank': 2,
-          'title': 'Computing',
-          'type': 'activity',
-          'depth': 1,
-          'activityGroup': 1,
-          'name': 'Computing',
-          'count': '0.33',
-          'percent': 'Infinity'
-        }, {
-          'name': 'No Activity',
-          'depth': 0,
-          'percent': 'Infinity',
-          'count': '10.33'
-        }]
-      }, {
-        'title': 'Avg of Avg',
-        'data': [{
-          'id': 63,
-          'rank': 0,
-          'title': 'Knitting',
-          'type': 'activity',
-          'depth': 1,
-          'activityGroup': 23,
-          'name': 'Knitting',
-          'count': '1.00',
-          'percent': 'Infinity'
-        }, {
-          'id': 64,
-          'rank': 0,
-          'title': 'Computer',
-          'type': 'activity',
-          'depth': 1,
-          'activityGroup': 24,
-          'name': 'Computer',
-          'count': '1.67',
-          'percent': 'Infinity'
-        }, {
-          'id': 66,
-          'rank': 2,
-          'title': 'Tablet',
-          'type': 'activity',
-          'depth': 1,
-          'activityGroup': 24,
-          'name': 'Tablet',
-          'count': '1.00',
-          'percent': 'Infinity'
-        }, {
-          'id': 1,
-          'rank': 2,
-          'title': 'Activities',
-          'type': 'activityGroup',
-          'depth': 0,
-          'name': 'Activities',
-          'count': '1.00',
-          'percent': 'Infinity'
-        }, {
-          'id': 1,
-          'rank': 0,
-          'title': 'Reading',
-          'type': 'activity',
-          'depth': 1,
-          'activityGroup': 1,
-          'name': 'Reading',
-          'count': '1.00',
-          'percent': 'Infinity'
-        }, {
-          'id': 4,
-          'rank': 2,
-          'title': 'Computing',
-          'type': 'activity',
-          'depth': 1,
-          'activityGroup': 1,
-          'name': 'Computing',
-          'count': '1.00',
-          'percent': 'Infinity'
-        }, {
-          'name': 'No Activity',
-          'depth': 0,
-          'percent': 'Infinity',
-          'count': '9.00'
-        }]
-      }, {
-        'title': 'Sum',
-        'data': [{
-          'id': 63,
-          'rank': 0,
-          'title': 'Knitting',
-          'type': 'activity',
-          'depth': 1,
-          'activityGroup': 23,
-          'name': 'Knitting',
-          'count': 3,
-          'percent': 'Infinity'
-        }, {
-          'id': 64,
-          'rank': 0,
-          'title': 'Computer',
-          'type': 'activity',
-          'depth': 1,
-          'activityGroup': 24,
-          'name': 'Computer',
-          'count': 6,
-          'percent': 'Infinity'
-        }, {
-          'id': 66,
-          'rank': 2,
-          'title': 'Tablet',
-          'type': 'activity',
-          'depth': 1,
-          'activityGroup': 24,
-          'name': 'Tablet',
-          'count': 1,
-          'percent': 'Infinity'
-        }, {
-          'id': 1,
-          'rank': 0,
-          'title': 'Reading',
-          'type': 'activity',
-          'depth': 1,
-          'activityGroup': 1,
-          'name': 'Reading',
-          'count': 3,
-          'percent': 'Infinity'
-        }, {
-          'id': 4,
-          'rank': 2,
-          'title': 'Computing',
-          'type': 'activity',
-          'depth': 1,
-          'activityGroup': 1,
-          'name': 'Computing',
-          'count': 1,
-          'percent': 'Infinity'
-        }, {
-          'name': 'No Activity',
-          'depth': 0,
-          'percent': 'Infinity',
-          'count': 31
-        }]
-      }, {
-        'title': 'Pct',
-        'data': [{
-          'id': 63,
-          'rank': 0,
-          'title': 'Knitting',
-          'type': 'activity',
-          'depth': 1,
-          'activityGroup': 23,
-          'name': 'Knitting',
-          'count': 'Infinity',
-          'percent': 'Infinity'
-        }, {
-          'id': 64,
-          'rank': 0,
-          'title': 'Computer',
-          'type': 'activity',
-          'depth': 1,
-          'activityGroup': 24,
-          'name': 'Computer',
-          'count': 'Infinity',
-          'percent': 'Infinity'
-        }, {
-          'id': 66,
-          'rank': 2,
-          'title': 'Tablet',
-          'type': 'activity',
-          'depth': 1,
-          'activityGroup': 24,
-          'name': 'Tablet',
-          'count': 'Infinity',
-          'percent': 'Infinity'
-        }, {
-          'id': 1,
-          'rank': 0,
-          'title': 'Reading',
-          'type': 'activity',
-          'depth': 1,
-          'activityGroup': 1,
-          'name': 'Reading',
-          'count': 'Infinity',
-          'percent': 'Infinity'
-        }, {
-          'id': 4,
-          'rank': 2,
-          'title': 'Computing',
-          'type': 'activity',
-          'depth': 1,
-          'activityGroup': 1,
-          'name': 'Computing',
-          'count': 'Infinity',
-          'percent': 'Infinity'
-        }, {
-          'name': 'No Activity',
-          'depth': 0,
-          'percent': 'Infinity',
-          'count': 'Infinity'
-        }]
-      }]
-    }, {
-      'title': 'Locations',
-      'val': 'locations',
-      'items': [{
-        'title': 'Avg of Sum',
-        'data': [{
-          'id': 3,
-          'title': 'Ground Floor',
-          'parent': 1,
-          'description': '',
-          'rank': 1,
-          'depth': 0,
-          'name': 'Ground Floor',
-          'count': '5.33',
-          'percent': 'Infinity'
-        }, {
-          'id': 4,
-          'title': 'Lobby and Mezzanine',
-          'parent': 1,
-          'description': '',
-          'rank': 2,
-          'depth': 0,
-          'name': 'Lobby and Mezzanine',
-          'count': '4.00',
-          'percent': 'Infinity'
-        }, {
-          'id': 18,
-          'title': 'ConeZone & Creamery',
-          'parent': 5,
-          'description': '',
-          'rank': 3,
-          'depth': 1,
-          'name': 'ConeZone & Creamery',
-          'count': '2.00',
-          'percent': 'Infinity'
-        }, {
-          'id': 22,
-          'title': 'EW 2nd floor',
-          'parent': 6,
-          'description': '',
-          'rank': 1,
-          'depth': 1,
-          'name': 'EW 2nd floor',
-          'count': '1.33',
-          'percent': 'Infinity'
-        }]
-      }, {
-        'title': 'Avg of Avg',
-        'data': [{
-          'id': 3,
-          'title': 'Ground Floor',
-          'parent': 1,
-          'description': '',
-          'rank': 1,
-          'depth': 0,
-          'name': 'Ground Floor',
-          'count': '5.50',
-          'percent': 'Infinity'
-        }, {
-          'id': 4,
-          'title': 'Lobby and Mezzanine',
-          'parent': 1,
-          'description': '',
-          'rank': 2,
-          'depth': 0,
-          'name': 'Lobby and Mezzanine',
-          'count': '4.00',
-          'percent': 'Infinity'
-        }, {
-          'id': 18,
-          'title': 'ConeZone & Creamery',
-          'parent': 5,
-          'description': '',
-          'rank': 3,
-          'depth': 1,
-          'name': 'ConeZone & Creamery',
-          'count': '6.00',
-          'percent': 'Infinity'
-        }, {
-          'id': 22,
-          'title': 'EW 2nd floor',
-          'parent': 6,
-          'description': '',
-          'rank': 1,
-          'depth': 1,
-          'name': 'EW 2nd floor',
-          'count': '4.00',
-          'percent': 'Infinity'
-        }]
-      }, {
-        'title': 'Sum',
-        'data': [{
-          'id': 3,
-          'title': 'Ground Floor',
-          'parent': 1,
-          'description': '',
-          'rank': 1,
-          'depth': 0,
-          'name': 'Ground Floor',
-          'count': 0,
-          'percent': 0
-        }, {
-          'id': 18,
-          'title': 'ConeZone & Creamery',
-          'parent': 5,
-          'description': '',
-          'rank': 3,
-          'depth': 1,
-          'name': 'ConeZone & Creamery',
-          'count': 6,
-          'percent': 'Infinity'
-        }, {
-          'id': 22,
-          'title': 'EW 2nd floor',
-          'parent': 6,
-          'description': '',
-          'rank': 1,
-          'depth': 1,
-          'name': 'EW 2nd floor',
-          'count': 4,
-          'percent': 'Infinity'
-        }]
-      }, {
-        'title': 'Pct',
-        'data': [{
-          'id': 3,
-          'title': 'Ground Floor',
-          'parent': 1,
-          'description': '',
-          'rank': 1,
-          'depth': 0,
-          'name': 'Ground Floor',
-          'count': 0,
-          'percent': 0
-        }, {
-          'id': 18,
-          'title': 'ConeZone & Creamery',
-          'parent': 5,
-          'description': '',
-          'rank': 3,
-          'depth': 1,
-          'name': 'ConeZone & Creamery',
-          'count': 'Infinity',
-          'percent': 'Infinity'
-        }, {
-          'id': 22,
-          'title': 'EW 2nd floor',
-          'parent': 6,
-          'description': '',
-          'rank': 1,
-          'depth': 1,
-          'name': 'EW 2nd floor',
-          'count': 'Infinity',
-          'percent': 'Infinity'
-        }]
-      }]
-    }],
-    'actsLocsData': {
-      'title': 'Locations',
-      'val': 'locations',
-      'items': [{
-        'title': 'Avg of Sum',
-        'data': [{
-          'id': 3,
-          'title': 'Ground Floor',
-          'parent': 1,
-          'description': '',
-          'rank': 1,
-          'depth': 0,
-          'name': 'Ground Floor',
-          'count': '5.33',
-          'percent': 'Infinity'
-        }, {
-          'id': 4,
-          'title': 'Lobby and Mezzanine',
-          'parent': 1,
-          'description': '',
-          'rank': 2,
-          'depth': 0,
-          'name': 'Lobby and Mezzanine',
-          'count': '4.00',
-          'percent': 'Infinity'
-        }, {
-          'id': 18,
-          'title': 'ConeZone & Creamery',
-          'parent': 5,
-          'description': '',
-          'rank': 3,
-          'depth': 1,
-          'name': 'ConeZone & Creamery',
-          'count': '2.00',
-          'percent': 'Infinity'
-        }, {
-          'id': 22,
-          'title': 'EW 2nd floor',
-          'parent': 6,
-          'description': '',
-          'rank': 1,
-          'depth': 1,
-          'name': 'EW 2nd floor',
-          'count': '1.33',
-          'percent': 'Infinity'
-        }]
-      }, {
-        'title': 'Avg of Avg',
-        'data': [{
-          'id': 3,
-          'title': 'Ground Floor',
-          'parent': 1,
-          'description': '',
-          'rank': 1,
-          'depth': 0,
-          'name': 'Ground Floor',
-          'count': '5.50',
-          'percent': 'Infinity'
-        }, {
-          'id': 4,
-          'title': 'Lobby and Mezzanine',
-          'parent': 1,
-          'description': '',
-          'rank': 2,
-          'depth': 0,
-          'name': 'Lobby and Mezzanine',
-          'count': '4.00',
-          'percent': 'Infinity'
-        }, {
-          'id': 18,
-          'title': 'ConeZone & Creamery',
-          'parent': 5,
-          'description': '',
-          'rank': 3,
-          'depth': 1,
-          'name': 'ConeZone & Creamery',
-          'count': '6.00',
-          'percent': 'Infinity'
-        }, {
-          'id': 22,
-          'title': 'EW 2nd floor',
-          'parent': 6,
-          'description': '',
-          'rank': 1,
-          'depth': 1,
-          'name': 'EW 2nd floor',
-          'count': '4.00',
-          'percent': 'Infinity'
-        }]
-      }, {
-        'title': 'Sum',
-        'data': [{
-          'id': 3,
-          'title': 'Ground Floor',
-          'parent': 1,
-          'description': '',
-          'rank': 1,
-          'depth': 0,
-          'name': 'Ground Floor',
-          'count': 0,
-          'percent': 0
-        }, {
-          'id': 18,
-          'title': 'ConeZone & Creamery',
-          'parent': 5,
-          'description': '',
-          'rank': 3,
-          'depth': 1,
-          'name': 'ConeZone & Creamery',
-          'count': 6,
-          'percent': 'Infinity'
-        }, {
-          'id': 22,
-          'title': 'EW 2nd floor',
-          'parent': 6,
-          'description': '',
-          'rank': 1,
-          'depth': 1,
-          'name': 'EW 2nd floor',
-          'count': 4,
-          'percent': 'Infinity'
-        }]
-      }, {
-        'title': 'Pct',
-        'data': [{
-          'id': 3,
-          'title': 'Ground Floor',
-          'parent': 1,
-          'description': '',
-          'rank': 1,
-          'depth': 0,
-          'name': 'Ground Floor',
-          'count': 0,
-          'percent': 0
-        }, {
-          'id': 18,
-          'title': 'ConeZone & Creamery',
-          'parent': 5,
-          'description': '',
-          'rank': 3,
-          'depth': 1,
-          'name': 'ConeZone & Creamery',
-          'count': 'Infinity',
-          'percent': 'Infinity'
-        }, {
-          'id': 22,
-          'title': 'EW 2nd floor',
-          'parent': 6,
-          'description': '',
-          'rank': 1,
-          'depth': 1,
-          'name': 'EW 2nd floor',
-          'count': 'Infinity',
-          'percent': 'Infinity'
-        }]
-      }]
-    },
-    'barChartData': {
-      'title': 'Sum',
-      'data': [{
-        'id': 3,
-        'title': 'Ground Floor',
-        'parent': 1,
-        'description': '',
-        'rank': 1,
-        'depth': 0,
-        'name': 'Ground Floor',
-        'count': 0,
-        'percent': 0
-      }, {
-        'id': 18,
-        'title': 'ConeZone & Creamery',
-        'parent': 5,
-        'description': '',
-        'rank': 3,
-        'depth': 1,
-        'name': 'ConeZone & Creamery',
-        'count': 6,
-        'percent': 'Infinity'
-      }, {
-        'id': 22,
-        'title': 'EW 2nd floor',
-        'parent': 6,
-        'description': '',
-        'rank': 1,
-        'depth': 1,
-        'name': 'EW 2nd floor',
-        'count': 4,
-        'percent': 'Infinity'
-      }]
-    }
-  });
+  .value('mockTimeSeriesProcessedZeros', {'csv':{'2013-08-12':{'date':'2013-08-12','total':10,'locations':{'Tower/Stacks':null,'Unity lab':null,'2nd floor':null,'3rd floor':null,'4th floor':null,'5th floor':null,'6th floor':null,'7th floor':null,'8th floor':null,'9th floor':null,'Ground Floor':6,'Lobby and Mezzanine':4,'West Wing':null,'Technology Sandbox':null,'Quiet Reading Room':null,'Terrace':null,'ConeZone & Creamery':null,'WW 1st floor':null,'WW 2nd floor':null,'East Wing':null,'EW 1st floor (Learning Commons)':null,'EW 2nd floor':null,'Special Collections Reading Room':null,'Digital Media Lab':null},'activities':{'Activities: Reading':2,'Test Group: Knitting':2,'Technology: Computer':2,'Test Group 3: 0':null,'Test Group 2: 0':null,'Activities: Sleeping':null,'Technology: Laptop':null,'Test Group 3: 1':null,'Test Group 2: 1':null,'Activities: Computing':null,'Technology: Tablet':null,'Test Group 3: 2':null,'Test Group 2: 2':null,'Activities: Collaborating':null,'_No Activity':8}},'2013-08-14':{'date':'2013-08-14','total':0,'locations':{'Tower/Stacks':null,'Unity lab':null,'2nd floor':null,'3rd floor':null,'4th floor':null,'5th floor':null,'6th floor':null,'7th floor':null,'8th floor':null,'9th floor':null,'Ground Floor':10,'Lobby and Mezzanine':null,'West Wing':null,'Technology Sandbox':null,'Quiet Reading Room':null,'Terrace':null,'ConeZone & Creamery':6,'WW 1st floor':null,'WW 2nd floor':null,'East Wing':null,'EW 1st floor (Learning Commons)':null,'EW 2nd floor':4,'Special Collections Reading Room':null,'Digital Media Lab':null},'activities':{'Activities: Reading':null,'Test Group: Knitting':1,'Technology: Computer':2,'Test Group 3: 0':null,'Test Group 2: 0':null,'Activities: Sleeping':null,'Technology: Laptop':null,'Test Group 3: 1':null,'Test Group 2: 1':null,'Activities: Computing':1,'Technology: Tablet':null,'Test Group 3: 2':null,'Test Group 2: 2':null,'Activities: Collaborating':null,'_No Activity':17}},'2013-08-13':{'date':'2013-08-13','total':8,'locations':{'Tower/Stacks':null,'Unity lab':null,'2nd floor':null,'3rd floor':null,'4th floor':null,'5th floor':null,'6th floor':null,'7th floor':null,'8th floor':null,'9th floor':null,'Ground Floor':null,'Lobby and Mezzanine':8,'West Wing':null,'Technology Sandbox':null,'Quiet Reading Room':null,'Terrace':null,'ConeZone & Creamery':null,'WW 1st floor':null,'WW 2nd floor':null,'East Wing':null,'EW 1st floor (Learning Commons)':null,'EW 2nd floor':null,'Special Collections Reading Room':null,'Digital Media Lab':null},'activities':{'Activities: Reading':1,'Test Group: Knitting':null,'Technology: Computer':2,'Test Group 3: 0':null,'Test Group 2: 0':null,'Activities: Sleeping':null,'Technology: Laptop':null,'Test Group 3: 1':null,'Test Group 2: 1':null,'Activities: Computing':null,'Technology: Tablet':1,'Test Group 3: 2':null,'Test Group 2: 2':null,'Activities: Collaborating':null,'_No Activity':6}}},'total':[{'count':0}],'totalCounts':[{}],'totalZeroCounts':[{}],'totalAvgSum':[{}],'totalAvgAvg':[{}],'daysWithObservations':[{}],'locationsTable':[{'id':3,'title':'Ground Floor','parent':1,'description':'','rank':1,'depth':0,'name':'Ground Floor','count':0,'percent':0},{'id':18,'title':'ConeZone & Creamery','parent':5,'description':'','rank':3,'depth':1,'name':'ConeZone & Creamery','count':6,'percent':'Infinity'},{'id':22,'title':'EW 2nd floor','parent':6,'description':'','rank':1,'depth':1,'name':'EW 2nd floor','count':4,'percent':'Infinity'}],'locationsSum':[{'id':3,'title':'Ground Floor','parent':1,'description':'','rank':1,'depth':0,'name':'Ground Floor','count':0,'percent':0},{'id':18,'title':'ConeZone & Creamery','parent':5,'description':'','rank':3,'depth':1,'name':'ConeZone & Creamery','count':6,'percent':'Infinity'},{'id':22,'title':'EW 2nd floor','parent':6,'description':'','rank':1,'depth':1,'name':'EW 2nd floor','count':4,'percent':'Infinity'}],'locationsAvgSum':[{'id':3,'title':'Ground Floor','parent':1,'description':'','rank':1,'depth':0,'name':'Ground Floor','count':'5.33','percent':'Infinity'},{'id':4,'title':'Lobby and Mezzanine','parent':1,'description':'','rank':2,'depth':0,'name':'Lobby and Mezzanine','count':'4.00','percent':'Infinity'},{'id':18,'title':'ConeZone & Creamery','parent':5,'description':'','rank':3,'depth':1,'name':'ConeZone & Creamery','count':'2.00','percent':'Infinity'},{'id':22,'title':'EW 2nd floor','parent':6,'description':'','rank':1,'depth':1,'name':'EW 2nd floor','count':'1.33','percent':'Infinity'}],'locationsAvgAvg':[{'id':3,'title':'Ground Floor','parent':1,'description':'','rank':1,'depth':0,'name':'Ground Floor','count':'5.50','percent':'Infinity'},{'id':4,'title':'Lobby and Mezzanine','parent':1,'description':'','rank':2,'depth':0,'name':'Lobby and Mezzanine','count':'4.00','percent':'Infinity'},{'id':18,'title':'ConeZone & Creamery','parent':5,'description':'','rank':3,'depth':1,'name':'ConeZone & Creamery','count':'6.00','percent':'Infinity'},{'id':22,'title':'EW 2nd floor','parent':6,'description':'','rank':1,'depth':1,'name':'EW 2nd floor','count':'4.00','percent':'Infinity'}],'locationsPct':[{'id':3,'title':'Ground Floor','parent':1,'description':'','rank':1,'depth':0,'name':'Ground Floor','count':0,'percent':0},{'id':18,'title':'ConeZone & Creamery','parent':5,'description':'','rank':3,'depth':1,'name':'ConeZone & Creamery','count':'Infinity','percent':'Infinity'},{'id':22,'title':'EW 2nd floor','parent':6,'description':'','rank':1,'depth':1,'name':'EW 2nd floor','count':'Infinity','percent':'Infinity'}],'activitiesTable':[{'id':63,'rank':0,'title':'Knitting','type':'activity','depth':1,'activityGroup':23,'name':'Knitting','count':3,'percent':'Infinity'},{'id':64,'rank':0,'title':'Computer','type':'activity','depth':1,'activityGroup':24,'name':'Computer','count':6,'percent':'Infinity'},{'id':66,'rank':2,'title':'Tablet','type':'activity','depth':1,'activityGroup':24,'name':'Tablet','count':1,'percent':'Infinity'},{'id':1,'rank':2,'title':'Activities','type':'activityGroup','depth':0,'name':'Activities','count':4,'percent':'Infinity'},{'id':1,'rank':0,'title':'Reading','type':'activity','depth':1,'activityGroup':1,'name':'Reading','count':3,'percent':'Infinity'},{'id':4,'rank':2,'title':'Computing','type':'activity','depth':1,'activityGroup':1,'name':'Computing','count':1,'percent':'Infinity'},{'name':'No Activity','depth':0,'percent':'Infinity','count':31}],'activitiesSum':[{'id':63,'rank':0,'title':'Knitting','type':'activity','depth':1,'activityGroup':23,'name':'Knitting','count':3,'percent':'Infinity','activityGroupTitle':'Test Group'},{'id':64,'rank':0,'title':'Computer','type':'activity','depth':1,'activityGroup':24,'name':'Computer','count':6,'percent':'Infinity','activityGroupTitle':'Technology'},{'id':66,'rank':2,'title':'Tablet','type':'activity','depth':1,'activityGroup':24,'name':'Tablet','count':1,'percent':'Infinity','activityGroupTitle':'Technology'},{'id':1,'rank':0,'title':'Reading','type':'activity','depth':1,'activityGroup':1,'name':'Reading','count':3,'percent':'Infinity','activityGroupTitle':'Activities'},{'id':4,'rank':2,'title':'Computing','type':'activity','depth':1,'activityGroup':1,'name':'Computing','count':1,'percent':'Infinity','activityGroupTitle':'Activities'},{'name':'No Activity','depth':0,'percent':'Infinity','count':31}],'activitiesAvgSum':[{'id':63,'rank':0,'title':'Knitting','type':'activity','depth':1,'activityGroup':23,'name':'Knitting','count':'1.00','percent':'Infinity','activityGroupTitle':'Test Group'},{'id':64,'rank':0,'title':'Computer','type':'activity','depth':1,'activityGroup':24,'name':'Computer','count':'2.00','percent':'Infinity','activityGroupTitle':'Technology'},{'id':66,'rank':2,'title':'Tablet','type':'activity','depth':1,'activityGroup':24,'name':'Tablet','count':'0.33','percent':'Infinity','activityGroupTitle':'Technology'},{'id':1,'rank':2,'title':'Activities','type':'activityGroup','depth':0,'name':'Activities','count':'1.00','percent':'Infinity'},{'id':1,'rank':0,'title':'Reading','type':'activity','depth':1,'activityGroup':1,'name':'Reading','count':'1.00','percent':'Infinity','activityGroupTitle':'Activities'},{'id':4,'rank':2,'title':'Computing','type':'activity','depth':1,'activityGroup':1,'name':'Computing','count':'0.33','percent':'Infinity','activityGroupTitle':'Activities'},{'name':'No Activity','depth':0,'percent':'Infinity','count':'10.33'}],'activitiesAvgAvg':[{'id':63,'rank':0,'title':'Knitting','type':'activity','depth':1,'activityGroup':23,'name':'Knitting','count':'1.00','percent':'Infinity','activityGroupTitle':'Test Group'},{'id':64,'rank':0,'title':'Computer','type':'activity','depth':1,'activityGroup':24,'name':'Computer','count':'1.67','percent':'Infinity','activityGroupTitle':'Technology'},{'id':66,'rank':2,'title':'Tablet','type':'activity','depth':1,'activityGroup':24,'name':'Tablet','count':'1.00','percent':'Infinity','activityGroupTitle':'Technology'},{'id':1,'rank':2,'title':'Activities','type':'activityGroup','depth':0,'name':'Activities','count':'1.00','percent':'Infinity'},{'id':1,'rank':0,'title':'Reading','type':'activity','depth':1,'activityGroup':1,'name':'Reading','count':'1.00','percent':'Infinity','activityGroupTitle':'Activities'},{'id':4,'rank':2,'title':'Computing','type':'activity','depth':1,'activityGroup':1,'name':'Computing','count':'1.00','percent':'Infinity','activityGroupTitle':'Activities'},{'name':'No Activity','depth':0,'percent':'Infinity','count':'9.00'}],'activitiesPct':[{'id':63,'rank':0,'title':'Knitting','type':'activity','depth':1,'activityGroup':23,'name':'Knitting','count':'Infinity','percent':'Infinity','activityGroupTitle':'Test Group'},{'id':64,'rank':0,'title':'Computer','type':'activity','depth':1,'activityGroup':24,'name':'Computer','count':'Infinity','percent':'Infinity','activityGroupTitle':'Technology'},{'id':66,'rank':2,'title':'Tablet','type':'activity','depth':1,'activityGroup':24,'name':'Tablet','count':'Infinity','percent':'Infinity','activityGroupTitle':'Technology'},{'id':1,'rank':0,'title':'Reading','type':'activity','depth':1,'activityGroup':1,'name':'Reading','count':'Infinity','percent':'Infinity','activityGroupTitle':'Activities'},{'id':4,'rank':2,'title':'Computing','type':'activity','depth':1,'activityGroup':1,'name':'Computing','count':'Infinity','percent':'Infinity','activityGroupTitle':'Activities'},{'name':'No Activity','depth':0,'percent':'Infinity','count':'Infinity'}],'periodSum':[{'date':'2013-08-12','count':10},{'date':'2013-08-13','count':8},{'date':'2013-08-14','count':20}],'periodAvg':[{'date':'2013-08-12','count':10},{'date':'2013-08-13','count':4},{'date':'2013-08-14','count':15}],'hourlySummary':[{'name':8,'count':11,'percent':'Infinity'},{'name':10,'count':8,'percent':'Infinity'},{'name':15,'count':19,'percent':'Infinity'}],'dayOfWeekSummary':[{'name':'Monday','count':10,'percent':0},{'name':'Tuesday','count':8,'percent':0},{'name':'Wednesday','count':20,'percent':0}],'monthSummary':[{'date':'August 1, 2013','name':'August 2013','count':38,'percent':'Infinity'}],'yearSummary':[{'name':'2013','count':38,'percent':'Infinity'}],'timeSeriesOptions':[{'title':'Daily Avg','val':'avg','data':[{'date':'2013-08-12','count':10},{'date':'2013-08-13','count':4},{'date':'2013-08-14','count':15}]},{'title':'Daily Sum','val':'sum','data':[{'date':'2013-08-12','count':10},{'date':'2013-08-13','count':8},{'date':'2013-08-14','count':20}]}],'timeSeriesData':{'title':'Daily Sum','val':'sum','data':[{'date':'2013-08-12','count':10},{'date':'2013-08-13','count':8},{'date':'2013-08-14','count':20}]},'actsLocsOptions':[{'title':'Activities','val':'activities','items':[{'title':'Avg of Sum','data':[{'id':63,'rank':0,'title':'Knitting','type':'activity','depth':1,'activityGroup':23,'name':'Knitting','count':'1.00','percent':'Infinity','activityGroupTitle':'Test Group'},{'id':64,'rank':0,'title':'Computer','type':'activity','depth':1,'activityGroup':24,'name':'Computer','count':'2.00','percent':'Infinity','activityGroupTitle':'Technology'},{'id':66,'rank':2,'title':'Tablet','type':'activity','depth':1,'activityGroup':24,'name':'Tablet','count':'0.33','percent':'Infinity','activityGroupTitle':'Technology'},{'id':1,'rank':2,'title':'Activities','type':'activityGroup','depth':0,'name':'Activities','count':'1.00','percent':'Infinity'},{'id':1,'rank':0,'title':'Reading','type':'activity','depth':1,'activityGroup':1,'name':'Reading','count':'1.00','percent':'Infinity','activityGroupTitle':'Activities'},{'id':4,'rank':2,'title':'Computing','type':'activity','depth':1,'activityGroup':1,'name':'Computing','count':'0.33','percent':'Infinity','activityGroupTitle':'Activities'},{'name':'No Activity','depth':0,'percent':'Infinity','count':'10.33'}]},{'title':'Avg of Avg','data':[{'id':63,'rank':0,'title':'Knitting','type':'activity','depth':1,'activityGroup':23,'name':'Knitting','count':'1.00','percent':'Infinity','activityGroupTitle':'Test Group'},{'id':64,'rank':0,'title':'Computer','type':'activity','depth':1,'activityGroup':24,'name':'Computer','count':'1.67','percent':'Infinity','activityGroupTitle':'Technology'},{'id':66,'rank':2,'title':'Tablet','type':'activity','depth':1,'activityGroup':24,'name':'Tablet','count':'1.00','percent':'Infinity','activityGroupTitle':'Technology'},{'id':1,'rank':2,'title':'Activities','type':'activityGroup','depth':0,'name':'Activities','count':'1.00','percent':'Infinity'},{'id':1,'rank':0,'title':'Reading','type':'activity','depth':1,'activityGroup':1,'name':'Reading','count':'1.00','percent':'Infinity','activityGroupTitle':'Activities'},{'id':4,'rank':2,'title':'Computing','type':'activity','depth':1,'activityGroup':1,'name':'Computing','count':'1.00','percent':'Infinity','activityGroupTitle':'Activities'},{'name':'No Activity','depth':0,'percent':'Infinity','count':'9.00'}]},{'title':'Sum','data':[{'id':63,'rank':0,'title':'Knitting','type':'activity','depth':1,'activityGroup':23,'name':'Knitting','count':3,'percent':'Infinity','activityGroupTitle':'Test Group'},{'id':64,'rank':0,'title':'Computer','type':'activity','depth':1,'activityGroup':24,'name':'Computer','count':6,'percent':'Infinity','activityGroupTitle':'Technology'},{'id':66,'rank':2,'title':'Tablet','type':'activity','depth':1,'activityGroup':24,'name':'Tablet','count':1,'percent':'Infinity','activityGroupTitle':'Technology'},{'id':1,'rank':0,'title':'Reading','type':'activity','depth':1,'activityGroup':1,'name':'Reading','count':3,'percent':'Infinity','activityGroupTitle':'Activities'},{'id':4,'rank':2,'title':'Computing','type':'activity','depth':1,'activityGroup':1,'name':'Computing','count':1,'percent':'Infinity','activityGroupTitle':'Activities'},{'name':'No Activity','depth':0,'percent':'Infinity','count':31}]},{'title':'Pct','data':[{'id':63,'rank':0,'title':'Knitting','type':'activity','depth':1,'activityGroup':23,'name':'Knitting','count':'Infinity','percent':'Infinity','activityGroupTitle':'Test Group'},{'id':64,'rank':0,'title':'Computer','type':'activity','depth':1,'activityGroup':24,'name':'Computer','count':'Infinity','percent':'Infinity','activityGroupTitle':'Technology'},{'id':66,'rank':2,'title':'Tablet','type':'activity','depth':1,'activityGroup':24,'name':'Tablet','count':'Infinity','percent':'Infinity','activityGroupTitle':'Technology'},{'id':1,'rank':0,'title':'Reading','type':'activity','depth':1,'activityGroup':1,'name':'Reading','count':'Infinity','percent':'Infinity','activityGroupTitle':'Activities'},{'id':4,'rank':2,'title':'Computing','type':'activity','depth':1,'activityGroup':1,'name':'Computing','count':'Infinity','percent':'Infinity','activityGroupTitle':'Activities'},{'name':'No Activity','depth':0,'percent':'Infinity','count':'Infinity'}]}]},{'title':'Locations','val':'locations','items':[{'title':'Avg of Sum','data':[{'id':3,'title':'Ground Floor','parent':1,'description':'','rank':1,'depth':0,'name':'Ground Floor','count':'5.33','percent':'Infinity'},{'id':4,'title':'Lobby and Mezzanine','parent':1,'description':'','rank':2,'depth':0,'name':'Lobby and Mezzanine','count':'4.00','percent':'Infinity'},{'id':18,'title':'ConeZone & Creamery','parent':5,'description':'','rank':3,'depth':1,'name':'ConeZone & Creamery','count':'2.00','percent':'Infinity'},{'id':22,'title':'EW 2nd floor','parent':6,'description':'','rank':1,'depth':1,'name':'EW 2nd floor','count':'1.33','percent':'Infinity'}]},{'title':'Avg of Avg','data':[{'id':3,'title':'Ground Floor','parent':1,'description':'','rank':1,'depth':0,'name':'Ground Floor','count':'5.50','percent':'Infinity'},{'id':4,'title':'Lobby and Mezzanine','parent':1,'description':'','rank':2,'depth':0,'name':'Lobby and Mezzanine','count':'4.00','percent':'Infinity'},{'id':18,'title':'ConeZone & Creamery','parent':5,'description':'','rank':3,'depth':1,'name':'ConeZone & Creamery','count':'6.00','percent':'Infinity'},{'id':22,'title':'EW 2nd floor','parent':6,'description':'','rank':1,'depth':1,'name':'EW 2nd floor','count':'4.00','percent':'Infinity'}]},{'title':'Sum','data':[{'id':3,'title':'Ground Floor','parent':1,'description':'','rank':1,'depth':0,'name':'Ground Floor','count':0,'percent':0},{'id':18,'title':'ConeZone & Creamery','parent':5,'description':'','rank':3,'depth':1,'name':'ConeZone & Creamery','count':6,'percent':'Infinity'},{'id':22,'title':'EW 2nd floor','parent':6,'description':'','rank':1,'depth':1,'name':'EW 2nd floor','count':4,'percent':'Infinity'}]},{'title':'Pct','data':[{'id':3,'title':'Ground Floor','parent':1,'description':'','rank':1,'depth':0,'name':'Ground Floor','count':0,'percent':0},{'id':18,'title':'ConeZone & Creamery','parent':5,'description':'','rank':3,'depth':1,'name':'ConeZone & Creamery','count':'Infinity','percent':'Infinity'},{'id':22,'title':'EW 2nd floor','parent':6,'description':'','rank':1,'depth':1,'name':'EW 2nd floor','count':'Infinity','percent':'Infinity'}]}]}],'actsLocsData':{'title':'Locations','val':'locations','items':[{'title':'Avg of Sum','data':[{'id':3,'title':'Ground Floor','parent':1,'description':'','rank':1,'depth':0,'name':'Ground Floor','count':'5.33','percent':'Infinity'},{'id':4,'title':'Lobby and Mezzanine','parent':1,'description':'','rank':2,'depth':0,'name':'Lobby and Mezzanine','count':'4.00','percent':'Infinity'},{'id':18,'title':'ConeZone & Creamery','parent':5,'description':'','rank':3,'depth':1,'name':'ConeZone & Creamery','count':'2.00','percent':'Infinity'},{'id':22,'title':'EW 2nd floor','parent':6,'description':'','rank':1,'depth':1,'name':'EW 2nd floor','count':'1.33','percent':'Infinity'}]},{'title':'Avg of Avg','data':[{'id':3,'title':'Ground Floor','parent':1,'description':'','rank':1,'depth':0,'name':'Ground Floor','count':'5.50','percent':'Infinity'},{'id':4,'title':'Lobby and Mezzanine','parent':1,'description':'','rank':2,'depth':0,'name':'Lobby and Mezzanine','count':'4.00','percent':'Infinity'},{'id':18,'title':'ConeZone & Creamery','parent':5,'description':'','rank':3,'depth':1,'name':'ConeZone & Creamery','count':'6.00','percent':'Infinity'},{'id':22,'title':'EW 2nd floor','parent':6,'description':'','rank':1,'depth':1,'name':'EW 2nd floor','count':'4.00','percent':'Infinity'}]},{'title':'Sum','data':[{'id':3,'title':'Ground Floor','parent':1,'description':'','rank':1,'depth':0,'name':'Ground Floor','count':0,'percent':0},{'id':18,'title':'ConeZone & Creamery','parent':5,'description':'','rank':3,'depth':1,'name':'ConeZone & Creamery','count':6,'percent':'Infinity'},{'id':22,'title':'EW 2nd floor','parent':6,'description':'','rank':1,'depth':1,'name':'EW 2nd floor','count':4,'percent':'Infinity'}]},{'title':'Pct','data':[{'id':3,'title':'Ground Floor','parent':1,'description':'','rank':1,'depth':0,'name':'Ground Floor','count':0,'percent':0},{'id':18,'title':'ConeZone & Creamery','parent':5,'description':'','rank':3,'depth':1,'name':'ConeZone & Creamery','count':'Infinity','percent':'Infinity'},{'id':22,'title':'EW 2nd floor','parent':6,'description':'','rank':1,'depth':1,'name':'EW 2nd floor','count':'Infinity','percent':'Infinity'}]}]},'barChartData':{'title':'Sum','data':[{'id':3,'title':'Ground Floor','parent':1,'description':'','rank':1,'depth':0,'name':'Ground Floor','count':0,'percent':0},{'id':18,'title':'ConeZone & Creamery','parent':5,'description':'','rank':3,'depth':1,'name':'ConeZone & Creamery','count':6,'percent':'Infinity'},{'id':22,'title':'EW 2nd floor','parent':6,'description':'','rank':1,'depth':1,'name':'EW 2nd floor','count':4,'percent':'Infinity'}]}});
