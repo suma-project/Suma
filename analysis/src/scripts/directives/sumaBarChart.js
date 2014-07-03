@@ -27,6 +27,9 @@ angular.module('sumaAnalysis')
           text,
           x;
 
+          // Destroy uneeded tooltips
+          $('.barLabel').tooltip('destroy');
+
           // Define scales
           x = d3.scale.linear()
             .domain([0, d3.max(data.map(function (d) { return +d.count; }))])
@@ -167,17 +170,31 @@ angular.module('sumaAnalysis')
             .append('text')
             .attr('class', 'barLabel')
             .style('font-size', '11px')
-            .style('font-family', 'Verdana');
+            .style('font-family', 'Verdana')
+            .attr('data-toggle', 'tooltip');
 
           // UPDATE
           text
+            .attr('title', function (d, i) {
+              return d.tooltipTitle;
+            })
             .transition().duration(500)
             .style('opacity', 0.000001)
             .transition().delay(750).duration(500)
             .attr('x', 10)
             .attr('y', function (d, i) {return 25 * i + 30; })
             .attr('dy', -3)
-            .text(function (d) {return _.unescape(myTrunc(d.name, 26, true)); })
+            .text(function (d) {
+              var text;
+
+              if (d.altName) {
+                text = d.altName;
+              } else {
+                text = d.name;
+              }
+
+              return _.unescape(myTrunc(text, 22, true));
+            })
             .style('opacity', 1);
 
           // EXIT
@@ -233,6 +250,14 @@ angular.module('sumaAnalysis')
             .transition().duration(500)
             .style('opacity', 0.000001)
             .remove();
+
+          // Initialize Tooltips
+          $('.barLabel').tooltip({
+            container: 'body',
+            html: true,
+            placement: 'auto'
+          });
+
         });
       }
 
@@ -244,6 +269,10 @@ angular.module('sumaAnalysis')
       scope: {data: '='},
       link: function postLink(scope, element, attrs) {
         var chart = new BarChart();
+
+        scope.$on('$locationChangeSuccess', function (e) {
+          $('.barLabel').tooltip('hide');
+        });
 
         scope.$watch('data', function (newData) {
           return scope.render(newData);

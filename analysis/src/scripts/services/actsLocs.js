@@ -2,27 +2,33 @@
 
 angular.module('sumaAnalysis')
   .factory('actsLocs', function () {
-    function calculateDepth (item, list, root, depth) {
+    function calculateDepthAndTooltip (item, list, root, depth) {
       var parent;
 
-      depth = depth || 0;
+      depth = depth || {depth: 0, tooltipTitle: item.title};
       if (parseInt(item.parent, 10) === parseInt(root, 10)) {
         return depth;
       }
 
-      depth += 1;
-
       parent = _.find(list, {'id': item.parent});
 
-      return calculateDepth(parent, list, root, depth);
+      depth.depth += 1;
+      depth.tooltipTitle = parent.title + ': ' + depth.tooltipTitle;
+
+      return calculateDepthAndTooltip(parent, list, root, depth);
     }
 
     function processActivities (activities, activityGroups) {
-      var activityList = [];
+      var activityList = [],
+          activityGroupsHash;
 
       // Sort activities and activity groups
       activities = _.sortBy(activities, 'rank');
       activityGroups = _.sortBy(activityGroups, 'rank');
+
+      activityGroupsHash = _.object(_.map(activityGroups, function (aGrp) {
+        return [aGrp.id, aGrp.title];
+      }));
 
       // For each activity group, build a list of activities
       _.each(activityGroups, function (activityGroup) {
@@ -48,6 +54,9 @@ angular.module('sumaAnalysis')
                 'type' : 'activity',
                 'depth': 1,
                 'activityGroup': activityGroup.id,
+                'activityGroupTitle': activityGroupsHash[activityGroup.id],
+                'tooltipTitle': activityGroupsHash[activityGroup.id] + ': ' + activity.title,
+                'altName': activityGroupsHash[activityGroup.id] + ': ' + activity.title,
                 'filter': 'allow',
                 'enabled': true
               });
@@ -63,7 +72,10 @@ angular.module('sumaAnalysis')
         title: 'All',
         id: 'all'
       }].concat(_.map(locations, function (loc, index, list) {
-        loc.depth = calculateDepth(loc, list, root);
+        var depth = calculateDepthAndTooltip(loc, list, root);
+        loc.depth = depth.depth;
+        loc.tooltipTitle = depth.tooltipTitle;
+
         return loc;
       }));
     }

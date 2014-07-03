@@ -73,12 +73,10 @@ angular.module('sumaAnalysis')
     function buildTableArray (source, response, total, flag) {
       var counts;
 
-      counts = _.filter(_.map(_.cloneDeep(source), function (loc) {
+      counts = _.map(_.cloneDeep(source), function (loc) {
         loc.name = loc.title;
         loc.count = _.isNumber(response[loc.id]) ? response[loc.id] : null;
         return loc;
-      }), function (obj) {
-        return obj.count !== null;
       });
 
       // Calculate counts for children
@@ -122,15 +120,7 @@ angular.module('sumaAnalysis')
       return false;
     }
 
-    function addActGrpTitle (acts, actGrps) {
-      return  _.map(acts, function (act) {
-        act.activityGroupTitle = actGrps[act.activityGroup];
-        act.name = act.activityGroupTitle + ': ' + act.name;
-        return act;
-      });
-    }
-
-    function processData (response, activities, activityGroups, locations, zeroCounts) {
+    function processData (response, activities, locations, zeroCounts) {
       var noActsSum,
         noActsAvgSum,
         noActsAvgAvg,
@@ -188,10 +178,10 @@ angular.module('sumaAnalysis')
 
       // Activities related data
       counts.activitiesTable = buildTableArray(activities, response.activitiesSum, response.total, 'activityGroup');
-      counts.activitiesSum = addActGrpTitle(buildArray(activities, response.activitiesSum, response.total), activityGroups);
-      counts.activitiesAvgSum = addActGrpTitle(buildArray(activities, response.activitiesAvgSum, response.total, true), activityGroups);
-      counts.activitiesAvgAvg = addActGrpTitle(buildArray(activities, response.activitiesAvgAvg, response.total, true), activityGroups);
-      counts.activitiesPct = addActGrpTitle(buildArray(activities, response.activitiesSum, response.total, false, true), activityGroups);
+      counts.activitiesSum = buildArray(activities, response.activitiesSum, response.total);
+      counts.activitiesAvgSum = buildArray(activities, response.activitiesAvgSum, response.total, true);
+      counts.activitiesAvgAvg = buildArray(activities, response.activitiesAvgAvg, response.total, true);
+      counts.activitiesPct = buildArray(activities, response.activitiesSum, response.total, false, true);
 
       // Handle insertion of no activity values
       noActsSum = insertNoActs(response.activitiesSum, response.total, 'sum');
@@ -309,24 +299,17 @@ angular.module('sumaAnalysis')
 
     return {
       get: function (response, acts, locs, params) {
-        var dfd = $q.defer(),
-          actGrps;
+        var dfd = $q.defer();
 
         acts = _.filter(acts, function (act) {
           return act.id !== 'all';
         });
 
-        actGrps = _.object(_.map(_.filter(acts, function (act) {
-            return act.id !== 'all' && act.type === 'activityGroup';
-          }), function (aGrp) {
-          return [aGrp.id, aGrp.title];
-        }));
-
         locs = _.filter(locs, function (loc) {
           return loc.id !== 'all';
         });
 
-        dfd.resolve(processData(response, acts, actGrps, locs, params.zeroCounts));
+        dfd.resolve(processData(response, acts, locs, params.zeroCounts));
 
         return dfd.promise;
       }

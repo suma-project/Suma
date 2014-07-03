@@ -49152,21 +49152,31 @@ angular.module('sumaAnalysis').factory('initiatives', [
 ]);
 'use strict';
 angular.module('sumaAnalysis').factory('actsLocs', function () {
-  function calculateDepth(item, list, root, depth) {
+  function calculateDepthAndTooltip(item, list, root, depth) {
     var parent;
-    depth = depth || 0;
+    depth = depth || {
+      depth: 0,
+      tooltipTitle: item.title
+    };
     if (parseInt(item.parent, 10) === parseInt(root, 10)) {
       return depth;
     }
-    depth += 1;
     parent = _.find(list, { 'id': item.parent });
-    return calculateDepth(parent, list, root, depth);
+    depth.depth += 1;
+    depth.tooltipTitle = parent.title + ': ' + depth.tooltipTitle;
+    return calculateDepthAndTooltip(parent, list, root, depth);
   }
   function processActivities(activities, activityGroups) {
-    var activityList = [];
+    var activityList = [], activityGroupsHash;
     // Sort activities and activity groups
     activities = _.sortBy(activities, 'rank');
     activityGroups = _.sortBy(activityGroups, 'rank');
+    activityGroupsHash = _.object(_.map(activityGroups, function (aGrp) {
+      return [
+        aGrp.id,
+        aGrp.title
+      ];
+    }));
     // For each activity group, build a list of activities
     _.each(activityGroups, function (activityGroup) {
       // Add activity group metadata to activityGroupList array
@@ -49190,6 +49200,9 @@ angular.module('sumaAnalysis').factory('actsLocs', function () {
             'type': 'activity',
             'depth': 1,
             'activityGroup': activityGroup.id,
+            'activityGroupTitle': activityGroupsHash[activityGroup.id],
+            'tooltipTitle': activityGroupsHash[activityGroup.id] + ': ' + activity.title,
+            'altName': activityGroupsHash[activityGroup.id] + ': ' + activity.title,
             'filter': 'allow',
             'enabled': true
           });
@@ -49203,7 +49216,9 @@ angular.module('sumaAnalysis').factory('actsLocs', function () {
         title: 'All',
         id: 'all'
       }].concat(_.map(locations, function (loc, index, list) {
-      loc.depth = calculateDepth(loc, list, root);
+      var depth = calculateDepthAndTooltip(loc, list, root);
+      loc.depth = depth.depth;
+      loc.tooltipTitle = depth.tooltipTitle;
       return loc;
     }));
   }
@@ -49645,12 +49660,10 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
     }
     function buildTableArray(source, response, total, flag) {
       var counts;
-      counts = _.filter(_.map(_.cloneDeep(source), function (loc) {
+      counts = _.map(_.cloneDeep(source), function (loc) {
         loc.name = loc.title;
         loc.count = _.isNumber(response[loc.id]) ? response[loc.id] : null;
         return loc;
-      }), function (obj) {
-        return obj.count !== null;
       });
       // Calculate counts for children
       return _.map(counts, function (loc, index, coll) {
@@ -49681,14 +49694,7 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
       }
       return false;
     }
-    function addActGrpTitle(acts, actGrps) {
-      return _.map(acts, function (act) {
-        act.activityGroupTitle = actGrps[act.activityGroup];
-        act.name = act.activityGroupTitle + ': ' + act.name;
-        return act;
-      });
-    }
-    function processData(response, activities, activityGroups, locations, zeroCounts) {
+    function processData(response, activities, locations, zeroCounts) {
       var noActsSum, noActsAvgSum, noActsAvgAvg, counts, divisor;
       // Convert response into arrays of objects
       counts = {};
@@ -49720,10 +49726,10 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
       counts.locationsPct = buildArray(locations, response.locationsSum, divisor, false, true);
       // Activities related data
       counts.activitiesTable = buildTableArray(activities, response.activitiesSum, response.total, 'activityGroup');
-      counts.activitiesSum = addActGrpTitle(buildArray(activities, response.activitiesSum, response.total), activityGroups);
-      counts.activitiesAvgSum = addActGrpTitle(buildArray(activities, response.activitiesAvgSum, response.total, true), activityGroups);
-      counts.activitiesAvgAvg = addActGrpTitle(buildArray(activities, response.activitiesAvgAvg, response.total, true), activityGroups);
-      counts.activitiesPct = addActGrpTitle(buildArray(activities, response.activitiesSum, response.total, false, true), activityGroups);
+      counts.activitiesSum = buildArray(activities, response.activitiesSum, response.total);
+      counts.activitiesAvgSum = buildArray(activities, response.activitiesAvgSum, response.total, true);
+      counts.activitiesAvgAvg = buildArray(activities, response.activitiesAvgAvg, response.total, true);
+      counts.activitiesPct = buildArray(activities, response.activitiesSum, response.total, false, true);
       // Handle insertion of no activity values
       noActsSum = insertNoActs(response.activitiesSum, response.total, 'sum');
       if (noActsSum) {
@@ -49865,22 +49871,14 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
     }
     return {
       get: function (response, acts, locs, params) {
-        var dfd = $q.defer(), actGrps;
+        var dfd = $q.defer();
         acts = _.filter(acts, function (act) {
           return act.id !== 'all';
         });
-        actGrps = _.object(_.map(_.filter(acts, function (act) {
-          return act.id !== 'all' && act.type === 'activityGroup';
-        }), function (aGrp) {
-          return [
-            aGrp.id,
-            aGrp.title
-          ];
-        }));
         locs = _.filter(locs, function (loc) {
           return loc.id !== 'all';
         });
-        dfd.resolve(processData(response, acts, actGrps, locs, params.zeroCounts));
+        dfd.resolve(processData(response, acts, locs, params.zeroCounts));
         return dfd.promise;
       }
     };
@@ -50257,6 +50255,8 @@ angular.module('sumaAnalysis').directive('sumaBarChart', function () {
     function chart(selection) {
       selection.each(function (data) {
         var ann, gBar, gEnter, gRule, line, rects, rule, svg, text, x;
+        // Destroy uneeded tooltips
+        $('.barLabel').tooltip('destroy');
         // Define scales
         x = d3.scale.linear().domain([
           0,
@@ -50329,12 +50329,20 @@ angular.module('sumaAnalysis').directive('sumaBarChart', function () {
         // Append bar labels
         text = svg.selectAll('.barLabel').data(data);
         // ENTER
-        text.enter().append('text').attr('class', 'barLabel').style('font-size', '11px').style('font-family', 'Verdana');
+        text.enter().append('text').attr('class', 'barLabel').style('font-size', '11px').style('font-family', 'Verdana').attr('data-toggle', 'tooltip');
         // UPDATE
-        text.transition().duration(500).style('opacity', 0.000001).transition().delay(750).duration(500).attr('x', 10).attr('y', function (d, i) {
+        text.attr('title', function (d, i) {
+          return d.tooltipTitle;
+        }).transition().duration(500).style('opacity', 0.000001).transition().delay(750).duration(500).attr('x', 10).attr('y', function (d, i) {
           return 25 * i + 30;
         }).attr('dy', -3).text(function (d) {
-          return _.unescape(myTrunc(d.name, 26, true));
+          var text;
+          if (d.altName) {
+            text = d.altName;
+          } else {
+            text = d.name;
+          }
+          return _.unescape(myTrunc(text, 22, true));
         }).style('opacity', 1);
         // EXIT
         text.exit().transition().duration(500).style('opacity', 0.000001).remove();
@@ -50365,6 +50373,12 @@ angular.module('sumaAnalysis').directive('sumaBarChart', function () {
         }).style('opacity', 1);
         // EXIT
         ann.exit().transition().duration(500).style('opacity', 0.000001).remove();
+        // Initialize Tooltips
+        $('.barLabel').tooltip({
+          container: 'body',
+          html: true,
+          placement: 'auto'
+        });
       });
     }
     return chart;
@@ -50374,6 +50388,9 @@ angular.module('sumaAnalysis').directive('sumaBarChart', function () {
     scope: { data: '=' },
     link: function postLink(scope, element, attrs) {
       var chart = new BarChart();
+      scope.$on('$locationChangeSuccess', function (e) {
+        $('.barLabel').tooltip('hide');
+      });
       scope.$watch('data', function (newData) {
         return scope.render(newData);
       });
