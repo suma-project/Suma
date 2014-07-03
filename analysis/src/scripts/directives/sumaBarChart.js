@@ -30,7 +30,7 @@ angular.module('sumaAnalysis')
           // Define scales
           x = d3.scale.linear()
             .domain([0, d3.max(data.map(function (d) { return +d.count; }))])
-            .range([0, 325]);
+            .range([0, 285]);
 
           // Select svg container and join data
           svg = d3.select(this).selectAll('svg').data([data]);
@@ -60,10 +60,10 @@ angular.module('sumaAnalysis')
 
           // Apply transforms to containers
           gBar = svg.select('.gBar')
-                  .attr('transform', 'translate(160,15)');
+                  .attr('transform', 'translate(170,15)');
 
           gRule = svg.select('.gRule')
-                    .attr('transorm', 'translate(160,15(');
+                    .attr('transorm', 'translate(170,15(');
 
           //Append lines for scale
           line = gRule.selectAll('line').data(x.ticks(3));
@@ -177,7 +177,7 @@ angular.module('sumaAnalysis')
             .attr('x', 10)
             .attr('y', function (d, i) {return 25 * i + 30; })
             .attr('dy', -3)
-            .text(function (d) {return _.unescape(myTrunc(d.name, 22, true)); })
+            .text(function (d) {return _.unescape(myTrunc(d.name, 26, true)); })
             .style('opacity', 1);
 
           // EXIT

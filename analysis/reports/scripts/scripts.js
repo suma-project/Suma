@@ -49684,6 +49684,7 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
     function addActGrpTitle(acts, actGrps) {
       return _.map(acts, function (act) {
         act.activityGroupTitle = actGrps[act.activityGroup];
+        act.name = act.activityGroupTitle + ': ' + act.name;
         return act;
       });
     }
@@ -50264,7 +50265,7 @@ angular.module('sumaAnalysis').directive('sumaBarChart', function () {
           }))
         ]).range([
           0,
-          325
+          285
         ]);
         // Select svg container and join data
         svg = d3.select(this).selectAll('svg').data([data]);
@@ -50284,8 +50285,8 @@ angular.module('sumaAnalysis').directive('sumaBarChart', function () {
           }
         }
         // Apply transforms to containers
-        gBar = svg.select('.gBar').attr('transform', 'translate(160,15)');
-        gRule = svg.select('.gRule').attr('transorm', 'translate(160,15(');
+        gBar = svg.select('.gBar').attr('transform', 'translate(170,15)');
+        gRule = svg.select('.gRule').attr('transorm', 'translate(170,15(');
         //Append lines for scale
         line = gRule.selectAll('line').data(x.ticks(3));
         // ENTER
@@ -50333,7 +50334,7 @@ angular.module('sumaAnalysis').directive('sumaBarChart', function () {
         text.transition().duration(500).style('opacity', 0.000001).transition().delay(750).duration(500).attr('x', 10).attr('y', function (d, i) {
           return 25 * i + 30;
         }).attr('dy', -3).text(function (d) {
-          return _.unescape(myTrunc(d.name, 22, true));
+          return _.unescape(myTrunc(d.name, 26, true));
         }).style('opacity', 1);
         // EXIT
         text.exit().transition().duration(500).style('opacity', 0.000001).remove();

@@ -125,6 +125,7 @@ angular.module('sumaAnalysis')
     function addActGrpTitle (acts, actGrps) {
       return  _.map(acts, function (act) {
         act.activityGroupTitle = actGrps[act.activityGroup];
+        act.name = act.activityGroupTitle + ': ' + act.name;
         return act;
       });
     }
