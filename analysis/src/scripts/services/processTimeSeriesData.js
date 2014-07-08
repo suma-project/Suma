@@ -12,12 +12,14 @@ angular.module('sumaAnalysis')
       Saturday: 6
     };
 
+    // Calculate percentage based on number and divisor
     function calcPct(count, total) {
       var pct = count / total * 100;
 
       return _.isNaN(pct) ? 0 : pct.toFixed(2);
     }
 
+    // Get counts of children recursively
     function calcCount(obj, coll, prop) {
       var hasChildren;
 
@@ -40,91 +42,50 @@ angular.module('sumaAnalysis')
       });
     }
 
+    // Build array for locations/activities bar chart
     function buildArray (source, response, total, trunc, pct) {
       return _.filter(_.map(_.cloneDeep(source), function (o) {
         o.name = o.title;
 
+        // Truncate flag
         if (trunc) {
-          o.count = _.isNumber(response[o.id]) ? response[o.id].toFixed(2) : null;
+            o.count = _.isNumber(response[o.id]) ? response[o.id].toFixed(2) : null;
         } else {
-          if (o.type === 'activityGroup') {
-            o.count = null;
-          } else {
             o.count = _.isNumber(response[o.id]) ? response[o.id] : null;
-          }
         }
 
-        if (o.count !== null) {
-          o.percent = calcPct(o.count, total);
-        } else {
-          o.percent = null;
-        }
-
+        // Percentage flag
         if (pct) {
-          o.count = o.percent;
+          o.count = calcPct(o.count, total);
         }
 
         return o;
       }), function (obj) {
-        return obj.count !== null;
+        return obj.type !== 'activityGroup' && obj.count !== null;
       });
     }
 
+    // Build array for locations/activities table
     function buildTableArray (source, response, total, flag) {
       var counts;
 
-      counts = _.map(_.cloneDeep(source), function (loc) {
-        loc.name = loc.title;
-        loc.count = _.isNumber(response[loc.id]) ? response[loc.id] : null;
-        return loc;
+      counts = _.map(_.cloneDeep(source), function (o) {
+        o.name = o.title;
+        o.count = _.isNumber(response[o.id]) ? response[o.id] : null;
+        return o;
       });
 
       // Calculate counts for children
-      return _.map(counts, function (loc, index, coll) {
-        loc.count = calcCount(loc, coll, flag);
-        loc.percent = calcPct(loc.count, total);
+      return _.map(counts, function (o, index, coll) {
+        o.count = calcCount(o, coll, flag);
+        o.percent = calcPct(o.count, total);
 
-        return loc;
+        return o;
       });
-    }
-
-    function insertNoActs (source, total, mode) {
-      var obj = {},
-        noActs;
-
-      noActs = _.find(source, function (item, key) {
-        return key === '_No Activity';
-      });
-
-      if (noActs) {
-        obj.name = 'No Activity';
-        obj.depth = 0;
-
-        obj.percent = (noActs / total * 100).toFixed(2);
-
-        if (mode === 'pct') {
-          obj.count = (noActs / total * 100).toFixed(2);
-        }
-
-        if (mode === 'sum') {
-          obj.count = noActs;
-        }
-
-        if (mode === 'avg') {
-          obj.count = noActs.toFixed(2);
-        }
-
-        return obj;
-      }
-
-      return false;
     }
 
     function processData (response, activities, locations, zeroCounts) {
-      var noActsSum,
-        noActsAvgSum,
-        noActsAvgAvg,
-        counts,
+      var counts,
         divisor;
 
       // Convert response into arrays of objects
@@ -136,70 +97,41 @@ angular.module('sumaAnalysis')
       } else {
         divisor = response.zeroDivisor;
       }
+
       // CSV
       counts.csv = response.csv;
 
       // Total Sum
-      counts.total = [{
-        count: response.total
-      }];
+      counts.total = response.total;
 
       // Total Counts
-      counts.totalCounts = [{
-        count: response.zeroDivisor
-      }];
+      counts.totalCounts = response.zeroDivisor;
 
       // Total Zero Counts
-      counts.totalZeroCounts = [{
-        count: response.zeroCounts
-      }];
+      counts.totalZeroCounts = response.zeroCounts;
 
       // Total Avg Sum
-      counts.totalAvgSum = [{
-        count: response.totalAvgSum
-      }];
+      counts.totalAvgSum = response.totalAvgSum;
 
       // Total AvgAvg
-      counts.totalAvgAvg = [{
-        count: response.totalAvgAvg
-      }];
+      counts.totalAvgAvg = response.totalAvgAvg;
 
       // Days with Observations
-      counts.daysWithObservations = [{
-        count: response.daysWithObservations
-      }];
+      counts.daysWithObservations = response.daysWithObservations;
 
       // Locations related data
-      counts.locationsTable = buildTableArray(locations, response.locationsSum, divisor, 'parent');
-      counts.locationsSum = buildArray(locations, response.locationsSum, divisor);
+      counts.locationsTable  = buildTableArray(locations, response.locationsSum, divisor, 'parent');
+      counts.locationsSum    = buildArray(locations, response.locationsSum, divisor);
       counts.locationsAvgSum = buildArray(locations, response.locationsAvgSum, divisor, true);
       counts.locationsAvgAvg = buildArray(locations, response.locationsAvgAvg, divisor, true);
-      counts.locationsPct = buildArray(locations, response.locationsSum, divisor, false, true);
+      counts.locationsPct    = buildArray(locations, response.locationsSum, divisor, false, true);
 
       // Activities related data
-      counts.activitiesTable = buildTableArray(activities, response.activitiesSum, response.total, 'activityGroup');
-      counts.activitiesSum = buildArray(activities, response.activitiesSum, response.total);
+      counts.activitiesTable  = buildTableArray(activities, response.activitiesSum, response.total, 'activityGroup');
+      counts.activitiesSum    = buildArray(activities, response.activitiesSum, response.total);
       counts.activitiesAvgSum = buildArray(activities, response.activitiesAvgSum, response.total, true);
       counts.activitiesAvgAvg = buildArray(activities, response.activitiesAvgAvg, response.total, true);
-      counts.activitiesPct = buildArray(activities, response.activitiesSum, response.total, false, true);
-
-      // Handle insertion of no activity values
-      noActsSum = insertNoActs(response.activitiesSum, response.total, 'sum');
-      if (noActsSum) {
-        counts.activitiesSum.push(noActsSum);
-        counts.activitiesTable.push(noActsSum);
-        counts.activitiesPct.push(insertNoActs(response.activitiesSum, response.total, 'pct'));
-      }
-
-      noActsAvgSum = insertNoActs(response.activitiesAvgSum, response.total, 'avg');
-      if (noActsAvgSum) {
-        counts.activitiesAvgSum.push(noActsAvgSum);
-      }
-
-      noActsAvgAvg = insertNoActs(response.activitiesAvgAvg, response.total, 'avg');
-      if (noActsAvgAvg) {
-        counts.activitiesAvgAvg.push(noActsAvgAvg);
-      }
+      counts.activitiesPct    = buildArray(activities, response.activitiesSum, response.total, false, true);
 
       // Period Sum
       counts.periodSum = _.sortBy(_.map(response.periodSum, function (element, index) {
@@ -300,10 +232,6 @@ angular.module('sumaAnalysis')
     return {
       get: function (response, acts, locs, params) {
         var dfd = $q.defer();
-
-        acts = _.filter(acts, function (act) {
-          return act.id !== 'all';
-        });
 
         locs = _.filter(locs, function (loc) {
           return loc.id !== 'all';

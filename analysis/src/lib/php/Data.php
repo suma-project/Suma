@@ -1270,6 +1270,10 @@ class Data
             {
                 $countHash['activitiesAvgAvg'][$activityID] = $activity['avg'] / $activity['divisor'];
             }
+            elseif ($activity['avg'] / $activity['divisor'] === 0)
+            {
+                $countHash['activitiesAvgAvg'][$activityID] = 0;
+            }
         }
 
         // dailyHourSummary averages

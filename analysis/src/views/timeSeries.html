@@ -169,17 +169,17 @@
       <h3>Summary Data</h3>
       <div>
         <h4>Total Sum</h4>
-        <p>{{data.total[0].count | countFormat}}</p>
+        <p>{{data.total | countFormat}}</p>
         <h4>Total # of Counts</h4>
-        <p>{{data.totalCounts[0].count | countFormat}}</p>
+        <p>{{data.totalCounts | countFormat}}</p>
         <h4>Total # of Zero Counts</h4>
-        <p>{{data.totalZeroCounts[0].count | countFormat}}</p>
+        <p>{{data.totalZeroCounts | countFormat}}</p>
         <h4>Avg of Sums</h4>
-        <p>{{data.totalAvgSum[0].count.toFixed(2) | countFormat}}</p>
+        <p>{{data.totalAvgSum.toFixed(2) | countFormat}}</p>
         <h4>Avg of Avgs</h4>
-        <p>{{data.totalAvgAvg[0].count.toFixed(2) | countFormat}}</p>
+        <p>{{data.totalAvgAvg.toFixed(2) | countFormat}}</p>
         <h4>Days with Observations</h4>
-        <p>{{data.daysWithObservations[0].count | countFormat}} (includes zero counts)</p>
+        <p>{{data.daysWithObservations | countFormat}} (includes zero counts)</p>
       </div>
       <div>
         <h4>Totals by Location</h4>
