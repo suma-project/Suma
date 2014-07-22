@@ -5,7 +5,7 @@ describe('Controller: ReportCtrl', function () {
   // load the controller's module
   beforeEach(module('sumaAnalysis'));
 
-  beforeEach(module('reportMock'));
+  // beforeEach(module('reportMock'));
 
   var ReportCtrl,
     Controller,
@@ -24,8 +24,7 @@ describe('Controller: ReportCtrl', function () {
     setScopeResponse,
     setScopeResponseError,
     SumaConfig,
-    SumaConfig2,
-    Defaults;
+    locationStub;
 
   // Initialize the controller and a mock scope
   beforeEach(inject(function (
@@ -39,9 +38,7 @@ describe('Controller: ReportCtrl', function () {
     initiatives,
     uiStates,
     scopeUtils,
-    sumaConfig,
-    sumaConfig2,
-    defaults) {
+    sumaConfig) {
 
     Controller = $controller;
     scope = $rootScope.$new();
@@ -53,10 +50,11 @@ describe('Controller: ReportCtrl', function () {
     Initiatives = initiatives;
     UIStates = uiStates;
     ScopeUtils = scopeUtils;
-
     SumaConfig = sumaConfig;
-    SumaConfig2 = sumaConfig2;
-    Defaults = defaults;
+
+    // Locations stub
+    locationStub = sinon.stub(location, 'path');
+    locationStub.returns('/timeseries');
 
     okResponse = function () {
       var dfd = $q.defer();
@@ -108,10 +106,14 @@ describe('Controller: ReportCtrl', function () {
     };
   }));
 
+  afterEach(inject(function () {
+    locationStub.restore();
+  }));
+
   it(':initialize should set defaults', function () {
     var initiativesStub,
         getInitsStub,
-        setDefaultsStub,
+        //locationStub,
         statesStub;
 
     // Stub initiatives service
@@ -121,25 +123,32 @@ describe('Controller: ReportCtrl', function () {
     // Stub state service
     statesStub = sinon.stub(UIStates, 'setUIState');
 
+    // Locations stub
+    // locationStub = sinon.stub(location, 'path');
+    // locationStub.returns('/timeseries');
+
     // Instantiate Controller
     ReportCtrl = Controller('ReportCtrl', {
-      $scope: scope,
-      sumaConfig: SumaConfig
+      $scope: scope
     });
 
     // Assertions
-    expect(scope.countOptions).to.deep.equal(Defaults.countOptions);
-    expect(scope.dayOptions).to.deep.equal(Defaults.dayOptions);
-    expect(scope.sessionOptions).to.deep.equal(Defaults.sessionOptions);
-    expect(scope.params.classifyCounts).to.deep.equal(Defaults.classifyCounts);
-    expect(scope.params.daygroup).to.deep.equal(Defaults.daygroup);
-    expect(scope.params.wholeSession).to.deep.equal(Defaults.wholeSession);
-    expect(scope.params.sdate).to.equal(Defaults.sDate);
-    expect(scope.params.edate).to.equal(Defaults.eDate);
+    expect(scope.params.countOptions).to.deep.equal([
+      {'id':'count','title':'Count Date'},
+      {'id':'start','title':'Session Start'},
+      {'id':'end','title':'Session End'}
+      ]);
+    expect(scope.params.dayOptions).to.deep.equal(['mo','tu','we','th','fr','sa','su']);
+    expect(scope.params.sessionOptions).to.deep.equal([{'id':'no','title':'No'},{'id':'yes','title':'Yes'}]);
+    expect(scope.params.classifyCounts).to.deep.equal({'id':'count','title':'Count Date'});
+    expect(scope.params.wholeSession).to.deep.equal({'id':'no','title':'No'});
+    expect(scope.params.sdate).to.equal(moment().subtract('months', 4).format('YYYY-MM-DD'));
+    expect(scope.params.edate).to.equal(moment().format('YYYY-MM-DD'));
 
     // Restore stubs
     initiativesStub.restore();
     statesStub.restore();
+    //locationStub.restore();
   });
 
   it(':initialize should set state to initial on empty URL', function () {
@@ -200,8 +209,7 @@ describe('Controller: ReportCtrl', function () {
 
     // Instantiate Controller
     ReportCtrl = Controller('ReportCtrl', {
-      $scope: scope,
-      sumaConfig: SumaConfig
+      $scope: scope
     });
 
     // Stub scope.getInits
@@ -242,8 +250,7 @@ describe('Controller: ReportCtrl', function () {
 
     // Instantiate controller
     ReportCtrl = Controller('ReportCtrl', {
-      $scope: scope,
-      sumaConfig: SumaConfig
+      $scope: scope
     });
 
     // Digest to flush promises
@@ -265,10 +272,8 @@ describe('Controller: ReportCtrl', function () {
 
     // Instantiate controller
     ReportCtrl = Controller('ReportCtrl', {
-      $scope: scope,
-      sumaConfig: SumaConfig
+      $scope: scope
     });
-
 
     scope.scrollTo(12345);
     scope.$digest();
@@ -300,8 +305,7 @@ describe('Controller: ReportCtrl', function () {
 
     // Instantiate controller
     ReportCtrl = Controller('ReportCtrl', {
-      $scope: scope,
-      sumaConfig: SumaConfig
+      $scope: scope
     });
 
     // Assertions
@@ -335,8 +339,7 @@ describe('Controller: ReportCtrl', function () {
 
     // Instantiate controller
     ReportCtrl = Controller('ReportCtrl', {
-      $scope: scope,
-      sumaConfig: SumaConfig
+      $scope: scope
     });
 
     // Stub getMetadata()
@@ -388,8 +391,7 @@ describe('Controller: ReportCtrl', function () {
 
     // Instantiate controller
     ReportCtrl = Controller('ReportCtrl', {
-      $scope: scope,
-      sumaConfig: SumaConfig
+      $scope: scope
     });
 
     // Stub data
@@ -484,8 +486,7 @@ describe('Controller: ReportCtrl', function () {
 
     // Initialize controller
     ReportCtrl = Controller('ReportCtrl', {
-      $scope: scope,
-      sumaConfig: SumaConfig
+      $scope: scope
     });
 
     // Call getData
@@ -524,8 +525,7 @@ describe('Controller: ReportCtrl', function () {
 
     // Instantiate controller
     ReportCtrl = Controller('ReportCtrl', {
-      $scope: scope,
-      sumaConfig: SumaConfig
+      $scope: scope
     });
 
     // Call success method
@@ -548,10 +548,12 @@ describe('Controller: ReportCtrl', function () {
     statesStub = sinon.stub(UIStates, 'setUIState');
     statesStub.returns(true);
 
+    // Use hourly route
+    locationStub.returns('/hourly');
+
     // Instantiate controller
     ReportCtrl = Controller('ReportCtrl', {
-      $scope: scope,
-      sumaConfig: SumaConfig2
+      $scope: scope
     });
 
     // Call success method
@@ -612,8 +614,7 @@ describe('Controller: ReportCtrl', function () {
 
     // Instantiate controller
     ReportCtrl = Controller('ReportCtrl', {
-      $scope: scope,
-      sumaConfig: SumaConfig
+      $scope: scope
     });
 
     // Call error method
@@ -647,8 +648,7 @@ describe('Controller: ReportCtrl', function () {
 
     // Instantiate controller
     ReportCtrl = Controller('ReportCtrl', {
-      $scope: scope,
-      sumaConfig: SumaConfig
+      $scope: scope
     });
 
     setScopeStub = sinon.stub(ScopeUtils, 'set');
@@ -684,8 +684,7 @@ describe('Controller: ReportCtrl', function () {
 
     // Instantiate controller
     ReportCtrl = Controller('ReportCtrl', {
-      $scope: scope,
-      sumaConfig: SumaConfig
+      $scope: scope
     });
 
     setScopeStub = sinon.stub(ScopeUtils, 'set');
@@ -726,8 +725,7 @@ describe('Controller: ReportCtrl', function () {
 
     // Instantiate controller
     ReportCtrl = Controller('ReportCtrl', {
-      $scope: scope,
-      sumaConfig: SumaConfig
+      $scope: scope
     });
 
     setScopeStub = sinon.stub(ScopeUtils, 'set');
@@ -770,8 +768,7 @@ describe('Controller: ReportCtrl', function () {
 
     // Instantiate controller
     ReportCtrl = Controller('ReportCtrl', {
-      $scope: scope,
-      sumaConfig: SumaConfig
+      $scope: scope
     });
 
     // Define/redefine timeouts
@@ -820,8 +817,7 @@ describe('Controller: ReportCtrl', function () {
 
     // Instantiate controller
     ReportCtrl = Controller('ReportCtrl', {
-      $scope: scope,
-      sumaConfig: SumaConfig
+      $scope: scope
     });
 
     // Define/redefine timeouts
@@ -872,8 +868,7 @@ describe('Controller: ReportCtrl', function () {
 
     // Instantiate controller
     ReportCtrl = Controller('ReportCtrl', {
-      $scope: scope,
-      sumaConfig: SumaConfig
+      $scope: scope
     });
 
     // Define/redefine timeouts

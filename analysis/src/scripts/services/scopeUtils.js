@@ -84,6 +84,8 @@ angular.module('sumaAnalysis')
               return String(e.id) === String(urlParams.classifyCounts);
             });
 
+            newParams.countOptions = sumaConfig.formData.countOptions;
+
             if (!newParams.classifyCounts) {
               errors.push('Invalid value for classifyCounts. Valid values are "count", "start", or "end".');
             }
@@ -94,6 +96,8 @@ angular.module('sumaAnalysis')
               return String(e.id) === String(urlParams.wholeSession);
             });
 
+            newParams.sessionOptions = sumaConfig.formData.sessionOptions;
+
             if (!newParams.wholeSession) {
               errors.push('Invalid value for wholeSession. Valid values are "yes" or "no".');
             }
@@ -103,6 +107,8 @@ angular.module('sumaAnalysis')
             newParams.zeroCounts = _.find(sumaConfig.formData.zeroOptions, function (e, i) {
               return String(e.id) === String(urlParams.zeroCounts);
             });
+
+            newParams.zeroOptions = sumaConfig.formData.zeroOptions;
 
             if (!newParams.zeroCounts) {
               errors.push('Invalid value for zeroCounts. Valid values are "yes" or "no".');
@@ -116,6 +122,8 @@ angular.module('sumaAnalysis')
             } else {
               newParams.days = [];
             }
+
+            newParams.dayOptions = sumaConfig.formData.dayOptions;
 
             if (!newParams.days || newParams.days.length === 0) {
               errors.push('At least one calendar day should be selected. Valid values are "mo", "tu", "we", "th", "fr", "sa", "su". Values should be separated by a comma.');

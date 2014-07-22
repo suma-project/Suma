@@ -1,10 +1,13 @@
 'use strict';
 
 angular.module('sumaAnalysis')
-  .controller('ReportCtrl', function ($scope, $http, $location, $anchorScroll, $timeout, initiatives, actsLocs, data, promiseTracker, uiStates, sumaConfig, $routeParams, $q, scopeUtils) {
+  .controller('ReportCtrl', function ($scope, $http, $location, $anchorScroll, $timeout, initiatives, actsLocs, data, promiseTracker, uiStates, $routeParams, $q, scopeUtils, sumaConfig) {
     // Initialize controller
     $scope.initialize = function () {
       var urlParams = $location.search();
+
+      // Get report specific configs
+      $scope.sumaConfig = sumaConfig.getConfig($location.path());
 
       // Set default scope values from config
       $scope.setDefaults();
@@ -26,25 +29,14 @@ angular.module('sumaAnalysis')
 
     // Set default form values
     $scope.setDefaults = function () {
-      $scope.params = {};
-
-      _.each(sumaConfig.formFields, function (field, fieldName) {
-        // Set all fields except acts/locs, which are set after init is selected in form
-        if (field && (fieldName !== 'locations' && fieldName !== 'activities' && fieldName !== 'days')) {
-          $scope[sumaConfig.formDefaults[fieldName]] = sumaConfig.formData[sumaConfig.formDefaults[fieldName]];
-          $scope.params[fieldName] = $scope[sumaConfig.formDefaults[fieldName]][0];
-        } else if (field && fieldName === 'days') {
-          $scope.dayOptions = sumaConfig.formData.dayOptions;
-          $scope.params.days = angular.copy($scope.dayOptions);
-        }
-      });
+      $scope.params = sumaConfig.setParams($scope.sumaConfig);
     };
 
     // Set scope.params based on urlParams
     $scope.setScope = function (urlParams) {
       var dfd = $q.defer();
 
-      scopeUtils.set(urlParams, sumaConfig, $scope.inits).then(function (response) {
+      scopeUtils.set(urlParams, $scope.sumaConfig, $scope.inits).then(function (response) {
         // Set scope where possible regardless of error
         $scope.actsLocs = response.actsLocs;
         $scope.activities = response.activities;
@@ -112,12 +104,12 @@ angular.module('sumaAnalysis')
         params: $scope.params,
         acts: $scope.activities,
         locs: $scope.locations,
-        dataProcessor: sumaConfig.dataProcessor,
+        dataProcessor: $scope.sumaConfig.dataProcessor,
         timeoutPromise: $scope.dataTimeoutPromise,
         timeout: 180000
       };
 
-      data[sumaConfig.dataSource](cfg)
+      data[$scope.sumaConfig.dataSource](cfg)
         .then($scope.success, $scope.error);
     };
 
@@ -215,7 +207,7 @@ angular.module('sumaAnalysis')
       $scope.summaryParams = angular.copy($scope.params);
 
       // Supplemental bar chart
-      if (sumaConfig.suppWatch) {
+      if ($scope.sumaConfig.suppWatch) {
         $scope.$watch('data.actsLocsData', function () {
           var index = _.findIndex($scope.data.actsLocsData.items, function (item) {
             return item.title === $scope.data.barChartData.title;

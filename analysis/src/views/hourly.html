@@ -98,7 +98,7 @@
             <label class="suma-popover" data-title="Limit Days of the Week" data-content="Filter by weekday." data-suma-popover>Limit Days of the Week</label>
             <div class="controls">
               <div class="row" >
-                <div class="col-xs-3" ng-repeat="day in dayOptions">
+                <div class="col-xs-3" ng-repeat="day in params.dayOptions">
                   <label class="checkbox-inline">
                     <input type="checkbox" value="{{day}}" check-list="params.days" suma-checklist>{{day | capitalize}}
                   </label>

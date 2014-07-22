@@ -48742,142 +48742,23 @@ angular.module('sumaAnalysis', [
   '$routeProvider',
   '$compileProvider',
   function ($routeProvider, $compileProvider) {
-    // Configuration options for the display of form fields, assignment
-    // of data processor, and display of supplemental charts
-    var sumaBaseConfig = {
-        formData: {
-          countOptions: [
-            {
-              id: 'count',
-              title: 'Count Date'
-            },
-            {
-              id: 'start',
-              title: 'Session Start'
-            },
-            {
-              id: 'end',
-              title: 'Session End'
-            }
-          ],
-          dayOptions: [
-            'mo',
-            'tu',
-            'we',
-            'th',
-            'fr',
-            'sa',
-            'su'
-          ],
-          sessionOptions: [
-            {
-              id: 'no',
-              title: 'No'
-            },
-            {
-              id: 'yes',
-              title: 'Yes'
-            }
-          ],
-          zeroOptions: [
-            {
-              id: 'no',
-              title: 'No'
-            },
-            {
-              id: 'yes',
-              title: 'Yes'
-            }
-          ],
-          startDate: [moment().subtract('months', 4).format('YYYY-MM-DD')],
-          endDate: [moment().format('YYYY-MM-DD')],
-          startTime: [''],
-          endTime: ['']
-        },
-        formDefaults: {
-          classifyCounts: 'countOptions',
-          wholeSession: 'sessionOptions',
-          zeroCounts: 'zeroOptions',
-          sdate: 'startDate',
-          edate: 'endDate',
-          stime: 'startTime',
-          etime: 'endTime'
-        },
-        formFields: {
-          sdate: true,
-          edate: true,
-          stime: true,
-          etime: true,
-          classifyCounts: true,
-          days: true,
-          wholeSession: true,
-          zeroCounts: true,
-          activities: true,
-          locations: true
-        },
-        dataSource: 'getData',
-        dataProcessor: 'processTimeSeriesData',
-        suppWatch: true
-      };
     $routeProvider.when('/', { templateUrl: 'views/home.html' }).when('/home', { redirectTo: '/' }).when('/timeseries', {
       templateUrl: 'views/timeSeries.html',
       reloadOnSearch: false,
-      controller: 'ReportCtrl',
-      resolve: {
-        sumaConfig: function () {
-          return sumaBaseConfig;
-        }
-      }
+      controller: 'ReportCtrl'
     }).when('/calendar', {
       templateUrl: 'views/calendar.html',
       controller: 'ReportCtrl',
-      reloadOnSearch: false,
-      resolve: {
-        sumaConfig: function () {
-          var newConfig = angular.copy(sumaBaseConfig);
-          newConfig.dataProcessor = 'processCalendarData';
-          newConfig.suppWatch = false;
-          return newConfig;
-        }
-      }
+      reloadOnSearch: false
     }).when('/hourly', {
       templateUrl: 'views/hourly.html',
       controller: 'ReportCtrl',
-      reloadOnSearch: false,
-      resolve: {
-        sumaConfig: function () {
-          var newConfig = angular.copy(sumaBaseConfig);
-          newConfig.formFields.stime = false;
-          newConfig.formFields.etime = false;
-          newConfig.dataProcessor = 'processHourlyData';
-          newConfig.suppWatch = false;
-          return newConfig;
-        }
-      }
+      reloadOnSearch: false
     }).when('/sessions', {
       templateUrl: 'views/sessions.html',
       controller: 'ReportCtrl',
-      reloadOnSearch: false,
-      resolve: {
-        sumaConfig: function () {
-          var newConfig = angular.copy(sumaBaseConfig);
-          newConfig.formFields.classifyCounts = false;
-          newConfig.formFields.days = false;
-          newConfig.formFields.wholeSession = false;
-          newConfig.formFields.zeroCounts = false;
-          newConfig.formFields.activities = false;
-          newConfig.formFields.locations = false;
-          newConfig.dataSource = 'getSessionsData';
-          newConfig.dataProcessor = false;
-          newConfig.suppWatch = false;
-          return newConfig;
-        }
-      }
-    }).when('/about', { templateUrl: 'views/about.html' }).when('/contact', { templateUrl: 'views/contact.html' });
-    // .otherwise({
-    //   redirectTo: '/'
-    // });
-    //
+      reloadOnSearch: false
+    }).when('/about', { templateUrl: 'views/about.html' }).when('/contact', { templateUrl: 'views/contact.html' }).otherwise({ redirectTo: '/' });
     // whitelist data for csv download
     if (angular.isDefined($compileProvider.urlSanitizationWhitelist)) {
       $compileProvider.urlSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|data):/);
@@ -48898,14 +48779,16 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
   'data',
   'promiseTracker',
   'uiStates',
-  'sumaConfig',
   '$routeParams',
   '$q',
   'scopeUtils',
-  function ($scope, $http, $location, $anchorScroll, $timeout, initiatives, actsLocs, data, promiseTracker, uiStates, sumaConfig, $routeParams, $q, scopeUtils) {
+  'sumaConfig',
+  function ($scope, $http, $location, $anchorScroll, $timeout, initiatives, actsLocs, data, promiseTracker, uiStates, $routeParams, $q, scopeUtils, sumaConfig) {
     // Initialize controller
     $scope.initialize = function () {
       var urlParams = $location.search();
+      // Get report specific configs
+      $scope.sumaConfig = sumaConfig.getConfig($location.path());
       // Set default scope values from config
       $scope.setDefaults();
       // Attach listener for URL changes
@@ -48923,22 +48806,12 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
     };
     // Set default form values
     $scope.setDefaults = function () {
-      $scope.params = {};
-      _.each(sumaConfig.formFields, function (field, fieldName) {
-        // Set all fields except acts/locs, which are set after init is selected in form
-        if (field && (fieldName !== 'locations' && fieldName !== 'activities' && fieldName !== 'days')) {
-          $scope[sumaConfig.formDefaults[fieldName]] = sumaConfig.formData[sumaConfig.formDefaults[fieldName]];
-          $scope.params[fieldName] = $scope[sumaConfig.formDefaults[fieldName]][0];
-        } else if (field && fieldName === 'days') {
-          $scope.dayOptions = sumaConfig.formData.dayOptions;
-          $scope.params.days = angular.copy($scope.dayOptions);
-        }
-      });
+      $scope.params = sumaConfig.setParams($scope.sumaConfig);
     };
     // Set scope.params based on urlParams
     $scope.setScope = function (urlParams) {
       var dfd = $q.defer();
-      scopeUtils.set(urlParams, sumaConfig, $scope.inits).then(function (response) {
+      scopeUtils.set(urlParams, $scope.sumaConfig, $scope.inits).then(function (response) {
         // Set scope where possible regardless of error
         $scope.actsLocs = response.actsLocs;
         $scope.activities = response.activities;
@@ -48999,11 +48872,11 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
         params: $scope.params,
         acts: $scope.activities,
         locs: $scope.locations,
-        dataProcessor: sumaConfig.dataProcessor,
+        dataProcessor: $scope.sumaConfig.dataProcessor,
         timeoutPromise: $scope.dataTimeoutPromise,
         timeout: 180000
       };
-      data[sumaConfig.dataSource](cfg).then($scope.success, $scope.error);
+      data[$scope.sumaConfig.dataSource](cfg).then($scope.success, $scope.error);
     };
     // Update metadata UI wrapper, fired by
     // init selection in form
@@ -49087,7 +48960,7 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
       $scope.data = processedData;
       $scope.summaryParams = angular.copy($scope.params);
       // Supplemental bar chart
-      if (sumaConfig.suppWatch) {
+      if ($scope.sumaConfig.suppWatch) {
         $scope.$watch('data.actsLocsData', function () {
           var index = _.findIndex($scope.data.actsLocsData.items, function (item) {
               return item.title === $scope.data.barChartData.title;
@@ -49464,6 +49337,7 @@ angular.module('sumaAnalysis').factory('scopeUtils', [
             newParams.classifyCounts = _.find(sumaConfig.formData.countOptions, function (e, i) {
               return String(e.id) === String(urlParams.classifyCounts);
             });
+            newParams.countOptions = sumaConfig.formData.countOptions;
             if (!newParams.classifyCounts) {
               errors.push('Invalid value for classifyCounts. Valid values are "count", "start", or "end".');
             }
@@ -49472,6 +49346,7 @@ angular.module('sumaAnalysis').factory('scopeUtils', [
             newParams.wholeSession = _.find(sumaConfig.formData.sessionOptions, function (e, i) {
               return String(e.id) === String(urlParams.wholeSession);
             });
+            newParams.sessionOptions = sumaConfig.formData.sessionOptions;
             if (!newParams.wholeSession) {
               errors.push('Invalid value for wholeSession. Valid values are "yes" or "no".');
             }
@@ -49480,6 +49355,7 @@ angular.module('sumaAnalysis').factory('scopeUtils', [
             newParams.zeroCounts = _.find(sumaConfig.formData.zeroOptions, function (e, i) {
               return String(e.id) === String(urlParams.zeroCounts);
             });
+            newParams.zeroOptions = sumaConfig.formData.zeroOptions;
             if (!newParams.zeroCounts) {
               errors.push('Invalid value for zeroCounts. Valid values are "yes" or "no".');
             }
@@ -49491,6 +49367,7 @@ angular.module('sumaAnalysis').factory('scopeUtils', [
             } else {
               newParams.days = [];
             }
+            newParams.dayOptions = sumaConfig.formData.dayOptions;
             if (!newParams.days || newParams.days.length === 0) {
               errors.push('At least one calendar day should be selected. Valid values are "mo", "tu", "we", "th", "fr", "sa", "su". Values should be separated by a comma.');
             }
@@ -49841,6 +49718,131 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
     };
   }
 ]);
+'use strict';
+angular.module('sumaAnalysis').factory('sumaConfig', function () {
+  var sumaBaseConfig = {
+      formData: {
+        countOptions: [
+          {
+            id: 'count',
+            title: 'Count Date'
+          },
+          {
+            id: 'start',
+            title: 'Session Start'
+          },
+          {
+            id: 'end',
+            title: 'Session End'
+          }
+        ],
+        dayOptions: [
+          'mo',
+          'tu',
+          'we',
+          'th',
+          'fr',
+          'sa',
+          'su'
+        ],
+        sessionOptions: [
+          {
+            id: 'no',
+            title: 'No'
+          },
+          {
+            id: 'yes',
+            title: 'Yes'
+          }
+        ],
+        zeroOptions: [
+          {
+            id: 'no',
+            title: 'No'
+          },
+          {
+            id: 'yes',
+            title: 'Yes'
+          }
+        ],
+        startDate: [moment().subtract('months', 4).format('YYYY-MM-DD')],
+        endDate: [moment().format('YYYY-MM-DD')],
+        startTime: [''],
+        endTime: ['']
+      },
+      formDefaults: {
+        classifyCounts: 'countOptions',
+        wholeSession: 'sessionOptions',
+        zeroCounts: 'zeroOptions',
+        sdate: 'startDate',
+        edate: 'endDate',
+        stime: 'startTime',
+        etime: 'endTime'
+      },
+      formFields: {
+        sdate: true,
+        edate: true,
+        stime: true,
+        etime: true,
+        classifyCounts: true,
+        days: true,
+        wholeSession: true,
+        zeroCounts: true,
+        activities: true,
+        locations: true
+      },
+      dataSource: 'getData',
+      dataProcessor: 'processTimeSeriesData',
+      suppWatch: true
+    };
+  return {
+    getConfig: function (path) {
+      var newConfig = angular.copy(sumaBaseConfig);
+      if (path === '/timeseries') {
+        return newConfig;
+      }
+      if (path === '/calendar') {
+        newConfig.dataProcessor = 'processCalendarData';
+        newConfig.suppWatch = false;
+        return newConfig;
+      }
+      if (path === '/hourly') {
+        newConfig.formFields.stime = false;
+        newConfig.formFields.etime = false;
+        newConfig.dataProcessor = 'processHourlyData';
+        newConfig.suppWatch = false;
+        return newConfig;
+      }
+      if (path === '/sessions') {
+        newConfig.formFields.classifyCounts = false;
+        newConfig.formFields.days = false;
+        newConfig.formFields.wholeSession = false;
+        newConfig.formFields.zeroCounts = false;
+        newConfig.formFields.activities = false;
+        newConfig.formFields.locations = false;
+        newConfig.dataSource = 'getSessionsData';
+        newConfig.dataProcessor = false;
+        newConfig.suppWatch = false;
+        return newConfig;
+      }
+      return newConfig;
+    },
+    setParams: function (cfg) {
+      var params = {};
+      _.each(cfg.formFields, function (field, fieldName) {
+        // Set all fields except acts/locs, which are set after init is selected in form
+        if (field && (fieldName !== 'locations' && fieldName !== 'activities' && fieldName !== 'days')) {
+          params[cfg.formDefaults[fieldName]] = cfg.formData[cfg.formDefaults[fieldName]];
+          params[fieldName] = params[cfg.formDefaults[fieldName]][0];
+        } else if (field && fieldName === 'days') {
+          params.dayOptions = cfg.formData.dayOptions;
+          params.days = angular.copy(params.dayOptions);
+        }
+      });
+      return params;
+    }
+  };
+});
 'use strict';
 angular.module('sumaAnalysis').filter('depth', function () {
   return function (input) {

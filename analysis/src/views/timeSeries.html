@@ -71,19 +71,19 @@
 
           <div class="form-group">
             <label class="suma-popover" data-title="Classify Counts By" data-content='Choose the date to use for grouping counts by date. "Count Date" shows the actual date of the count, while "Session Start" and "Session End" use the respective date on the collection session containing each count.' data-suma-popover>Classify Counts By</label>
-            <select name="session" id="classifyCounts" class="form-control" data-ng-model="params.classifyCounts" data-ng-options="opt.title for opt in countOptions">
+            <select name="session" id="classifyCounts" class="form-control" data-ng-model="params.classifyCounts" data-ng-options="opt.title for opt in params.countOptions">
             </select>
           </div>
 
           <div class="form-group">
             <label class="suma-popover" data-title="Always Include Whole Session" data-content="Select yes if you would like to include counts inside of sessions that may fall outside of your other filters." data-suma-popover>Always Include Whole Session</label>
-            <select name="session_filter" id="wholeSession" class="form-control" data-ng-model="params.wholeSession" data-ng-options="opt.title for opt in sessionOptions">
+            <select name="session_filter" id="wholeSession" class="form-control" data-ng-model="params.wholeSession" data-ng-options="opt.title for opt in params.sessionOptions">
             </select>
           </div>
 
           <div class="form-group">
             <label class="suma-popover" data-title="Use Zero Counts" data-content="Select yes if you would like to include counts with a number of 0 in the percentage and average calculations for the summary data and locations and activities chart." data-suma-popover>Use Zero Counts for Locations </label>
-            <select name="zeroCounts" id="zeroCounts" class="form-control" data-ng-model="params.zeroCounts" data-ng-options="opt.title for opt in zeroOptions">
+            <select name="zeroCounts" id="zeroCounts" class="form-control" data-ng-model="params.zeroCounts" data-ng-options="opt.title for opt in params.zeroOptions">
             </select>
           </div>
         </div>
@@ -125,7 +125,7 @@
             <label class="suma-popover" data-title="Limit Days of the Week" data-content="Filter by weekday." data-suma-popover>Limit Days of the Week</label>
             <div class="controls">
               <div class="row" >
-                <div class="col-xs-3" ng-repeat="day in dayOptions">
+                <div class="col-xs-3" ng-repeat="day in params.dayOptions">
                   <label class="checkbox-inline">
                     <input type="checkbox" value="{{day}}" check-list="params.days" suma-checklist>{{day | capitalize}}
                   </label>
