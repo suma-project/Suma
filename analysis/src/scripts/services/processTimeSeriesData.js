@@ -43,7 +43,7 @@ angular.module('sumaAnalysis')
     }
 
     // Build array for locations/activities bar chart
-    function buildArray (source, response, total, trunc, pct) {
+    function buildArray (source, response, total, trunc, pct, cullNull) {
       return _.filter(_.map(_.cloneDeep(source), function (o) {
         o.name = o.title;
 
@@ -56,7 +56,11 @@ angular.module('sumaAnalysis')
 
         // Percentage flag
         if (pct) {
-          o.count = calcPct(o.count, total);
+          if (cullNull && o.count === null) {
+            o.count = null;
+          } else {
+            o.count = calcPct(o.count, total);
+          }
         }
 
         return o;
@@ -124,14 +128,14 @@ angular.module('sumaAnalysis')
       counts.locationsSum    = buildArray(locations, response.locationsSum, divisor);
       counts.locationsAvgSum = buildArray(locations, response.locationsAvgSum, divisor, true);
       counts.locationsAvgAvg = buildArray(locations, response.locationsAvgAvg, divisor, true);
-      counts.locationsPct    = buildArray(locations, response.locationsSum, divisor, false, true);
+      counts.locationsPct    = buildArray(locations, response.locationsSum, divisor, false, true, true);
 
       // Activities related data
       counts.activitiesTable  = buildTableArray(activities, response.activitiesSum, response.total, 'activityGroup');
       counts.activitiesSum    = buildArray(activities, response.activitiesSum, response.total);
       counts.activitiesAvgSum = buildArray(activities, response.activitiesAvgSum, response.total, true);
       counts.activitiesAvgAvg = buildArray(activities, response.activitiesAvgAvg, response.total, true);
-      counts.activitiesPct    = buildArray(activities, response.activitiesSum, response.total, false, true);
+      counts.activitiesPct    = buildArray(activities, response.activitiesSum, response.total, false, true, true);
 
       // Period Sum
       counts.periodSum = _.sortBy(_.map(response.periodSum, function (element, index) {
