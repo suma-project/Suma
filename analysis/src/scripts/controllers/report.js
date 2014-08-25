@@ -106,12 +106,12 @@ angular.module('sumaAnalysis')
 
       // Includes promise/explicit timeout values
       cfg = {
-        params: $scope.params,
-        acts: $scope.activities,
-        locs: $scope.locations,
-        dataProcessor: CONFIG.dataProcessor,
+        params:         $scope.params,
+        acts:           $scope.activities,
+        locs:           $scope.locations,
+        dataProcessor:  CONFIG.dataProcessor,
         timeoutPromise: dataTimeoutPromise,
-        timeout: 180000
+        timeout:        180000
       };
 
       data[CONFIG.dataSource](cfg)
@@ -170,19 +170,19 @@ angular.module('sumaAnalysis')
       // Map current scope to object for comparison/setting
       currentScope = {
         id: String($scope.params.init.id),
-        sdate: $scope.params.sdate || $scope.params.sdate === '' ? $scope.params.sdate : null,
-        edate: $scope.params.edate || $scope.params.edate === '' ? $scope.params.edate : null,
-        stime: $scope.params.stime || $scope.params.stime === '' ? $scope.params.stime : null,
-        etime: $scope.params.etime || $scope.params.etime === '' ? $scope.params.etime : null,
+        sdate:          $scope.params.sdate || $scope.params.sdate === '' ? $scope.params.sdate : null,
+        edate:          $scope.params.edate || $scope.params.edate === '' ? $scope.params.edate : null,
+        stime:          $scope.params.stime || $scope.params.stime === '' ? $scope.params.stime : null,
+        etime:          $scope.params.etime || $scope.params.etime === '' ? $scope.params.etime : null,
         classifyCounts: $scope.params.classifyCounts ? $scope.params.classifyCounts.id : null,
-        wholeSession: $scope.params.wholeSession ? $scope.params.wholeSession.id : null,
-        zeroCounts: $scope.params.zeroCounts ? $scope.params.zeroCounts.id : null,
-        requireActs: scopeUtils.stringifyActs($scope.activities, 'require'),
-        excludeActs: scopeUtils.stringifyActs($scope.activities, 'exclude'),
+        wholeSession:   $scope.params.wholeSession ? $scope.params.wholeSession.id : null,
+        zeroCounts:     $scope.params.zeroCounts ? $scope.params.zeroCounts.id : null,
+        requireActs:    scopeUtils.stringifyActs($scope.activities, 'require'),
+        excludeActs:    scopeUtils.stringifyActs($scope.activities, 'exclude'),
         requireActGrps: scopeUtils.stringifyActs($scope.activities, 'require', true),
         excludeActGrps: scopeUtils.stringifyActs($scope.activities, 'exclude', true),
-        location: $scope.params.location ? $scope.params.location.id : null,
-        days: scopeUtils.stringifyDays($scope.params.days)
+        location:       $scope.params.location ? $scope.params.location.id : null,
+        days:           scopeUtils.stringifyDays($scope.params.days)
       };
 
       // Remove empty fields
