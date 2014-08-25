@@ -38,7 +38,6 @@ angular.module('sumaAnalysis')
 
       scopeUtils.set(urlParams, $scope.sumaConfig, $scope.inits).then(function (response) {
         // Set scope where possible regardless of error
-        $scope.actsLocs = response.actsLocs;
         $scope.activities = response.activities;
         $scope.locations = response.locations;
         $scope.params = response.params;
@@ -85,9 +84,9 @@ angular.module('sumaAnalysis')
 
     // Get initiative metadata
     $scope.getMetadata = function () {
-      $scope.actsLocs = actsLocs.get($scope.params.init);
-      $scope.activities = $scope.actsLocs.activities;
-      $scope.locations = $scope.actsLocs.locations;
+      var actsLocsArys = actsLocs.get($scope.params.init);
+      $scope.activities = actsLocsArys.activities;
+      $scope.locations = actsLocsArys.locations;
       $scope.params.location = $scope.locations[0];
     };
 

@@ -318,7 +318,6 @@ describe('Controller: ReportCtrl', function () {
     scope.getMetadata();
 
     // Assertions
-    expect(scope.actsLocs).to.equal(mock);
     expect(scope.activities).to.equal(mock.activities);
     expect(scope.locations).to.equal(mock.locations);
     expect(scope.params.location).to.equal(mock.locations[0]);
