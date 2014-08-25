@@ -64,7 +64,8 @@ angular.module('sumaAnalysis')
     // Get initiatives
     $scope.getInitiatives = function () {
       var cfg,
-          dfd = $q.defer();
+          dfd = $q.defer(),
+          loadInits;
 
       // Promise to resolve request on navigation change
       initTimeoutPromise = $q.defer();
@@ -75,14 +76,14 @@ angular.module('sumaAnalysis')
         timeout: 180000
       };
 
-      $scope.loadInits = initiatives.get(cfg).then(function (data) {
+      loadInits = initiatives.get(cfg).then(function (data) {
         $scope.inits = data;
         dfd.resolve();
       }, $scope.error);
 
       // Setup promise tracker for spinner on initial load
       initTracker = promiseTracker('initTracker');
-      initTracker.addPromise($scope.loadInits);
+      initTracker.addPromise(loadInits);
 
       return dfd.promise;
     };
