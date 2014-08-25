@@ -2,7 +2,8 @@
 
 angular.module('sumaAnalysis')
   .controller('ReportCtrl', function ($anchorScroll, $location, $q, $scope, $timeout, promiseTracker, actsLocs, data, initiatives, scopeUtils, sumaConfig, uiStates) {
-    var dataTimeoutPromise,
+    var CONFIG,
+      dataTimeoutPromise,
       initTimeoutPromise,
       initTracker;
 
@@ -11,7 +12,7 @@ angular.module('sumaAnalysis')
       var urlParams = $location.search();
 
       // Get report specific configs
-      $scope.sumaConfig = sumaConfig.getConfig($location.path());
+      CONFIG = sumaConfig.getConfig($location.path());
 
       // Set default scope values from config
       $scope.setDefaults();
@@ -33,14 +34,14 @@ angular.module('sumaAnalysis')
 
     // Set default form values
     $scope.setDefaults = function () {
-      $scope.params = sumaConfig.setParams($scope.sumaConfig);
+      $scope.params = sumaConfig.setParams(CONFIG);
     };
 
     // Set scope.params based on urlParams
     $scope.setScope = function (urlParams) {
       var dfd = $q.defer();
 
-      scopeUtils.set(urlParams, $scope.sumaConfig, $scope.inits).then(function (response) {
+      scopeUtils.set(urlParams, CONFIG, $scope.inits).then(function (response) {
         // Set scope where possible regardless of error
         $scope.activities = response.activities;
         $scope.locations = response.locations;
@@ -107,12 +108,12 @@ angular.module('sumaAnalysis')
         params: $scope.params,
         acts: $scope.activities,
         locs: $scope.locations,
-        dataProcessor: $scope.sumaConfig.dataProcessor,
+        dataProcessor: CONFIG.dataProcessor,
         timeoutPromise: dataTimeoutPromise,
         timeout: 180000
       };
 
-      data[$scope.sumaConfig.dataSource](cfg)
+      data[CONFIG.dataSource](cfg)
         .then($scope.success, $scope.error);
     };
 
@@ -210,7 +211,7 @@ angular.module('sumaAnalysis')
       $scope.summaryParams = angular.copy($scope.params);
 
       // Supplemental bar chart
-      if ($scope.sumaConfig.suppWatch) {
+      if (CONFIG.suppWatch) {
         $scope.$watch('data.actsLocsData', function () {
           var index = _.findIndex($scope.data.actsLocsData.items, function (item) {
             return item.title === $scope.data.barChartData.title;
