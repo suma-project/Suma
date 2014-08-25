@@ -2,6 +2,9 @@
 
 angular.module('sumaAnalysis')
   .controller('ReportCtrl', function ($anchorScroll, $location, $q, $scope, $timeout, promiseTracker, actsLocs, data, initiatives, scopeUtils, sumaConfig, uiStates) {
+    var dataTimeoutPromise,
+      initTimeoutPromise;
+
     // Initialize controller
     $scope.initialize = function () {
       var urlParams = $location.search();
@@ -62,11 +65,11 @@ angular.module('sumaAnalysis')
           dfd = $q.defer();
 
       // Promise to resolve request on navigation change
-      $scope.initTimeoutPromise = $q.defer();
+      initTimeoutPromise = $q.defer();
 
       // Promise/Explicit timeouts
       cfg = {
-        timeoutPromise: $scope.initTimeoutPromise,
+        timeoutPromise: initTimeoutPromise,
         timeout: 180000
       };
 
@@ -95,7 +98,7 @@ angular.module('sumaAnalysis')
       var cfg;
 
       // Promise to resolve request on navigation change
-      $scope.dataTimeoutPromise = $q.defer();
+      dataTimeoutPromise = $q.defer();
       $scope.state = uiStates.setUIState('loading');
 
       // Includes promise/explicit timeout values
@@ -104,7 +107,7 @@ angular.module('sumaAnalysis')
         acts: $scope.activities,
         locs: $scope.locations,
         dataProcessor: $scope.sumaConfig.dataProcessor,
-        timeoutPromise: $scope.dataTimeoutPromise,
+        timeoutPromise: dataTimeoutPromise,
         timeout: 180000
       };
 
@@ -132,12 +135,12 @@ angular.module('sumaAnalysis')
       var urlParams = $location.search();
 
       // Resolve active requests
-      if ($scope.dataTimeoutPromise) {
-        $scope.dataTimeoutPromise.resolve('resolved');
+      if (dataTimeoutPromise) {
+        dataTimeoutPromise.resolve('resolved');
       }
 
-      if ($scope.initTimeoutPromise) {
-        $scope.initTimeoutPromise.resolve('resolved');
+      if (initTimeoutPromise) {
+        initTimeoutPromise.resolve('resolved');
         $scope.finder.cancel();
       }
 
