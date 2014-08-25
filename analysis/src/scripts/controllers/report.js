@@ -3,7 +3,8 @@
 angular.module('sumaAnalysis')
   .controller('ReportCtrl', function ($anchorScroll, $location, $q, $scope, $timeout, promiseTracker, actsLocs, data, initiatives, scopeUtils, sumaConfig, uiStates) {
     var dataTimeoutPromise,
-      initTimeoutPromise;
+      initTimeoutPromise,
+      initTracker;
 
     // Initialize controller
     $scope.initialize = function () {
@@ -79,8 +80,8 @@ angular.module('sumaAnalysis')
       }, $scope.error);
 
       // Setup promise tracker for spinner on initial load
-      $scope.finder = promiseTracker('initTracker');
-      $scope.finder.addPromise($scope.loadInits);
+      initTracker = promiseTracker('initTracker');
+      initTracker.addPromise($scope.loadInits);
 
       return dfd.promise;
     };
@@ -141,7 +142,7 @@ angular.module('sumaAnalysis')
 
       if (initTimeoutPromise) {
         initTimeoutPromise.resolve('resolved');
-        $scope.finder.cancel();
+        initTracker.cancel();
       }
 
       if (_.isEmpty(urlParams)) { // True when navigating back to initial
