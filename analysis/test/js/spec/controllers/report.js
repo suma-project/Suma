@@ -154,7 +154,6 @@ describe('Controller: ReportCtrl', function () {
   it(':initialize should set state to initial on empty URL', function () {
     var initiativesStub,
         getInitsStub,
-        setDefaultsStub,
         statesStub;
 
     // Stub initiatives service
@@ -174,9 +173,6 @@ describe('Controller: ReportCtrl', function () {
     getInitsStub = sinon.stub(scope, 'getInitiatives');
     getInitsStub.returns(okResponse());
 
-    // Stub scope.setDefaults
-    setDefaultsStub = sinon.stub(scope, 'setDefaults');
-
     // Call initialize again to utlize stubs
     scope.initialize();
     scope.$digest();
@@ -188,14 +184,12 @@ describe('Controller: ReportCtrl', function () {
     // Restore stubs
     initiativesStub.restore();
     getInitsStub.restore();
-    setDefaultsStub.restore();
     statesStub.restore();
   });
 
-  it(':initialize should should setScope and getData if URL params present', function () {
+  it(':initialize should setScope and getData if URL params present', function () {
     var initiativesStub,
         getInitsStub,
-        setDefaultsStub,
         setScopeStub,
         statesStub,
         getDataStub;
@@ -217,7 +211,6 @@ describe('Controller: ReportCtrl', function () {
     getInitsStub.returns(okResponse());
 
     // Stub scope.setDefaults, scope.setScope, scope.getData
-    setDefaultsStub = sinon.stub(scope, 'setDefaults');
     setScopeStub = sinon.stub(scope, 'setScope');
     setScopeStub.returns(okResponse());
     getDataStub = sinon.stub(scope, 'getData');
@@ -230,14 +223,12 @@ describe('Controller: ReportCtrl', function () {
     scope.$digest();
 
     // Assertions
-    expect(setDefaultsStub).to.be.calledOnce;
     expect(setScopeStub).to.be.calledOnce;
     expect(getDataStub).to.be.calledOnce;
 
     // Restore stubs
     initiativesStub.restore();
     getInitsStub.restore();
-    setDefaultsStub.restore();
     statesStub.restore();
   });
 
@@ -755,8 +746,7 @@ describe('Controller: ReportCtrl', function () {
     var initiativesStub,
         statesStub,
         dataTimeoutStub,
-        initTimeoutStub,
-        setDefaultsStub;
+        initTimeoutStub;
 
     // Stub initiatives service
     initiativesStub = sinon.stub(Initiatives, 'get');
@@ -775,9 +765,6 @@ describe('Controller: ReportCtrl', function () {
     scope.initTimeoutPromise = undefined;
     scope.initTimeoutPromise = Q.defer();
 
-    // Stub scope.setDefaults
-    setDefaultsStub = sinon.stub(scope, 'setDefaults');
-
     // Call routeUpdate()
     scope.routeUpdate();
 
@@ -791,14 +778,12 @@ describe('Controller: ReportCtrl', function () {
     });
 
     expect(statesStub).to.be.calledWith('initial');
-    expect(setDefaultsStub).to.be.calledOnce;
 
     scope.$digest();
 
     // Restore stubs
     initiativesStub.restore();
     statesStub.restore();
-    setDefaultsStub.restore();
   });
 
   it(':routeUpdate should setScope and getData when params and scope.params.init present', function () {

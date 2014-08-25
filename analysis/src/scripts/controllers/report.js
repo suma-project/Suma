@@ -15,7 +15,7 @@ angular.module('sumaAnalysis')
       CONFIG = sumaConfig.getConfig($location.path());
 
       // Set default scope values from config
-      $scope.setDefaults();
+      $scope.params = sumaConfig.setParams(CONFIG);
 
       // Attach listener for URL changes
       $scope.$on('$routeUpdate', $scope.routeUpdate);
@@ -30,11 +30,6 @@ angular.module('sumaAnalysis')
           $scope.setScope(urlParams).then($scope.getData, $scope.error);
         }
       });
-    };
-
-    // Set default form values
-    $scope.setDefaults = function () {
-      $scope.params = sumaConfig.setParams(CONFIG);
     };
 
     // Set scope.params based on urlParams
@@ -149,7 +144,7 @@ angular.module('sumaAnalysis')
 
       if (_.isEmpty(urlParams)) { // True when navigating back to initial
         $scope.state = uiStates.setUIState('initial');
-        $scope.setDefaults();
+        $scope.params = sumaConfig.setParams(CONFIG);
       } else if ($scope.params.init){ // Typical navigation between reports (most common case)
         $scope.setScope(urlParams).then($scope.getData, $scope.error);
       } else { // Navigation from initial to completed report
