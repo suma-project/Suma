@@ -59,6 +59,24 @@ angular.module('sumaAnalysis')
       getMetadata: function (init) {
         return actsLocs.get(init);
       },
+      getCurrentScope: function (params, acts) {
+        return _.compactObject({
+          id:             String(params.init.id),
+          sdate:          params.sdate || params.sdate === '' ? params.sdate : null,
+          edate:          params.edate || params.edate === '' ? params.edate : null,
+          stime:          params.stime || params.stime === '' ? params.stime : null,
+          etime:          params.etime || params.etime === '' ? params.etime : null,
+          classifyCounts: params.classifyCounts ? params.classifyCounts.id : null,
+          wholeSession:   params.wholeSession ? params.wholeSession.id : null,
+          zeroCounts:     params.zeroCounts ? params.zeroCounts.id : null,
+          requireActs:    this.stringifyActs(acts, 'require'),
+          excludeActs:    this.stringifyActs(acts, 'exclude'),
+          requireActGrps: this.stringifyActs(acts, 'require', true),
+          excludeActGrps: this.stringifyActs(acts, 'exclude', true),
+          location:       params.location ? params.location.id : null,
+          days:           this.stringifyDays(params.days)
+        });
+      },
       set: function (urlParams, sumaConfig, inits) {
         var activities,
             dfd = $q.defer(),
