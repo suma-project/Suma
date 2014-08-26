@@ -329,4 +329,10 @@ describe('Service: ScopeUtils', function () {
     // Assertions
     expect(newActs).to.deep.equal(expectedNewActs);
   });
+
+  it('ScopeUtils:success should reject if error message exists', function () {
+    ScopeUtils.success('ERROR').then(function (response) {
+      expect(response).to.equal({message: 'ERROR', code: 500});
+    })
+  });
 });
