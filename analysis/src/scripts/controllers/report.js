@@ -44,26 +44,18 @@ angular.module('sumaAnalysis')
 
     // Set scope.params based on urlParams
     $scope.setScope = function (urlParams) {
-      var dfd = $q.defer();
+      return scopeUtils.set(urlParams, CONFIG, $scope.inits)
+        .then($scope._setScope)
+        .then(scopeUtils.success, $scope.error);
+    };
 
-      scopeUtils.set(urlParams, CONFIG, $scope.inits).then(function (response) {
-        // Set scope where possible regardless of error
-        $scope.activities = response.activities;
-        $scope.locations = response.locations;
-        $scope.params = response.params;
+    $scope._setScope = function (response) {
+      // Set scope where possible regardless of error
+      $scope.activities = response.activities;
+      $scope.locations = response.locations;
+      $scope.params = response.params;
 
-        // Partial success
-        if (response.errorMessage) {
-          dfd.reject({message: response.errorMessage, code: 500});
-        } else {
-          // Fully successful
-          dfd.resolve();
-        }
-      }, function (response) {
-        dfd.reject({message: response.errorMessage, code: 500});
-      });
-
-      return dfd.promise;
+      return response.errorMessage;
     };
 
     // Get initiatives
@@ -120,8 +112,7 @@ angular.module('sumaAnalysis')
       $scope.params.location = $scope.locations[0];
     };
 
-    // Update metadata UI wrapper, fired by
-    // init selection in form
+    // Update init metadata
     $scope.updateMetadata = function () {
       if ($scope.params.init) {
         $scope.processMetadata = true;
@@ -142,9 +133,6 @@ angular.module('sumaAnalysis')
       currentUrl = $location.search();
       currentScope = scopeUtils.getCurrentScope($scope.params, $scope.activities);
 
-      // Calling location search with the same URL will not
-      // trigger a route update, so if the currentUrl and
-      // currentScope are equal, we must manually call getData()
       if (_.isEqual(currentUrl, currentScope)) {
         $scope.getData()
           .then($scope.success, $scope.error)
