@@ -77,6 +77,19 @@ angular.module('sumaAnalysis')
           days:           this.stringifyDays(params.days)
         });
       },
+      success: function (errorMessage) {
+        var dfd = $q.defer();
+
+        // Partial success
+        if (errorMessage) {
+          dfd.reject({message: errorMessage, code: 500});
+        } else {
+          // Fully successful
+          dfd.resolve();
+        }
+
+        return dfd.promise;
+      },
       set: function (urlParams, sumaConfig, inits) {
         var activities,
             dfd = $q.defer(),
