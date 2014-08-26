@@ -113,7 +113,6 @@ describe('Controller: ReportCtrl', function () {
   it(':initialize should set defaults', function () {
     var initiativesStub,
         getInitsStub,
-        //locationStub,
         statesStub;
 
     // Stub initiatives service
@@ -122,36 +121,24 @@ describe('Controller: ReportCtrl', function () {
 
     // Stub state service
     statesStub = sinon.stub(UIStates, 'setUIState');
-
-    // Locations stub
-    // locationStub = sinon.stub(location, 'path');
-    // locationStub.returns('/timeseries');
 
     // Instantiate Controller
     ReportCtrl = Controller('ReportCtrl', {
       $scope: scope
     });
 
-    // Assertions
-    expect(scope.params.countOptions).to.deep.equal([
-      {'id':'count','title':'Count Date'},
-      {'id':'start','title':'Session Start'},
-      {'id':'end','title':'Session End'}
-      ]);
-    expect(scope.params.dayOptions).to.deep.equal(['mo','tu','we','th','fr','sa','su']);
-    expect(scope.params.sessionOptions).to.deep.equal([{'id':'no','title':'No'},{'id':'yes','title':'Yes'}]);
-    expect(scope.params.classifyCounts).to.deep.equal({'id':'count','title':'Count Date'});
-    expect(scope.params.wholeSession).to.deep.equal({'id':'no','title':'No'});
-    expect(scope.params.sdate).to.equal(moment().subtract('months', 4).format('YYYY-MM-DD'));
-    expect(scope.params.edate).to.equal(moment().format('YYYY-MM-DD'));
+    expect(initiativesStub).to.be.calledOnce;
+
+    scope.$digest();
+
+    expect(statesStub).to.be.calledOnce
 
     // Restore stubs
     initiativesStub.restore();
     statesStub.restore();
-    //locationStub.restore();
   });
 
-  it(':initialize should set state to initial on empty URL', function () {
+  it(':initialize should resolve DATA_TIMEOUT_PROMISE', function () {
     var initiativesStub,
         getInitsStub,
         statesStub;
@@ -165,41 +152,32 @@ describe('Controller: ReportCtrl', function () {
 
     // Instantiate Controller
     ReportCtrl = Controller('ReportCtrl', {
-      $scope: scope,
-      sumaConfig: SumaConfig
+      $scope: scope
     });
 
-    // Stub scope.getInits
-    getInitsStub = sinon.stub(scope, 'getInitiatives');
-    getInitsStub.returns(okResponse());
+    scope.params = {
+      init:4
+    };
+    scope.activities = [];
+    scope.locations = [];
 
-    // Call initialize again to utlize stubs
+    scope.getData();
     scope.initialize();
-    scope.$digest();
-
-    // Assertions
-    expect(UIStates.setUIState).to.be.calledWith('initial');
-    expect(UIStates.setUIState).to.be.calledTwice;
 
     // Restore stubs
     initiativesStub.restore();
-    getInitsStub.restore();
     statesStub.restore();
   });
 
-  it(':initialize should setScope and getData if URL params present', function () {
+  it(':initialize should getInitiatives, setScope and getData if URL params present but no $scope.params.init', function () {
     var initiativesStub,
         getInitsStub,
         setScopeStub,
-        statesStub,
         getDataStub;
 
     // Stub initiatives service
     initiativesStub = sinon.stub(Initiatives, 'get');
     initiativesStub.returns(okResponse());
-
-    // Stub state service
-    statesStub = sinon.stub(UIStates, 'setUIState');
 
     // Instantiate Controller
     ReportCtrl = Controller('ReportCtrl', {
@@ -214,6 +192,7 @@ describe('Controller: ReportCtrl', function () {
     setScopeStub = sinon.stub(scope, 'setScope');
     setScopeStub.returns(okResponse());
     getDataStub = sinon.stub(scope, 'getData');
+    getDataStub.returns(dataResponse());
 
     // Add parameter to URL
     location.search({id: 4});
@@ -229,29 +208,51 @@ describe('Controller: ReportCtrl', function () {
     // Restore stubs
     initiativesStub.restore();
     getInitsStub.restore();
-    statesStub.restore();
   });
 
-  it(':getInitiatives should assign inits to scope', function () {
-    var initiativesStub;
+  it(':initialize should setScope and getData if URL params and $scope.params.init present', function () {
+    var initiativesStub,
+        getInitsStub,
+        setScopeStub,
+        getDataStub;
 
     // Stub initiatives service
     initiativesStub = sinon.stub(Initiatives, 'get');
     initiativesStub.returns(okResponse());
 
-    // Instantiate controller
+    // Instantiate Controller
     ReportCtrl = Controller('ReportCtrl', {
       $scope: scope
     });
 
-    // Digest to flush promises
+    // Stub scope.getInits
+    getInitsStub = sinon.stub(scope, 'getInitiatives');
+    getInitsStub.returns(okResponse());
+
+    // Stub scope.setDefaults, scope.setScope, scope.getData
+    setScopeStub = sinon.stub(scope, 'setScope');
+    setScopeStub.returns(okResponse());
+    getDataStub = sinon.stub(scope, 'getData');
+    getDataStub.returns(dataResponse());
+
+    // Add parameter to URL
+    location.search({id: 4});
+
+    scope.params = {
+      init: 4
+    }
+
+    // Call initialize again to utlize stubs
+    scope.initialize();
     scope.$digest();
 
     // Assertions
-    expect(scope.inits).to.deep.equal({success: true});
+    expect(setScopeStub).to.be.calledOnce;
+    expect(getDataStub).to.be.calledOnce;
 
     // Restore stubs
     initiativesStub.restore();
+    getInitsStub.restore();
   });
 
   it(':scrollTo should set locationHash', function () {
@@ -299,6 +300,10 @@ describe('Controller: ReportCtrl', function () {
       $scope: scope
     });
 
+    scope.params = {
+      init: 4
+    };
+
     // Assertions
     expect(scope.actsLocs).to.equal(undefined);
     expect(scope.activities).to.equal(undefined);
@@ -336,6 +341,8 @@ describe('Controller: ReportCtrl', function () {
     getMetadataStub = sinon.stub(scope, 'getMetadata');
     getMetadataStub.returns(true);
 
+    scope.params = {};
+
     //Check branch if params.init is undefined
     scope.updateMetadata();
     scope.$digest();
@@ -345,7 +352,7 @@ describe('Controller: ReportCtrl', function () {
     scope.params = {};
     scope.params.init = {};
     scope.updateMetadata();
-    // scope.$digest();
+    scope.$digest();
 
     // Assertions
     expect(scope.processMetadata).to.equal(true);
@@ -386,6 +393,7 @@ describe('Controller: ReportCtrl', function () {
 
     // Stub data
     getDataStub = sinon.stub(scope, 'getData');
+    getDataStub.returns(okResponse());
 
     // Populate Scope
     scope.params = {};
@@ -491,45 +499,45 @@ describe('Controller: ReportCtrl', function () {
     dataStub.restore();
   });
 
-  it(':success should set scope.state and scope.data', function () {
-    var initiativesStub,
-        statesStub,
-        dataMock;
+  // it(':success should set scope.state and scope.data', function () {
+  //   var initiativesStub,
+  //       statesStub,
+  //       dataMock;
 
-    dataMock = {
-      actsLocsData: {
-        items: [{title: 'title'}]
-      },
-      barChartData: {
-        title: 'title'
-      }
-    };
+  //   dataMock = {
+  //     actsLocsData: {
+  //       items: [{title: 'title'}]
+  //     },
+  //     barChartData: {
+  //       title: 'title'
+  //     }
+  //   };
 
-    // Stub initiatives service
-    initiativesStub = sinon.stub(Initiatives, 'get');
-    initiativesStub.returns(okResponse());
+  //   // Stub initiatives service
+  //   initiativesStub = sinon.stub(Initiatives, 'get');
+  //   initiativesStub.returns(okResponse());
 
-    // Stub state service
-    statesStub = sinon.stub(UIStates, 'setUIState');
-    statesStub.returns(true);
+  //   // Stub state service
+  //   statesStub = sinon.stub(UIStates, 'setUIState');
+  //   statesStub.returns(true);
 
-    // Instantiate controller
-    ReportCtrl = Controller('ReportCtrl', {
-      $scope: scope
-    });
+  //   // Instantiate controller
+  //   ReportCtrl = Controller('ReportCtrl', {
+  //     $scope: scope
+  //   });
 
-    // Call success method
-    scope.success(dataMock);
-    scope.$digest();
+  //   // Call success method
+  //   scope.success(dataMock);
+  //   scope.$digest();
 
-    // Assertions
-    expect(scope.state).to.equal(true);
-    expect(scope.data).to.equal(dataMock);
+  //   // Assertions
+  //   expect(scope.state).to.equal(true);
+  //   expect(scope.data).to.equal(dataMock);
 
-    // Restore stubs
-    initiativesStub.restore();
-    statesStub.restore();
-  });
+  //   // Restore stubs
+  //   initiativesStub.restore();
+  //   statesStub.restore();
+  // });
 
   it(':success should set scope.state and scope.data', function () {
     var statesStub;
@@ -651,8 +659,6 @@ describe('Controller: ReportCtrl', function () {
       // Assertions
       expect(expectedScope.activities).to.deep.equal(scope.activities);
       expect(expectedScope.locations).to.deep.equal(scope.locations);
-      expect(expectedScope.actsLocs).to.deep.equal(scope.actsLocs);
-      expect(expectedScope.params).to.deep.equal(scope.params);
     });
 
     scope.$digest();
@@ -661,234 +667,5 @@ describe('Controller: ReportCtrl', function () {
     initiativesStub.restore();
     setScopeStub.restore();
     errorStub.restore();
-  });
-
-  it(':setScope should call scope.error if setScope.set fails', function () {
-    var initiativesStub,
-        urlParams,
-        setScopeStub,
-        errorStub;
-
-    initiativesStub = sinon.stub(Initiatives, 'get');
-    initiativesStub.returns(okResponse());
-
-    // Instantiate controller
-    ReportCtrl = Controller('ReportCtrl', {
-      $scope: scope
-    });
-
-    setScopeStub = sinon.stub(ScopeUtils, 'set');
-    setScopeStub.returns(errorResponse());
-
-    errorStub = sinon.stub(scope, 'error');
-
-    // Call setScope method
-    scope.setScope(urlParams).then(scope.success, scope.error);
-
-    scope.$digest();
-
-    // Assertions
-    expect(errorStub).to.be.calledOnce;
-
-    // Restore stubs
-    initiativesStub.restore();
-    setScopeStub.restore();
-    errorStub.restore();
-  });
-
-  it(':setScope should set scope values and reject if setScope.set returns errorMessage', function () {
-    var initiativesStub,
-        urlParams,
-        setScopeStub,
-        errorStub,
-        expectedScope;
-
-    expectedScope = {
-      activities: [],
-      locations: [],
-      actLocs: {acts: [], locs: []},
-      params: {}
-    };
-
-    initiativesStub = sinon.stub(Initiatives, 'get');
-    initiativesStub.returns(okResponse());
-
-    // Instantiate controller
-    ReportCtrl = Controller('ReportCtrl', {
-      $scope: scope
-    });
-
-    setScopeStub = sinon.stub(ScopeUtils, 'set');
-    setScopeStub.returns(setScopeResponseError());
-
-    errorStub = sinon.stub(scope, 'error');
-
-    // Call setScope method
-    scope.setScope(urlParams).then(function () {
-      // Assertions
-      expect(expectedScope.activities).to.deep.equal(scope.activities);
-      expect(expectedScope.locations).to.deep.equal(scope.locations);
-      expect(expectedScope.actsLocs).to.deep.equal(scope.actsLocs);
-      expect(expectedScope.params).to.deep.equal(scope.params);
-    }, scope.error);
-
-    scope.$digest();
-
-    expect(errorStub).to.be.calledOnce;
-
-    // Restore stubs
-    initiativesStub.restore();
-    setScopeStub.restore();
-    errorStub.restore();
-  });
-
-  it(':routeUpdate should resolve active promiseTimeouts, set state, and setDefaults', function () {
-    var initiativesStub,
-        statesStub,
-        dataTimeoutStub,
-        initTimeoutStub;
-
-    // Stub initiatives service
-    initiativesStub = sinon.stub(Initiatives, 'get');
-    initiativesStub.returns(okResponse());
-
-    // Stub state service
-    statesStub = sinon.stub(UIStates, 'setUIState');
-
-    // Instantiate controller
-    ReportCtrl = Controller('ReportCtrl', {
-      $scope: scope
-    });
-
-    // Define/redefine timeouts
-    scope.dataTimeoutPromise = Q.defer();
-    scope.initTimeoutPromise = undefined;
-    scope.initTimeoutPromise = Q.defer();
-
-    // Call routeUpdate()
-    scope.routeUpdate();
-
-    // Assertions
-    scope.dataTimeoutPromise.promise.then(function (message) {
-      expect(message).to.equal('resolved');
-    });
-
-    scope.initTimeoutPromise.promise.finally(function (message) {
-      expect(message).to.equal('resolved');
-    });
-
-    expect(statesStub).to.be.calledWith('initial');
-
-    scope.$digest();
-
-    // Restore stubs
-    initiativesStub.restore();
-    statesStub.restore();
-  });
-
-  it(':routeUpdate should setScope and getData when params and scope.params.init present', function () {
-    var initiativesStub,
-        locationStub,
-        setScopeStub,
-        getDataStub;
-
-    // Stub initiatives service
-    initiativesStub = sinon.stub(Initiatives, 'get');
-    initiativesStub.returns(okResponse());
-
-    locationStub = sinon.stub(location, 'search');
-    locationStub.returns({id: 4});
-
-    // Instantiate controller
-    ReportCtrl = Controller('ReportCtrl', {
-      $scope: scope
-    });
-
-    // Define/redefine timeouts
-    scope.initTimeoutPromise = undefined;
-
-    // Define scope.params.init
-    scope.params.init = {id: 4};
-
-    // Define scope.setScope
-    setScopeStub = sinon.stub(scope, 'setScope');
-    setScopeStub.returns(okResponse());
-
-    // Define scope.getData
-    getDataStub = sinon.stub(scope, 'getData');
-
-    // Call routeUpdate()
-    scope.routeUpdate();
-
-    // Assertions
-    expect(setScopeStub).to.be.calledOnce;
-
-    setScopeStub().then(function () {
-      expect(getDataStub).to.be.calledOnce;
-    });
-
-    scope.$digest();
-
-    // Restore stubs
-    initiativesStub.restore();
-    locationStub.restore();
-    setScopeStub.restore();
-    getDataStub.restore();
-  });
-
-  it(':routeUpdate should call getInitiatives when urlParams are present but scope.params.init is not', function () {
-    var initiativesStub,
-        locationStub,
-        getInitiativesStub,
-        setScopeStub,
-        getDataStub;
-
-    // Stub initiatives service
-    initiativesStub = sinon.stub(Initiatives, 'get');
-    initiativesStub.returns(okResponse());
-
-    locationStub = sinon.stub(location, 'search');
-    locationStub.returns({id: 4});
-
-    // Instantiate controller
-    ReportCtrl = Controller('ReportCtrl', {
-      $scope: scope
-    });
-
-    // Define/redefine timeouts
-    scope.initTimeoutPromise = undefined;
-
-    // Define scope.getInitiatives
-    getInitiativesStub = sinon.stub(scope, 'getInitiatives');
-    getInitiativesStub.returns(okResponse());
-
-    // Define scope.setScope
-    setScopeStub = sinon.stub(scope, 'setScope');
-    setScopeStub.returns(okResponse());
-
-    // Define scope.getData
-    getDataStub = sinon.stub(scope, 'getData');
-
-    // Call routeUpdate()
-    scope.routeUpdate();
-
-    // Assertions
-    expect(getInitiativesStub).to.be.calledOnce;
-
-    getInitiativesStub().then(function () {
-      expect(setScopeStub).to.be.calledOnce;
-
-      setScopeStub().then(function () {
-        expect(getDataStub).to.be.calledOnce;
-      });
-    });
-
-    scope.$digest();
-
-    // Restore stubs
-    initiativesStub.restore();
-    locationStub.restore();
-    setScopeStub.restore();
-    getDataStub.restore();
   });
 });
