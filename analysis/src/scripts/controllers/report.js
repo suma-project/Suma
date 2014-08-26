@@ -24,7 +24,7 @@ angular.module('sumaAnalysis')
         initTracker.cancel();
       }
 
-      if (_.isEmpty(urlParams)) { // True when navigating back to initial
+      if (_.isEmpty(urlParams)) { // Nav to initial
         $scope.getInitiatives().then(function () {
           $scope.state = uiStates.setUIState('initial');
           $scope.params = sumaConfig.setParams(CONFIG);
@@ -33,7 +33,7 @@ angular.module('sumaAnalysis')
         $scope.setScope(urlParams)
           .then($scope.getData)
           .then($scope.success, $scope.error)
-      } else { // Nav from initial to completed report
+      } else { // Nav from initial
         $scope.getInitiatives().then(function () {
           $scope.setScope(urlParams)
             .then($scope.getData)
