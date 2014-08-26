@@ -24,9 +24,6 @@ angular.module('sumaAnalysis')
         initTracker.cancel();
       }
 
-      // Attach listener for URL changes
-      $scope.$on('$routeUpdate', $scope.initialize);
-
       if (_.isEmpty(urlParams)) { // True when navigating back to initial
         $scope.getInitiatives().then(function () {
           $scope.state = uiStates.setUIState('initial');
@@ -72,7 +69,6 @@ angular.module('sumaAnalysis')
     // Get initiatives
     $scope.getInitiatives = function () {
       var cfg,
-          dfd = $q.defer(),
           loadInits;
 
       // Promise to resolve request on navigation change
@@ -86,16 +82,13 @@ angular.module('sumaAnalysis')
 
       loadInits = initiatives.get(cfg).then(function (data) {
         $scope.inits = data;
-        dfd.resolve();
-      }, function (response) {
-        dfd.reject(response);
       });
 
       // Setup promise tracker for spinner on initial load
       initTracker = promiseTracker('initTracker');
       initTracker.addPromise(loadInits);
 
-      return dfd.promise;
+      return loadInits;
     };
 
     // Submit request and draw chart
@@ -196,6 +189,9 @@ angular.module('sumaAnalysis')
       $anchorScroll();
       $location.hash(old);
     };
+
+    // Attach listener for URL changes
+    $scope.$on('$routeUpdate', $scope.initialize);
 
     // Initialize controller
     $scope.initialize();
