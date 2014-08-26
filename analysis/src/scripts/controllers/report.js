@@ -14,22 +14,35 @@ angular.module('sumaAnalysis')
       // Get report specific configs
       CONFIG = sumaConfig.getConfig($location.path());
 
-      // Set default scope values from config
-      $scope.params = sumaConfig.setParams(CONFIG);
+      // Resolve active requests
+      if (dataTimeoutPromise) {
+        dataTimeoutPromise.resolve('resolved');
+      }
+
+      if (initTimeoutPromise) {
+        initTimeoutPromise.resolve('resolved');
+        initTracker.cancel();
+      }
 
       // Attach listener for URL changes
-      $scope.$on('$routeUpdate', $scope.routeUpdate);
+      $scope.$on('$routeUpdate', $scope.initialize);
 
-      // Get initiatives
-      $scope.getInitiatives().then(function () {
-        // None bookmark navigation
-        if (_.isEmpty(urlParams)) {
+      if (_.isEmpty(urlParams)) { // True when navigating back to initial
+        $scope.getInitiatives().then(function () {
           $scope.state = uiStates.setUIState('initial');
-        } else {
-          // Bookmark navigation
-          $scope.setScope(urlParams).then($scope.getData, $scope.error);
-        }
-      });
+          $scope.params = sumaConfig.setParams(CONFIG);
+        }, $scope.error);
+      } else if ($scope.params && $scope.params.init) { // Nav between reports (common case)
+        $scope.setScope(urlParams)
+          .then($scope.getData)
+          .then($scope.success, $scope.error)
+      } else { // Nav from initial to completed report
+        $scope.getInitiatives().then(function () {
+          $scope.setScope(urlParams)
+            .then($scope.getData)
+            .then($scope.success, $scope.error);
+        }, $scope.error);
+      }
     };
 
     // Set scope.params based on urlParams
@@ -74,21 +87,15 @@ angular.module('sumaAnalysis')
       loadInits = initiatives.get(cfg).then(function (data) {
         $scope.inits = data;
         dfd.resolve();
-      }, $scope.error);
+      }, function (response) {
+        dfd.reject(response);
+      });
 
       // Setup promise tracker for spinner on initial load
       initTracker = promiseTracker('initTracker');
       initTracker.addPromise(loadInits);
 
       return dfd.promise;
-    };
-
-    // Get initiative metadata
-    $scope.getMetadata = function () {
-      var actsLocsArys = actsLocs.get($scope.params.init);
-      $scope.activities = actsLocsArys.activities;
-      $scope.locations = actsLocsArys.locations;
-      $scope.params.location = $scope.locations[0];
     };
 
     // Submit request and draw chart
@@ -109,8 +116,15 @@ angular.module('sumaAnalysis')
         timeout:        180000
       };
 
-      data[CONFIG.dataSource](cfg)
-        .then($scope.success, $scope.error);
+      return data[CONFIG.dataSource](cfg);
+    };
+
+    // Get initiative metadata
+    $scope.getMetadata = function () {
+      var actsLocsArys       = actsLocs.get($scope.params.init);
+      $scope.activities      = actsLocsArys.activities;
+      $scope.locations       = actsLocsArys.locations;
+      $scope.params.location = $scope.locations[0];
     };
 
     // Update metadata UI wrapper, fired by
@@ -118,7 +132,6 @@ angular.module('sumaAnalysis')
     $scope.updateMetadata = function () {
       if ($scope.params.init) {
         $scope.processMetadata = true;
-
         $scope.getMetadata();
 
         // Artificially add a delay for UI
@@ -128,64 +141,20 @@ angular.module('sumaAnalysis')
       }
     };
 
-    // Respond to routeUpdate event
-    $scope.routeUpdate = function () {
-      var urlParams = $location.search();
-
-      // Resolve active requests
-      if (dataTimeoutPromise) {
-        dataTimeoutPromise.resolve('resolved');
-      }
-
-      if (initTimeoutPromise) {
-        initTimeoutPromise.resolve('resolved');
-        initTracker.cancel();
-      }
-
-      if (_.isEmpty(urlParams)) { // True when navigating back to initial
-        $scope.state = uiStates.setUIState('initial');
-        $scope.params = sumaConfig.setParams(CONFIG);
-      } else if ($scope.params.init){ // Typical navigation between reports (most common case)
-        $scope.setScope(urlParams).then($scope.getData, $scope.error);
-      } else { // Navigation from initial to completed report
-        $scope.getInitiatives().then(function () {
-          $scope.setScope(urlParams).then($scope.getData, $scope.error);
-        });
-      }
-    };
-
     // Submit form and set URL
     $scope.submit = function () {
       var currentUrl,
           currentScope;
 
-      // Current URL for comparison
       currentUrl = $location.search();
+      currentScope = scopeUtils.getCurrentScope($scope.params, $scope.activities);
 
-      // Map current scope to object for comparison/setting
-      currentScope = {
-        id: String($scope.params.init.id),
-        sdate:          $scope.params.sdate || $scope.params.sdate === '' ? $scope.params.sdate : null,
-        edate:          $scope.params.edate || $scope.params.edate === '' ? $scope.params.edate : null,
-        stime:          $scope.params.stime || $scope.params.stime === '' ? $scope.params.stime : null,
-        etime:          $scope.params.etime || $scope.params.etime === '' ? $scope.params.etime : null,
-        classifyCounts: $scope.params.classifyCounts ? $scope.params.classifyCounts.id : null,
-        wholeSession:   $scope.params.wholeSession ? $scope.params.wholeSession.id : null,
-        zeroCounts:     $scope.params.zeroCounts ? $scope.params.zeroCounts.id : null,
-        requireActs:    scopeUtils.stringifyActs($scope.activities, 'require'),
-        excludeActs:    scopeUtils.stringifyActs($scope.activities, 'exclude'),
-        requireActGrps: scopeUtils.stringifyActs($scope.activities, 'require', true),
-        excludeActGrps: scopeUtils.stringifyActs($scope.activities, 'exclude', true),
-        location:       $scope.params.location ? $scope.params.location.id : null,
-        days:           scopeUtils.stringifyDays($scope.params.days)
-      };
-
-      // Remove empty fields
-      currentScope = _.compactObject(currentScope);
-
-      // Resubmit if equal, set URL if not and fire RouteUpdate
+      // Calling location search with the same URL will not
+      // trigger a route update, so if the currentUrl and
+      // currentScope are equal, we must manually call getData()
       if (_.isEqual(currentUrl, currentScope)) {
-        $scope.getData();
+        $scope.getData()
+          .then($scope.success, $scope.error)
       } else {
         $location.search(currentScope);
       }
@@ -194,28 +163,30 @@ angular.module('sumaAnalysis')
     // Display error message
     $scope.error = function (data) {
       if (!data.promiseTimeout) {
-        $scope.state = uiStates.setUIState('error');
+        $scope.state        = uiStates.setUIState('error');
         $scope.errorMessage = data.message;
-        $scope.errorCode = data.code;
+        $scope.errorCode    = data.code;
       }
     };
 
     // Assign data to scope and set state
     $scope.success = function (processedData) {
-      $scope.state = uiStates.setUIState('success');
-      $scope.data = processedData;
+      $scope.state         = uiStates.setUIState('success');
+      $scope.data          = processedData;
       $scope.summaryParams = angular.copy($scope.params);
 
       // Supplemental bar chart
       if (CONFIG.suppWatch) {
-        $scope.$watch('data.actsLocsData', function () {
-          var index = _.findIndex($scope.data.actsLocsData.items, function (item) {
-            return item.title === $scope.data.barChartData.title;
-          });
-
-          $scope.data.barChartData = $scope.data.actsLocsData.items[index];
-        });
+        $scope.$watch('data.actsLocsData', $scope.updateBarChart);
       }
+    };
+
+    $scope.updateBarChart = function () {
+      var index = _.findIndex($scope.data.actsLocsData.items, function (item) {
+        return item.title === $scope.data.barChartData.title;
+      });
+
+      $scope.data.barChartData = $scope.data.actsLocsData.items[index];
     };
 
     // Handle anchor links
@@ -223,8 +194,6 @@ angular.module('sumaAnalysis')
       var old = $location.hash();
       $location.hash(id);
       $anchorScroll();
-
-      // Reset to old to suppress routing logic
       $location.hash(old);
     };
 
