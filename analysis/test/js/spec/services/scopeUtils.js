@@ -333,6 +333,6 @@ describe('Service: ScopeUtils', function () {
   it('ScopeUtils:success should reject if error message exists', function () {
     ScopeUtils.success('ERROR').then(function (response) {
       expect(response).to.equal({message: 'ERROR', code: 500});
-    })
+    });
   });
 });

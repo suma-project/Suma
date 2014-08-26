@@ -131,7 +131,7 @@ describe('Controller: ReportCtrl', function () {
 
     scope.$digest();
 
-    expect(statesStub).to.be.calledOnce
+    expect(statesStub).to.be.calledOnce;
 
     // Restore stubs
     initiativesStub.restore();
@@ -240,7 +240,7 @@ describe('Controller: ReportCtrl', function () {
 
     scope.params = {
       init: 4
-    }
+    };
 
     // Call initialize again to utlize stubs
     scope.initialize();

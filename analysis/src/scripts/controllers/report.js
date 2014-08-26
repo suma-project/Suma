@@ -32,7 +32,7 @@ angular.module('sumaAnalysis')
       } else if ($scope.params && $scope.params.init) { // Nav between reports (common case)
         $scope.setScope(urlParams)
           .then($scope.getData)
-          .then($scope.success, $scope.error)
+          .then($scope.success, $scope.error);
       } else { // Nav from initial
         $scope.getInitiatives().then(function () {
           $scope.setScope(urlParams)
@@ -135,7 +135,7 @@ angular.module('sumaAnalysis')
 
       if (_.isEqual(currentUrl, currentScope)) {
         $scope.getData()
-          .then($scope.success, $scope.error)
+          .then($scope.success, $scope.error);
       } else {
         $location.search(currentScope);
       }
