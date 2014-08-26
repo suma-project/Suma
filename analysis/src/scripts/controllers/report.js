@@ -3,9 +3,9 @@
 angular.module('sumaAnalysis')
   .controller('ReportCtrl', function ($anchorScroll, $location, $q, $scope, $timeout, promiseTracker, actsLocs, data, initiatives, scopeUtils, sumaConfig, uiStates) {
     var CONFIG,
-      dataTimeoutPromise,
-      initTimeoutPromise,
-      initTracker;
+      DATA_TIMEOUT_PROMISE,
+      INIT_TIMEOUT_PROMISE,
+      INIT_TRACKER;
 
     // Initialize controller
     $scope.initialize = function () {
@@ -15,13 +15,13 @@ angular.module('sumaAnalysis')
       CONFIG = sumaConfig.getConfig($location.path());
 
       // Resolve active requests
-      if (dataTimeoutPromise) {
-        dataTimeoutPromise.resolve('resolved');
+      if (DATA_TIMEOUT_PROMISE) {
+        DATA_TIMEOUT_PROMISE.resolve('resolved');
       }
 
-      if (initTimeoutPromise) {
-        initTimeoutPromise.resolve('resolved');
-        initTracker.cancel();
+      if (INIT_TIMEOUT_PROMISE) {
+        INIT_TIMEOUT_PROMISE.resolve('resolved');
+        INIT_TRACKER.cancel();
       }
 
       if (_.isEmpty(urlParams)) { // Nav to initial
@@ -72,11 +72,11 @@ angular.module('sumaAnalysis')
           loadInits;
 
       // Promise to resolve request on navigation change
-      initTimeoutPromise = $q.defer();
+      INIT_TIMEOUT_PROMISE = $q.defer();
 
       // Promise/Explicit timeouts
       cfg = {
-        timeoutPromise: initTimeoutPromise,
+        timeoutPromise: INIT_TIMEOUT_PROMISE,
         timeout: 180000
       };
 
@@ -85,8 +85,8 @@ angular.module('sumaAnalysis')
       });
 
       // Setup promise tracker for spinner on initial load
-      initTracker = promiseTracker('initTracker');
-      initTracker.addPromise(loadInits);
+      INIT_TRACKER = promiseTracker('initTracker');
+      INIT_TRACKER.addPromise(loadInits);
 
       return loadInits;
     };
@@ -96,7 +96,7 @@ angular.module('sumaAnalysis')
       var cfg;
 
       // Promise to resolve request on navigation change
-      dataTimeoutPromise = $q.defer();
+      DATA_TIMEOUT_PROMISE = $q.defer();
       $scope.state = uiStates.setUIState('loading');
 
       // Includes promise/explicit timeout values
@@ -105,7 +105,7 @@ angular.module('sumaAnalysis')
         acts:           $scope.activities,
         locs:           $scope.locations,
         dataProcessor:  CONFIG.dataProcessor,
-        timeoutPromise: dataTimeoutPromise,
+        timeoutPromise: DATA_TIMEOUT_PROMISE,
         timeout:        180000
       };
 
