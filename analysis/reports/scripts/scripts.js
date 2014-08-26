@@ -48769,117 +48769,103 @@ angular.module('sumaAnalysis', [
 ]);
 'use strict';
 angular.module('sumaAnalysis').controller('ReportCtrl', [
-  '$scope',
-  '$http',
-  '$location',
   '$anchorScroll',
+  '$location',
+  '$q',
+  '$scope',
   '$timeout',
-  'initiatives',
+  'promiseTracker',
   'actsLocs',
   'data',
-  'promiseTracker',
-  'uiStates',
-  '$routeParams',
-  '$q',
+  'initiatives',
   'scopeUtils',
   'sumaConfig',
-  function ($scope, $http, $location, $anchorScroll, $timeout, initiatives, actsLocs, data, promiseTracker, uiStates, $routeParams, $q, scopeUtils, sumaConfig) {
+  'uiStates',
+  function ($anchorScroll, $location, $q, $scope, $timeout, promiseTracker, actsLocs, data, initiatives, scopeUtils, sumaConfig, uiStates) {
+    var CONFIG, DATA_TIMEOUT_PROMISE, INIT_TIMEOUT_PROMISE, INIT_TRACKER;
     // Initialize controller
     $scope.initialize = function () {
       var urlParams = $location.search();
       // Get report specific configs
-      $scope.sumaConfig = sumaConfig.getConfig($location.path());
-      // Set default scope values from config
-      $scope.setDefaults();
-      // Attach listener for URL changes
-      $scope.$on('$routeUpdate', $scope.routeUpdate);
-      // Get initiatives
-      $scope.getInitiatives().then(function () {
-        // None bookmark navigation
-        if (_.isEmpty(urlParams)) {
+      CONFIG = sumaConfig.getConfig($location.path());
+      // Resolve active requests
+      if (DATA_TIMEOUT_PROMISE) {
+        DATA_TIMEOUT_PROMISE.resolve('resolved');
+      }
+      if (INIT_TIMEOUT_PROMISE) {
+        INIT_TIMEOUT_PROMISE.resolve('resolved');
+        INIT_TRACKER.cancel();
+      }
+      if (_.isEmpty(urlParams)) {
+        // Nav to initial
+        $scope.getInitiatives().then(function () {
           $scope.state = uiStates.setUIState('initial');
-        } else {
-          // Bookmark navigation
-          $scope.setScope(urlParams).then($scope.getData, $scope.error);
-        }
-      });
-    };
-    // Set default form values
-    $scope.setDefaults = function () {
-      $scope.params = sumaConfig.setParams($scope.sumaConfig);
+          $scope.params = sumaConfig.setParams(CONFIG);
+        }, $scope.error);
+      } else if ($scope.params && $scope.params.init) {
+        // Nav between reports (common case)
+        $scope.setScope(urlParams).then($scope.getData).then($scope.success, $scope.error);
+      } else {
+        // Nav from initial
+        $scope.getInitiatives().then(function () {
+          $scope.setScope(urlParams).then($scope.getData).then($scope.success, $scope.error);
+        }, $scope.error);
+      }
     };
     // Set scope.params based on urlParams
     $scope.setScope = function (urlParams) {
-      var dfd = $q.defer();
-      scopeUtils.set(urlParams, $scope.sumaConfig, $scope.inits).then(function (response) {
-        // Set scope where possible regardless of error
-        $scope.actsLocs = response.actsLocs;
-        $scope.activities = response.activities;
-        $scope.locations = response.locations;
-        $scope.params = response.params;
-        // Partial success
-        if (response.errorMessage) {
-          dfd.reject({
-            message: response.errorMessage,
-            code: 500
-          });
-        } else {
-          // Fully successful
-          dfd.resolve();
-        }
-      }, function (response) {
-        dfd.reject({
-          message: response.errorMessage,
-          code: 500
-        });
-      });
-      return dfd.promise;
+      return scopeUtils.set(urlParams, CONFIG, $scope.inits).then($scope._setScope).then(scopeUtils.success, $scope.error);
+    };
+    $scope._setScope = function (response) {
+      // Set scope where possible regardless of error
+      $scope.activities = response.activities;
+      $scope.locations = response.locations;
+      $scope.params = response.params;
+      return response.errorMessage;
     };
     // Get initiatives
     $scope.getInitiatives = function () {
-      var cfg, dfd = $q.defer();
+      var cfg, loadInits;
       // Promise to resolve request on navigation change
-      $scope.initTimeoutPromise = $q.defer();
+      INIT_TIMEOUT_PROMISE = $q.defer();
       // Promise/Explicit timeouts
       cfg = {
-        timeoutPromise: $scope.initTimeoutPromise,
+        timeoutPromise: INIT_TIMEOUT_PROMISE,
         timeout: 180000
       };
-      $scope.loadInits = initiatives.get(cfg).then(function (data) {
+      loadInits = initiatives.get(cfg).then(function (data) {
         $scope.inits = data;
-        dfd.resolve();
-      }, $scope.error);
+      });
       // Setup promise tracker for spinner on initial load
-      $scope.finder = promiseTracker('initTracker');
-      $scope.finder.addPromise($scope.loadInits);
-      return dfd.promise;
-    };
-    // Get initiative metadata
-    $scope.getMetadata = function () {
-      $scope.actsLocs = actsLocs.get($scope.params.init);
-      $scope.activities = $scope.actsLocs.activities;
-      $scope.locations = $scope.actsLocs.locations;
-      $scope.params.location = $scope.locations[0];
+      INIT_TRACKER = promiseTracker('initTracker');
+      INIT_TRACKER.addPromise(loadInits);
+      return loadInits;
     };
     // Submit request and draw chart
     $scope.getData = function () {
       var cfg;
       // Promise to resolve request on navigation change
-      $scope.dataTimeoutPromise = $q.defer();
+      DATA_TIMEOUT_PROMISE = $q.defer();
       $scope.state = uiStates.setUIState('loading');
       // Includes promise/explicit timeout values
       cfg = {
         params: $scope.params,
         acts: $scope.activities,
         locs: $scope.locations,
-        dataProcessor: $scope.sumaConfig.dataProcessor,
-        timeoutPromise: $scope.dataTimeoutPromise,
+        dataProcessor: CONFIG.dataProcessor,
+        timeoutPromise: DATA_TIMEOUT_PROMISE,
         timeout: 180000
       };
-      data[$scope.sumaConfig.dataSource](cfg).then($scope.success, $scope.error);
+      return data[CONFIG.dataSource](cfg);
     };
-    // Update metadata UI wrapper, fired by
-    // init selection in form
+    // Get initiative metadata
+    $scope.getMetadata = function () {
+      var actsLocsArys = actsLocs.get($scope.params.init);
+      $scope.activities = actsLocsArys.activities;
+      $scope.locations = actsLocsArys.locations;
+      $scope.params.location = $scope.locations[0];
+    };
+    // Update init metadata
     $scope.updateMetadata = function () {
       if ($scope.params.init) {
         $scope.processMetadata = true;
@@ -48890,58 +48876,13 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
         }, 400);
       }
     };
-    // Respond to routeUpdate event
-    $scope.routeUpdate = function () {
-      var urlParams = $location.search();
-      // Resolve active requests
-      if ($scope.dataTimeoutPromise) {
-        $scope.dataTimeoutPromise.resolve('resolved');
-      }
-      if ($scope.initTimeoutPromise) {
-        $scope.initTimeoutPromise.resolve('resolved');
-        $scope.finder.cancel();
-      }
-      if (_.isEmpty(urlParams)) {
-        // True when navigating back to initial
-        $scope.state = uiStates.setUIState('initial');
-        $scope.setDefaults();
-      } else if ($scope.params.init) {
-        // Typical navigation between reports (most common case)
-        $scope.setScope(urlParams).then($scope.getData, $scope.error);
-      } else {
-        // Navigation from initial to completed report
-        $scope.getInitiatives().then(function () {
-          $scope.setScope(urlParams).then($scope.getData, $scope.error);
-        });
-      }
-    };
     // Submit form and set URL
     $scope.submit = function () {
       var currentUrl, currentScope;
-      // Current URL for comparison
       currentUrl = $location.search();
-      // Map current scope to object for comparison/setting
-      currentScope = {
-        id: String($scope.params.init.id),
-        sdate: $scope.params.sdate || $scope.params.sdate === '' ? $scope.params.sdate : null,
-        edate: $scope.params.edate || $scope.params.edate === '' ? $scope.params.edate : null,
-        stime: $scope.params.stime || $scope.params.stime === '' ? $scope.params.stime : null,
-        etime: $scope.params.etime || $scope.params.etime === '' ? $scope.params.etime : null,
-        classifyCounts: $scope.params.classifyCounts ? $scope.params.classifyCounts.id : null,
-        wholeSession: $scope.params.wholeSession ? $scope.params.wholeSession.id : null,
-        zeroCounts: $scope.params.zeroCounts ? $scope.params.zeroCounts.id : null,
-        requireActs: scopeUtils.stringifyActs($scope.activities, 'require'),
-        excludeActs: scopeUtils.stringifyActs($scope.activities, 'exclude'),
-        requireActGrps: scopeUtils.stringifyActs($scope.activities, 'require', true),
-        excludeActGrps: scopeUtils.stringifyActs($scope.activities, 'exclude', true),
-        location: $scope.params.location ? $scope.params.location.id : null,
-        days: scopeUtils.stringifyDays($scope.params.days)
-      };
-      // Remove empty fields
-      currentScope = _.compactObject(currentScope);
-      // Resubmit if equal, set URL if not and fire RouteUpdate
+      currentScope = scopeUtils.getCurrentScope($scope.params, $scope.activities);
       if (_.isEqual(currentUrl, currentScope)) {
-        $scope.getData();
+        $scope.getData().then($scope.success, $scope.error);
       } else {
         $location.search(currentScope);
       }
@@ -48960,23 +48901,25 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
       $scope.data = processedData;
       $scope.summaryParams = angular.copy($scope.params);
       // Supplemental bar chart
-      if ($scope.sumaConfig.suppWatch) {
-        $scope.$watch('data.actsLocsData', function () {
-          var index = _.findIndex($scope.data.actsLocsData.items, function (item) {
-              return item.title === $scope.data.barChartData.title;
-            });
-          $scope.data.barChartData = $scope.data.actsLocsData.items[index];
-        });
+      if (CONFIG.suppWatch) {
+        $scope.$watch('data.actsLocsData', $scope.updateBarChart);
       }
+    };
+    $scope.updateBarChart = function () {
+      var index = _.findIndex($scope.data.actsLocsData.items, function (item) {
+          return item.title === $scope.data.barChartData.title;
+        });
+      $scope.data.barChartData = $scope.data.actsLocsData.items[index];
     };
     // Handle anchor links
     $scope.scrollTo = function (id) {
       var old = $location.hash();
       $location.hash(id);
       $anchorScroll();
-      // Reset to old to suppress routing logic
       $location.hash(old);
     };
+    // Attach listener for URL changes
+    $scope.$on('$routeUpdate', $scope.initialize);
     // Initialize controller
     $scope.initialize();
   }
@@ -49321,6 +49264,38 @@ angular.module('sumaAnalysis').factory('scopeUtils', [
       },
       getMetadata: function (init) {
         return actsLocs.get(init);
+      },
+      getCurrentScope: function (params, acts) {
+        return _.compactObject({
+          id: String(params.init.id),
+          sdate: params.sdate || params.sdate === '' ? params.sdate : null,
+          edate: params.edate || params.edate === '' ? params.edate : null,
+          stime: params.stime || params.stime === '' ? params.stime : null,
+          etime: params.etime || params.etime === '' ? params.etime : null,
+          classifyCounts: params.classifyCounts ? params.classifyCounts.id : null,
+          wholeSession: params.wholeSession ? params.wholeSession.id : null,
+          zeroCounts: params.zeroCounts ? params.zeroCounts.id : null,
+          requireActs: this.stringifyActs(acts, 'require'),
+          excludeActs: this.stringifyActs(acts, 'exclude'),
+          requireActGrps: this.stringifyActs(acts, 'require', true),
+          excludeActGrps: this.stringifyActs(acts, 'exclude', true),
+          location: params.location ? params.location.id : null,
+          days: this.stringifyDays(params.days)
+        });
+      },
+      success: function (errorMessage) {
+        var dfd = $q.defer();
+        // Partial success
+        if (errorMessage) {
+          dfd.reject({
+            message: errorMessage,
+            code: 500
+          });
+        } else {
+          // Fully successful
+          dfd.resolve();
+        }
+        return dfd.promise;
       },
       set: function (urlParams, sumaConfig, inits) {
         var activities, dfd = $q.defer(), errors = [], errorMessage, excludeActsAry, excludeActGrpsAry, locations, metadata, newParams = {}, requireActsAry, requireActGrpsAry;
