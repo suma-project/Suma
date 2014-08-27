@@ -2,15 +2,14 @@
 
 angular.module('sumaAnalysis')
   .controller('ReportCtrl', function ($anchorScroll, $location, $q, $scope, $timeout, promiseTracker, actsLocs, data, initiatives, scopeUtils, sumaConfig, uiStates) {
-    var CONFIG,
-      vm = this;
+    var vm = this;
 
     // Initialize controller
     vm.initialize = function () {
       var urlParams = $location.search();
 
       // Get report specific configs
-      CONFIG = sumaConfig.getConfig($location.path());
+      vm.config = sumaConfig.getConfig($location.path());
 
       // Resolve active requests
       if (vm.dataTimeoutPromise) {
@@ -22,16 +21,17 @@ angular.module('sumaAnalysis')
         vm.initTracker.cancel();
       }
 
-      if (_.isEmpty(urlParams)) { // Nav to initial
+      // Nav to initial, between reports, from initial
+      if (_.isEmpty(urlParams)) {
         vm.getInitiatives().then(function () {
-          vm.state = uiStates.setUIState('initial');
-          vm.params = sumaConfig.setParams(CONFIG);
+          vm.state  = uiStates.setUIState('initial');
+          vm.params = sumaConfig.setParams(vm.config);
         }, vm.error);
-      } else if (vm.params && vm.params.init) { // Nav between reports (common case)
+      } else if (vm.params && vm.params.init) {
         vm.setScope(urlParams)
           .then(vm.getData)
           .then(vm.success, vm.error);
-      } else { // Nav from initial
+      } else {
         vm.getInitiatives().then(function () {
           vm.setScope(urlParams)
             .then(vm.getData)
@@ -42,7 +42,7 @@ angular.module('sumaAnalysis')
 
     // Set scope.params based on urlParams
     vm.setScope = function (urlParams) {
-      return scopeUtils.set(urlParams, CONFIG, vm.inits)
+      return scopeUtils.set(urlParams, vm.config, vm.inits)
         .then(vm._setScope)
         .then(scopeUtils.success, vm.error);
     };
@@ -50,8 +50,8 @@ angular.module('sumaAnalysis')
     vm._setScope = function (response) {
       // Set scope where possible regardless of error
       vm.activities = response.activities;
-      vm.locations = response.locations;
-      vm.params = response.params;
+      vm.locations  = response.locations;
+      vm.params     = response.params;
 
       return response.errorMessage;
     };
@@ -94,17 +94,17 @@ angular.module('sumaAnalysis')
         params:         vm.params,
         acts:           vm.activities,
         locs:           vm.locations,
-        dataProcessor:  CONFIG.dataProcessor,
+        dataProcessor:  vm.config.dataProcessor,
         timeoutPromise: vm.dataTimeoutPromise,
         timeout:        180000
       };
 
-      return data[CONFIG.dataSource](cfg);
+      return data[vm.config.dataSource](cfg);
     };
 
     // Get initiative metadata
     vm.getMetadata = function () {
-      var actsLocsArys       = actsLocs.get(vm.params.init);
+      var actsLocsArys   = actsLocs.get(vm.params.init);
       vm.activities      = actsLocsArys.activities;
       vm.locations       = actsLocsArys.locations;
       vm.params.location = vm.locations[0];
@@ -132,8 +132,7 @@ angular.module('sumaAnalysis')
       currentScope = scopeUtils.getCurrentScope(vm.params, vm.activities);
 
       if (_.isEqual(currentUrl, currentScope)) {
-        vm.getData()
-          .then(vm.success, vm.error);
+        vm.getData().then(vm.success, vm.error);
       } else {
         $location.search(currentScope);
       }

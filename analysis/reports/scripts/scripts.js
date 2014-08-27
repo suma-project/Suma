@@ -48782,12 +48782,12 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
   'sumaConfig',
   'uiStates',
   function ($anchorScroll, $location, $q, $scope, $timeout, promiseTracker, actsLocs, data, initiatives, scopeUtils, sumaConfig, uiStates) {
-    var CONFIG, vm = this;
+    var vm = this;
     // Initialize controller
     vm.initialize = function () {
       var urlParams = $location.search();
       // Get report specific configs
-      CONFIG = sumaConfig.getConfig($location.path());
+      vm.config = sumaConfig.getConfig($location.path());
       // Resolve active requests
       if (vm.dataTimeoutPromise) {
         vm.dataTimeoutPromise.resolve('resolved');
@@ -48796,17 +48796,15 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
         vm.initTimeoutPromise.resolve('resolved');
         vm.initTracker.cancel();
       }
+      // Nav to initial, between reports, from initial
       if (_.isEmpty(urlParams)) {
-        // Nav to initial
         vm.getInitiatives().then(function () {
           vm.state = uiStates.setUIState('initial');
-          vm.params = sumaConfig.setParams(CONFIG);
+          vm.params = sumaConfig.setParams(vm.config);
         }, vm.error);
       } else if (vm.params && vm.params.init) {
-        // Nav between reports (common case)
         vm.setScope(urlParams).then(vm.getData).then(vm.success, vm.error);
       } else {
-        // Nav from initial
         vm.getInitiatives().then(function () {
           vm.setScope(urlParams).then(vm.getData).then(vm.success, vm.error);
         }, vm.error);
@@ -48814,7 +48812,7 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
     };
     // Set scope.params based on urlParams
     vm.setScope = function (urlParams) {
-      return scopeUtils.set(urlParams, CONFIG, vm.inits).then(vm._setScope).then(scopeUtils.success, vm.error);
+      return scopeUtils.set(urlParams, vm.config, vm.inits).then(vm._setScope).then(scopeUtils.success, vm.error);
     };
     vm._setScope = function (response) {
       // Set scope where possible regardless of error
@@ -48852,11 +48850,11 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
         params: vm.params,
         acts: vm.activities,
         locs: vm.locations,
-        dataProcessor: CONFIG.dataProcessor,
+        dataProcessor: vm.config.dataProcessor,
         timeoutPromise: vm.dataTimeoutPromise,
         timeout: 180000
       };
-      return data[CONFIG.dataSource](cfg);
+      return data[vm.config.dataSource](cfg);
     };
     // Get initiative metadata
     vm.getMetadata = function () {
