@@ -111,73 +111,6 @@ describe('Service: ScopeUtils', function () {
       expect(response.activities).to.deep.equal([{id: 'all', filter: 'allow'}]);
       expect(response.locations).to.deep.equal([{id: 'all'}]);
       expect(response.errorMessage).to.equal(undefined);
-      expect(response.params).to.deep.equal(expectedScope);
-    });
-
-    scope.$digest();
-
-    // Restore Stubs
-    getMetadataStub.restore();
-  });
-
-  it('ScopeUtils:set should return a params object if params are valid', function () {
-    var expectedScope,
-        getMetadataStub,
-        urlParams,
-        inits;
-
-    // mock urlParams
-    urlParams = {
-      id: 4,
-      classifyCounts: 'count',
-      days: 'mo,tu,we,th,fr,sa,su',
-      wholeSession: 'no',
-      zeroCounts: 'no',
-      sdate: '20131111',
-      edate: '20140101',
-      stime: '0400',
-      etime: '1600',
-      location: 'all',
-      requireActs: '',
-      excludeActs: '',
-      requireActGrps: '',
-      excludeActGrps: ''
-    };
-
-    // expected Scope
-    expectedScope = {
-      init: {id: 4},
-      classifyCounts: {id: 'count', title: 'Count Date'},
-      wholeSession: {id: 'no', title: 'No'},
-      zeroCounts: {id: 'no', title: 'No'},
-      days: ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su'],
-      location: {id: 'all'},
-      sdate: '20131111',
-      edate: '20140101',
-      stime: '0400',
-      etime: '1600',
-      requireActs: [''],
-      excludeActs: [''],
-      requireActGrps: [''],
-      excludeActGrps: ['']
-    };
-
-    // mock inits
-    inits = [{id: 4}, {id: 5}];
-
-    // Stub ScopeUtils.getMetadata
-    getMetadataStub = sinon.stub(ScopeUtils, 'getMetadata');
-    getMetadataStub.returns({activities: [{id: '4', type: 'activity'}], locations: [{id: 'all'}]});
-
-    // Call ScopeUtils.set
-    ScopeUtils.set(urlParams, SumaConfig, inits).then(function (response) {
-
-      // Assertions
-      expect(response.actsLocs).to.deep.equal({activities: [{id: '4', type: 'activity', filter: 'allow'}], locations: [{id: 'all'}]});
-      expect(response.activities).to.deep.equal([{id: '4', type: 'activity', filter: 'allow'}]);
-      expect(response.locations).to.deep.equal([{id: 'all'}]);
-      expect(response.errorMessage).to.equal(undefined);
-      expect(response.params).to.deep.equal(expectedScope);
     });
 
     scope.$digest();
@@ -395,5 +328,11 @@ describe('Service: ScopeUtils', function () {
 
     // Assertions
     expect(newActs).to.deep.equal(expectedNewActs);
+  });
+
+  it('ScopeUtils:success should reject if error message exists', function () {
+    ScopeUtils.success('ERROR').then(function (response) {
+      expect(response).to.equal({message: 'ERROR', code: 500});
+    });
   });
 });

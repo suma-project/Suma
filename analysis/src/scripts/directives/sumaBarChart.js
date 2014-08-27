@@ -266,7 +266,7 @@ angular.module('sumaAnalysis')
 
     return {
       restrict: 'A',
-      scope: {data: '='},
+      scope: {data: '=', actsLocs: '='},
       link: function postLink(scope, element, attrs) {
         var chart = new BarChart();
 
@@ -276,6 +276,16 @@ angular.module('sumaAnalysis')
 
         scope.$watch('data', function (newData) {
           return scope.render(newData);
+        });
+
+        scope.$watch('actsLocs', function (newData) {
+          if (newData) {
+            var index = _.findIndex(scope.actsLocs.items, function (item) {
+              return item.title === scope.data.title;
+            });
+
+            scope.data = scope.actsLocs.items[index];
+          }
         });
 
         scope.render = function (data) {

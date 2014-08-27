@@ -59,6 +59,37 @@ angular.module('sumaAnalysis')
       getMetadata: function (init) {
         return actsLocs.get(init);
       },
+      getCurrentScope: function (params, acts) {
+        return _.compactObject({
+          id:             String(params.init.id),
+          sdate:          params.sdate || params.sdate === '' ? params.sdate : null,
+          edate:          params.edate || params.edate === '' ? params.edate : null,
+          stime:          params.stime || params.stime === '' ? params.stime : null,
+          etime:          params.etime || params.etime === '' ? params.etime : null,
+          classifyCounts: params.classifyCounts ? params.classifyCounts.id : null,
+          wholeSession:   params.wholeSession ? params.wholeSession.id : null,
+          zeroCounts:     params.zeroCounts ? params.zeroCounts.id : null,
+          requireActs:    this.stringifyActs(acts, 'require'),
+          excludeActs:    this.stringifyActs(acts, 'exclude'),
+          requireActGrps: this.stringifyActs(acts, 'require', true),
+          excludeActGrps: this.stringifyActs(acts, 'exclude', true),
+          location:       params.location ? params.location.id : null,
+          days:           this.stringifyDays(params.days)
+        });
+      },
+      success: function (errorMessage) {
+        var dfd = $q.defer();
+
+        // Partial success
+        if (errorMessage) {
+          dfd.reject({message: errorMessage, code: 500});
+        } else {
+          // Fully successful
+          dfd.resolve();
+        }
+
+        return dfd.promise;
+      },
       set: function (urlParams, sumaConfig, inits) {
         var activities,
             dfd = $q.defer(),
@@ -84,6 +115,8 @@ angular.module('sumaAnalysis')
               return String(e.id) === String(urlParams.classifyCounts);
             });
 
+            newParams.countOptions = sumaConfig.formData.countOptions;
+
             if (!newParams.classifyCounts) {
               errors.push('Invalid value for classifyCounts. Valid values are "count", "start", or "end".');
             }
@@ -94,6 +127,8 @@ angular.module('sumaAnalysis')
               return String(e.id) === String(urlParams.wholeSession);
             });
 
+            newParams.sessionOptions = sumaConfig.formData.sessionOptions;
+
             if (!newParams.wholeSession) {
               errors.push('Invalid value for wholeSession. Valid values are "yes" or "no".');
             }
@@ -103,6 +138,8 @@ angular.module('sumaAnalysis')
             newParams.zeroCounts = _.find(sumaConfig.formData.zeroOptions, function (e, i) {
               return String(e.id) === String(urlParams.zeroCounts);
             });
+
+            newParams.zeroOptions = sumaConfig.formData.zeroOptions;
 
             if (!newParams.zeroCounts) {
               errors.push('Invalid value for zeroCounts. Valid values are "yes" or "no".');
@@ -116,6 +153,8 @@ angular.module('sumaAnalysis')
             } else {
               newParams.days = [];
             }
+
+            newParams.dayOptions = sumaConfig.formData.dayOptions;
 
             if (!newParams.days || newParams.days.length === 0) {
               errors.push('At least one calendar day should be selected. Valid values are "mo", "tu", "we", "th", "fr", "sa", "su". Values should be separated by a comma.');
