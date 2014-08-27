@@ -30,7 +30,7 @@
   <div class="row">
     <div class="col-xs-12 chart-wrapper">
       <div class="loading" data-ng-show="state.loading"><img src="images/spinner.gif" alt="Spinner"></div>
-      <div class="alert alert-info alert-block" data-ng-show="state.initial && !finder.active()">
+      <div class="alert alert-info alert-block" data-ng-show="state.initial && !initTracker.active()">
         <h4>Welcome!</h4>
         Please select an initiative from the select menu below. Once you have chosen an initiative, additional filter options will appear. You can also limit your search by date or time.
       </div>
@@ -44,7 +44,7 @@
     </div>
   </div>
 
-  <div class="row" data-ng-hide="finder.active()">
+  <div class="row" data-ng-hide="initTracker.active()">
     <div class="col-xs-9">
       <h3>Modify Chart</h3>
     </div>
@@ -55,10 +55,10 @@
   </div>
 
   <div class="row">
-    <div class="loading" data-ng-show="finder.active()"><img src="images/spinner.gif" alt="Spinner"></div>
+    <div class="loading" data-ng-show="initTracker.active()"><img src="images/spinner.gif" alt="Spinner"></div>
   </div>
 
-  <div class="row filter-row" data-ng-hide="finder.active()">
+  <div class="row filter-row" data-ng-hide="initTracker.active()">
     <form data-ng-submit="submit()">
       <fieldset data-ng-disabled="state.loading">
         <div class="col-xs-3">

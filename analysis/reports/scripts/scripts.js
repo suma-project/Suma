@@ -48782,19 +48782,19 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
   'sumaConfig',
   'uiStates',
   function ($anchorScroll, $location, $q, $scope, $timeout, promiseTracker, actsLocs, data, initiatives, scopeUtils, sumaConfig, uiStates) {
-    var CONFIG, DATA_TIMEOUT_PROMISE, INIT_TIMEOUT_PROMISE, INIT_TRACKER;
+    var CONFIG;
     // Initialize controller
     $scope.initialize = function () {
       var urlParams = $location.search();
       // Get report specific configs
       CONFIG = sumaConfig.getConfig($location.path());
       // Resolve active requests
-      if (DATA_TIMEOUT_PROMISE) {
-        DATA_TIMEOUT_PROMISE.resolve('resolved');
+      if ($scope.dataTimeoutPromise) {
+        $scope.dataTimeoutPromise.resolve('resolved');
       }
-      if (INIT_TIMEOUT_PROMISE) {
-        INIT_TIMEOUT_PROMISE.resolve('resolved');
-        INIT_TRACKER.cancel();
+      if ($scope.initTimeoutPromise) {
+        $scope.initTimeoutPromise.resolve('resolved');
+        $scope.initTracker.cancel();
       }
       if (_.isEmpty(urlParams)) {
         // Nav to initial
@@ -48827,25 +48827,25 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
     $scope.getInitiatives = function () {
       var cfg, loadInits;
       // Promise to resolve request on navigation change
-      INIT_TIMEOUT_PROMISE = $q.defer();
+      $scope.initTimeoutPromise = $q.defer();
       // Promise/Explicit timeouts
       cfg = {
-        timeoutPromise: INIT_TIMEOUT_PROMISE,
+        timeoutPromise: $scope.initTimeoutPromise,
         timeout: 180000
       };
       loadInits = initiatives.get(cfg).then(function (data) {
         $scope.inits = data;
       });
       // Setup promise tracker for spinner on initial load
-      INIT_TRACKER = promiseTracker('initTracker');
-      INIT_TRACKER.addPromise(loadInits);
+      $scope.initTracker = promiseTracker('initTracker');
+      $scope.initTracker.addPromise(loadInits);
       return loadInits;
     };
     // Submit request and draw chart
     $scope.getData = function () {
       var cfg;
       // Promise to resolve request on navigation change
-      DATA_TIMEOUT_PROMISE = $q.defer();
+      $scope.dataTimeoutPromise = $q.defer();
       $scope.state = uiStates.setUIState('loading');
       // Includes promise/explicit timeout values
       cfg = {
@@ -48853,7 +48853,7 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
         acts: $scope.activities,
         locs: $scope.locations,
         dataProcessor: CONFIG.dataProcessor,
-        timeoutPromise: DATA_TIMEOUT_PROMISE,
+        timeoutPromise: $scope.dataTimeoutPromise,
         timeout: 180000
       };
       return data[CONFIG.dataSource](cfg);
