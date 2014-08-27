@@ -7,19 +7,19 @@
       </div>
     </div>
   </div>
-  <div class="row" data-ng-hide="finder.active()">
+  <div class="row" data-ng-hide="initTracker.active()">
     <div class="col-xs-3">
       <h3>Filter Sessions</h3>
     </div>
   </div>
 
-  <div class="row" data-ng-show="finder.active()">
+  <div class="row" data-ng-show="initTracker.active()">
     <div class="col-xs-12 initial-loading-wrap">
       <div class="loading"><img src="images/spinner.gif" alt="Spinner"></div>
     </div>
   </div>
 
-  <div class="row filter-row" data-ng-hide="finder.active()">
+  <div class="row filter-row" data-ng-hide="initTracker.active()">
     <form data-ng-submit="submit()">
       <fieldset data-ng-disabled="state.loading">
         <div class="col-xs-3">
