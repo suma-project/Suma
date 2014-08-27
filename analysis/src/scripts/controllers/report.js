@@ -152,19 +152,6 @@ angular.module('sumaAnalysis')
       $scope.state         = uiStates.setUIState('success');
       $scope.data          = processedData;
       $scope.summaryParams = angular.copy($scope.params);
-
-      // Supplemental bar chart
-      if (CONFIG.suppWatch) {
-        $scope.$watch('data.actsLocsData', $scope.updateBarChart);
-      }
-    };
-
-    $scope.updateBarChart = function () {
-      var index = _.findIndex($scope.data.actsLocsData.items, function (item) {
-        return item.title === $scope.data.barChartData.title;
-      });
-
-      $scope.data.barChartData = $scope.data.actsLocsData.items[index];
     };
 
     // Handle anchor links

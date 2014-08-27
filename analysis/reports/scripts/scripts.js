@@ -48900,16 +48900,6 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
       $scope.state = uiStates.setUIState('success');
       $scope.data = processedData;
       $scope.summaryParams = angular.copy($scope.params);
-      // Supplemental bar chart
-      if (CONFIG.suppWatch) {
-        $scope.$watch('data.actsLocsData', $scope.updateBarChart);
-      }
-    };
-    $scope.updateBarChart = function () {
-      var index = _.findIndex($scope.data.actsLocsData.items, function (item) {
-          return item.title === $scope.data.barChartData.title;
-        });
-      $scope.data.barChartData = $scope.data.actsLocsData.items[index];
     };
     // Handle anchor links
     $scope.scrollTo = function (id) {
@@ -50319,7 +50309,10 @@ angular.module('sumaAnalysis').directive('sumaBarChart', function () {
   };
   return {
     restrict: 'A',
-    scope: { data: '=' },
+    scope: {
+      data: '=',
+      actsLocs: '='
+    },
     link: function postLink(scope, element, attrs) {
       var chart = new BarChart();
       scope.$on('$locationChangeSuccess', function (e) {
@@ -50327,6 +50320,14 @@ angular.module('sumaAnalysis').directive('sumaBarChart', function () {
       });
       scope.$watch('data', function (newData) {
         return scope.render(newData);
+      });
+      scope.$watch('actsLocs', function (newData) {
+        if (newData) {
+          var index = _.findIndex(scope.actsLocs.items, function (item) {
+              return item.title === scope.data.title;
+            });
+          scope.data = scope.actsLocs.items[index];
+        }
       });
       scope.render = function (data) {
         if (!data) {
