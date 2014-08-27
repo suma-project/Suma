@@ -1,26 +1,26 @@
 <div class="hourly">
-  <div class="row" data-ng-show="state.success">
+  <div class="row" data-ng-show="report.state.success">
     <div class="col-xs-4">
       <p class="text-muted">
-        <strong>Initiative: </strong> {{summaryParams.init.title}} <br>
-        <strong>Classify By: </strong> {{summaryParams.classifyCounts.title}}
-        <strong>Whole Session: </strong> {{summaryParams.wholeSession.title}} <br>
-        <strong>Dates: </strong> {{summaryParams.sdate}} - {{summaryParams.edate}}
-        <strong>Subset: </strong> {{summaryParams.stime || '00:00'}} - {{summaryParams.etime || '23:59'}} <br>
-        <strong>Days: </strong> <span ng-repeat="day in summaryParams.days">{{day | capitalize}}<span ng-show="!$last">,</span> </span>
-        <strong>Locations: </strong> {{summaryParams.location.title}} <br>
-        <strong>EA: </strong> {{summaryParams.excludeActs | activityTitle:activities:'activity'}}
-        <strong>RA: </strong> {{summaryParams.requireActs | activityTitle:activities:'activity'}}
-        <strong>EAG: </strong> {{summaryParams.excludeActGrps | activityTitle:activities:'activityGroup'}}
-        <strong>RAG: </strong> {{summaryParams.requireActGrps | activityTitle:activities:'activityGroup'}}
+        <strong>Initiative: </strong> {{report.summaryParams.init.title}} <br>
+        <strong>Classify By: </strong> {{report.summaryParams.classifyCounts.title}}
+        <strong>Whole Session: </strong> {{report.summaryParams.wholeSession.title}} <br>
+        <strong>Dates: </strong> {{report.summaryParams.sdate}} - {{report.summaryParams.edate}}
+        <strong>Subset: </strong> {{report.summaryParams.stime || '00:00'}} - {{report.summaryParams.etime || '23:59'}} <br>
+        <strong>Days: </strong> <span ng-repeat="day in report.summaryParams.days">{{day | capitalize}}<span ng-show="!$last">,</span> </span>
+        <strong>Locations: </strong> {{report.summaryParams.location.title}} <br>
+        <strong>EA: </strong> {{report.summaryParams.excludeActs | activityTitle:activities:'activity'}}
+        <strong>RA: </strong> {{report.summaryParams.requireActs | activityTitle:activities:'activity'}}
+        <strong>EAG: </strong> {{report.summaryParams.excludeActGrps | activityTitle:activities:'activityGroup'}}
+        <strong>RAG: </strong> {{report.summaryParams.requireActGrps | activityTitle:activities:'activityGroup'}}
       </p>
     </div>
 
     <div class="col-xs-8">
       <div class="row">
-        <div data-suma-buttons-radio class="btn-group col-xs-5 pull-right" data-model="data.data" data-options="data.options"></div>
+        <div data-suma-buttons-radio class="btn-group col-xs-5 pull-right" data-model="report.data.data" data-options="report.data.options"></div>
         <div class="pull-right">
-          <span data-suma-csv-hourly data-data="data"></span>
+          <span data-suma-csv-hourly data-data="report.data"></span>
           <span data-suma-chart-download data-chart="#chart-1" data-text="Save Line Chart" data-title="suma_hourly_line_chart.png"></span>
           <span data-suma-chart-download data-chart="#chart-2" data-text="Save Calendar Chart" data-title="suma_hourly_calendar_chart.png"></span>
         </div>
@@ -30,77 +30,77 @@
 
   <div class="row">
     <div class="col-xs-12 chart-wrapper">
-      <div class="loading" data-ng-show="state.loading"><img src="images/spinner.gif" alt="Spinner"></div>
-      <div class="alert alert-info alert-block" data-ng-show="state.initial">
+      <div class="loading" data-ng-show="report.state.loading"><img src="images/spinner.gif" alt="Spinner"></div>
+      <div class="alert alert-info alert-block" data-ng-show="report.state.initial">
         <h4>Welcome!</h4>
         Please select an initiative from the select menu below. Once you have chosen an initiative, additional filter options will appear. You can also limit your search by date or time.
       </div>
 
-      <div class="alert alert-danger alert-block" data-ng-show="state.error">
+      <div class="alert alert-danger alert-block" data-ng-show="report.state.error">
         <h4>Notice!</h4>
         <p>There was a problem generating the report. Please try again or contact your system administrator.</p>
-        <p>Error Code: {{errorCode}}</p>
-        <p>Error Message: {{errorMessage}}</p>
+        <p>Error Code: {{report.errorCode}}</p>
+        <p>Error Message: {{report.errorMessage}}</p>
       </div>
-      <div data-suma-hourly-line-chart id="chart-1" data-data="data.data" data-ng-show="state.success"></div>
-      <div data-suma-hourly-calendar-chart id="chart-2" data-data="data.data" data-stats="stats" data-ng-show="state.success"></div>
+      <div data-suma-hourly-line-chart id="chart-1" data-data="report.data.data" data-ng-show="report.state.success"></div>
+      <div data-suma-hourly-calendar-chart id="chart-2" data-data="report.data.data" data-stats="report.stats" data-ng-show="report.state.success"></div>
     </div>
   </div>
 
-  <div class="row" data-ng-hide="initTracker.active()">
+  <div class="row" data-ng-hide="report.initTracker.active()">
     <div class="col-xs-3">
       <h3>Modify Chart</h3>
     </div>
 
-    <div class="col-xs-3" data-ng-show="params.init && !processMetadata">
+    <div class="col-xs-3" data-ng-show="report.params.init && !report.processMetadata">
       <h3>Initiative Filters</h3>
     </div>
 
-    <div class="col-xs-6" data-ng-show="state.success && stats">
+    <div class="col-xs-6" data-ng-show="report.state.success && report.stats">
       <h3>Summary Statistics</h3>
     </div>
   </div>
 
   <div class="row">
-    <div class="loading" data-ng-show="initTracker.active()"><img src="images/spinner.gif" alt="Spinner"></div>
+    <div class="loading" data-ng-show="report.initTracker.active()"><img src="images/spinner.gif" alt="Spinner"></div>
   </div>
 
-  <div class="row filter-row" data-ng-hide="initTracker.active()">
-    <form data-ng-submit="submit()">
-      <fieldset data-ng-disabled="state.loading">
+  <div class="row filter-row" data-ng-hide="report.initTracker.active()">
+    <form data-ng-submit="report.submit()">
+      <fieldset data-ng-disabled="report.state.loading">
         <div class="col-xs-3">
           <div class="form-group">
             <label class="suma-popover" data-title="Select Initiative" data-content="Select an initiative to reveal additional filters." data-suma-popover>Select an Initiative</label>
-            <select name="initiative" data-ng-model="params.init" data-ng-options="init.title for init in inits" data-ng-change="updateMetadata()" class="form-control">
+            <select name="initiative" data-ng-model="report.params.init" data-ng-options="init.title for init in report.inits" data-ng-change="report.updateMetadata()" class="form-control">
               <option value="">Select an Initiative</option>
             </select>
           </div>
 
           <div class="form-group">
             <label class="suma-popover" data-title="Choose Date Range" data-content="Select a start date for your analysis. Defaults to 4 months from current day. Clear fields to retrieve the complete data set." data-suma-popover>Start Date</label>
-            <div data-suma-datepicker data-model="params.sdate"></div>
+            <div data-suma-datepicker data-model="report.params.sdate"></div>
             <span class="help-block">YYYY-MM-DD</span>
           </div>
 
           <div class="form-group">
             <label class="suma-popover" data-title="Choose Date Range" data-content="Select an end date for your analysis. Clear fields to retrieve complete data set." data-suma-popover>End Date</label>
-            <div data-suma-datepicker data-model="params.edate"></div>
+            <div data-suma-datepicker data-model="report.params.edate"></div>
             <span class="help-block">YYYY-MM-DD</span>
           </div>
         </div>
 
-        <div class="col-xs-3 supp-wrapper" data-ng-show="processMetadata">
+        <div class="col-xs-3 supp-wrapper" data-ng-show="report.processMetadata">
           <div class="loading"><img src="images/spinner.gif" alt="Spinner"></div>
         </div>
 
-        <div class="col-xs-3" data-ng-show="params.init && !processMetadata">
+        <div class="col-xs-3" data-ng-show="report.params.init && !report.processMetadata">
           <div class="form-group">
             <label class="suma-popover" data-title="Limit Days of the Week" data-content="Filter by weekday." data-suma-popover>Limit Days of the Week</label>
             <div class="controls">
               <div class="row">
-                <div class="col-xs-3" ng-repeat="day in params.dayOptions">
+                <div class="col-xs-3" ng-repeat="day in report.params.dayOptions">
                   <label class="checkbox-inline">
-                    <input type="checkbox" value="{{day}}" check-list="params.days" suma-checklist>{{day | capitalize}}
+                    <input type="checkbox" value="{{day}}" check-list="report.params.days" suma-checklist>{{day | capitalize}}
                   </label>
                 </div>
               </div>
@@ -110,60 +110,60 @@
           <div class="form-group">
             <label class="suma-popover" data-title="Limit Locations" data-content="Select which locations to include in your analysis. Selecting a location with children will include all children in the data set." data-suma-popover>Limit Locations</label>
             <div class="controls">
-              <select name="locations" data-ng-model="params.location" data-ng-options="loc | depth for loc in locations" class="form-control">
+              <select name="locations" data-ng-model="report.params.location" data-ng-options="loc | depth for loc in report.locations" class="form-control">
               </select>
             </div>
           </div>
 
-          <div class="form-group" ng-show="activities.length > 2">
+          <div class="form-group" ng-show="report.activities.length > 2">
             <label class="suma-popover" data-title="Limit Activities" data-content="Select which activities or Activity Groups to require or exclude in your analysis. Excluding Activity Groups will also exclude their child activities. Requiring an Activity Group while allowing all children will require at least one of the children. All required fields must be present in each count, and all excluded fields must be absent from each count." data-suma-popover>Limit Activities</label>
             <div class="controls">
               <button type="button" class="btn btn-default" data-toggle="modal" data-target="#sumaModal">
                 Limit Activities
               </button>
               <div data-suma-modal data-modal-id="sumaModal" data-modal-title="Limit Activities" data-modal-save-text="Update">
-                <div data-suma-activity-filter acts="activities"></div>
+                <div data-suma-activity-filter acts="report.activities"></div>
               </div>
             </div>
           </div>
 
-          <div data-suma-active-acts acts="activities" ng-show="activities.length > 2"></div>
+          <div data-suma-active-acts acts="report.activities" ng-show="report.activities.length > 2"></div>
 
           <div>
-            <input type="submit" id="submit" class="btn btn-success" value="{{state.loading ? 'Loading...' : 'Submit'}}">
+            <input type="submit" id="submit" class="btn btn-success" value="{{report.state.loading ? 'Loading...' : 'Submit'}}">
           </div>
         </div>
 
-        <div class="col-xs-6" data-ng-show="state.success && stats">
+        <div class="col-xs-6" data-ng-show="report.state.success && report.stats">
           <table class="table table-hover table-condensed">
             <tbody>
               <tr>
                 <td>Min</td>
-                <td>{{stats.min}}</td>
+                <td>{{report.stats.min}}</td>
               </tr>
               <tr>
                 <td>Max</td>
-                <td>{{stats.max}}</td>
+                <td>{{report.stats.max}}</td>
               </tr>
               <tr>
                 <td>Quartiles</td>
-                <td>{{stats.quartiles}}</td>
+                <td>{{report.stats.quartiles}}</td>
               </tr>
               <tr>
                 <td>Median</td>
-                <td>{{stats.median}}</td>
+                <td>{{report.stats.median}}</td>
               </tr>
               <tr>
                 <td>Interquartile Range</td>
-                <td>{{stats.iqr}}</td>
+                <td>{{report.stats.iqr}}</td>
               </tr>
               <tr>
                 <td>Lower Outlier Threshold</td>
-                <td>{{stats.lowerOutlier}}</td>
+                <td>{{report.stats.lowerOutlier}}</td>
               </tr>
               <tr>
                 <td>Upper Outlier Threshold</td>
-                <td>{{stats.upperOutlier}}</td>
+                <td>{{report.stats.upperOutlier}}</td>
               </tr>
             </tbody>
             

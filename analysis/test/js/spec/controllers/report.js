@@ -155,14 +155,14 @@ describe('Controller: ReportCtrl', function () {
       $scope: scope
     });
 
-    scope.params = {
+    ReportCtrl.params = {
       init:4
     };
-    scope.activities = [];
-    scope.locations = [];
+    ReportCtrl.activities = [];
+    ReportCtrl.locations = [];
 
-    scope.getData();
-    scope.initialize();
+    ReportCtrl.getData();
+    ReportCtrl.initialize();
 
     // Restore stubs
     initiativesStub.restore();
@@ -185,20 +185,20 @@ describe('Controller: ReportCtrl', function () {
     });
 
     // Stub scope.getInits
-    getInitsStub = sinon.stub(scope, 'getInitiatives');
+    getInitsStub = sinon.stub(ReportCtrl, 'getInitiatives');
     getInitsStub.returns(okResponse());
 
     // Stub scope.setDefaults, scope.setScope, scope.getData
-    setScopeStub = sinon.stub(scope, 'setScope');
+    setScopeStub = sinon.stub(ReportCtrl, 'setScope');
     setScopeStub.returns(okResponse());
-    getDataStub = sinon.stub(scope, 'getData');
+    getDataStub = sinon.stub(ReportCtrl, 'getData');
     getDataStub.returns(dataResponse());
 
     // Add parameter to URL
     location.search({id: 4});
 
     // Call initialize again to utlize stubs
-    scope.initialize();
+    ReportCtrl.initialize();
     scope.$digest();
 
     // Assertions
@@ -226,24 +226,24 @@ describe('Controller: ReportCtrl', function () {
     });
 
     // Stub scope.getInits
-    getInitsStub = sinon.stub(scope, 'getInitiatives');
+    getInitsStub = sinon.stub(ReportCtrl, 'getInitiatives');
     getInitsStub.returns(okResponse());
 
     // Stub scope.setDefaults, scope.setScope, scope.getData
-    setScopeStub = sinon.stub(scope, 'setScope');
+    setScopeStub = sinon.stub(ReportCtrl, 'setScope');
     setScopeStub.returns(okResponse());
-    getDataStub = sinon.stub(scope, 'getData');
+    getDataStub = sinon.stub(ReportCtrl, 'getData');
     getDataStub.returns(dataResponse());
 
     // Add parameter to URL
     location.search({id: 4});
 
-    scope.params = {
+    ReportCtrl.params = {
       init: 4
     };
 
     // Call initialize again to utlize stubs
-    scope.initialize();
+    ReportCtrl.initialize();
     scope.$digest();
 
     // Assertions
@@ -267,7 +267,7 @@ describe('Controller: ReportCtrl', function () {
       $scope: scope
     });
 
-    scope.scrollTo(12345);
+    ReportCtrl.scrollTo(12345);
     scope.$digest();
 
     // Assertions
@@ -300,23 +300,23 @@ describe('Controller: ReportCtrl', function () {
       $scope: scope
     });
 
-    scope.params = {
+    ReportCtrl.params = {
       init: 4
     };
 
     // Assertions
-    expect(scope.actsLocs).to.equal(undefined);
-    expect(scope.activities).to.equal(undefined);
-    expect(scope.locations).to.equal(undefined);
-    expect(scope.params.location).to.equal(undefined);
+    expect(ReportCtrl.actsLocs).to.equal(undefined);
+    expect(ReportCtrl.activities).to.equal(undefined);
+    expect(ReportCtrl.locations).to.equal(undefined);
+    expect(ReportCtrl.params.location).to.equal(undefined);
 
     // Call getMetadata
-    scope.getMetadata();
+    ReportCtrl.getMetadata();
 
     // Assertions
-    expect(scope.activities).to.equal(mock.activities);
-    expect(scope.locations).to.equal(mock.locations);
-    expect(scope.params.location).to.equal(mock.locations[0]);
+    expect(ReportCtrl.activities).to.equal(mock.activities);
+    expect(ReportCtrl.locations).to.equal(mock.locations);
+    expect(ReportCtrl.params.location).to.equal(mock.locations[0]);
 
     // Restore stubs
     initiativesStub.restore();
@@ -338,30 +338,30 @@ describe('Controller: ReportCtrl', function () {
     });
 
     // Stub getMetadata()
-    getMetadataStub = sinon.stub(scope, 'getMetadata');
+    getMetadataStub = sinon.stub(ReportCtrl, 'getMetadata');
     getMetadataStub.returns(true);
 
-    scope.params = {};
+    ReportCtrl.params = {};
 
     //Check branch if params.init is undefined
-    scope.updateMetadata();
+    ReportCtrl.updateMetadata();
     scope.$digest();
-    expect(scope.processMetadata).to.equal(undefined);
+    expect(ReportCtrl.processMetadata).to.equal(undefined);
 
     // Check branch if params.init is defined
-    scope.params = {};
-    scope.params.init = {};
-    scope.updateMetadata();
+    ReportCtrl.params = {};
+    ReportCtrl.params.init = {};
+    ReportCtrl.updateMetadata();
     scope.$digest();
 
     // Assertions
-    expect(scope.processMetadata).to.equal(true);
+    expect(ReportCtrl.processMetadata).to.equal(true);
 
     // Flush timeout to test state
     Timeout.flush();
 
     // Assertions
-    expect(scope.processMetadata).to.equal(false);
+    expect(ReportCtrl.processMetadata).to.equal(false);
 
     // Restore stubs
     initiativesStub.restore();
@@ -392,28 +392,28 @@ describe('Controller: ReportCtrl', function () {
     });
 
     // Stub data
-    getDataStub = sinon.stub(scope, 'getData');
+    getDataStub = sinon.stub(ReportCtrl, 'getData');
     getDataStub.returns(okResponse());
 
     // Populate Scope
-    scope.params = {};
-    scope.params.init = {id: '4'};
-    scope.params.sdate = '20140101';
-    scope.params.edate = '20140104';
-    scope.params.stime = '';
-    scope.params.etime = '';
-    scope.params.classifyCounts = null;
-    scope.params.wholeSession = null;
-    scope.params.location = null;
-    scope.params.daygroup = null;
-    scope.params.zeroCounts = true;
-    scope.params.excludeActs = '';
-    scope.params.requireActs = '';
-    scope.params.excludeActGrps = '';
-    scope.params.requireActGrps = '';
+    ReportCtrl.params = {};
+    ReportCtrl.params.init = {id: '4'};
+    ReportCtrl.params.sdate = '20140101';
+    ReportCtrl.params.edate = '20140104';
+    ReportCtrl.params.stime = '';
+    ReportCtrl.params.etime = '';
+    ReportCtrl.params.classifyCounts = null;
+    ReportCtrl.params.wholeSession = null;
+    ReportCtrl.params.location = null;
+    ReportCtrl.params.daygroup = null;
+    ReportCtrl.params.zeroCounts = true;
+    ReportCtrl.params.excludeActs = '';
+    ReportCtrl.params.requireActs = '';
+    ReportCtrl.params.excludeActGrps = '';
+    ReportCtrl.params.requireActGrps = '';
 
     // Call submit method
-    scope.submit();
+    ReportCtrl.submit();
 
     // Assertions
     expect(getDataStub).to.be.calledOnce;
@@ -448,20 +448,20 @@ describe('Controller: ReportCtrl', function () {
     });
 
     // Populate Scope
-    scope.params = {};
-    scope.params.init = {id: '4'};
-    scope.params.sdate = null;
-    scope.params.edate = null;
-    scope.params.stime = null;
-    scope.params.etime = null;
-    scope.params.classifyCounts = 'count';
-    scope.params.wholeSession = 'no';
-    scope.params.activity = 'mouse';
-    scope.params.location = 'mouse';
-    scope.params.daygroup = 'mouse';
+    ReportCtrl.params = {};
+    ReportCtrl.params.init = {id: '4'};
+    ReportCtrl.params.sdate = null;
+    ReportCtrl.params.edate = null;
+    ReportCtrl.params.stime = null;
+    ReportCtrl.params.etime = null;
+    ReportCtrl.params.classifyCounts = 'count';
+    ReportCtrl.params.wholeSession = 'no';
+    ReportCtrl.params.activity = 'mouse';
+    ReportCtrl.params.location = 'mouse';
+    ReportCtrl.params.daygroup = 'mouse';
 
     // Call submit method
-    scope.submit();
+    ReportCtrl.submit();
 
     // Assertions
     expect(locationSearchStub).to.be.calledThrice;
@@ -488,7 +488,7 @@ describe('Controller: ReportCtrl', function () {
     });
 
     // Call getData
-    scope.getData();
+    ReportCtrl.getData();
     scope.$digest();
 
     // Assertions
@@ -499,45 +499,45 @@ describe('Controller: ReportCtrl', function () {
     dataStub.restore();
   });
 
-  // it(':success should set scope.state and scope.data', function () {
-  //   var initiativesStub,
-  //       statesStub,
-  //       dataMock;
+  it(':success should set scope.state and scope.data', function () {
+    var initiativesStub,
+        statesStub,
+        dataMock;
 
-  //   dataMock = {
-  //     actsLocsData: {
-  //       items: [{title: 'title'}]
-  //     },
-  //     barChartData: {
-  //       title: 'title'
-  //     }
-  //   };
+    dataMock = {
+      actsLocsData: {
+        items: [{title: 'title'}]
+      },
+      barChartData: {
+        title: 'title'
+      }
+    };
 
-  //   // Stub initiatives service
-  //   initiativesStub = sinon.stub(Initiatives, 'get');
-  //   initiativesStub.returns(okResponse());
+    // Stub initiatives service
+    initiativesStub = sinon.stub(Initiatives, 'get');
+    initiativesStub.returns(okResponse());
 
-  //   // Stub state service
-  //   statesStub = sinon.stub(UIStates, 'setUIState');
-  //   statesStub.returns(true);
+    // Stub state service
+    statesStub = sinon.stub(UIStates, 'setUIState');
+    statesStub.returns(true);
 
-  //   // Instantiate controller
-  //   ReportCtrl = Controller('ReportCtrl', {
-  //     $scope: scope
-  //   });
+    // Instantiate controller
+    ReportCtrl = Controller('ReportCtrl', {
+      $scope: scope
+    });
 
-  //   // Call success method
-  //   scope.success(dataMock);
-  //   scope.$digest();
+    // Call success method
+    ReportCtrl.success(dataMock);
+    scope.$digest();
 
-  //   // Assertions
-  //   expect(scope.state).to.equal(true);
-  //   expect(scope.data).to.equal(dataMock);
+    // Assertions
+    expect(ReportCtrl.state).to.equal(true);
+    expect(ReportCtrl.data).to.equal(dataMock);
 
-  //   // Restore stubs
-  //   initiativesStub.restore();
-  //   statesStub.restore();
-  // });
+    // Restore stubs
+    initiativesStub.restore();
+    statesStub.restore();
+  });
 
   it(':success should set scope.state and scope.data', function () {
     var statesStub;
@@ -555,11 +555,11 @@ describe('Controller: ReportCtrl', function () {
     });
 
     // Call success method
-    scope.success('test data');
+    ReportCtrl.success('test data');
 
     // Assertions
-    expect(scope.state).to.equal(true);
-    expect(scope.data).to.equal('test data');
+    expect(ReportCtrl.state).to.equal(true);
+    expect(ReportCtrl.data).to.equal('test data');
 
     // Restore stubs
     statesStub.restore();
@@ -585,12 +585,12 @@ describe('Controller: ReportCtrl', function () {
     });
 
     // Call error method
-    scope.error(mockData);
+    ReportCtrl.error(mockData);
 
     // Assertions
-    expect(scope.state).to.equal(true);
-    expect(scope.errorMessage).to.equal('Error');
-    expect(scope.errorCode).to.equal(500);
+    expect(ReportCtrl.state).to.equal(true);
+    expect(ReportCtrl.errorMessage).to.equal('Error');
+    expect(ReportCtrl.errorCode).to.equal(500);
 
     // Restore stubs
     statesStub.restore();
@@ -616,12 +616,12 @@ describe('Controller: ReportCtrl', function () {
     });
 
     // Call error method
-    scope.error(mockData);
+    ReportCtrl.error(mockData);
 
     // Assertions
-    expect(scope.state).to.equal(undefined);
-    expect(scope.errorMessage).to.equal(undefined);
-    expect(scope.errorCode).to.equal(undefined);
+    expect(ReportCtrl.state).to.equal(undefined);
+    expect(ReportCtrl.errorMessage).to.equal(undefined);
+    expect(ReportCtrl.errorCode).to.equal(undefined);
 
     // Restore stubs
     statesStub.restore();
@@ -652,13 +652,13 @@ describe('Controller: ReportCtrl', function () {
     setScopeStub = sinon.stub(ScopeUtils, 'set');
     setScopeStub.returns(setScopeResponse());
 
-    errorStub = sinon.stub(scope, 'error');
+    errorStub = sinon.stub(ReportCtrl, 'error');
 
     // Call setScope method
-    scope.setScope(urlParams).then(function () {
+    ReportCtrl.setScope(urlParams).then(function () {
       // Assertions
-      expect(expectedScope.activities).to.deep.equal(scope.activities);
-      expect(expectedScope.locations).to.deep.equal(scope.locations);
+      expect(expectedScope.activities).to.deep.equal(ReportCtrl.activities);
+      expect(expectedScope.locations).to.deep.equal(ReportCtrl.locations);
     });
 
     scope.$digest();

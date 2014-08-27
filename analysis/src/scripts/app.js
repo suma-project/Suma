@@ -12,21 +12,21 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
       .when('/timeseries', {
         templateUrl: 'views/timeSeries.html',
         reloadOnSearch: false,
-        controller: 'ReportCtrl'
+        controller: 'ReportCtrl as report'
       })
       .when('/calendar', {
         templateUrl: 'views/calendar.html',
-        controller: 'ReportCtrl',
+        controller: 'ReportCtrl as report',
         reloadOnSearch: false
       })
       .when('/hourly', {
         templateUrl: 'views/hourly.html',
-        controller: 'ReportCtrl',
+        controller: 'ReportCtrl as report',
         reloadOnSearch: false
       })
       .when('/sessions', {
         templateUrl: 'views/sessions.html',
-        controller: 'ReportCtrl',
+        controller: 'ReportCtrl as report',
         reloadOnSearch: false
       })
       .when('/about', {
