@@ -49043,7 +49043,8 @@ angular.module('sumaAnalysis').factory('data', [
   'processTimeSeriesData',
   'processCalendarData',
   'processHourlyData',
-  function ($http, $q, $timeout, processTimeSeriesData, processCalendarData, processHourlyData) {
+  'processSessionsData',
+  function ($http, $q, $timeout, processTimeSeriesData, processCalendarData, processHourlyData, processSessionsData) {
     return {
       getSessionsData: function (cfg) {
         var dfd, options, self = this, url;
@@ -49060,7 +49061,9 @@ angular.module('sumaAnalysis').factory('data', [
           timeout: cfg.timeoutPromise.promise
         };
         this.httpSuccess = function (response) {
-          dfd.resolve(response.data);
+          processSessionsData.get(response.data).then(function (processedData) {
+            dfd.resolve(processedData);
+          });
         };
         this.httpError = function (response) {
           if (response.status === 0) {
@@ -50931,6 +50934,23 @@ angular.module('sumaAnalysis').factory('processHourlyData', [
       get: function (response) {
         var dfd = $q.defer();
         dfd.resolve(processData(response));
+        return dfd.promise;
+      }
+    };
+  }
+]);
+'use strict';
+angular.module('sumaAnalysis').factory('processSessionsData', [
+  '$q',
+  '$rootScope',
+  function ($q, $rootScope) {
+    function sortData(response) {
+      return _.sortBy(response, 'start').reverse();
+    }
+    return {
+      get: function (response) {
+        var dfd = $q.defer();
+        dfd.resolve(sortData(response));
         return dfd.promise;
       }
     };
