@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('sumaAnalysis')
-  .factory('data', function ($http, $q, $timeout, processTimeSeriesData, processCalendarData, processHourlyData) {
+  .factory('data', function ($http, $q, $timeout, processTimeSeriesData, processCalendarData, processHourlyData, processSessionsData) {
     return {
       getSessionsData: function (cfg) {
         var dfd,
@@ -24,7 +24,9 @@ angular.module('sumaAnalysis')
         };
 
         this.httpSuccess = function (response) {
-          dfd.resolve(response.data);
+          processSessionsData.get(response.data).then(function (processedData) {
+            dfd.resolve(processedData);
+          });
         };
 
         this.httpError = function (response) {
