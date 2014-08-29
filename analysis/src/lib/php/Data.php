@@ -403,7 +403,7 @@ class Data
             'classifyCounts' => 'alpha|contains, count start end',
             'wholeSession'   => 'alpha|contains, yes no',
             'days'           => 'day_of_week',
-            'locations'      => 'alpha_numeric',
+            'locations'      => 'activities',
             'requireActs'    => 'activities',
             'excludeActs'    => 'activities',
             'requireActGrps' => 'activities',
@@ -1051,7 +1051,7 @@ class Data
      */
     private function populateHash($response, $params)
     {
-        $locID   = $params['locations'];
+        $locID   = explode(",", $params['locations']);
         $actDict = $response['initiative']['dictionary']['activities'];
         $actGrpDict = $response['initiative']['dictionary']['activityGroups'];
         $locDict = $response['initiative']['dictionary']['locations'];
@@ -1065,10 +1065,13 @@ class Data
         // Populate location list for filters
         if (empty($this->locListIds))
         {
-            if ($locID !== 'all')
+            foreach ($locID as $id)
             {
-                $locList    = $this->populateLocations($locDict, $locID);
-                $this->locListIds = $this->pluck($locList, 'id');
+                $subLocList = $this->populateLocations($locDict, $id);
+                foreach($subLocList as $loc)
+                {
+                    array_push($this->locListIds, $loc['id']);
+                }
             }
         }
 
@@ -1112,7 +1115,7 @@ class Data
             foreach ($sess['locations'] as $loc)
             {
                 // Test if location is in locations array
-                if ($params['locations'] === 'all' || in_array($loc['id'], $this->locListIds))
+                if (in_array($loc['id'], $this->locListIds))
                 {
                     foreach ($loc['counts'] as $count)
                     {
