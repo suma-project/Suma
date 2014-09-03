@@ -279,14 +279,14 @@ class Data
         // using min/max values of data from server
         if (empty($sdate))
         {
-            $keys  = array_keys($countHash['periodSum']);
+            $keys  = array_keys($this->countHash['periodSum']);
             $sdate = min($keys);
             $sdate = str_replace("-", "", $sdate);
         }
 
         if (empty($edate))
         {
-            $keys  = array_keys($countHash['periodSum']);
+            $keys  = array_keys($this->countHash['periodSum']);
             $edate = max($keys);
             $edate = str_replace("-", "", $edate);
         }
