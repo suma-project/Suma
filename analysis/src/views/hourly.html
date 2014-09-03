@@ -110,8 +110,12 @@
           <div class="form-group">
             <label class="suma-popover" data-title="Limit Locations" data-content="Select which locations to include in your analysis. Selecting a location with children will include all children in the data set." data-suma-popover>Limit Locations</label>
             <div class="controls">
-              <select name="locations" data-ng-model="report.params.location" data-ng-options="loc | depth for loc in report.locations" class="form-control">
-              </select>
+              <button type="button" class="btn btn-default" data-toggle="modal" data-target="#locModal">
+                Limit Locations
+              </button>
+              <div data-suma-modal data-modal-id="locModal" data-modal-title="Limit Locations" data-modal-save-text="Update">
+                <div data-suma-location-filter locs="report.locations"></div>
+              </div>
             </div>
           </div>
 
