@@ -5,7 +5,7 @@ angular.module('sumaAnalysis')
     function calculateDepthAndTooltip (item, list, root, depth) {
       var parent;
 
-      depth = depth || {depth: 0, tooltipTitle: item.title};
+      depth = depth || {depth: 0, tooltipTitle: item.title, ancestors: []};
       if (parseInt(item.parent, 10) === parseInt(root, 10)) {
         return depth;
       }
@@ -14,6 +14,7 @@ angular.module('sumaAnalysis')
 
       depth.depth += 1;
       depth.tooltipTitle = parent.title + ': ' + depth.tooltipTitle;
+      depth.ancestors.push(parent.id);
 
       return calculateDepthAndTooltip(parent, list, root, depth);
     }
@@ -34,12 +35,12 @@ angular.module('sumaAnalysis')
       _.each(activityGroups, function (activityGroup) {
           // Add activity group metadata to activityGroupList array
           activityList.push({
-            'id'   : activityGroup.id,
-            'rank' : activityGroup.rank,
-            'title': activityGroup.title,
-            'type' : 'activityGroup',
-            'depth': 0,
-            'filter': 'allow',
+            'id'     : activityGroup.id,
+            'rank'   : activityGroup.rank,
+            'title'  : activityGroup.title,
+            'type'   : 'activityGroup',
+            'depth'  : 0,
+            'filter' : 'allow',
             'enabled': true
           });
 
@@ -48,17 +49,17 @@ angular.module('sumaAnalysis')
             if (activity.activityGroup === activityGroup.id) {
               // Add activities to activityList array behind proper activityGroup
               activityList.push({
-                'id'   : activity.id,
-                'rank' : activity.rank,
-                'title': activity.title,
-                'type' : 'activity',
-                'depth': 1,
-                'activityGroup': activityGroup.id,
+                'id'                : activity.id,
+                'rank'              : activity.rank,
+                'title'             : activity.title,
+                'type'              : 'activity',
+                'depth'             : 1,
+                'activityGroup'     : activityGroup.id,
                 'activityGroupTitle': activityGroupsHash[activityGroup.id],
-                'tooltipTitle': activityGroupsHash[activityGroup.id] + ': ' + activity.title,
-                'altName': activityGroupsHash[activityGroup.id] + ': ' + activity.title,
-                'filter': 'allow',
-                'enabled': true
+                'tooltipTitle'      : activityGroupsHash[activityGroup.id] + ': ' + activity.title,
+                'altName'           : activityGroupsHash[activityGroup.id] + ': ' + activity.title,
+                'filter'            : 'allow',
+                'enabled'           : true
               });
             }
           });
@@ -68,16 +69,17 @@ angular.module('sumaAnalysis')
     }
 
     function processLocations (locations, root) {
-      return [{
-        title: 'All',
-        id: 'all'
-      }].concat(_.map(locations, function (loc, index, list) {
+      return _.map(locations, function (loc, index, list) {
         var depth = calculateDepthAndTooltip(loc, list, root);
-        loc.depth = depth.depth;
+
+        loc.depth        = depth.depth;
         loc.tooltipTitle = depth.tooltipTitle;
+        loc.ancestors    = depth.ancestors;
+        loc.filter       = true;
+        loc.enabled      = true;
 
         return loc;
-      }));
+      });
     }
 
     return {
