@@ -104,10 +104,9 @@ angular.module('sumaAnalysis')
 
     // Get initiative metadata
     vm.getMetadata = function () {
-      var actsLocsArys   = actsLocs.get(vm.params.init);
-      vm.activities      = actsLocsArys.activities;
-      vm.locations       = actsLocsArys.locations;
-      vm.params.location = vm.locations[0];
+      var actsLocsArys = actsLocs.get(vm.params.init);
+      vm.activities    = actsLocsArys.activities;
+      vm.locations     = actsLocsArys.locations;
     };
 
     // Update init metadata
@@ -128,8 +127,8 @@ angular.module('sumaAnalysis')
       var currentUrl,
           currentScope;
 
-      currentUrl = $location.search();
-      currentScope = scopeUtils.getCurrentScope(vm.params, vm.activities);
+      currentUrl   = $location.search();
+      currentScope = scopeUtils.getCurrentScope(vm.params, vm.activities, vm.locations);
 
       if (_.isEqual(currentUrl, currentScope)) {
         vm.getData().then(vm.success, vm.error);

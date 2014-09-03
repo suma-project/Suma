@@ -3,7 +3,6 @@
 require_once 'vendor/autoload.php';
 require_once 'ServerIO.php';
 require_once 'SumaGump.php';
-require_once 'ChromePhp.php';
 
 /**
  * Data - Class to process data for display in a variety of charts.
