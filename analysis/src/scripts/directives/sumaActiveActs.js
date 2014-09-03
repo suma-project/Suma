@@ -8,6 +8,8 @@ angular.module('sumaAnalysis')
       scope: {acts: '=', locs: '='},
       link: function (scope, ele, attrs, depthFilter) {
         scope.display = false;
+        scope.actsActive = false;
+        scope.locsActive = false;
 
         function setActsDisplayStatus () {
           var states = _.uniq(_.pluck(scope.acts, 'filter'));
@@ -20,7 +22,6 @@ angular.module('sumaAnalysis')
               scope.display = false;
             }
             scope.actsActive = false;
-
           }
         }
 
