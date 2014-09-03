@@ -172,7 +172,8 @@ angular.module('sumaAnalysis')
       counts.dayOfWeekSummary = _.sortBy(_.map(response.weekdaySummary, function (element, index) {
         return {
           name: index,
-          count: element,
+          count: element.total,
+          avg: element.avg,
           percent: calcPct(element.total, divisor)
         };
       }), function (item) {
