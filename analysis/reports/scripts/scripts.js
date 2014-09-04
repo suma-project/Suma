@@ -48861,7 +48861,6 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
       var actsLocsArys = actsLocs.get(vm.params.init);
       vm.activities = actsLocsArys.activities;
       vm.locations = actsLocsArys.locations;
-      vm.params.location = vm.locations[0];
     };
     // Update init metadata
     vm.updateMetadata = function () {
@@ -48878,7 +48877,7 @@ angular.module('sumaAnalysis').controller('ReportCtrl', [
     vm.submit = function () {
       var currentUrl, currentScope;
       currentUrl = $location.search();
-      currentScope = scopeUtils.getCurrentScope(vm.params, vm.activities);
+      currentScope = scopeUtils.getCurrentScope(vm.params, vm.activities, vm.locations);
       if (_.isEqual(currentUrl, currentScope)) {
         vm.getData().then(vm.success, vm.error);
       } else {
@@ -48960,7 +48959,8 @@ angular.module('sumaAnalysis').factory('actsLocs', function () {
     var parent;
     depth = depth || {
       depth: 0,
-      tooltipTitle: item.title
+      tooltipTitle: item.title,
+      ancestors: []
     };
     if (parseInt(item.parent, 10) === parseInt(root, 10)) {
       return depth;
@@ -48968,6 +48968,7 @@ angular.module('sumaAnalysis').factory('actsLocs', function () {
     parent = _.find(list, { 'id': item.parent });
     depth.depth += 1;
     depth.tooltipTitle = parent.title + ': ' + depth.tooltipTitle;
+    depth.ancestors.push(parent.id);
     return calculateDepthAndTooltip(parent, list, root, depth);
   }
   function processActivities(activities, activityGroups) {
@@ -49016,15 +49017,15 @@ angular.module('sumaAnalysis').factory('actsLocs', function () {
     return activityList;
   }
   function processLocations(locations, root) {
-    return [{
-        title: 'All',
-        id: 'all'
-      }].concat(_.map(locations, function (loc, index, list) {
+    return _.map(locations, function (loc, index, list) {
       var depth = calculateDepthAndTooltip(loc, list, root);
       loc.depth = depth.depth;
       loc.tooltipTitle = depth.tooltipTitle;
+      loc.ancestors = depth.ancestors;
+      loc.filter = true;
+      loc.enabled = true;
       return loc;
-    }));
+    });
   }
   return {
     get: function (init) {
@@ -49115,7 +49116,7 @@ angular.module('sumaAnalysis').factory('data', [
             classifyCounts: cfg.params.classifyCounts ? cfg.params.classifyCounts.id : null,
             wholeSession: cfg.params.wholeSession ? cfg.params.wholeSession.id : null,
             days: cfg.params.days ? cfg.params.days.join(',') : null,
-            locations: cfg.params.location ? cfg.params.location.id : 'all',
+            excludeLocs: cfg.params.excludeLocs ? cfg.params.excludeLocs.join(',') : null,
             excludeActs: cfg.params.excludeActs ? cfg.params.excludeActs.join(',') : null,
             requireActs: cfg.params.requireActs ? cfg.params.requireActs.join(',') : null,
             excludeActGrps: cfg.params.excludeActGrps ? cfg.params.excludeActGrps.join(',') : null,
@@ -49172,6 +49173,20 @@ angular.module('sumaAnalysis').service('validation', function Validation() {
     // Is each activity a member of the validIds array?
     _.each(acts, function (act) {
       if (!_.contains(validIds, parseInt(act, 10)) && act !== '') {
+        test = false;
+      }
+    });
+    return test;
+  };
+  this.validateLoc = function (locs, dict) {
+    var test, validIds;
+    // Get list of valid ids
+    validIds = _.pluck(dict, 'id');
+    // Default to valid
+    test = true;
+    // Is each activity a member of the validIds array?
+    _.each(locs, function (loc) {
+      if (!_.contains(validIds, parseInt(loc, 10)) && loc !== '') {
         test = false;
       }
     });
@@ -49253,10 +49268,26 @@ angular.module('sumaAnalysis').factory('scopeUtils', [
           return act;
         });
       },
+      mapLocs: function (locs, excludeLocsAry) {
+        return _.map(locs, function (loc) {
+          if (_.contains(excludeLocsAry, String(loc.id))) {
+            loc.filter = false;
+            if (loc.ancestors.length > 0) {
+              loc.enabled = false;
+            }
+          }
+          return loc;
+        });
+      },
+      stringifyLocs: function (locs) {
+        return _.map(_.filter(locs, { filter: false }), function (loc) {
+          return loc.id;
+        }).join();
+      },
       getMetadata: function (init) {
         return actsLocs.get(init);
       },
-      getCurrentScope: function (params, acts) {
+      getCurrentScope: function (params, acts, locs) {
         return _.compactObject({
           id: String(params.init.id),
           sdate: params.sdate || params.sdate === '' ? params.sdate : null,
@@ -49270,7 +49301,7 @@ angular.module('sumaAnalysis').factory('scopeUtils', [
           excludeActs: this.stringifyActs(acts, 'exclude'),
           requireActGrps: this.stringifyActs(acts, 'require', true),
           excludeActGrps: this.stringifyActs(acts, 'exclude', true),
-          location: params.location ? params.location.id : null,
+          excludeLocs: this.stringifyLocs(locs),
           days: this.stringifyDays(params.days)
         });
       },
@@ -49289,7 +49320,7 @@ angular.module('sumaAnalysis').factory('scopeUtils', [
         return dfd.promise;
       },
       set: function (urlParams, sumaConfig, inits) {
-        var activities, dfd = $q.defer(), errors = [], errorMessage, excludeActsAry, excludeActGrpsAry, locations, metadata, newParams = {}, requireActsAry, requireActGrpsAry;
+        var activities, dfd = $q.defer(), errors = [], errorMessage, excludeActsAry, excludeActGrpsAry, excludeLocsAry, locations, metadata, newParams = {}, requireActsAry, requireActGrpsAry;
         newParams.init = _.find(inits, function (e, i) {
           return String(e.id) === String(urlParams.id);
         });
@@ -49379,12 +49410,15 @@ angular.module('sumaAnalysis').factory('scopeUtils', [
             activities = this.mapActs(activities, excludeActGrpsAry, requireActGrpsAry, excludeActsAry, requireActsAry);
           }
           if (sumaConfig.formFields.locations) {
-            newParams.location = _.find(locations, function (e, i) {
-              return String(e.id) === String(urlParams.location);
-            });
-            if (!newParams.location) {
-              errors.push('Invalid value for location.');
+            excludeLocsAry = urlParams.excludeLocs || urlParams.excludeLocs === '' ? urlParams.excludeLocs.split(',') : null;
+            // validate excludeLocs
+            if (validation.validateLoc(excludeLocsAry, locations)) {
+              newParams.excludeLocs = excludeLocsAry;
+            } else {
+              newParams.excludeLocs = '';
+              errors.push('Invalid value for excludeLocs.');
             }
+            locations = this.mapLocs(locations, excludeLocsAry);
           }
           if (sumaConfig.formFields.sdate) {
             // Validate sdate
@@ -49462,18 +49496,18 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
     }
     // Get counts of children recursively
     function calcCount(obj, coll, prop) {
-      var hasChildren;
-      hasChildren = _.filter(coll, function (item) {
+      var children;
+      children = _.filter(coll, function (item) {
         if (prop === 'activityGroup') {
           return obj.id === item[prop] && obj.type === 'activityGroup';
         }
         return obj.id === item[prop];
       });
-      if (hasChildren.length < 1) {
+      if (children.length < 1) {
         return obj.count;
       }
-      return _.reduce(_.map(hasChildren, function (o) {
-        return calcCount(o, coll, prop);
+      return _.reduce(_.map(children, function (o) {
+        return calcCount(o, coll, prop) + obj.count;
       }), function (sum, num) {
         return sum + num;
       });
@@ -49584,7 +49618,8 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
       counts.dayOfWeekSummary = _.sortBy(_.map(response.weekdaySummary, function (element, index) {
         return {
           name: index,
-          count: element,
+          count: element.total,
+          avg: element.avg,
           percent: calcPct(element.total, divisor)
         };
       }), function (item) {
@@ -49679,9 +49714,6 @@ angular.module('sumaAnalysis').factory('processTimeSeriesData', [
     return {
       get: function (response, acts, locs, params) {
         var dfd = $q.defer();
-        locs = _.filter(locs, function (loc) {
-          return loc.id !== 'all';
-        });
         dfd.resolve(processData(response, acts, locs, params.zeroCounts));
         return dfd.promise;
       }
@@ -50443,11 +50475,14 @@ angular.module('sumaAnalysis').directive('sumaCsv', function () {
         };
         $scope.buildCSVString = function (counts, label, indent) {
           return d3.csv.format(_.map(counts, function (o, i) {
-            var object = {};
-            object[label] = indent ? $scope.addCSVIndent(o) : o.name;
-            object.Count = o.count;
-            object.Percent = o.percent;
-            return object;
+            var obj = {};
+            obj[label] = indent ? $scope.addCSVIndent(o) : o.name;
+            obj.Count = o.count;
+            obj.Percent = o.percent;
+            if (o.avg) {
+              obj.Avg = o.avg;
+            }
+            return obj;
           }));
         };
         $scope.buildCSV = function (counts) {
@@ -51582,22 +51617,100 @@ angular.module('sumaAnalysis').directive('sumaActivityFilter', function () {
   };
 });
 'use strict';
-angular.module('sumaAnalysis').directive('sumaActiveActs', function () {
+angular.module('sumaAnalysis').directive('sumaLocationFilter', function () {
   return {
     restrict: 'A',
-    templateUrl: 'views/directives/activeActs.html',
-    scope: { acts: '=' },
+    templateUrl: 'views/directives/locationFilter.html',
+    scope: { locs: '=' },
+    controller: [
+      '$scope',
+      function ($scope) {
+        $scope.selectAll = function () {
+          _.each($scope.locs, function (loc) {
+            loc.filter = true;
+            loc.enabled = true;
+          });
+        };
+        $scope.selectNone = function () {
+          _.each($scope.locs, function (loc) {
+            loc.filter = false;
+            if (loc.ancestors.length > 0) {
+              loc.enabled = false;
+            }
+          });
+        };
+        $scope.isDescendant = function (loc, parentId) {
+          if (_.contains(loc.ancestors, parentId)) {
+            return true;
+          }
+          return false;
+        };
+        $scope.selectChildren = function (parentId) {
+          _.each($scope.locs, function (loc) {
+            if ($scope.isDescendant(loc, parentId)) {
+              loc.filter = true;
+              loc.enabled = true;
+            }
+          });
+        };
+        $scope.disableChildren = function (parentId) {
+          _.each($scope.locs, function (loc) {
+            if ($scope.isDescendant(loc, parentId)) {
+              loc.filter = false;
+              loc.enabled = false;
+            }
+          });
+        };
+        $scope.updateCollection = function () {
+          if (this.loc.filter) {
+            $scope.selectChildren(this.loc.id);
+          } else {
+            $scope.disableChildren(this.loc.id);
+          }
+        };
+      }
+    ]
+  };
+});
+'use strict';
+angular.module('sumaAnalysis').directive('sumaActiveFilters', function () {
+  return {
+    restrict: 'A',
+    templateUrl: 'views/directives/activeFilters.html',
+    scope: {
+      acts: '=',
+      locs: '='
+    },
     link: function (scope, ele, attrs, depthFilter) {
       scope.display = false;
-      function setDisplayStatus() {
+      scope.actsActive = false;
+      scope.locsActive = false;
+      function setActsDisplayStatus() {
         var states = _.uniq(_.pluck(scope.acts, 'filter'));
         if (_.contains(states, 'require') || _.contains(states, 'exclude')) {
           scope.display = true;
+          scope.actsActive = true;
         } else {
-          scope.display = false;
+          if (!scope.locsActive) {
+            scope.display = false;
+          }
+          scope.actsActive = false;
         }
       }
-      scope.$watch('acts', setDisplayStatus, true);
+      function setLocsDisplayStatus() {
+        var states = _.uniq(_.pluck(scope.locs, 'filter'));
+        if (_.contains(states, false)) {
+          scope.display = true;
+          scope.locsActive = true;
+        } else {
+          if (!scope.actsActive) {
+            scope.display = false;
+          }
+          scope.locsActive = false;
+        }
+      }
+      scope.$watch('acts', setActsDisplayStatus, true);
+      scope.$watch('locs', setLocsDisplayStatus, true);
     }
   };
 });

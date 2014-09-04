@@ -9,18 +9,18 @@
         <strong>Subset: </strong> {{report.summaryParams.stime || '00:00'}} - {{report.summaryParams.etime || '23:59'}} <br>
         <strong>Days: </strong> <span ng-repeat="day in report.summaryParams.days">{{day | capitalize}}<span ng-show="!$last">,</span> </span>
         <strong>Locations: </strong> {{report.summaryParams.location.title}} <br>
-        <strong>EA: </strong> {{report.summaryParams.excludeActs | activityTitle:activities:'activity'}}
-        <strong>RA: </strong> {{report.summaryParams.requireActs | activityTitle:activities:'activity'}}
-        <strong>EAG: </strong> {{report.summaryParams.excludeActGrps | activityTitle:activities:'activityGroup'}}
-        <strong>RAG: </strong> {{report.summaryParams.requireActGrps | activityTitle:activities:'activityGroup'}}
+        <strong>EA: </strong> {{report.summaryParams.excludeActs | activityTitle:report.activities:'activity'}}
+        <strong>RA: </strong> {{report.summaryParams.requireActs | activityTitle:report.activities:'activity'}}
+        <strong>EAG: </strong> {{report.summaryParams.excludeActGrps | activityTitle:report.activities:'activityGroup'}}
+        <strong>RAG: </strong> {{report.summaryParams.requireActGrps | activityTitle:report.activities:'activityGroup'}}
       </p>
     </div>
     <div class="col-xs-7">
       <div class="row">
         <div data-suma-buttons-radio class="btn-group col-xs-4 pull-right" data-model="report.data.timeSeriesData" data-options="report.data.timeSeriesOptions"></div>
         <div class="pull-right">
-          <a class="btn btn-default btn-sm" data-ng-click="scrollTo('export-data')">Export Raw Data</a>
-          <a class="btn btn-default btn-sm" data-ng-click="scrollTo('summary-data')">Summary Data</a>
+          <a class="btn btn-default btn-sm" data-ng-click="report.scrollTo('export-data')">Export Raw Data</a>
+          <a class="btn btn-default btn-sm" data-ng-click="report.scrollTo('summary-data')">Summary Data</a>
           <span data-suma-chart-download data-chart="#chart-1" title="suma_timeseries_chart.png" data-filter=".sub-graph"></span>
         </div>
       </div>
@@ -137,8 +137,12 @@
           <div class="form-group">
             <label class="suma-popover" data-title="Limit Locations" data-content="Select which locations to include in your analysis. Selecting a location with children will include all children in the data set." data-suma-popover>Limit Locations</label>
             <div class="controls">
-              <select name="locations" data-ng-model="report.params.location" data-ng-options="loc | depth for loc in report.locations" class="form-control">
-              </select>
+              <button type="button" class="btn btn-default" data-toggle="modal" data-target="#locModal">
+                Limit Locations
+              </button>
+              <div data-suma-modal data-modal-id="locModal" data-modal-title="Limit Locations" data-modal-save-text="Update">
+                <div data-suma-location-filter locs="report.locations"></div>
+              </div>
             </div>
           </div>
 
@@ -154,7 +158,7 @@
             </div>
           </div>
 
-          <div data-suma-active-acts acts="report.activities" ng-show="report.activities.length > 2"></div>
+          <div data-suma-active-filters acts="report.activities" locs="report.locations"></div>
 
           <div>
             <input type="submit" id="submit" class="btn btn-success" value="{{report.state.loading ? 'Loading...' : 'Submit'}}">
@@ -272,8 +276,8 @@
           <tbody>
             <tr data-ng-repeat="weekday in report.data.dayOfWeekSummary">
                 <td>{{weekday.name}}</td>
-                <td>{{weekday.count.total}}</td>
-                <td>{{weekday.count.avg.toFixed(2)}}</td>
+                <td>{{weekday.count}}</td>
+                <td>{{weekday.avg.toFixed(2)}}</td>
                 <td>{{weekday.percent}}%</td>
             </tr>
           </tbody>
