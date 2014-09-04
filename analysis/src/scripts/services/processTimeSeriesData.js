@@ -236,10 +236,6 @@ angular.module('sumaAnalysis')
       get: function (response, acts, locs, params) {
         var dfd = $q.defer();
 
-        locs = _.filter(locs, function (loc) {
-          return loc.id !== 'all';
-        });
-
         dfd.resolve(processData(response, acts, locs, params.zeroCounts));
 
         return dfd.promise;
