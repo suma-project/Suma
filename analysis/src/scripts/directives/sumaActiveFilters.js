@@ -1,10 +1,10 @@
 'use strict';
 
 angular.module('sumaAnalysis')
-  .directive('sumaActiveActs', function () {
+  .directive('sumaActiveFilters', function () {
     return {
       restrict: 'A',
-      templateUrl: 'views/directives/activeActs.html',
+      templateUrl: 'views/directives/activeFilters.html',
       scope: {acts: '=', locs: '='},
       link: function (scope, ele, attrs, depthFilter) {
         scope.display = false;
