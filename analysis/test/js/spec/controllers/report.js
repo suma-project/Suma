@@ -308,7 +308,6 @@ describe('Controller: ReportCtrl', function () {
     expect(ReportCtrl.actsLocs).to.equal(undefined);
     expect(ReportCtrl.activities).to.equal(undefined);
     expect(ReportCtrl.locations).to.equal(undefined);
-    expect(ReportCtrl.params.location).to.equal(undefined);
 
     // Call getMetadata
     ReportCtrl.getMetadata();
@@ -316,7 +315,6 @@ describe('Controller: ReportCtrl', function () {
     // Assertions
     expect(ReportCtrl.activities).to.equal(mock.activities);
     expect(ReportCtrl.locations).to.equal(mock.locations);
-    expect(ReportCtrl.params.location).to.equal(mock.locations[0]);
 
     // Restore stubs
     initiativesStub.restore();
@@ -380,6 +378,7 @@ describe('Controller: ReportCtrl', function () {
       edate: '20140104',
       stime: '',
       etime: '',
+      excludeLocs: '',
       excludeActs: '',
       requireActs: '',
       excludeActGrps: '',
@@ -404,9 +403,9 @@ describe('Controller: ReportCtrl', function () {
     ReportCtrl.params.etime = '';
     ReportCtrl.params.classifyCounts = null;
     ReportCtrl.params.wholeSession = null;
-    ReportCtrl.params.location = null;
     ReportCtrl.params.daygroup = null;
     ReportCtrl.params.zeroCounts = true;
+    ReportCtrl.params.excludeLocs = '';
     ReportCtrl.params.excludeActs = '';
     ReportCtrl.params.requireActs = '';
     ReportCtrl.params.excludeActGrps = '';
@@ -437,7 +436,6 @@ describe('Controller: ReportCtrl', function () {
       classifyCounts: null,
       wholeSession: null,
       activity: null,
-      location: null,
       daygroup: null
     });
 
@@ -457,7 +455,6 @@ describe('Controller: ReportCtrl', function () {
     ReportCtrl.params.classifyCounts = 'count';
     ReportCtrl.params.wholeSession = 'no';
     ReportCtrl.params.activity = 'mouse';
-    ReportCtrl.params.location = 'mouse';
     ReportCtrl.params.daygroup = 'mouse';
 
     // Call submit method
