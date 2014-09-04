@@ -10,7 +10,7 @@ angular.module('sumaAnalysis')
         $scope.selectAll = function () {
           _.each($scope.locs, function (loc) {
             loc.filter = true;
-            loc.enabled = true
+            loc.enabled = true;
           });
         };
 
