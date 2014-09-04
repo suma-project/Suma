@@ -3,27 +3,26 @@
 angular.module('sumaAnalysis')
   .factory('processTimeSeriesData', function ($q, $rootScope) {
     var weekdays = {
-      Sunday: 0,
-      Monday: 1,
-      Tuesday: 2,
+      Sunday   : 0,
+      Monday   : 1,
+      Tuesday  : 2,
       Wednesday: 3,
-      Thursday: 4,
-      Friday: 5,
-      Saturday: 6
+      Thursday : 4,
+      Friday   : 5,
+      Saturday : 6
     };
 
     // Calculate percentage based on number and divisor
     function calcPct(count, total) {
       var pct = count / total * 100;
-
       return _.isNaN(pct) ? 0 : pct.toFixed(2);
     }
 
     // Get counts of children recursively
     function calcCount(obj, coll, prop) {
-      var hasChildren;
+      var children;
 
-      hasChildren = _.filter(coll, function (item) {
+      children = _.filter(coll, function (item) {
         if (prop === 'activityGroup') {
           return obj.id === item[prop] && obj.type === 'activityGroup';
         }
@@ -31,12 +30,12 @@ angular.module('sumaAnalysis')
         return obj.id === item[prop];
       });
 
-      if (hasChildren.length < 1) {
+      if (children.length < 1) {
         return obj.count;
       }
 
-      return _.reduce(_.map(hasChildren, function (o) {
-        return calcCount(o, coll, prop);
+      return _.reduce(_.map(children, function (o) {
+        return calcCount(o, coll, prop) + obj.count;
       }), function (sum, num) {
         return sum + num;
       });
@@ -83,7 +82,6 @@ angular.module('sumaAnalysis')
       return _.map(counts, function (o, index, coll) {
         o.count = calcCount(o, coll, flag);
         o.percent = calcPct(o.count, total);
-
         return o;
       });
     }
@@ -216,14 +214,14 @@ angular.module('sumaAnalysis')
         {title: 'Activities', val: 'activities', items: [
           {title: 'Avg of Sum', data: counts.activitiesAvgSum},
           {title: 'Avg of Avg', data: counts.activitiesAvgAvg},
-          {title: 'Sum', data: counts.activitiesSum},
-          {title: 'Pct', data: counts.activitiesPct}
+          {title: 'Sum',        data: counts.activitiesSum},
+          {title: 'Pct',        data: counts.activitiesPct}
         ]},
         {title: 'Locations', val: 'locations', items: [
           {title: 'Avg of Sum', data: counts.locationsAvgSum},
           {title: 'Avg of Avg', data: counts.locationsAvgAvg},
-          {title: 'Sum', data: counts.locationsSum},
-          {title: 'Pct', data: counts.locationsPct}
+          {title: 'Sum',        data: counts.locationsSum},
+          {title: 'Pct',        data: counts.locationsPct}
         ]}
       ];
 
