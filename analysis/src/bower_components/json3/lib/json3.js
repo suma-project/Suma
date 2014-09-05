@@ -1,4 +1,4 @@
-/*! JSON v3.3.1 | http://bestiejs.github.io/json3 | Copyright 2012-2014, Kit Cambridge | http://kit.mit-license.org */
+/*! JSON v3.3.2 | http://bestiejs.github.io/json3 | Copyright 2012-2014, Kit Cambridge | http://kit.mit-license.org */
 ;(function () {
   // Detect the `define` function exposed by asynchronous module loaders. The
   // strict `define` check is necessary for compatibility with `r.js`.
@@ -232,7 +232,7 @@
             // Safari <= 2.0.3 doesn't implement `Object#hasOwnProperty`, but
             // supports the mutable *proto* property.
             isProperty = function (property) {
-              // Capture and break the objectgs prototype chain (see section 8.6.2
+              // Capture and break the object's prototype chain (see section 8.6.2
               // of the ES 5.1 spec). The parenthesized expression prevents an
               // unsafe transformation by the Closure Compiler.
               var original = this.__proto__, result = property in (this.__proto__ = null, this);
