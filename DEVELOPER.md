@@ -12,12 +12,25 @@ If you plan on developing reports for inclusion in the Suma repository and will 
 Reports Dependencies/Tools
 --------------------------
 * [AngularJS](http://angularjs.org)
+* [Node.js](http://nodejs.org/)
+* [Bundler](http://bundler.io/)
 * [Bower](http://bower.io)
 * [Grunt](http://gruntjs.com)
 * [Mocha](http://visionmedia.github.io/mocha)
 * [SinonJS](http://sinonjs.org)
 * [ChaiJS](http://chaijs.com)
 * [PHPUnit](http://phpunit.de)
+
+Installing Reports Dependencies
+-----------------------
+From the `analysis` directory:
+
+1. Install Node.js, PHP, PHPUnit, Ruby, and Bundler
+2. `bundle install`
+3. `npm install`
+4. `npm install -g grunt-cli`
+
+You can now run `grunt` to build and test the analysis tools.
 
 New Report Configuration Settings
 ---------------------------------
