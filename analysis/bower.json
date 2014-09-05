@@ -6,7 +6,7 @@
     "angular-route": "1.2.23",
     "angular-promise-tracker": "2.0.0",
     "bootstrap3-datetimepicker": "3.1.2",
-    "bootstrap-sass": "3.0.2",
+    "bootstrap-sass-official": "3.2.0",
     "d3": "3.4.11",
     "es5-shim": "4.0.3",
     "font-awesome": "4.2.0",
