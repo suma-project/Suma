@@ -2,8 +2,8 @@
   "name": "sumaAnalysis",
   "version": "0.0.0",
   "dependencies": {
-    "angular": "1.2.14",
-    "angular-route": "1.2.14",
+    "angular": "1.2.23",
+    "angular-route": "1.2.23",
     "angular-promise-tracker": "2.0.0",
     "bootstrap3-datetimepicker": "3.0.0",
     "bootstrap-sass": "3.0.2",
