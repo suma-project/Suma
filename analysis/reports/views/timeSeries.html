@@ -8,7 +8,7 @@
         <strong>Dates: </strong> {{report.summaryParams.sdate}} - {{report.summaryParams.edate}}
         <strong>Subset: </strong> {{report.summaryParams.stime || '00:00'}} - {{report.summaryParams.etime || '23:59'}} <br>
         <strong>Days: </strong> <span ng-repeat="day in report.summaryParams.days">{{day | capitalize}}<span ng-show="!$last">,</span> </span>
-        <strong>Locations: </strong> {{report.summaryParams.location.title}} <br>
+        <strong>EL: </strong> {{report.summaryParams.excludeLocs | locationTitle:report.locations}} <br>
         <strong>EA: </strong> {{report.summaryParams.excludeActs | activityTitle:report.activities:'activity'}}
         <strong>RA: </strong> {{report.summaryParams.requireActs | activityTitle:report.activities:'activity'}}
         <strong>EAG: </strong> {{report.summaryParams.excludeActGrps | activityTitle:report.activities:'activityGroup'}}
