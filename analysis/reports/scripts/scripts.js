@@ -26395,7 +26395,7 @@
   }
 }(window, window.angular));
 /*
- * promise-tracker - v2.0.0-beta3 - 2014-02-13
+ * promise-tracker - v2.0.0 - 2014-04-11
  * http://github.com/ajoslin/angular-promise-tracker
  * Created by Andy Joslin; Licensed under Public Domain
  */
@@ -26433,6 +26433,10 @@
             }
             return tracked.length > 0;
           };
+          self.tracking = function () {
+            //Even if we aren't active, we could still have a promise in our tracker
+            return tracked.length > 0;
+          };
           self.destroy = self.cancel = function () {
             minDurationPromise = cancelTimeout(minDurationPromise);
             activationDelayPromise = cancelTimeout(activationDelayPromise);
@@ -26442,7 +26446,7 @@
             tracked.length = 0;
           };
           //Create a promise that will make our tracker active until it is resolved.
-          //@return deferred - our deferred object that is being tracked
+          // @return deferred - our deferred object that is being tracked
           self.createPromise = function () {
             var deferred = $q.defer();
             tracked.push(deferred);
@@ -49793,10 +49797,10 @@ if (typeof CanvasRenderingContext2D != 'undefined') {
         }, H = function () {
           i.widget.off('click', '.datepicker *', i.click), i.widget.off('click', '[data-action]'), i.widget.off('mousedown', i.stopEvent), i.options.pickDate && i.options.pickTime && i.widget.off('click.togglePicker'), i.isInput ? i.element.off({
             focus: i.show,
-            change: i.change,
+            change: D,
             click: i.show,
             blur: i.hide
-          }) : (i.element.off({ change: i.change }, 'input'), i.component ? (i.component.off('click', i.show), i.component.off('mousedown', i.stopEvent)) : i.element.off('click', i.show));
+          }) : (i.element.off({ change: D }, 'input'), i.component ? (i.component.off('click', i.show), i.component.off('mousedown', i.stopEvent)) : i.element.off('click', i.show));
         }, I = function () {
           a(window).off('resize.datetimepicker' + i.id), i.isInput || a(document).off('mousedown.datetimepicker' + i.id);
         }, J = function () {
