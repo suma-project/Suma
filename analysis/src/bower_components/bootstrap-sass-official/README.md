@@ -6,6 +6,10 @@
 
 Please see the appropriate guide for your environment of choice:
 
+* [Ruby on Rails](#a-ruby-on-rails).
+* [Compass](#b-compass-without-rails) not on Rails.
+* [Bower](#c-bower).
+
 ### a. Ruby on Rails
 
 `bootstrap-sass` is easy to drop into Rails with the asset pipeline.
@@ -26,21 +30,39 @@ gem 'autoprefixer-rails'
 
 `bundle install` and restart your server to make the files available through the pipeline.
 
-In `app/assets/application.css.sass`:
+Import Bootstrap styles in `app/assets/stylesheets/application.css.scss`:
 
-```sass
-@import "bootstrap-sprockets"
-@import "bootstrap"
+```scss
+@import "bootstrap-sprockets";
+@import "bootstrap";
+```
+
+Make sure the file has `.css.scss` extension (or `.css.sass` for Sass syntax). If you have just generated a new Rails app,
+it may come with a `.css` file instead. If this file exists, it will be served instead of Sass, so remove it:
+
+```console
+$ rm app/assets/stylesheets/application.css
 ```
 
 Do not use `//= require` in Sass or your other stylesheets will not be [able to access][antirequire] the Bootstrap mixins or variables.
 
-In `app/assets/application.js`:
+Require Bootstrap Javascripts in `app/assets/javascripts/application.js`:
 
 ```js
 //= require jquery
 //= require bootstrap-sprockets
 ```
+
+#### Bower with Rails
+
+When using [bootstrap-sass Bower package](#c-bower) in Rails, ensure [minimum Sass number precision](#sass-number-precision):
+
+```ruby
+# e.g. config/initializers/sass.rb
+::Sass::Script::Number.precision = [10, ::Sass::Script::Number.precision].max
+```
+
+`bootstrap-sprockets` must be imported before `bootstrap` for the icon fonts to work.
 
 #### Rails 3.2.x
 
@@ -141,8 +163,8 @@ You can also import components explicitly. To start with a full list of modules 
 Then comment out components you do not want from `bootstrap-custom`.
 In the application Sass file, replace `@import 'bootstrap'` with:
 
-```sass
-@import 'bootstrap-custom'
+```scss
+@import 'bootstrap-custom';
 ```
 
 #### Sass: Number Precision
@@ -192,17 +214,17 @@ You can check dependencies in the [Bootstrap JS documentation][jsdocs].
 
 The fonts are referenced as:
 
-```sass
+```scss
 "#{$icon-font-path}#{$icon-font-name}.eot"
 ```
 
-`$icon-font-path` defaults to `bootstrap/`.
+`$icon-font-path` defaults to `bootstrap/` if asset path helpers are used, and `../fonts/bootstrap/` otherwise.
 
-When using with Compass, Sprockets, or Mincer, make sure to import the relevant path helpers before Bootstrap itself, for example:.
+When using bootstrap-sass with Compass, Sprockets, or Mincer, you **must** import the relevant path helpers before Bootstrap itself, for example:
 
-```sass
-@import bootstrap-compass
-@import bootstrap
+```scss
+@import "bootstrap-compass";
+@import "bootstrap";
 ```
 
 ## Usage

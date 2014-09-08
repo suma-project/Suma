@@ -1,6 +1,6 @@
 /*!
  * Datetimepicker for Bootstrap v3
-//! version : 3.1.2
+//! version : 3.1.3
  * https://github.com/Eonasdan/bootstrap-datetimepicker/
  */
 .bootstrap-datetimepicker-widget {
@@ -90,6 +90,10 @@
     a[data-action] {
       padding: 6px 0;
     }
+    
+    a[data-action]:active {
+        box-shadow: none;
+    }
 
     .timepicker-hour, .timepicker-minute, .timepicker-second {
         width: 54px;
@@ -178,7 +182,7 @@
         &.active,
         &.active:hover {
             background-color: @btn-primary-bg;
-            color: #fff;
+            color: @btn-primary-color;
             text-shadow: 0 -1px 0 rgba(0,0,0,.25);
         }
 
@@ -208,7 +212,7 @@
 
             &.active {
                 background-color: @btn-primary-bg;
-                color: #fff;
+                color: @btn-primary-color;
                 text-shadow: 0 -1px 0 rgba(0,0,0,.25);
             }
 
