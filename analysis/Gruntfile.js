@@ -212,7 +212,7 @@ module.exports = function (grunt) {
         singleRun: true
       }
     },
-    ngmin: {
+    ngAnnotate: {
       dist: {
         files: [{
           expand: true,
@@ -307,8 +307,8 @@ module.exports = function (grunt) {
     'copy:sourceMapPrep',
     'imagemin',
     'htmlmin',
-    'ngmin',
     'cssmin',
+    'ngAnnotate',
     'uglify:dist',
     'usemin'
   ]);
