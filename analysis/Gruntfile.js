@@ -116,16 +116,25 @@ module.exports = function (grunt) {
     },
     compass: {
       options: {
-        sassDir: '<%= yeoman.app %>/styles',
         config: '.compass-config.rb',
+        sassDir: '.tmp/scss',
         cssDir: '.tmp/styles',
-        specify: '<%= yeoman.app %>/styles/main.scss',
+        specify: '.tmp/scss/main.min.scss',
         importPath: '<%= yeoman.app %>',
-        relativeAssets: false
+        relativeAssets: false,
+        sourcemap: true
       },
-      dist: {},
+      dist: {
+        options: {
+          environment: 'development',
+          disableWarnings: false,
+          outputStyle: 'compressed',
+          cssDir: '<%= yeoman.dist %>/styles'
+        }
+      },
       server: {
         options: {
+          environment: 'production',
           debugInfo: true
         }
       }
@@ -195,11 +204,15 @@ module.exports = function (grunt) {
       styles: {
         expand: true,
         cwd: '<%= yeoman.app %>',
-        dest: '.tmp/',
+        dest: '.tmp/scss/',
         src: [
           'bower_components/font-awesome/css/font-awesome.css',
-          'bower_components/bootstrap3-datetimepicker/build/css/bootstrap-datetimepicker.min.css'
-        ]
+          'bower_components/bootstrap3-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
+          'styles/{,*/}*.{scss,sass}'
+        ],
+        rename: function (dest, src) {
+          return dest + src.replace(/^styles\//g, '').replace(/\.css$/g, '.css.scss').replace(/^main\.scss/g, 'main.min.scss');
+        }
       },
       sourceMapPrep: {
         dest: '<%= yeoman.dist %>/scripts/scripts.js',
@@ -289,8 +302,8 @@ module.exports = function (grunt) {
 
   grunt.registerTask('test', [
     'clean:server',
-    'compass',
     'copy:styles',
+    'compass',
     'autoprefixer',
     'connect:test',
     'karma'
@@ -299,15 +312,14 @@ module.exports = function (grunt) {
   grunt.registerTask('build', [
     'clean:dist',
     'useminPrepare',
-    'compass:dist',
     'copy:styles',
+    'compass:dist',
     'autoprefixer',
     'concat',
     'copy:dist',
     'copy:sourceMapPrep',
     'imagemin',
     'htmlmin',
-    'cssmin',
     'ngAnnotate',
     'uglify:dist',
     'usemin'
