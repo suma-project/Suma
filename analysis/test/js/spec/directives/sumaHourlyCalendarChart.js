@@ -42,8 +42,8 @@ describe('Directive: sumaHourlyCalendarChart', function () {
       });
 
       // Assertions
-      expect(renderStub).to.be.calledTwice();
-      expect(statsStub).to.be.calledTwice();
+      expect(renderStub).to.be.calledTwice;
+      expect(statsStub).to.be.calledTwice;
 
       // Restore stubs
       renderStub.restore();
