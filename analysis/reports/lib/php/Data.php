@@ -25,7 +25,7 @@ class Data
      * @var array
      * @access  private
      */
-    private $daysScaffold = array(
+    private $daysDict = array(
         'mo' => 'Monday',
         'tu' => 'Tuesday',
         'we' => 'Wednesday',
@@ -36,12 +36,12 @@ class Data
     );
 
     /**
-     * Stores location ids for filtering
+     * Stores location ids to exclude
      *
      * @var NULL
      * @access  private
      */
-    private $locListIds = array();
+    private $excludeLocs = array();
 
     /**
      * Stores activity ids to exclude
@@ -128,8 +128,9 @@ class Data
      * Method to populate $csvScaffold, used for csv count collection
      *
      * @access private
-     * @param  array $locListIds
-     * @param  array $actListIds
+     * @param  array $actDict
+     * @param  array $locDict
+     * @param  array $actGrpDict
      * @return array
      */
     private function buildCSVScaffold ($actDict, $locDict, $actGrpDict)
@@ -182,19 +183,10 @@ class Data
             }
         }
 
-        if(empty($this->locListIds))
+        foreach($locDict as $loc)
         {
-            foreach($locDict as $loc)
-            {
+            if (!in_array($loc['id'], $this->excludeLocs)) {
                 $scaffoldArray['locations'][$loc['title']] = NULL;
-            }
-        }
-        else
-        {
-            foreach($this->locListIds as $loc)
-            {
-                $name = $this->locHash[$loc];
-                $scaffoldArray['locations'][$name] = NULL;
             }
         }
 
@@ -286,14 +278,14 @@ class Data
         // using min/max values of data from server
         if (empty($sdate))
         {
-            $keys  = array_keys($countHash['periodSum']);
+            $keys  = array_keys($this->countHash['periodSum']);
             $sdate = min($keys);
             $sdate = str_replace("-", "", $sdate);
         }
 
         if (empty($edate))
         {
-            $keys  = array_keys($countHash['periodSum']);
+            $keys  = array_keys($this->countHash['periodSum']);
             $edate = max($keys);
             $edate = str_replace("-", "", $edate);
         }
@@ -334,34 +326,6 @@ class Data
     }
 
     /**
-     * Basic pluck method
-     *
-     * @access private
-     * @param  array $input
-     * @param  string $key
-     * @return array
-     */
-    private function pluck($input, $key)
-    {
-        if (is_array($key) || !is_array($input))
-        {
-            return array();
-        }
-
-        $array = array();
-
-        foreach ($input as $v)
-        {
-            if (array_key_exists($key, $v))
-            {
-                $array[] = $v[$key];
-            }
-        }
-
-        return $array;
-    }
-
-    /**
      * Validates form input from client
      *
      * @access  private
@@ -386,7 +350,7 @@ class Data
             'classifyCounts' => 'trim',
             'wholeSession'   => 'trim',
             'days'           => 'trim',
-            'locations'      => 'trim',
+            'excludeLocs'    => 'trim',
             'requireActs'    => 'trim',
             'excludeActs'    => 'trim',
             'requireActGrps' => 'trim',
@@ -403,7 +367,7 @@ class Data
             'classifyCounts' => 'alpha|contains, count start end',
             'wholeSession'   => 'alpha|contains, yes no',
             'days'           => 'day_of_week',
-            'locations'      => 'alpha_numeric',
+            'excludeLocs'    => 'activities',
             'requireActs'    => 'activities',
             'excludeActs'    => 'activities',
             'requireActGrps' => 'activities',
@@ -428,7 +392,7 @@ class Data
                 'classifyCounts' => $input['classifyCounts'],
                 'wholeSession'   => $input['wholeSession'],
                 'days'           => $input['days'],
-                'locations'      => $input['locations'],
+                'excludeLocs'    => $input['excludeLocs'],
                 'excludeActs'    => $input['excludeActs'],
                 'requireActs'    => $input['requireActs'],
                 'excludeActGrps' => $input['excludeActGrps'],
@@ -443,8 +407,8 @@ class Data
             $params['days'] = array();
 
             foreach ($days as $day) {
-                if (array_key_exists($day, $this->daysScaffold)) {
-                    array_push($params['days'], $this->daysScaffold[$day]);
+                if (array_key_exists($day, $this->daysDict)) {
+                    array_push($params['days'], $this->daysDict[$day]);
                 }
             }
 
@@ -522,42 +486,6 @@ class Data
     }
 
     /**
-     * Creates an array of location ids for filtering
-     *
-     * @access  private
-     * @param  array $locDict
-     * @param  string $locID
-     * @param  array  $locArray
-     * @return array
-     */
-    private function populateLocations($locDict, $locID, $locArray = array())
-    {
-        // Convert locID to integer
-        if (is_numeric($locID))
-        {
-            $locID = (int)$locID;
-        }
-
-        // Build array of locations that match locID
-        // or have locID as a parent
-        foreach ($locDict as $loc)
-        {
-            if ($locID === $loc['id'])
-            {
-                $locArray[] = $loc;
-            }
-            elseif ($locID === $loc['parent'])
-            {
-                $newLocID = $loc['id'];
-                $locArray[] = $loc;
-                $this->populateLocations($locDict, $newLocID, $locArray);
-            }
-        }
-
-        return $locArray;
-    }
-
-    /**
      * Reject count based on exclude acts, require acts, or require one of each arrays
      *
      * @access private
@@ -566,7 +494,6 @@ class Data
      */
     private function rejectBasedOnActs($count)
     {
-
         // Reject if no count acts in exclude acts
         if (count(array_intersect($count['activities'], $this->excludeActs)) > 0) {
             return true;
@@ -1051,10 +978,9 @@ class Data
      */
     private function populateHash($response, $params)
     {
-        $locID   = $params['locations'];
-        $actDict = $response['initiative']['dictionary']['activities'];
-        $actGrpDict = $response['initiative']['dictionary']['activityGroups'];
-        $locDict = $response['initiative']['dictionary']['locations'];
+        $actDict     = $response['initiative']['dictionary']['activities'];
+        $actGrpDict  = $response['initiative']['dictionary']['activityGroups'];
+        $locDict     = $response['initiative']['dictionary']['locations'];
 
         // Check for sessions object
         if (!isset($response['initiative']['sessions']))
@@ -1063,13 +989,9 @@ class Data
         }
 
         // Populate location list for filters
-        if (empty($this->locListIds))
+        if (empty($this->excludeLocs))
         {
-            if ($locID !== 'all')
-            {
-                $locList    = $this->populateLocations($locDict, $locID);
-                $this->locListIds = $this->pluck($locList, 'id');
-            }
+            $this->excludeLocs = array_map('intval', explode(",", $params['excludeLocs']));
         }
 
         // Populate activity lists for filters
@@ -1112,7 +1034,7 @@ class Data
             foreach ($sess['locations'] as $loc)
             {
                 // Test if location is in locations array
-                if ($params['locations'] === 'all' || in_array($loc['id'], $this->locListIds))
+                if (!in_array($loc['id'], $this->excludeLocs))
                 {
                     foreach ($loc['counts'] as $count)
                     {
@@ -1135,6 +1057,7 @@ class Data
      *
      * @access  private
      * @param  array $countHash
+     * @param  array $params
      * @return array
      */
     private function calculateAvg($countHash, $params)

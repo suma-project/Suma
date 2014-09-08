@@ -36,7 +36,7 @@ describe('Directive: sumaTimeSeriesChart', function () {
       });
 
       // Assertions
-      expect(renderStub).to.be.calledTwice();
+      expect(renderStub).to.be.calledTwice;
 
       // Restore stubs
       renderStub.restore();

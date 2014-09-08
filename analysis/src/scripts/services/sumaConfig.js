@@ -18,7 +18,7 @@ angular.module('sumaAnalysis')
           {id: 'no', title: 'No'},
           {id: 'yes', title: 'Yes'}
         ],
-        startDate: [moment().subtract('months', 4).format('YYYY-MM-DD')],
+        startDate: [moment().subtract(4, 'months').format('YYYY-MM-DD')],
         endDate: [moment().format('YYYY-MM-DD')],
         startTime: [''],
         endTime: ['']

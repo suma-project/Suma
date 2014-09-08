@@ -1,5 +1,5 @@
 /*
- * promise-tracker - v2.0.0-beta3 - 2014-02-13
+ * promise-tracker - v2.0.0 - 2014-04-11
  * http://github.com/ajoslin/angular-promise-tracker
  * Created by Andy Joslin; Licensed under Public Domain
  */
@@ -46,6 +46,11 @@ angular.module('ajoslin.promise-tracker', [])
         return tracked.length > 0;
       };
 
+      self.tracking = function() {
+        //Even if we aren't active, we could still have a promise in our tracker
+        return tracked.length > 0;
+      };
+
       self.destroy = self.cancel = function() {
         minDurationPromise = cancelTimeout(minDurationPromise);
         activationDelayPromise = cancelTimeout(activationDelayPromise);
@@ -56,7 +61,7 @@ angular.module('ajoslin.promise-tracker', [])
       };
 
       //Create a promise that will make our tracker active until it is resolved.
-      //@return deferred - our deferred object that is being tracked
+      // @return deferred - our deferred object that is being tracked
       self.createPromise = function() {
         var deferred = $q.defer();
         tracked.push(deferred);

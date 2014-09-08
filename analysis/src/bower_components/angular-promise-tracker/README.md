@@ -56,7 +56,7 @@ angular.module('myApp', ['ajoslin.promise-tracker'])
   //This shortcut is included in promise-tracker-http-interceptor.js
   $scope.fetchSomething = function(id) {
     return $http.get('/something', {
-      tracker: 'loadingTracker'
+      tracker: $scope.loadingTracker
     }).then(function(response) {
       alert('Fetched something! ' + response.data);
     });
@@ -95,6 +95,10 @@ Example: `var myTracker = promiseTracker({ activationDelay: 500, minDuration: 75
 
   Returns whether this tracker is currently active. That is, whether any of the promises added to/created by this tracker are still pending, or the `activationDelay` has not been met yet.
 
+* **`boolean` tracker.tracking()**
+
+  Returns whether this tracker is currently tracking a request. That is, whether any of the promises added to/created by this tracker are still pending, even if the `activationDelay` has not been met yet.
+
 * **`void` tracker.addPromise(promise)**
 
   Add any arbitrary promise to tracker. `tracker.active()` will be true until `promise` is resolved or rejected.
@@ -105,6 +109,7 @@ Example: `var myTracker = promiseTracker({ activationDelay: 500, minDuration: 75
 
   ```js
   var promise = $timeout(doSomethingCool, 1000);
+  myTracker.addPromise(promise);
   console.log(myTracker.active()); // => true
   //1000 milliseconds later...
   console.log(myTracker.active()); // => false

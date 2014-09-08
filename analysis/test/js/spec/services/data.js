@@ -263,32 +263,6 @@ describe('Service: Data', function () {
     timeseriesStub.restore();
   });
 
-  it(':getData should fall back if params are missing', function (done) {
-    // Note use of Params3
-    var cfg = {
-      params: Params3,
-      acts: [],
-      locs: [],
-      dataProcessor: 'processTimeSeriesData',
-      timeoutPromise: tPromise,
-      timeout: 180000
-    };
-
-    $httpBackend.whenGET(MockUrl4)
-      .respond([{}, {}]);
-
-    timeseriesStub = sinon.stub(Processtimeseriesdata, 'get');
-    timeseriesStub.returns(okResponse());
-
-    Data.getData(cfg).then(function (result) {
-      expect(result.success).to.equal(true);
-      done();
-    });
-
-    $httpBackend.flush();
-    timeseriesStub.restore();
-  });
-
   it(':getData should return an error if AJAX fails', function (done) {
     var cfg = {
       params: Params1,

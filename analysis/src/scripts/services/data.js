@@ -14,7 +14,7 @@ angular.module('sumaAnalysis')
 
         options = {
           'params': {
-            'id': cfg.params.init.id,
+            'id'   : cfg.params.init.id,
             'sdate': cfg.params.sdate || '',
             'edate': cfg.params.edate || '',
             'stime': cfg.params.stime || '',
@@ -78,17 +78,17 @@ angular.module('sumaAnalysis')
 
         options = {
           params: {
-            id: cfg.params.init.id,
-            sdate: cfg.params.sdate || '',
-            edate: cfg.params.edate || '',
-            stime: cfg.params.stime || '',
-            etime: cfg.params.etime || '',
-            classifyCounts: cfg.params.classifyCounts ? cfg.params.classifyCounts.id : null,
-            wholeSession: cfg.params.wholeSession ? cfg.params.wholeSession.id : null,
-            days: cfg.params.days ? cfg.params.days.join(',') : null,
-            locations: cfg.params.location ? cfg.params.location.id : 'all',
-            excludeActs: cfg.params.excludeActs ? cfg.params.excludeActs.join(',') : null,
-            requireActs: cfg.params.requireActs ? cfg.params.requireActs.join(',') : null,
+            id            : cfg.params.init.id,
+            sdate         : cfg.params.sdate || '',
+            edate         : cfg.params.edate || '',
+            stime         : cfg.params.stime || '',
+            etime         : cfg.params.etime || '',
+            classifyCounts: cfg.params.classifyCounts ? cfg.params.classifyCounts.id        : null,
+            wholeSession  : cfg.params.wholeSession   ? cfg.params.wholeSession.id          : null,
+            days          : cfg.params.days           ? cfg.params.days.join(',')           : null,
+            excludeLocs   : cfg.params.excludeLocs    ? cfg.params.excludeLocs.join(',')    : null,
+            excludeActs   : cfg.params.excludeActs    ? cfg.params.excludeActs.join(',')    : null,
+            requireActs   : cfg.params.requireActs    ? cfg.params.requireActs.join(',')    : null,
             excludeActGrps: cfg.params.excludeActGrps ? cfg.params.excludeActGrps.join(',') : null,
             requireActGrps: cfg.params.requireActGrps ? cfg.params.requireActGrps.join(',') : null
           },

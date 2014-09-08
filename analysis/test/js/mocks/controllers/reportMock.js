@@ -17,8 +17,8 @@ angular.module('reportMock', [])
       {id: 'no', title: 'No'},
       {id: 'yes', title: 'Yes'}
     ],
-    startDate: [moment().subtract('months', 6).add('days', 1).format('YYYY-MM-DD')],
-    endDate: [moment().add('days', 1).format('YYYY-MM-DD')],
+    startDate: [moment().subtract(6, 'months').add(1, 'days').format('YYYY-MM-DD')],
+    endDate: [moment().add(1, 'days').format('YYYY-MM-DD')],
     startTime: [''],
     endTime: ['']
   },
@@ -58,8 +58,8 @@ angular.module('reportMock', [])
       {id: 'no', title: 'No'},
       {id: 'yes', title: 'Yes'}
     ],
-    startDate: [moment().subtract('months', 6).add('days', 1).format('YYYY-MM-DD')],
-    endDate: [moment().add('days', 1).format('YYYY-MM-DD')],
+    startDate: [moment().subtract(6, 'months').add(1, 'days').format('YYYY-MM-DD')],
+    endDate: [moment().add(1, 'days').format('YYYY-MM-DD')],
     startTime: [''],
     endTime: ['']
   },
@@ -97,8 +97,8 @@ angular.module('reportMock', [])
       {id: 'no', title: 'No'},
       {id: 'yes', title: 'Yes'}
     ],
-    startDate: [moment().subtract('months', 6).add('days', 1).format('YYYY-MM-DD')],
-    endDate: [moment().add('days', 1).format('YYYY-MM-DD')],
+    startDate: [moment().subtract(6, 'months').add(1, 'days').format('YYYY-MM-DD')],
+    endDate: [moment().add(1, 'days').format('YYYY-MM-DD')],
     startTime: [''],
     endTime: ['']
   },
@@ -138,6 +138,6 @@ angular.module('reportMock', [])
   classifyCounts : {id: 'count', title: 'Count Date'},
   days : {id: 'all', title: 'All'},
   wholeSession : {id: 'no', title: 'No'},
-  sDate : moment().subtract('months', 6).add('days', 1).format('YYYY-MM-DD'),
-  eDate : moment().add('days', 1).format('YYYY-MM-DD')
+  sDate : moment().subtract(6, 'months').add(1, 'days').format('YYYY-MM-DD'),
+  eDate : moment().add(1, 'days').format('YYYY-MM-DD')
 });

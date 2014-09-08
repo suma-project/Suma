@@ -5,14 +5,14 @@
         <strong>Initiative: </strong> {{report.summaryParams.init.title}} <br>
         <strong>Classify By: </strong> {{report.summaryParams.classifyCounts.title}}
         <strong>Whole Session: </strong> {{report.summaryParams.wholeSession.title}} <br>
-        <strong>Dates: </strong> {{report.summaryParams.sdate}} - {{report.summaryParams.edate}}
+        <strong>Dates: </strong> {{report.summaryParams.sdate}} - {{report.summaryParams.edate}}<br>
         <strong>Subset: </strong> {{report.summaryParams.stime || '00:00'}} - {{report.summaryParams.etime || '23:59'}} <br>
         <strong>Days: </strong> <span ng-repeat="day in report.summaryParams.days">{{day | capitalize}}<span ng-show="!$last">,</span> </span>
-        <strong>Locations: </strong> {{report.summaryParams.location.title}} <br>
-        <strong>EA: </strong> {{report.summaryParams.excludeActs | activityTitle:activities:'activity'}}
-        <strong>RA: </strong> {{report.summaryParams.requireActs | activityTitle:activities:'activity'}}
-        <strong>EAG: </strong> {{report.summaryParams.excludeActGrps | activityTitle:activities:'activityGroup'}}
-        <strong>RAG: </strong> {{report.summaryParams.requireActGrps | activityTitle:activities:'activityGroup'}}
+        <strong>EL: </strong> {{report.summaryParams.excludeLocs | locationTitle:report.locations}}
+        <strong>EA: </strong> {{report.summaryParams.excludeActs | activityTitle:report.activities:'activity'}}
+        <strong>RA: </strong> {{report.summaryParams.requireActs | activityTitle:report.activities:'activity'}}
+        <strong>EAG: </strong> {{report.summaryParams.excludeActGrps | activityTitle:report.activities:'activityGroup'}}
+        <strong>RAG: </strong> {{report.summaryParams.requireActGrps | activityTitle:report.activities:'activityGroup'}}
       </p>
     </div>
 
@@ -110,8 +110,12 @@
           <div class="form-group">
             <label class="suma-popover" data-title="Limit Locations" data-content="Select which locations to include in your analysis. Selecting a location with children will include all children in the data set." data-suma-popover>Limit Locations</label>
             <div class="controls">
-              <select name="locations" data-ng-model="report.params.location" data-ng-options="loc | depth for loc in report.locations" class="form-control">
-              </select>
+              <button type="button" class="btn btn-default" data-toggle="modal" data-target="#locModal">
+                Limit Locations
+              </button>
+              <div data-suma-modal data-modal-id="locModal" data-modal-title="Limit Locations" data-modal-save-text="Update">
+                <div data-suma-location-filter locs="report.locations"></div>
+              </div>
             </div>
           </div>
 
@@ -127,7 +131,7 @@
             </div>
           </div>
 
-          <div data-suma-active-acts acts="report.activities" ng-show="report.activities.length > 2"></div>
+          <div data-suma-active-filters acts="report.activities" locs="report.locations"></div>
 
           <div>
             <input type="submit" id="submit" class="btn btn-success" value="{{report.state.loading ? 'Loading...' : 'Submit'}}">

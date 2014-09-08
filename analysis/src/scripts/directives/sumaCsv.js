@@ -39,13 +39,16 @@ angular.module('sumaAnalysis')
 
         $scope.buildCSVString = function (counts, label, indent) {
           return d3.csv.format(_.map(counts, function (o, i) {
-            var object = {};
+            var obj = {};
 
-            object[label] = indent ? $scope.addCSVIndent(o) : o.name;
-            object.Count = o.count;
-            object.Percent = o.percent;
+            obj[label]  = indent ? $scope.addCSVIndent(o) : o.name;
+            obj.Count   = o.count;
+            obj.Percent = o.percent;
+            if (o.avg) {
+              obj.Avg = o.avg;
+            }
 
-            return object;
+            return obj;
           }));
         };
 
@@ -57,13 +60,13 @@ angular.module('sumaAnalysis')
               href;
 
           // Convert data to strings
-          data.Primary = $scope.buildPrimaryCSVString(counts.csv);
-          data.Locations = $scope.buildCSVString(counts.locationsTable, 'Location', true);
+          data.Primary    = $scope.buildPrimaryCSVString(counts.csv);
+          data.Locations  = $scope.buildCSVString(counts.locationsTable, 'Location', true);
           data.Activities = $scope.buildCSVString(counts.activitiesTable, 'Activity', true);
-          data.Hourly = $scope.buildCSVString(counts.hourlySummary, 'Hour');
-          data.Daily = $scope.buildCSVString(counts.dayOfWeekSummary, 'Day');
-          data.Monthly = $scope.buildCSVString(counts.monthSummary, 'Month');
-          data.Yearly = $scope.buildCSVString(counts.yearSummary, 'Year');
+          data.Hourly     = $scope.buildCSVString(counts.hourlySummary, 'Hour');
+          data.Daily      = $scope.buildCSVString(counts.dayOfWeekSummary, 'Day');
+          data.Monthly    = $scope.buildCSVString(counts.monthSummary, 'Month');
+          data.Yearly     = $scope.buildCSVString(counts.yearSummary, 'Year');
 
           // Build final string with section headers and spacing
           _.each(data, function (str, name) {

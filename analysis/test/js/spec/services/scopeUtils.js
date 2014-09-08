@@ -72,7 +72,7 @@ describe('Service: ScopeUtils', function () {
       edate: '20140101',
       stime: '0400',
       etime: '1600',
-      location: 'all',
+      excludeLocs: '',
       requireActs: '',
       excludeActs: '',
       requireActGrps: '',
@@ -86,12 +86,12 @@ describe('Service: ScopeUtils', function () {
       wholeSession: {id: 'no', title: 'No'},
       zeroCounts: {id: 'no', title: 'No'},
       days: ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su'],
-      location: {id: 'all'},
       sdate: '20131111',
       edate: '20140101',
       stime: '0400',
       etime: '1600',
       requireActs: [''],
+      excludeLocs: [''],
       excludeActs: [''],
       requireActGrps: [''],
       excludeActGrps: ['']
@@ -201,7 +201,7 @@ describe('Service: ScopeUtils', function () {
       edate: 'mouse',
       stime: 'mouse',
       etime: 'mouse',
-      location: 'mouse',
+      excludeLocs: 'mouse',
       requireActs: 'mouse',
       excludeActs: 'mouse',
       requireActGrps: 'mouse',
@@ -218,7 +218,7 @@ describe('Service: ScopeUtils', function () {
     // Call ScopeUtils.set
     ScopeUtils.set(urlParams, SumaConfig, inits).then(function (response) {
       // Assertions
-      expect(response.errorMessage).to.equal('Query parameter input error. Invalid value for classifyCounts. Valid values are "count", "start", or "end". Invalid value for wholeSession. Valid values are "yes" or "no". Invalid value for zeroCounts. Valid values are "yes" or "no". At least one calendar day should be selected. Valid values are "mo", "tu", "we", "th", "fr", "sa", "su". Values should be separated by a comma. Invalid value for excludeActs. Invalid value for requireActs. Invalid value for excludeActGrps. Invalid value for requireActGrps. Invalid value for location. Invalid value for sdate. Should be numeric and either 0 or 8 characters in length, not counting punctuation. Invalid value for edate. Should be numeric and either 0 or 8 characters in length, not counting punctuation. Invalid value for stime. Should be numeric and either 0 or 4 characters in length, not counting punctuation. Invalid value for etime. Should be numeric and either 0 or 4 characters in length, not counting punctuation. ');
+      expect(response.errorMessage).to.equal('Query parameter input error. Invalid value for classifyCounts. Valid values are "count", "start", or "end". Invalid value for wholeSession. Valid values are "yes" or "no". Invalid value for zeroCounts. Valid values are "yes" or "no". At least one calendar day should be selected. Valid values are "mo", "tu", "we", "th", "fr", "sa", "su". Values should be separated by a comma. Invalid value for excludeActs. Invalid value for requireActs. Invalid value for excludeActGrps. Invalid value for requireActGrps. Invalid value for excludeLocs. Invalid value for sdate. Should be numeric and either 0 or 8 characters in length, not counting punctuation. Invalid value for edate. Should be numeric and either 0 or 8 characters in length, not counting punctuation. Invalid value for stime. Should be numeric and either 0 or 4 characters in length, not counting punctuation. Invalid value for etime. Should be numeric and either 0 or 4 characters in length, not counting punctuation. ');
     });
 
     scope.$digest();
@@ -243,7 +243,7 @@ describe('Service: ScopeUtils', function () {
       edate: 'mouse',
       stime: 'mouse',
       etime: 'mouse',
-      location: 'mouse',
+      excludeLocs: null,
       requireActs: null,
       excludeActs: null,
       requireActGrps: null,
@@ -260,7 +260,7 @@ describe('Service: ScopeUtils', function () {
     // Call ScopeUtils.set
     ScopeUtils.set(urlParams, SumaConfig, inits).then(function (response) {
       // Assertions
-      expect(response.errorMessage).to.equal('Query parameter input error. Invalid value for classifyCounts. Valid values are "count", "start", or "end". Invalid value for wholeSession. Valid values are "yes" or "no". Invalid value for zeroCounts. Valid values are "yes" or "no". At least one calendar day should be selected. Valid values are "mo", "tu", "we", "th", "fr", "sa", "su". Values should be separated by a comma. Invalid value for location. Invalid value for sdate. Should be numeric and either 0 or 8 characters in length, not counting punctuation. Invalid value for edate. Should be numeric and either 0 or 8 characters in length, not counting punctuation. Invalid value for stime. Should be numeric and either 0 or 4 characters in length, not counting punctuation. Invalid value for etime. Should be numeric and either 0 or 4 characters in length, not counting punctuation. ');
+      expect(response.errorMessage).to.equal('Query parameter input error. Invalid value for classifyCounts. Valid values are "count", "start", or "end". Invalid value for wholeSession. Valid values are "yes" or "no". Invalid value for zeroCounts. Valid values are "yes" or "no". At least one calendar day should be selected. Valid values are "mo", "tu", "we", "th", "fr", "sa", "su". Values should be separated by a comma. Invalid value for sdate. Should be numeric and either 0 or 8 characters in length, not counting punctuation. Invalid value for edate. Should be numeric and either 0 or 8 characters in length, not counting punctuation. Invalid value for stime. Should be numeric and either 0 or 4 characters in length, not counting punctuation. Invalid value for etime. Should be numeric and either 0 or 4 characters in length, not counting punctuation. ');
     });
 
     scope.$digest();
@@ -334,5 +334,42 @@ describe('Service: ScopeUtils', function () {
     ScopeUtils.success('ERROR').then(function (response) {
       expect(response).to.equal({message: 'ERROR', code: 500});
     });
+  });
+
+  it('ScopeUtils:mapLocs should set filter to false if loc is in exclude array and enabled to false if ancestors exist', function () {
+    var locs,
+        excludeLocs,
+        expectedLocs;
+
+    locs = [
+      {id: 1, filter: true, enabled: true, ancestors: [1, 2, 3]},
+      {id: 2, filter: true, enabled: true, ancestors: []},
+      {id: 3, filter: true, enabled: true}
+    ];
+
+    excludeLocs = ['1', '2'];
+
+    expectedLocs = [
+      {id: 1, filter: false, enabled: false, ancestors: [1, 2, 3]},
+      {id: 2, filter: false, enabled: true, ancestors: []},
+      {id: 3, filter: true, enabled: true}
+    ];
+
+    expect(ScopeUtils.mapLocs(locs, excludeLocs)).to.deep.equal(expectedLocs);
+  });
+
+  it ('ScopeUtils:stringifyLocs should convert locations with filter:false to string', function () {
+    var locs,
+        expectedString;
+
+    locs = [
+      {id: 1, filter: false, enabled: false, ancestors: [1, 2, 3]},
+      {id: 2, filter: false, enabled: true, ancestors: []},
+      {id: 3, filter: true, enabled: true}
+    ];
+
+    expectedString = '1,2';
+
+    expect(ScopeUtils.stringifyLocs(locs)).to.equal(expectedString);
   });
 });

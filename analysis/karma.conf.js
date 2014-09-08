@@ -7,19 +7,19 @@ module.exports = function(config) {
     basePath: '',
 
     // testing framework to use (jasmine/mocha/qunit/...)
-    frameworks: ['mocha', 'chai-jquery', 'sinon-chai', 'jquery-2.0.3'],
+    frameworks: ['mocha', 'chai-jquery', 'sinon-chai', 'jquery-2.1.0'],
 
     // list of files / patterns to load in the browser
     files: [
-      'src/bower_components/jquery/jquery.js',
+      'src/bower_components/jquery/dist/jquery.js',
       'src/bower_components/angular/angular.js',
       'src/bower_components/angular-mocks/angular-mocks.js',
       'src/bower_components/angular-route/angular-route.js',
       'src/bower_components/angular-promise-tracker/promise-tracker.js',
       'src/bower_components/moment/moment.js',
-      'src/bower_components/bootstrap-sass/js/tooltip.js',
-      'src/bower_components/bootstrap-sass/js/modal.js',
-      'src/bower_components/bootstrap-sass/js/popover.js',
+      'src/bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/tooltip.js',
+      'src/bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/modal.js',
+      'src/bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/popover.js',
       'src/bower_components/bootstrap3-datetimepicker/src/js/bootstrap-datetimepicker.js',
       'src/bower_components/lodash/dist/lodash.js',
       'src/lib/js/lodash_mixins.js',

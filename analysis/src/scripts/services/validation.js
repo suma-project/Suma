@@ -26,6 +26,26 @@ angular.module('sumaAnalysis')
       return test;
     };
 
+    this.validateLoc = function (locs, dict) {
+      var test,
+          validIds;
+
+      // Get list of valid ids
+      validIds = _.pluck(dict, 'id');
+
+      // Default to valid
+      test = true;
+
+      // Is each activity a member of the validIds array?
+      _.each(locs, function (loc) {
+        if (!_.contains(validIds, parseInt(loc, 10)) && loc !== '') {
+          test = false;
+        }
+      });
+
+      return test;
+    };
+
     this.validateDateTime = function (value, maxLength, pad) {
       var stripped,
           val;

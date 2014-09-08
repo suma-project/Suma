@@ -9,10 +9,10 @@
         <strong>Subset: </strong> {{report.summaryParams.stime || '00:00'}} - {{report.summaryParams.etime || '23:59'}} <br/>
         <strong>Days: </strong> <span ng-repeat="day in report.summaryParams.days">{{day | capitalize}}<span ng-show="!$last">,</span> </span>
         <strong>Locations: </strong> {{report.summaryParams.location.title}} <br/>
-        <strong>EA: </strong> {{report.summaryParams.excludeActs | activityTitle:activities:'activity'}}
-        <strong>RA: </strong> {{report.summaryParams.requireActs | activityTitle:activities:'activity'}}
-        <strong>EAG: </strong> {{report.summaryParams.excludeActGrps | activityTitle:activities:'activityGroup'}}
-        <strong>RAG: </strong> {{report.summaryParams.requireActGrps | activityTitle:activities:'activityGroup'}}
+        <strong>EA: </strong> {{report.summaryParams.excludeActs | activityTitle:report.activities:'activity'}}
+        <strong>RA: </strong> {{report.summaryParams.requireActs | activityTitle:report.activities:'activity'}}
+        <strong>EAG: </strong> {{report.summaryParams.excludeActGrps | activityTitle:report.activities:'activityGroup'}}
+        <strong>RAG: </strong> {{report.summaryParams.requireActGrps | activityTitle:report.activities:'activityGroup'}}
       </p>
     </div>
     <div class="col-xs-7">
@@ -27,7 +27,7 @@
 
   <div class="row">
     <div class="col-xs-12 chart-wrapper">
-      <div class="loading" data-ng-show="state.loading"><img src="images/spinner.gif" alt="Spinner"></div>
+      <div class="loading" data-ng-show="report.state.loading"><img src="images/spinner.gif" alt="Spinner"></div>
       <div class="alert alert-info alert-block" data-ng-show="report.state.initial">
         <h4>Welcome!</h4>
         Please select an initiative from the select menu below. Once you have chosen an initiative, additional filter options will appear. You can also limit your search by date or time.
@@ -129,8 +129,12 @@
           <div class="form-group">
             <label class="suma-popover" data-title="Limit Locations" data-content="Select which locations to include in your analysis. Selecting a location with children will include all children in the data set." data-suma-popover>Limit Locations</label>
             <div class="controls">
-              <select name="locations" data-ng-model="report.params.location" data-ng-options="loc | depth for loc in report.locations" class="form-control">
-              </select>
+              <button type="button" class="btn btn-default" data-toggle="modal" data-target="#locModal">
+                Limit Locations
+              </button>
+              <div data-suma-modal data-modal-id="locModal" data-modal-title="Limit Locations" data-modal-save-text="Update">
+                <div data-suma-location-filter locs="report.locations"></div>
+              </div>
             </div>
           </div>
 
@@ -146,7 +150,7 @@
             </div>
           </div>
 
-          <div data-suma-active-acts acts="report.activities" ng-show="report.activities.length > 2"></div>
+          <div data-suma-active-filters acts="report.activities" locs="report.locations""></div>
 
           <div>
             <input type="submit" id="submit" class="btn btn-success" value="{{report.state.loading ? 'Loading...' : 'Submit'}}" />

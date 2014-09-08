@@ -56,24 +56,40 @@ angular.module('sumaAnalysis')
           return act;
         });
       },
+      mapLocs: function (locs, excludeLocsAry) {
+        return _.map(locs, function (loc) {
+          if (_.contains(excludeLocsAry, String(loc.id))) {
+            loc.filter = false;
+            if (loc.ancestors.length > 0) {
+              loc.enabled = false;
+            }
+          }
+          return loc;
+        });
+      },
+      stringifyLocs: function (locs) {
+        return _.map(_.filter(locs, {filter: false}), function (loc) {
+          return loc.id;
+        }).join();
+      },
       getMetadata: function (init) {
         return actsLocs.get(init);
       },
-      getCurrentScope: function (params, acts) {
+      getCurrentScope: function (params, acts, locs) {
         return _.compactObject({
           id:             String(params.init.id),
-          sdate:          params.sdate || params.sdate === '' ? params.sdate : null,
-          edate:          params.edate || params.edate === '' ? params.edate : null,
-          stime:          params.stime || params.stime === '' ? params.stime : null,
-          etime:          params.etime || params.etime === '' ? params.etime : null,
-          classifyCounts: params.classifyCounts ? params.classifyCounts.id : null,
-          wholeSession:   params.wholeSession ? params.wholeSession.id : null,
-          zeroCounts:     params.zeroCounts ? params.zeroCounts.id : null,
+          sdate:          params.sdate || params.sdate === '' ? params.sdate             : null,
+          edate:          params.edate || params.edate === '' ? params.edate             : null,
+          stime:          params.stime || params.stime === '' ? params.stime             : null,
+          etime:          params.etime || params.etime === '' ? params.etime             : null,
+          classifyCounts: params.classifyCounts               ? params.classifyCounts.id : null,
+          wholeSession:   params.wholeSession                 ? params.wholeSession.id   : null,
+          zeroCounts:     params.zeroCounts                   ? params.zeroCounts.id     : null,
           requireActs:    this.stringifyActs(acts, 'require'),
           excludeActs:    this.stringifyActs(acts, 'exclude'),
           requireActGrps: this.stringifyActs(acts, 'require', true),
           excludeActGrps: this.stringifyActs(acts, 'exclude', true),
-          location:       params.location ? params.location.id : null,
+          excludeLocs:    this.stringifyLocs(locs),
           days:           this.stringifyDays(params.days)
         });
       },
@@ -97,6 +113,7 @@ angular.module('sumaAnalysis')
             errorMessage,
             excludeActsAry,
             excludeActGrpsAry,
+            excludeLocsAry,
             locations,
             metadata,
             newParams = {},
@@ -168,8 +185,8 @@ angular.module('sumaAnalysis')
           }
 
           if (sumaConfig.formFields.activities) {
-            excludeActsAry = urlParams.excludeActs || urlParams.excludeActs === '' ? urlParams.excludeActs.split(',') : null;
-            requireActsAry = urlParams.requireActs || urlParams.requireActs === '' ? urlParams.requireActs.split(',') : null;
+            excludeActsAry    = urlParams.excludeActs    || urlParams.excludeActs === ''    ? urlParams.excludeActs.split(',')    : null;
+            requireActsAry    = urlParams.requireActs    || urlParams.requireActs === ''    ? urlParams.requireActs.split(',')    : null;
             excludeActGrpsAry = urlParams.excludeActGrps || urlParams.excludeActGrps === '' ? urlParams.excludeActGrps.split(',') : null;
             requireActGrpsAry = urlParams.requireActGrps || urlParams.requireActGrps === '' ? urlParams.requireActGrps.split(',') : null;
 
@@ -209,13 +226,17 @@ angular.module('sumaAnalysis')
           }
 
           if (sumaConfig.formFields.locations) {
-            newParams.location = _.find(locations, function (e, i) {
-              return String(e.id) === String(urlParams.location);
-            });
+            excludeLocsAry = urlParams.excludeLocs || urlParams.excludeLocs === '' ? urlParams.excludeLocs.split(',') : null;
 
-            if (!newParams.location) {
-              errors.push('Invalid value for location.');
+            // validate excludeLocs
+            if (validation.validateLoc(excludeLocsAry, locations)) {
+              newParams.excludeLocs = excludeLocsAry;
+            } else {
+              newParams.excludeLocs = '';
+              errors.push('Invalid value for excludeLocs.');
             }
+
+            locations = this.mapLocs(locations, excludeLocsAry);
           }
 
           if (sumaConfig.formFields.sdate) {
