@@ -23,7 +23,7 @@ module.exports = function (grunt) {
           atBegin: true
         },
         files: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass,css}'],
-        tasks: ['copy:styles', 'compass:server', 'autoprefixer']
+        tasks: ['copy:styles', 'compass:server', 'autoprefixer:development']
       },
       livereload: {
         options: {
@@ -44,13 +44,23 @@ module.exports = function (grunt) {
       }
     },
     autoprefixer: {
-      options: ['last 1 version'],
-      dist: {
+      options: {
+        map: true
+      },
+      development: {
         files: [{
           expand: true,
           cwd: '.tmp/styles/',
           src: '{,*/}*.css',
           dest: '.tmp/styles/'
+        }]
+      },
+      dist: {
+        files: [{
+          expand: true,
+          cwd: '<%= yeoman.dist %>/styles/',
+          src: '{,*/}*.css',
+          dest: '<%= yeoman.dist %>/styles/'
         }]
       }
     },
@@ -312,7 +322,7 @@ module.exports = function (grunt) {
     'useminPrepare',
     'copy:styles',
     'compass:dist',
-    'autoprefixer',
+    'autoprefixer:dist',
     'concat',
     'copy:dist',
     'copy:sourceMapPrep',
