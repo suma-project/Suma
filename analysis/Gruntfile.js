@@ -23,7 +23,7 @@ module.exports = function (grunt) {
           atBegin: true
         },
         files: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass,css}'],
-        tasks: ['copy:styles', 'compass:server', 'autoprefixer:development']
+        tasks: ['copy:cssScss', 'copy:styles', 'compass:server', 'copy:minCss', 'autoprefixer:development']
       },
       livereload: {
         options: {
@@ -58,9 +58,9 @@ module.exports = function (grunt) {
       dist: {
         files: [{
           expand: true,
-          cwd: '<%= yeoman.dist %>/styles/',
+          cwd: '.tmp/styles/',
           src: '{,*/}*.css',
-          dest: '<%= yeoman.dist %>/styles/'
+          dest: '.tmp/styles/'
         }]
       }
     },
@@ -126,9 +126,9 @@ module.exports = function (grunt) {
     compass: {
       options: {
         config: '.compass-config.rb',
-        sassDir: '.tmp/scss',
+        sassDir: '<%= yeoman.app %>/styles',
         cssDir: '.tmp/styles',
-        specify: '.tmp/scss/main.min.scss',
+        specify: '<%= yeoman.app %>/styles/main.scss',
         importPath: '<%= yeoman.app %>',
         relativeAssets: false,
         sourcemap: true
@@ -136,8 +136,7 @@ module.exports = function (grunt) {
       dist: {
         options: {
           environment: 'production',
-          outputStyle: 'compressed',
-          cssDir: '<%= yeoman.dist %>/styles'
+          outputStyle: 'compressed'
         }
       },
       server: {
@@ -207,19 +206,49 @@ module.exports = function (grunt) {
           cwd: '<%= yeoman.app %>',
           dest: '<%= yeoman.dist %>/fonts',
           src: ['bower_components/font-awesome/fonts/*']
-        }]
+        }, {
+          expand: true,
+          cwd: '.tmp/styles',
+          dest: '<%= yeoman.dist %>/styles',
+          src: [
+            'main.min.css',
+            'main.min.css.map' 
+          ]
+        }
+        ]
       },
       styles: {
         expand: true,
         cwd: '<%= yeoman.app %>',
-        dest: '.tmp/scss/',
+        dest: '.tmp/styles/',
         src: [
-          'bower_components/font-awesome/css/font-awesome.css',
-          'bower_components/bootstrap3-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
+          'bower_components/font-awesome/css/font-awesome.css.scss',
+          'bower_components/bootstrap3-datetimepicker/build/css/bootstrap-datetimepicker.min.css.scss',
           'styles/{,*/}*.{scss,sass}'
         ],
         rename: function (dest, src) {
-          return dest + src.replace(/^styles\//g, '').replace(/\.css$/g, '.css.scss').replace(/^main\.scss/g, 'main.min.scss');
+          return dest + src.replace(/^styles\//g, '');
+        }
+      },
+      minCss: {
+        expand: true,
+        cwd: '.tmp/styles',
+        dest: '.tmp/styles/',
+        src: 'main.css*',
+        rename: function (dest, src) {
+          return dest + src.replace(/\.css$/g, '.min.css');
+        }
+      },
+      cssScss: {
+        expand: true,
+        cwd: '<%= yeoman.app %>',
+        dest: '<%= yeoman.app %>/',
+        src: [
+          'bower_components/font-awesome/css/font-awesome.css',
+          'bower_components/bootstrap3-datetimepicker/build/css/bootstrap-datetimepicker.min.css'
+        ],
+        rename: function (dest, src) {
+          return dest + src.replace(/\.css$/g, '.css.scss');
         }
       },
       sourceMapPrep: {
@@ -310,9 +339,11 @@ module.exports = function (grunt) {
 
   grunt.registerTask('test', [
     'clean:server',
+    'copy:cssScss',
     'copy:styles',
     'compass',
-    'autoprefixer',
+    'copy:minCss',
+    'autoprefixer:development',
     'connect:test',
     'karma'
   ]);
@@ -320,8 +351,10 @@ module.exports = function (grunt) {
   grunt.registerTask('build', [
     'clean:dist',
     'useminPrepare',
+    'copy:cssScss',
     'copy:styles',
     'compass:dist',
+    'copy:minCss',
     'autoprefixer:dist',
     'concat',
     'copy:dist',
