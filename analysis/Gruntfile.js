@@ -260,7 +260,6 @@ module.exports = function (grunt) {
     validation: {
       options: {
         reportpath: false,
-        maxTry: 5,
         // failHard: true,
         doctype: 'HTML5',
         relaxerror: [
