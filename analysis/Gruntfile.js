@@ -19,12 +19,11 @@ module.exports = function (grunt) {
     },
     watch: {
       compass: {
-        files: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass}'],
-        tasks: ['compass:server', 'autoprefixer']
-      },
-      styles: {
-        files: ['<%= yeoman.app %>/styles/{,*/}*.css'],
-        tasks: ['copy:styles', 'autoprefixer']
+        options: {
+          atBegin: true
+        },
+        files: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass,css}'],
+        tasks: ['copy:styles', 'compass:server', 'autoprefixer']
       },
       livereload: {
         options: {
@@ -126,15 +125,14 @@ module.exports = function (grunt) {
       },
       dist: {
         options: {
-          environment: 'development',
-          disableWarnings: false,
+          environment: 'production',
           outputStyle: 'compressed',
           cssDir: '<%= yeoman.dist %>/styles'
         }
       },
       server: {
         options: {
-          environment: 'production',
+          environment: 'development',
           debugInfo: true
         }
       }
