@@ -1,18 +1,18 @@
 <div class="form-group">
-  <button type="button" class="btn btn-default btn-xs" ng-click="selectAll()">
+  <button type="button" class="btn btn-default btn-xs" data-ng-click="selectAll()">
     Select All
   </button>
-  <button type="button" class="btn btn-default btn-xs" ng-click="selectNone()">
+  <button type="button" class="btn btn-default btn-xs" data-ng-click="selectNone()">
     Select None
   </button>
 
 </div>
 
 <table class="table table-hover">
-  <tr ng-repeat="loc in locs">
+  <tr data-ng-repeat="loc in locs">
     <td>{{loc | depth | truncate:25:true}}</td>
     <td>
-      <input type="checkbox" ng-model="loc.filter" ng-disabled="!loc.enabled" ng-change="updateCollection()">
+      <input type="checkbox" data-ng-model="loc.filter" data-ng-disabled="!loc.enabled" data-ng-change="updateCollection()">
     </td>
   </tr>
 </table>
