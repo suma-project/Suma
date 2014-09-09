@@ -23,7 +23,7 @@ module.exports = function (grunt) {
           atBegin: true
         },
         files: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass,css}'],
-        tasks: ['copy:cssScss', 'copy:styles', 'compass:server', 'copy:minCss', 'autoprefixer:development']
+        tasks: ['copy:cssScss', 'copy:styles', 'compass:server', 'copy:minCss', 'copy:devFonts', 'autoprefixer:development']
       },
       livereload: {
         options: {
@@ -212,7 +212,7 @@ module.exports = function (grunt) {
           dest: '<%= yeoman.dist %>/styles',
           src: [
             'main.min.css',
-            'main.min.css.map' 
+            'main.min.css.map'
           ]
         }
         ]
@@ -250,6 +250,14 @@ module.exports = function (grunt) {
         rename: function (dest, src) {
           return dest + src.replace(/\.css$/g, '.css.scss');
         }
+      },
+      devFonts: {
+        expand: true,
+        dot: true,
+        flatten: true,
+        cwd: '<%= yeoman.app %>',
+        dest: '.tmp/fonts',
+        src: ['bower_components/font-awesome/fonts/*']
       },
       sourceMapPrep: {
         dest: '<%= yeoman.dist %>/scripts/scripts.js',
