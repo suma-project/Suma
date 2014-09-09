@@ -7,7 +7,7 @@
         <strong>Whole Session: </strong> {{report.summaryParams.wholeSession.title}} <br>
         <strong>Dates: </strong> {{report.summaryParams.sdate}} - {{report.summaryParams.edate}}<br>
         <strong>Subset: </strong> {{report.summaryParams.stime || '00:00'}} - {{report.summaryParams.etime || '23:59'}} <br>
-        <strong>Days: </strong> <span ng-repeat="day in report.summaryParams.days">{{day | capitalize}}<span ng-show="!$last">,</span> </span>
+        <strong>Days: </strong> <span data-ng-repeat="day in report.summaryParams.days">{{day | capitalize}}<span data-ng-show="!$last">,</span> </span>
         <strong>EL: </strong> {{report.summaryParams.excludeLocs | locationTitle:report.locations}}
         <strong>EA: </strong> {{report.summaryParams.excludeActs | activityTitle:report.activities:'activity'}}
         <strong>RA: </strong> {{report.summaryParams.requireActs | activityTitle:report.activities:'activity'}}
@@ -98,9 +98,9 @@
             <label class="suma-popover" data-title="Limit Days of the Week" data-content="Filter by weekday." data-suma-popover>Limit Days of the Week</label>
             <div class="controls">
               <div class="row">
-                <div class="col-xs-3" ng-repeat="day in report.params.dayOptions">
+                <div class="col-xs-3" data-ng-repeat="day in report.params.dayOptions">
                   <label class="checkbox-inline">
-                    <input type="checkbox" value="{{day}}" check-list="report.params.days" suma-checklist>{{day | capitalize}}
+                    <input type="checkbox" value="{{day}}" data-check-list="report.params.days" data-suma-checklist>{{day | capitalize}}
                   </label>
                 </div>
               </div>
@@ -114,24 +114,24 @@
                 Limit Locations
               </button>
               <div data-suma-modal data-modal-id="locModal" data-modal-title="Limit Locations" data-modal-save-text="Update">
-                <div data-suma-location-filter locs="report.locations"></div>
+                <div data-suma-location-filter data-locs="report.locations"></div>
               </div>
             </div>
           </div>
 
-          <div class="form-group" ng-show="report.activities.length > 2">
+          <div class="form-group" data-ng-show="report.activities.length > 2">
             <label class="suma-popover" data-title="Limit Activities" data-content="Select which activities or Activity Groups to require or exclude in your analysis. Excluding Activity Groups will also exclude their child activities. Requiring an Activity Group while allowing all children will require at least one of the children. All required fields must be present in each count, and all excluded fields must be absent from each count." data-suma-popover>Limit Activities</label>
             <div class="controls">
               <button type="button" class="btn btn-default" data-toggle="modal" data-target="#sumaModal">
                 Limit Activities
               </button>
               <div data-suma-modal data-modal-id="sumaModal" data-modal-title="Limit Activities" data-modal-save-text="Update">
-                <div data-suma-activity-filter acts="report.activities"></div>
+                <div data-suma-activity-filter data-acts="report.activities"></div>
               </div>
             </div>
           </div>
 
-          <div data-suma-active-filters acts="report.activities" locs="report.locations"></div>
+          <div data-suma-active-filters data-acts="report.activities" data-locs="report.locations"></div>
 
           <div>
             <input type="submit" id="submit" class="btn btn-success" value="{{report.state.loading ? 'Loading...' : 'Submit'}}">
@@ -170,7 +170,6 @@
                 <td>{{report.stats.upperOutlier}}</td>
               </tr>
             </tbody>
-            
           </table>
         </div>
       </fieldset>

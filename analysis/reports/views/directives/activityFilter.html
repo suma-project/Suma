@@ -1,16 +1,16 @@
 <div class="form-group">
-  <button type="button" class="btn btn-default btn-xs" ng-click="reset()">
+  <button type="button" class="btn btn-default btn-xs" data-ng-click="reset()">
     Reset Activities
   </button>
 </div>
 
 <table class="table table-hover">
-  <tr ng-repeat="act in acts" ng-class="{success: act.type === 'activityGroup'}">
+  <tr data-ng-repeat="act in acts" data-ng-class="{success: act.type === 'activityGroup'}">
     <td>{{act | depth | truncate:25:true}}</td>
     <td>
-      <label class="radio-inline" ng-disabled="!act.enabled"><input type="radio" ng-model="act.filter" ng-disabled="!act.enabled" ng-change="setStatus()" value="allow"> Allow</label>
-      <label class="radio-inline" ng-disabled="!act.enabled"><input type="radio" ng-model="act.filter" ng-disabled="!act.enabled" ng-change="setStatus()" value="require"> Require</label>
-      <label class="radio-inline" ng-disabled="!act.enabled"><input type="radio" ng-model="act.filter" ng-disabled="!act.enabled" ng-change="setStatus()" value="exclude"> Exclude</label>
+      <label class="radio-inline" data-ng-disabled="!act.enabled"><input type="radio" data-ng-model="act.filter" data-ng-disabled="!act.enabled" data-ng-change="setStatus()" value="allow"> Allow</label>
+      <label class="radio-inline" data-ng-disabled="!act.enabled"><input type="radio" data-ng-model="act.filter" data-ng-disabled="!act.enabled" data-ng-change="setStatus()" value="require"> Require</label>
+      <label class="radio-inline" data-ng-disabled="!act.enabled"><input type="radio" data-ng-model="act.filter" data-ng-disabled="!act.enabled" data-ng-change="setStatus()" value="exclude"> Exclude</label>
     </td>
   </tr>
 </table>
