@@ -260,6 +260,7 @@ module.exports = function (grunt) {
     validation: {
       options: {
         reportpath: false,
+        maxTry: 5,
         // failHard: true,
         doctype: 'HTML5',
         relaxerror: [
@@ -284,22 +285,8 @@ module.exports = function (grunt) {
     }
   });
 
-  // grunt.registerTask('server', function (target) {
-  //   if (target === 'dist') {
-  //     return grunt.task.run(['build', 'connect:dist:keepalive']);
-  //   }
-
-  //   grunt.task.run([
-  //     'clean:server',
-  //     'compass:server',
-  //     'copy:styles',
-  //     'autoprefixer',
-  //     // 'connect:livereload',
-  //     'watch'
-  //   ]);
-  // });
-
   grunt.registerTask('validateHTML', [
+    'clean:validate',
     'validation',
     'clean:validate'
   ]);
