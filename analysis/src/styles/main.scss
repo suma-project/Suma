@@ -3,15 +3,17 @@
 
 $icon-font-path: "bower_components/bootstrap-sass/fonts/";
 
+// Vendor
 @import "bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap.scss";
 @import "non-responsive.scss";
 @import "bootstrap-theme.scss";
+@import "bower_components/font-awesome/css/font-awesome.css.scss";
+@import "bower_components/bootstrap3-datetimepicker/build/css/bootstrap-datetimepicker.min.css.scss";
 
+// Suma Styles
 @import "base.scss";
 @import "home.scss";
 @import "time-series.scss";
 @import "calendar.scss";
 @import "hourly.scss";
 @import "sessions.scss";
-@import "bower_components/font-awesome/css/font-awesome.css.scss";
-@import "bower_components/bootstrap3-datetimepicker/build/css/bootstrap-datetimepicker.min.css.scss";
