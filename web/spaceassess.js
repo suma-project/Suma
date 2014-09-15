@@ -652,9 +652,7 @@ $(function() {
 
     $(".jqButton").button();
 
-    var agent = navigator.userAgent.toLowerCase();
-
-    if(agent.indexOf('iphone') >= 0 || agent.indexOf('ipad') >= 0 || agent.indexOf('android') >= 0){
+    if(device.mobile()){
         buttonEventType = 'tap';
 
         $('body').on('touchstart', '.tappable', function(event) {
