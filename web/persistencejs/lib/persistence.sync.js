@@ -132,7 +132,16 @@ persistence.sync.postJSON = function(uri, data, callback) {
           }
         });
       // Step 1: Look at local versions of remotely updated entities
-      Entity.all(session).filter("id", "in", ids).list(function(existingItems) {
+      var existingItems = [], groupedIds = [];
+      for (var i=0,l=Math.floor((ids.length/100)+1);i<l;i++) {
+        groupedIds.push(ids.slice(i*100, i*100+100));
+      }
+      persistence.asyncForEach(groupedIds, function(idGroup, next) {
+        Entity.all(session).filter('id', 'in', idGroup).list(function(groupOfExistingItems) {
+          existingItems.concat(groupOfExistingItems);
+          next();
+        });
+      }, function() {
           existingItems.forEach(function(localItem) {
               var remoteItem = lookupTbl[localItem.id];
               delete remoteItem.id;
@@ -165,7 +174,20 @@ persistence.sync.postJSON = function(uri, data, callback) {
               }
             });
           // Step 2: Remove all remotely removed objects
-          Entity.all(session).filter("id", "in", objectsToRemove).destroyAll(function() {
+          var groupedObjectsToRemove = [];
+          for (var i=0,l=Math.floor((objectsToRemove.length/100)+1);i<l;i++) {
+            groupedObjectsToRemove.push(objectsToRemove.slice(i*100, i*100+100));
+          }
+
+          /* ensure IDs var chars */
+          var idVals = new Array();
+          for(var id=0;id<group.length;id++){
+            idVals.push( persistence.typeMapper.entityIdToDbId(group[id]));
+          }
+
+          persistence.asyncForEach(groupedObjectsToRemove, function(group, next) {
+            Entity.all(session).filter('id', 'in', group).destroyAll(next);
+          }, function() {
               // Step 3: store new remote items locally
               // NOTE: all that's left in lookupTbl is new, we deleted the existing items
               for(var id in lookupTbl) {
@@ -179,7 +201,13 @@ persistence.sync.postJSON = function(uri, data, callback) {
                 }
               }
               // Step 4: Find local new/updated/removed items (not part of the remote change set)
-              Entity.all(session).filter("id", "not in", ids).filter("_lastChange", ">", lastLocalSyncTime).list(function(newItems) {
+              Entity.all(session).filter("_lastChange", ">", lastLocalSyncTime).list(function(allNewItems) {
+                  var newItems = [];
+                  for (var i=0,l=allNewItems.length;i<l;i++) {
+                    if (ids.indexOf(allNewItems[i].id)===-1) {
+                      newItems.push(allNewItems[i]);
+                    }
+                  }
                   console.log("New items: ", newItems);
                   newItems.forEach(function(newItem) {
                       var update = { id: newItem.id };
@@ -198,7 +226,7 @@ persistence.sync.postJSON = function(uri, data, callback) {
                   var removedObjColl = persistence.sync.RemovedObject.all(session).filter("entity", "=", meta.name);
                   removedObjColl.list(function(objs) {
                       objs.forEach(function(obj) {
-                          updatesToPush.push({id: obj.id, _removed: true});
+                          updatesToPush.push({id: obj.objectId, _removed: true});
                         });
                       function next() {
                         removedObjColl.destroyAll(function() {
@@ -322,6 +350,7 @@ persistence.sync.postJSON = function(uri, data, callback) {
               session.add(new persistence.sync.RemovedObject({entity: rec.entity, objectId: rec.id}));
             }
           });
+        session.objectsRemoved=[];
         callback();
       });
 

@@ -18,13 +18,36 @@ function log(o) {
 exports.config = function(persistence, hostname, port, db, username, password) {
   exports.getSession = function(cb) {
     var that = {};
-    var client = mysql.createClient({
-			host: hostname,
-			port: port,
-			database: db,
-			user: username,
-			password: password
-		});
+    var opts = {
+						host: hostname,
+						port: port,
+						database: db,
+						user: username,
+						password: password
+		 	  };
+    var client;
+    function handleDisconnect() {
+      connection = mysql.createConnection(opts); 
+    }
+    if(typeof(mysql.createConnection)=='undefined'){
+      client = mysql.createClient(opts);
+    }else{
+      client = new mysql.createConnection(opts);
+      client.connect(function(err) {
+        if(err){
+          console.error(err);
+          setTimeout(handleDisconnect, 2000);
+        }
+     });
+      client.on('error', function(err) {
+      	console.error(err);
+        if(err.code === 'PROTOCOL_CONNECTION_LOST') { 
+          handleDisconnect();                         
+        } else {                                      
+          throw err;                                  
+        }
+      });
+    }
 
     var session = new persistence.Session(that);
     session.transaction = function (explicitCommit, fn) {

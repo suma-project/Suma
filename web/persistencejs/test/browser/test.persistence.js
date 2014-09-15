@@ -182,6 +182,39 @@ $(document).ready(function(){
         });
     });
 
+  asyncTest("Removing objects", function() {
+      var originalTasks = [];
+      var counter = 0;
+      for(var i = 0; i < 25; i++) {
+        var t = new Task({name: "Task " + i});
+        t.counter = counter;
+        originalTasks.push(t);
+        persistence.add(t);
+        counter++;
+      }
+      for(var i = 0; i < 5; i++) {
+        persistence.remove(originalTasks[i]);
+      }
+      Task.all().order('counter', true).list(function(tasks) {
+          equals(tasks.length, 20, 'Correct count after removing local objects');
+          for(var i = 5; i < 25; i++) {
+            equals(tasks[i - 5].id, originalTasks[i].id, 'Correct objects after removing local objects');
+          }
+
+          for(var i = 5; i < 10; i++) {
+            persistence.remove(originalTasks[i]);
+          }
+          Task.all().order('counter', true).list(function(tasks) {
+              equals(tasks.length, 15, 'Correct count after removing persisted objects');
+              for(var i = 10; i < 25; i++) {
+                equals(tasks[i - 10].id, originalTasks[i].id, 'Correct objects after removing persisted objects');
+              }
+
+              start();
+            });
+        });
+    });
+
   asyncTest("One-to-many", function() {
       var p = new Project({name: "Some project"});
       persistence.add(p);
@@ -224,6 +257,24 @@ $(document).ready(function(){
                       start();
                     });
                 });
+            });
+        });
+    });
+
+  asyncTest("Many-to-many with local changes", function() {
+      var t = new Task({name: "Some task"});
+      persistence.add(t);
+      t.tags.list(function(tags) {
+          equals(tags.length, 0, "Initially, no tags");
+          var tag1 = new Tag({name: "important"});
+          var tag2 = new Tag({name: "today"});
+          t.tags.add(tag1);
+          t.tags.add(tag2);
+          t.tags.remove(tag1);
+          t.tags.list(function(tags) {
+              equals(tags.length, 1, "2 tags added, 1 removed");
+              equals(tags[0].id, tag2.id, "Correct tag left");
+              start();
             });
         });
     });
@@ -423,6 +474,28 @@ $(document).ready(function(){
       });
   }
 
+  function textOrderTests(coll, callback) {
+    var taskNames = ['Task A', 'task b', 'Task C', 'task d'];
+    var tasks = [];
+    for(var i = 0; i < taskNames.length; i++) {
+      var t = new Task({name: taskNames[i]});
+      tasks.push(t);
+      coll.add(t);
+    }
+    coll.order('name', true, true).list(function(results) {
+        var expectedIndices = [0, 2, 1, 3];
+        for(var i = 0; i < tasks.length; i++) {
+          equals(results[i].id, tasks[expectedIndices[i]].id, "order check, ascending, case sensitive");
+        }
+        coll.order('name', true, false).list(function(results) {
+            for(var i = 0; i < tasks.length; i++) {
+              equals(results[i].id, tasks[i].id, "order check, ascending, case insensitive");
+            }
+            callback();
+          });
+      });
+  }
+
   function dateOrderTests(coll, callback) {
     var now = new Date();
 
@@ -461,6 +534,17 @@ $(document).ready(function(){
   asyncTest("Local INT order", function() {
       var coll = new persistence.LocalQueryCollection();
       intOrderTests(coll, start);
+    });
+
+  asyncTest("Database TEXT order", function() {
+      var p = new Project({name: "My project"});
+      persistence.add(p);
+      textOrderTests(p.tasks, start);
+    });
+
+  asyncTest("Local TEXT order", function() {
+      var coll = new persistence.LocalQueryCollection();
+      textOrderTests(coll, start);
     });
 
   asyncTest("Database DATE order", function() {

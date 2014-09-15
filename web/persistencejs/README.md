@@ -109,24 +109,31 @@ lacks `__defineGetter__` and `__defineSetter__` support, which
 Setting up
 ----------
 
-To use `persistence.js` you need to clone the git repository:
+* Using `bower`:
 
-    git clone git://github.com/zefhemel/persistencejs.git
+```shell
+bower install persistence
+```
 
-To use it you need to copy `lib/persistence.js` to your web directory,
-as well as any data stores you want to use. Note that the `mysql` and
-`websql` stores both depend on the `sql` store. A typical setup
-requires you to copy at least `lib/persistence.js`,
-`lib/persistence.store.sql.js` and `lib/persistence.store.websql.js` to your
-web directory. You can then load them as follows:
+Add a `<script>` to your `index.html`:
 
-    <script src="persistence.js" type="application/javascript"></script>
-    <script src="persistence.store.sql.js" type="application/javascript"></script>
-    <script src="persistence.store.websql.js" type="application/javascript"></script>
+`lib/persistence.js` needs to be added, as well as any data stores you want to use. Note that the `mysql` and
+`websql` stores both depend on the `sql` store. A typical setup requires you to add at least
+`lib/persistence.js`, `lib/persistence.store.sql.js` and `lib/persistence.store.websql.js` as follows:
+
+    <script src="/bower_components/persistencejs/lib/persistence.js"></script>
+    <script src="/bower_components/persistencejs/lib/persistence.store.sql.js"></script>
+    <script src="/bower_components/persistencejs/lib/persistence.store.websql.js"></script>
 
 If you want to use the in-memory store (in combination with
 `localStorage`) you also need the `persistence.store.memory.js`
 included.
+
+* Using directly from source:
+
+    git clone git://github.com/zefhemel/persistencejs.git
+
+Copy directories you will need following almost the same instructions above.
 
 
 Setup your database
@@ -142,6 +149,23 @@ The first argument is always supposed to be `persistence`. The second
 in your database name (it will create it if it does not already exist,
 the third is a description for you database, the last argument is the
 maximum size of your database in bytes (5MB in this example).
+
+## Setting up for Cordova with SQLitePlugin/WebSQL
+
+Use following if you want to use `persistencejs` in a [Cordova](https://cordova.apache.org/) mobile app and you plan to use the [Cordova SQLitePlugin](https://github.com/brodysoft/Cordova-SQLitePlugin):
+
+    persistence.store.cordovasql.config(
+      persistence,
+      'yourdbname',
+      '0.0.1',                // DB version
+      'My database',          // DB display name
+      5 * 1024 * 1024,        // DB size
+      0                       // SQLitePlugin Background processing disabled
+    );
+
+For more information on the SQLitePlugin background processing please refer to the [SQLitePlugin](https://github.com/brodysoft/Cordova-SQLitePlugin) readme.
+
+The Cordova support in `persistencejs` will try to work with the [SQLitePlugin](https://github.com/brodysoft/Cordova-SQLitePlugin) if it is loaded; if not it will automatically fall back to [WebSQL](http://docs.phonegap.com/en/edge/cordova_storage_storage.md.html#Storage).
 
 The in-memory store
 ---------------------------------------
@@ -585,8 +609,8 @@ Setup
 You need to `require` two modules, the `persistence.js` library itself
 and the MySQL backend module.
 
-    var persistence = require('persistencejs/persistence').persistence;
-    var persistenceStore = require('persistencejs/persistence.store.mysql');
+    var persistence = require('persistencejs');
+    var persistenceStore = persistence.StoreConfig.init(persistence, { adaptor: 'mysql' });
 
 Then, you configure the database settings to use:
 
