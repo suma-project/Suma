@@ -190,7 +190,7 @@ li.loc_item a {
 }
 
 #loadingScreen {
-    background: url(loading.gif) no-repeat 5px 8px;
+    background: url(images/loading.gif) no-repeat 5px 8px;
     padding-left: 50px;
     padding-top: 14px;
 }
