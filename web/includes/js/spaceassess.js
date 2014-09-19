@@ -94,7 +94,7 @@ function serializeCollectedData(callback) {
 function clearPlaceholderCounts (callback) {
 
     // setTimeout uses for callbacks in some parts of the code
-    // in an attempt to avoice the "Javascript execution exceeded timeout
+    // in an attempt to avoid the "Javascript execution exceeded" timeout
     // error on mobile devices
     Session.all().list(function(sessions) {
         var sessionsCounter = sessions.length;
@@ -652,7 +652,7 @@ $(function() {
 
     $(".jqButton").button();
 
-    if(device.mobile()){
+    if(device.mobile() || device.tablet()){
         buttonEventType = 'tap';
 
         $('body').on('touchstart', '.tappable', function(event) {
