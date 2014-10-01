@@ -133,7 +133,7 @@ Now you have to run a database initialization script included in the suma downlo
 Suma Server Software Configuration
 -----------------------------------
 
-* web/config.yaml
+* service/web/config/config.yaml
 
     In the `/SUMA_SERVER_INSTALL_DIR/web/config/` directory, copy `config_example.yaml` to a new file `config.yaml`. You must set some path variables in the `config.yaml` file for the Suma server to function correctly.
 
@@ -145,7 +145,7 @@ Suma Server Software Configuration
 
     `SUMA_DEBUG` can be set to `true` if you would like to see more verbose error messages. This should generally be set to `false`.
 
-* config.yaml
+* service/config/config.yaml
 
     In the `SUMA_SERVER_INSTALL_DIR/config/` directory, copy `config_example.yaml` to a new file `config.yaml`. You must modify the following:
 
@@ -167,7 +167,7 @@ Suma Server Software Configuration
 Suma Client Configuration
 --------------------------
 
-* spaceassessConfig.js
+* web/config/spaceassessConfig.js
 
     In the `YOUR_WEB_DIR/suma/web/config/` directory, copy `spaceassessConfig_example.js` to a new file `spaceassessConfig.js`. If the Suma server URL is anything other than `http://YOUR_HOST/sumaserver`, you will need to change the paths at the top of `YOUR_WEB_DIR/suma/web/config/spaceassessConfig.js`.
 
