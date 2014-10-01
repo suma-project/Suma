@@ -2,6 +2,7 @@
 *.cache
 *.log
 *.pid
+*.swp
 tmp/**/*
 .DS_Store
 ._*
