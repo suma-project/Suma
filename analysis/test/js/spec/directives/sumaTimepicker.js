@@ -33,21 +33,4 @@ describe('Directive: sumaTimepicker', function () {
     // Assertions
     expect(linkScope.model).to.equal('0100');
   });
-
-  it('should call setDate and show on model change', function () {
-    // Stub setDate and show
-    var setDateStub = sinon.stub(element.find('.input-group').data('DateTimePicker'), 'setDate'),
-        showStub = sinon.stub(element.find('.input-group').data('DateTimePicker'), 'show');
-
-    // Trigger event via click
-    element.find('.input-group-addon').click();
-
-    // Assertions
-    expect(element.find('.input-group').data('DateTimePicker').setDate).to.be.calledOnce;
-    expect(element.find('.input-group').data('DateTimePicker').show).to.be.calledOnce;
-
-    // Restore stubs
-    setDateStub.restore();
-    showStub.restore();
-  });
 });
