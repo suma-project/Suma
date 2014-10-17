@@ -56989,6 +56989,7 @@ angular.module('sumaAnalysis')
         // Initialize
         inputGroup.datetimepicker({
           defaultDate: moment(scope.placeholder, 'HH:mm'),
+          useCurrent: false,
           pickDate: false,
           pickTime: true,
           format: 'HH:mm',
@@ -57004,12 +57005,6 @@ angular.module('sumaAnalysis')
           scope.$apply(function () {
             scope.model = el.find('input').val();
           });
-        });
-
-        // Respond to changes from model
-        inputGroupAddon.on('click', function (e) {
-          inputGroup.data('DateTimePicker').setDate(moment(scope.model, 'HH:mm'));
-          inputGroup.data('DateTimePicker').show();
         });
       }
     };
