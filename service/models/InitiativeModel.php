@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 require_once 'models/LocationModel.php';
 require_once 'models/SessionModel.php';
@@ -13,7 +13,7 @@ class InitiativeModel
     private $_activities = array();
     private $_metadata;
     private $_id;
-    
+
     public function __construct($id)
     {
         $this->_db = Globals::getDBConn();
@@ -21,18 +21,18 @@ class InitiativeModel
             ->from('initiative')
             ->where('id = '.$id);
         $row = $select->query()->fetch();
-        
+
         if (empty($row))
         {
             Globals::getLog()->err('NONEXISTENT INITIATIVE - InitiativeModel id: '.$id);
             throw new Exception('Initiative object not found in database with id ' . $id);
         }
-            
+
         foreach ($row as $key => $value)
         {
             $this->_metadata[$key] = $value;
         }
-        
+
         $this->_id = $id;
     }
 
@@ -44,18 +44,18 @@ class InitiativeModel
                 ->from('initiative')
                 ->where('id = '.$this->_id);
             $row = $select->query()->fetch();
-            
+
             foreach ($row as $index => $val)
             {
                 $this->_metadata[$index] = $val;
             }
         }
-        
+
         if ($key == null)
         {
             return $this->_metadata;
         }
-        else 
+        else
         {
             if (isset($this->_metadata[$key]))
             {
@@ -66,17 +66,17 @@ class InitiativeModel
                 return '';
             }
         }
-    }    
-    
+    }
+
     public function getActivityGroups($filterEmpty = true)
     {
         $select = $this->_db->select()
             ->from('activity_group', array('id'))
             ->where('fk_initiative = '.$this->_id)
             ->order('rank ASC');
-            
+
         $rows = $select->query()->fetchAll();
-        
+
         $groups = array();
         foreach($rows as $row)
         {
@@ -86,16 +86,16 @@ class InitiativeModel
                 $groups[] = $actGroup;
             }
         }
-        
+
         return $groups;
     }
-    
+
     public function getActivities($filterDisabled = true)
     {
         if (isset($this->_activities) && ! empty($this->_activities))
         {
             return $this->_activities;
-        } 
+        }
         else if (isset($this->_id))
         {
             $select = $this->_db->select()
@@ -115,11 +115,11 @@ class InitiativeModel
             {
                 $this->_activities[] = new ActivityModel($row['id']);
             }
-            
+
             return $this->_activities;
-        }    
+        }
     }
-    
+
     public function getSessions()
     {
         if (isset($this->_sessions) && ! empty($this->_sessions))
@@ -134,16 +134,16 @@ class InitiativeModel
                 ->order('start DESC');
 
             $rows = $select->query()->fetchAll();
-            
+
             foreach($rows as $row)
             {
                 $this->_sessions[] = new SessionModel($row['id']);
             }
-            
+
             return $this->_sessions;
         }
     }
-    
+
     public function getRootLocation()
     {
         $root = $this->getMetadata('fk_root_location');
@@ -154,52 +154,52 @@ class InitiativeModel
         else if (isset($root))
         {
             $this->_rootLocation = new LocationModel($root);
-            return $this->_rootLocation;            
+            return $this->_rootLocation;
         }
     }
-    
+
     public function getJSON()
     {
         $rootLoc = $this->getRootLocation();
-        
+
         if (! isset($rootLoc))
         {
             return json_encode(array());
         }
-        
+
         $rootMeta = $rootLoc->getMetadata();
-        
+
         $rootId = $rootMeta['id'];
         $rootTitle = $rootMeta['title'];
         $locations = $this->walkLocTree($rootMeta['id']);
         $activities = $this->fetchActivities();
         $activityGroups = $this->fetchActivityGroups();
-        
+
         $array = array('initiativeId'    => (int)$this->_id,
                        'initiativeTitle' => $this->getMetadata('title'),
                        'locations'       => array('id' => (int)$rootId, 'title' => $rootTitle, 'children' => $locations),
                        'activities'      => $activities,
                        'activityGroups'  => $activityGroups);
-        
+
         return json_encode($array);
     }
-    
+
     public function enable()
     {
-        $data = array('enabled'  =>  true);
+        $data = array('enabled'  =>  1);
         $this->_db->update('initiative', $data, 'id = '.$this->_id);
         Globals::getLog()->info('INITIATIVE ENABLED - id: '.$this->_id.', title: '.$this->getMetadata('title'));
         $this->jettisonMetadata();
     }
-    
+
     public function disable()
     {
-        $data = array('enabled'  =>  false);
+        $data = array('enabled'  =>  0);
         $this->_db->update('initiative', $data, 'id = '.$this->_id);
         Globals::getLog()->info('INITIATIVE DISABLED - id: '.$this->_id.', title: '.$this->getMetadata('title'));
         $this->jettisonMetadata();
     }
-    
+
     public function update($data)
     {
         $hash = array('title'       =>  $data['title'],
@@ -208,14 +208,14 @@ class InitiativeModel
         Globals::getLog()->info('INITIATIVE UPDATED - id: '.$this->_id.', title: '.$this->getMetadata('title'));
         $this->jettisonMetadata();
     }
-    
+
     public function setRoot($rootId)
     {
         $select = $this->_db->select()
             ->from('location')
             ->where('fk_parent IS NULL AND id = '.$rootId);
         $treeExist = $select->query()->fetch();
-        
+
         if ($treeExist)
         {
             $data = array('fk_root_location' => $rootId);
@@ -228,10 +228,10 @@ class InitiativeModel
             Globals::getLog()->warn('CANNOT SET INITIATIVE ROOT, LOCATION DOES NOT EXIST - init_id: '.$this->_id.', title: '.$this->getMetadata('title').', root_id: '.$rootId);
         }
     }
-    
-    
+
+
     // ------ PRIVATE FUNCTIONS ------
-    
+
     private function walkLocTree($parentId)
     {
         $select = $this->_db->select()
@@ -239,12 +239,12 @@ class InitiativeModel
             ->where('enabled = true AND fk_parent = ' . $parentId)
             ->order('rank ASC');
         $results = $select->query()->fetchAll();
-        
+
         if (empty($results))
         {
            return null;
         }
-        
+
         $array = array();
         foreach($results as $result)
         {
@@ -252,15 +252,15 @@ class InitiativeModel
             {
                 $array[] = array('id' => (int)$result['id'], 'title' => $result['title'], 'children' => $children);
             }
-            else 
+            else
             {
                 $array[] = array('id' => (int)$result['id'], 'title' => $result['title']);
-            }           
+            }
         }
-        
+
         return $array;
     }
-    
+
     private function fetchActivities()
     {
         $array = array();
@@ -274,11 +274,11 @@ class InitiativeModel
         }
         return $array;
     }
-    
+
     private function fetchActivityGroups()
     {
         $activityGroupMetadata = array();
-        
+
         foreach($this->getActivityGroups(true) as $group)
         {
             $activityGroupMetadata[] = array('id'       => (int)$group->getMetadata('id'),
@@ -288,33 +288,33 @@ class InitiativeModel
                              'allowMulti' => ($group->getMetadata('allowMulti')) ? TRUE : FALSE,
                              );
         }
-        
+
         return $activityGroupMetadata;
     }
-    
+
     private function jettisonMetadata()
     {
         $this->_metadata = null;
     }
 
-    
+
     // ------ STATIC FUNCTIONS ------
 
     public static function create($data)
     {
         $db = Globals::getDBConn();
-        
+
         $select = $db->select()
             ->from('initiative')
             ->where('LOWER(title) = '. $db->quote(strtolower($data['title'])));
         $row = $select->query()->fetch();
-        
+
         if (empty($row))
         {
             $hash =     array('title'       =>  $data['title'],
-                              'enabled'     =>  false,
+                              'enabled'     =>  0,
                               'description' =>  $data['description']);
-            
+
             $db->insert('initiative', $hash);
             $initId = $db->lastInsertId();
             Globals::getLog()->info('INITIATIVE CREATED - id: '.$initId.', title: '.$data['title']);
@@ -326,7 +326,7 @@ class InitiativeModel
             throw new Exception('Initiative already exists with the title "' . $data['title'].'"');
         }
     }
-    
+
     public static function getAll($filterDisabled = false)
     {
         $db = Globals::getDBConn();
@@ -336,16 +336,16 @@ class InitiativeModel
             {
                 $select->where('enabled = true');
             }
-            
+
         $rows = $select->order('title ASC')->query()->fetchAll();
-        
+
         $inits = array();
         foreach($rows as $row)
         {
             $inits[] = new InitiativeModel($row['id']);
         }
-        
+
         return $inits;
-    }    
-    
+    }
+
 }
