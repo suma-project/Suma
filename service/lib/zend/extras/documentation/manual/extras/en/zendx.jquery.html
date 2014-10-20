@@ -1,0 +1,1022 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Chapter 2. ZendX_JQuery</title>
+<link rel="stylesheet" type="text/css" href="dbstyle.css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="Programmer's Reference Guide">
+<link rel="up" href="index.html" title="Programmer's Reference Guide">
+<link rel="prev" href="zendx.console.process.unix.html" title="Chapter 1. ZendX_Console_Process_Unix">
+<link rel="next" href="the.index.html" title="Index">
+<link rel="chapter" href="zendx.console.process.unix.html" title="Chapter 1. ZendX_Console_Process_Unix">
+<link rel="chapter" href="zendx.jquery.html" title="Chapter 2. ZendX_JQuery">
+<link rel="index" href="the.index.html" title="Index">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<div class="navheader"><table width="100%" summary="Navigation header">
+<tr><th colspan="3" align="center">Chapter 2. ZendX_JQuery</th></tr>
+<tr>
+<td width="20%" align="left">
+<a accesskey="p" href="zendx.console.process.unix.html">Prev</a> </td>
+<th width="60%" align="center"> </th>
+<td width="20%" align="right"> <a accesskey="n" href="the.index.html">Next</a>
+</td>
+</tr>
+</table></div>
+<div class="chapter">
+<div class="titlepage"><div><div><h1 class="title">
+<a name="zendx.jquery"></a>Chapter 2. ZendX_JQuery</h1></div></div></div>
+<span style="color: red">&lt;sect1&gt;
+    <span style="color: red">&lt;title&gt;Introduction&lt;/title&gt;</span>
+
+    <span style="color: red">&lt;para&gt;
+        As of version 1.7, Zend Framework integrates <span style="color: red">&lt;ulink&gt;jQuery&lt;/ulink&gt;</span> view and form helpers through
+        its extras library. The jQuery support is meant as an alternative
+         to the already existing Dojo library integration. Currently jQuery can
+         be integrated into your Zend Framework applications in the following ways:
+    &lt;/para&gt;</span>
+
+    <span style="color: red">&lt;itemizedlist&gt;
+        <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;View helper to help setup the jQuery (Core and UI) environment&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+        <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;jQuery UI specific Zend_View helpers&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+        <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;jQuery UI specific Zend_Form elements and decorators&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+    &lt;/itemizedlist&gt;</span>
+
+    <span style="color: red">&lt;para&gt;
+        By default the jQuery javascript dependencies are loaded from the Google Ajax Library
+        Content Distribution Network. The CDN offers both jQuery Core and jQuery UI access points and
+        the view helpers therefore can already offer you most the dependencies out of the box. Currently
+        the Google CDN offers jQuery UI support up to version 1.5.2, but the jQuery view and form helpers
+        already make use of the UI library 1.6 version (AutoComplete, ColorPicker, Spinner, Slider).
+        To make use of these great additions you have to download the release candidate version of the
+        <span style="color: red">&lt;ulink&gt;jQuery UI library&lt;/ulink&gt;</span> from its website.
+    &lt;/para&gt;</span>
+&lt;/sect1&gt;</span><span style="color: red">&lt;sect1&gt;
+    <span style="color: red">&lt;title&gt;ZendX_JQuery View Helpers&lt;/title&gt;</span>
+
+    <span style="color: red">&lt;para&gt;
+        Zend Framework provides jQuery related View Helpers through its Extras Library.
+        These can be enabled in two ways, adding jQuery to the view helper path:
+    &lt;/para&gt;</span>
+
+    <span style="color: red">&lt;programlisting&gt;
+$view-&gt;addHelperPath("ZendX/JQuery/View/Helper", "ZendX_JQuery_View_Helper");
+&lt;/programlisting&gt;</span>
+
+    <span style="color: red">&lt;para&gt;Or using the <span style="color: red">&lt;methodname&gt;ZendX_JQuery::enableView(Zend_View_Interface $view)&lt;/methodname&gt;</span> method
+        that does the same for you.&lt;/para&gt;</span>
+
+    <span style="color: red">&lt;sect2&gt;
+    <span style="color: red">&lt;title&gt;jQuery() View Helper&lt;/title&gt;</span>
+
+    <span style="color: red">&lt;para&gt;
+        The <span style="color: red">&lt;methodname&gt;jQuery()&lt;/methodname&gt;</span> view helper simplifies setup of your jQuery environment
+        in your application. It takes care of loading the core and ui library dependencies if necessary
+        and acts as a stack for all the registered onLoad javascript statements. All jQuery view helpers
+        put their javascript code onto this stack. It acts as a collector for everything jQuery in your
+        application with the following responsibilities:
+    &lt;/para&gt;</span>
+
+    <span style="color: red">&lt;itemizedlist&gt;
+        <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;Handling deployment of CDN or a local path jQuery Core
+                and UI libraries.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+        <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;Handling <span style="color: red">&lt;ulink&gt;$(document).ready()&lt;/ulink&gt;</span> events.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+        <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;Specifying additional stylesheet themes to use.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+    &lt;/itemizedlist&gt;</span>
+
+    <span style="color: red">&lt;para&gt;
+        The <span style="color: red">&lt;methodname&gt;jQuery()&lt;/methodname&gt;</span> view helper implementation, like its <span style="color: red">&lt;methodname&gt;dojo()&lt;/methodname&gt;</span> pendant,
+        follows the placeholder architecture implementation; the data set in it persists between view
+        objects, and may be directly echo'd from your layout script. Since views specified in a Zend_Layout
+        script file are rendered before the layout itself, the <span style="color: red">&lt;methodname&gt;jQuery()&lt;/methodname&gt;</span> helper can act as a
+        stack for jQuery statements and render them into the head segment of the html page.
+    &lt;/para&gt;</span>
+
+    <span style="color: red">&lt;para&gt;Contrary to Dojo, themes cannot be loaded from a CDN for the jQuery UI widgets and have to be implemented
+        in your pages stylesheet file or loaded from an extra stylesheet file. A default theme called Flora can be
+        obtained from the jQuery UI downloadable file.&lt;/para&gt;</span>
+
+    <span style="color: red">&lt;example&gt;
+        <span style="color: red">&lt;title&gt;jQuery() View Helper Example&lt;/title&gt;</span>
+
+        <span style="color: red">&lt;para&gt;
+            In this example a jQuery environment using the core and UI libraries will be needed. UI Widgets should
+            be rendered with the Flora thema that is installed in 'public/styles/flora.all.css'. The jQuery libraries
+            are both loaded from local paths.
+        &lt;/para&gt;</span>
+
+        <span style="color: red">&lt;para&gt;
+            To register the jQuery functionality inside the view object, you have to add the appropriate helpers
+            to the view helper path. There are many ways of accomplishing this, based on the requirements that the
+            jQuery helpers have. If you need them in one specific view only, you can use the addHelperPath method
+            on initialization of this view, or right before rendering:
+        &lt;/para&gt;</span>
+
+        <span style="color: red">&lt;programlisting&gt;
+$view-&gt;addHelperPath('ZendX/JQuery/View/Helper/', 'ZendX_JQuery_View_Helper');
+&lt;/programlisting&gt;</span>
+
+        <span style="color: red">&lt;para&gt;If you need them throughout your application, you can register them in your bootstrap
+            file using access to the Controller Plugin ViewRenderer:
+        &lt;/para&gt;</span>
+
+        <span style="color: red">&lt;programlisting&gt;
+$view = new Zend_View();
+$view-&gt;addHelperPath('ZendX/JQuery/View/Helper/', 'ZendX_JQuery_View_Helper');
+
+$viewRenderer = new Zend_Controller_Action_Helper_ViewRenderer();
+$viewRenderer-&gt;setView($view);
+Zend_Controller_Action_HelperBroker::addHelper($viewRenderer);
+&lt;/programlisting&gt;</span>
+
+        <span style="color: red">&lt;para&gt;Now in the view script we want to display a Date Picker and an Ajax based Link.&lt;/para&gt;</span>
+
+        <span style="color: red">&lt;programlisting&gt;
+&lt;?php echo $this-&gt;ajaxLink("Show me something",
+                    "/hello/world",
+                    array('update' =&gt; '#content'));?&gt;
+
+&lt;div id="content"&gt;&lt;/div&gt;
+
+&lt;form method="post" action="/hello/world"&gt;
+Pick your Date: &lt;?php echo $this-&gt;datePicker("dp1",
+                                             '',
+                                             array(
+                                                'defaultDate' =&gt;
+                                                    date('Y/m/d', time())));?&gt;
+&lt;input type="submit" value="Submit" /&gt;
+&lt;/form&gt;
+&lt;/programlisting&gt;</span>
+
+        <span style="color: red">&lt;para&gt;Both helpers now stacked some javascript statements on the jQuery helper and printed a link and
+            a form element respectively. To access the javascript we have to utilize the jQuery()
+            functionality. Both helpers already activated their dependencies that is they have called
+            <span style="color: red">&lt;methodname&gt;jQuery()-&gt;enable()&lt;/methodname&gt;</span> and <span style="color: red">&lt;methodname&gt;jQuery()-&gt;uiEnable()&lt;/methodname&gt;</span>. We only have to print
+            the jQuery() environment, and we choose to do so in the layout script's head segment:
+        &lt;/para&gt;</span>
+
+        <span style="color: red">&lt;programlisting&gt;
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;title&gt;A jQuery View Helper Example&lt;/title&gt;
+        &lt;?php echo $this-&gt;jQuery(); ?&gt;
+    &lt;/head&gt;
+
+    &lt;body&gt;
+        &lt;?php echo $this-&gt;layout()-&gt;content; ?&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+&lt;/programlisting&gt;</span>
+
+        <span style="color: red">&lt;para&gt;Although <span style="color: red">&lt;code&gt;$this-&gt;layout()-&gt;content;&lt;/code&gt;</span> is printed behind the <span style="color: red">&lt;code&gt;$this-&gt;jQuery()&lt;/code&gt;</span> statement,
+            the content of the view script is rendered before. This way all the javascript onLoad code has already been put
+            on the onLoad stack and can be printed within the head segment of the html document.
+        &lt;/para&gt;</span>
+    &lt;/example&gt;</span>
+
+    <span style="color: red">&lt;sect3&gt;
+        <span style="color: red">&lt;title&gt;jQuery NoConflict Mode&lt;/title&gt;</span>
+
+        <span style="color: red">&lt;para&gt;jQuery offers a noConflict mode that allows the library to be run side by side with other javascript libraries
+            that operate in the global namespace, Prototype for example. The Zend Framework jQuery View Helper makes usage of
+            the noConflict mode very easy. If you want to run Prototype and jQuery side by side you can call
+            <span style="color: red">&lt;code&gt;ZendX_JQuery_View_Helper_JQuery::enableNoConflictMode();&lt;/code&gt;</span> and all jQuery helpers will operate in the No Conflict
+            Mode.&lt;/para&gt;</span>
+
+        <span style="color: red">&lt;example&gt;
+            <span style="color: red">&lt;title&gt;Building your own Helper with No Conflict Mode&lt;/title&gt;</span>
+
+            <span style="color: red">&lt;para&gt;To make use of the NoConflict Mode in your own jQuery helper, you only have to use the static method
+                <span style="color: red">&lt;methodname&gt;ZendX_JQuery_View_Helper_JQuery::getJQueryHandler()&lt;/methodname&gt;</span> method. It returns the variable jQuery is operating
+                in at the moment, either <span style="color: red">&lt;code&gt;$&lt;/code&gt;</span> or <span style="color: red">&lt;varname&gt;$j&lt;/varname&gt;</span>
+            &lt;/para&gt;</span>
+
+            <span style="color: red">&lt;programlisting&gt;
+class MyHelper_SomeHelper extends Zend_View_Helper_Abstract
+{
+    public function someHelper()
+    {
+        $jquery = $this-&gt;view-&gt;jQuery();
+        $jquery-&gt;enable(); // enable jQuery Core Library
+
+        // get current jQuery handler based on noConflict settings
+        $jqHandler = ZendX_JQuery_View_Helper_JQuery::getJQueryHandler();
+
+        $function = '("#element").click(function() '
+                  . '{ alert("noConflict Mode Save Helper!"); }'
+                  . ')';
+        $jquery-&gt;addOnload($jqHandler . $function);
+        return '';
+    }
+}
+&lt;/programlisting&gt;</span>
+        &lt;/example&gt;</span>
+    &lt;/sect3&gt;</span>
+
+    <span style="color: red">&lt;sect3&gt;
+        <span style="color: red">&lt;title&gt;jQuery UI Themes&lt;/title&gt;</span>
+
+        <span style="color: red">&lt;para&gt;Since there are no online available themes to use out of the box, the implementation of the UI library themes
+            is a bit more complex than with the Dojo helper. The jQuery UI documentation describes for each component
+            what stylesheet information is needed and the Default and Flora Themes from the downloadable archive give hints
+            on the usage of stylesheets. The jQuery helper offers the function <span style="color: red">&lt;code&gt;jQuery()-&gt;addStylesheet($path);&lt;/code&gt;</span>
+            function to include the dependant stylesheets whenever the helper is enabled and rendered. You can optionally
+            merge the required stylesheet information in your main stylesheet file.
+        &lt;/para&gt;</span>
+    &lt;/sect3&gt;</span>
+
+    <span style="color: red">&lt;sect3&gt;
+        <span style="color: red">&lt;title&gt;Methods Available&lt;/title&gt;</span>
+
+        <span style="color: red">&lt;para&gt;
+            The <span style="color: red">&lt;methodname&gt;jQuery()&lt;/methodname&gt;</span> view helper always returns an instance of
+            the jQuery placeholder container. That container object has the
+            following methods available:
+        &lt;/para&gt;</span>
+
+        <span style="color: red">&lt;sect4&gt;
+            <span style="color: red">&lt;title&gt;jQuery Core Library methods&lt;/title&gt;</span>
+            <span style="color: red">&lt;itemizedlist&gt;
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;enable()&lt;/methodname&gt;</span>: explicitly enable jQuery
+                        integration.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;disable()&lt;/methodname&gt;</span>: disable jQuery
+                        integration.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;isEnabled()&lt;/methodname&gt;</span>: determine whether or not
+                        jQuery integration is enabled.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;setVersion()&lt;/methodname&gt;</span>: set the jQuery version
+                        that is used. This also decides on the library loaded
+                        from the Google Ajax Library CDN&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;getVersion()&lt;/methodname&gt;</span>: get the current jQuery
+                        that is used. This also decides on the library loaded
+                        from the Google Ajax Library CDN&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;useCdn()&lt;/methodname&gt;</span>: Return true, if CDN usage is
+                        currently enabled&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;useLocalPath()&lt;/methodname&gt;</span>: Return true, if local usage
+                        is currently enabled&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;setLocalPath()&lt;/methodname&gt;</span>: Set the local path to the
+                        jQuery Core library&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;getLocalPath()&lt;/methodname&gt;</span>: If set, return the local path to the
+                        jQuery Core library&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+            &lt;/itemizedlist&gt;</span>
+        &lt;/sect4&gt;</span>
+
+        <span style="color: red">&lt;sect4&gt;
+            <span style="color: red">&lt;title&gt;jQuery UI Library methods&lt;/title&gt;</span>
+
+            <span style="color: red">&lt;itemizedlist&gt;
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;uiEnable()&lt;/methodname&gt;</span>: explicitly enable jQuery UI
+                        integration.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;uiDisable()&lt;/methodname&gt;</span>: disable jQuery UI
+                        integration.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;uiIsEnabled()&lt;/methodname&gt;</span>: determine whether or not
+                        jQuery UI integration is enabled.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;setUiVersion()&lt;/methodname&gt;</span>: set the jQuery UI version
+                        that is used. This also decides on the library loaded
+                        from the Google Ajax Library CDN&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;getUiVersion()&lt;/methodname&gt;</span>: get the current jQuery UI
+                        that is used. This also decides on the library loaded
+                        from the Google Ajax Library CDN&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;useUiCdn()&lt;/methodname&gt;</span>: Return true, if CDN usage is
+                        currently enabled for jQuery UI&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;useUiLocal()&lt;/methodname&gt;</span>: Return true, if local usage
+                        is currently enabled for jQuery UI&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;setUiLocalPath()&lt;/methodname&gt;</span>: Set the local path to the
+                        jQuery UI library&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;getUiLocalPath()&lt;/methodname&gt;</span>: If set, get the local path
+                        to the jQuery UI library&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+            &lt;/itemizedlist&gt;</span>
+        &lt;/sect4&gt;</span>
+
+        <span style="color: red">&lt;sect4&gt;
+            <span style="color: red">&lt;title&gt;jQuery Helper Utility methods&lt;/title&gt;</span>
+
+            <span style="color: red">&lt;itemizedlist&gt;
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;setView(Zend_View_Interface $view)&lt;/methodname&gt;</span>: set
+                        a view instance in the container.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;onLoadCaptureStart()&lt;/methodname&gt;</span>: Start capturing javascript code
+                        for jQuery onLoad execution.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;onLoadCaptureEnd()&lt;/methodname&gt;</span>: Stop capturing&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;javascriptCaptureStart()&lt;/methodname&gt;</span>: Start capturing javascript code
+                        that has to be rendered after the inclusion of either jQuery Core or UI libraries.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;javascriptCaptureEnd()&lt;/methodname&gt;</span>: Stop capturing.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;addJavascriptFile($path)&lt;/methodname&gt;</span>: Add javascript file to be included after
+                                jQuery Core or UI library.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;getJavascriptFiles()&lt;/methodname&gt;</span>: Return all currently registered
+                        additional javascript files.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;clearJavascriptFiles()&lt;/methodname&gt;</span>: Clear the javascript files&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;addJavascript($statement)&lt;/methodname&gt;</span>: Add javascript statement to be included
+                        after jQuery Core or UI library.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;getJavascript()&lt;/methodname&gt;</span>: Return all currently registered
+                        additional javascript statements.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;clearJavascript()&lt;/methodname&gt;</span>: Clear the javascript statements.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;addStylesheet($path)&lt;/methodname&gt;</span>: Add a stylesheet file that is needed
+                        for a jQuery view helper to display correctly.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;getStylesheets()&lt;/methodname&gt;</span>: Get all currently registered
+                        additional stylesheets.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;addOnLoad($statement)&lt;/methodname&gt;</span>: Add javascript statement that should
+                        be executed on document loading.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;getOnLoadActions()&lt;/methodname&gt;</span>: Return all currently registered
+                        onLoad statements.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;setRenderMode($mask)&lt;/methodname&gt;</span>: Render only a specific subset of the
+                        jQuery environment via ZendX_JQuery::RENDER_ constants. Rendering all elements
+                        is the default behaviour.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;getRenderMode()&lt;/methodname&gt;</span>: Return the current
+                        jQuery environment rendering mode.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;setCdnSsl($bool)&lt;/methodname&gt;</span>: Set if the CDN Google Ajax Library should be loaded
+                        from an SSL or a Non-SSL location.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+            &lt;/itemizedlist&gt;</span>
+
+            <span style="color: red">&lt;para&gt;These are quite a number of methods, but many of them are used for internally by all the
+                additional view helpers and during the printing of the jQuery environment. Unless you
+                want to build your own jQuery helper or have a complex use-case, you will probably only
+                get in contact with a few methods of these.&lt;/para&gt;</span>
+        &lt;/sect4&gt;</span>
+
+    &lt;/sect3&gt;</span>
+
+    <span style="color: red">&lt;sect3&gt;
+        <span style="color: red">&lt;title&gt;Refactoring jQuery environment with setRenderMode()&lt;/title&gt;</span>
+
+        <span style="color: red">&lt;para&gt;Using the current setup that was described, each page of your website would show
+            a different subset of jQuery code that would be needed to keep the current jQuery related
+            items running. Also different files or stylesheets may be included depending on which
+            helpers you implemented in your application. In production stage you might want to centralize
+            all the javascript your application generated into a single file, or disable stylesheet
+            rendering because you have merged all the stylesheets into a single file and include it statically
+            in your layout. To allow a smooth refactoring you can enable or disable the rendering
+            of certain jQuery environment blocks with help of the following constants and the
+        <span style="color: red">&lt;methodname&gt;jQuery()-&gt;setRenderMode($bitmask)&lt;/methodname&gt;</span> function.&lt;/para&gt;</span>
+
+        <span style="color: red">&lt;itemizedlist&gt;
+            <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;code&gt;ZendX_JQuery::RENDER_LIBRARY&lt;/code&gt;</span>: Renders jQuery Core and UI library&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+            <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;code&gt;ZendX_JQuery::RENDER_SOURCES&lt;/code&gt;</span>: Renders additional javascript files&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+            <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;code&gt;ZendX_JQuery::RENDER_STYLESHEETS&lt;/code&gt;</span>: Renders jQuery related stylesheets&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+            <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;code&gt;ZendX_JQuery::RENDER_JAVASCRIPT&lt;/code&gt;</span>: Render additional javascript statements&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+            <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;code&gt;ZendX_JQuery::RENDER_JQUERY_ON_LOAD&lt;/code&gt;</span>: Render jQuery onLoad statements&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+            <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;code&gt;ZendX_JQuery::RENDER_ALL&lt;/code&gt;</span>: Render all previously mentioned blocks, this is default behaviour.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+        &lt;/itemizedlist&gt;</span>
+
+        <span style="color: red">&lt;para&gt;
+            For an example, if you would have merged jQuery Core and UI libraries as well as other files into a single large file
+            as well as merged stylesheets to keep HTTP requests low on your production application.
+            You could disallow the jQuery helper to render those parts, but render all the other stuff
+            with the following statement in your view:
+        &lt;/para&gt;</span>
+
+        <span style="color: red">&lt;programlisting&gt;
+$view-&gt;jQuery()
+     -&gt;setRenderMode(ZendX_JQuery::RENDER_JAVASCRIPT |
+                     ZendX_JQuery::RENDER_JQUERY_ON_LOAD);
+&lt;/programlisting&gt;</span>
+
+        <span style="color: red">&lt;para&gt;This statement makes sure only the required javascript statements and onLoad blocks of the current page are rendered by the jQuery helper.&lt;/para&gt;</span>
+    &lt;/sect3&gt;</span>
+
+    <span style="color: red">&lt;sect3&gt;
+        <span style="color: red">&lt;title&gt;Migrations&lt;/title&gt;</span>
+
+        <span style="color: red">&lt;para&gt;Prior to 1.8 the methods <span style="color: red">&lt;methodname&gt;setCdnVersion()&lt;/methodname&gt;</span>, <span style="color: red">&lt;methodname&gt;setLocalPath()&lt;/methodname&gt;</span>
+            <span style="color: red">&lt;methodname&gt;setUiCdnVersion()&lt;/methodname&gt;</span> and <span style="color: red">&lt;methodname&gt;setUiLocalPath()&lt;/methodname&gt;</span> all enabled the view
+            helper upon calling, which is considered a bug from the following perspective: If
+            you want to use the any non-default library option, you would have to manually disable the
+            jQuery helper aftwards if you only require it to be loaded in some scenarios. With version
+            1.8 the jQuery helper does only enable itsself, when <span style="color: red">&lt;methodname&gt;enable()&lt;/methodname&gt;</span> is called,
+            which all internal jQuery View helpers do upon being called.
+        &lt;/para&gt;</span>
+    &lt;/sect3&gt;</span>
+&lt;/sect2&gt;</span>
+    <span style="color: red">&lt;sect2&gt;
+    <span style="color: red">&lt;title&gt;JQuery Helpers&lt;/title&gt;</span>
+
+    <span style="color: red">&lt;sect3&gt;
+        <span style="color: red">&lt;title&gt;AjaxLink Helper&lt;/title&gt;</span>
+
+        <span style="color: red">&lt;para&gt;The AjaxLink helper uses jQuery's ajax capabilities to offer the creation of links that do ajax requests and
+            inject the response into a chosen DOM element. It also offers the possibility to append simple jQuery effects
+            to both the link and the response DOM element. A simple example introduces its functionality:&lt;/para&gt;</span>
+
+        <span style="color: red">&lt;programlisting&gt;
+&lt;!-- Inside your View Object --&gt;
+&lt;div id="container"&gt;&lt;/div&gt;
+&lt;?php echo $this-&gt;view-&gt;ajaxLink("Link Name",
+                          "url.php",
+                          array('update' =&gt; '#container')); ?&gt;
+&lt;/programlisting&gt;</span>
+
+        <span style="color: red">&lt;para&gt;This example creates a link with the label "Link Name" that fires an ajax request to url.php
+            upon click and renders the response into the div container "#container". The function header
+            for the ajaxLink is as follows: <span style="color: red">&lt;code&gt;function ajaxLink($label, $url, $options, $params);&lt;/code&gt;</span>
+            The options array is very powerful and offers you lots of functionality to customize your
+            ajax requests.&lt;/para&gt;</span>
+
+        <span style="color: red">&lt;para&gt;Available options are:&lt;/para&gt;</span>
+
+        <span style="color: red">&lt;table&gt;
+            <span style="color: red">&lt;title&gt;AjaxLink options&lt;/title&gt;</span>
+            <span style="color: red">&lt;tgroup&gt;
+                <span style="color: red">&lt;thead&gt;
+                    <span style="color: red">&lt;row&gt;
+                        <span style="color: red">&lt;entry&gt;Option&lt;/entry&gt;</span>
+                        <span style="color: red">&lt;entry&gt;Data Type&lt;/entry&gt;</span>
+                        <span style="color: red">&lt;entry&gt;Default Value&lt;/entry&gt;</span>
+                        <span style="color: red">&lt;entry&gt;Description&lt;/entry&gt;</span>
+                    &lt;/row&gt;</span>
+                &lt;/thead&gt;</span>
+                <span style="color: red">&lt;tbody&gt;
+                    <span style="color: red">&lt;row&gt;
+                        <span style="color: red">&lt;entry&gt;<span style="color: red">&lt;code&gt;update&lt;/code&gt;</span>&lt;/entry&gt;</span>
+                        <span style="color: red">&lt;entry&gt;<span style="color: red">&lt;code&gt;string&lt;/code&gt;</span>&lt;/entry&gt;</span>
+                        <span style="color: red">&lt;entry&gt;<span style="color: red">&lt;code&gt;false&lt;/code&gt;</span>&lt;/entry&gt;</span>
+                        <span style="color: red">&lt;entry&gt;
+                            Container to inject response content into, use jQuery CSS Selector syntax, ie. "#container" or ".box"
+                        &lt;/entry&gt;</span>
+                    &lt;/row&gt;</span>
+                    <span style="color: red">&lt;row&gt;
+                        <span style="color: red">&lt;entry&gt;<span style="color: red">&lt;code&gt;method&lt;/code&gt;</span>&lt;/entry&gt;</span>
+                        <span style="color: red">&lt;entry&gt;<span style="color: red">&lt;code&gt;string&lt;/code&gt;</span>&lt;/entry&gt;</span>
+                        <span style="color: red">&lt;entry&gt;<span style="color: red">&lt;code&gt;Implicit GET or POST&lt;/code&gt;</span>&lt;/entry&gt;</span>
+                        <span style="color: red">&lt;entry&gt;Request method, is implicitly chosen as GET when no parameters given and POST when parameters given.&lt;/entry&gt;</span>
+                    &lt;/row&gt;</span>
+                    <span style="color: red">&lt;row&gt;
+                        <span style="color: red">&lt;entry&gt;<span style="color: red">&lt;code&gt;complete&lt;/code&gt;</span>&lt;/entry&gt;</span>
+                        <span style="color: red">&lt;entry&gt;<span style="color: red">&lt;code&gt;string&lt;/code&gt;</span>&lt;/entry&gt;</span>
+                        <span style="color: red">&lt;entry&gt;<span style="color: red">&lt;code&gt;false&lt;/code&gt;</span>&lt;/entry&gt;</span>
+                        <span style="color: red">&lt;entry&gt;Javascript callback executed, when ajax request is complete. This option allows for shortcut effects, see next section.&lt;/entry&gt;</span>
+                    &lt;/row&gt;</span>
+                    <span style="color: red">&lt;row&gt;
+                        <span style="color: red">&lt;entry&gt;<span style="color: red">&lt;code&gt;beforeSend&lt;/code&gt;</span>&lt;/entry&gt;</span>
+                        <span style="color: red">&lt;entry&gt;<span style="color: red">&lt;code&gt;string&lt;/code&gt;</span>&lt;/entry&gt;</span>
+                        <span style="color: red">&lt;entry&gt;<span style="color: red">&lt;code&gt;false&lt;/code&gt;</span>&lt;/entry&gt;</span>
+                        <span style="color: red">&lt;entry&gt;Javascript callback executed right before ajax request is started. This option allows for shortcut effects, see next section.&lt;/entry&gt;</span>
+                    &lt;/row&gt;</span>
+                    <span style="color: red">&lt;row&gt;
+                        <span style="color: red">&lt;entry&gt;<span style="color: red">&lt;code&gt;noscript&lt;/code&gt;</span>&lt;/entry&gt;</span>
+                        <span style="color: red">&lt;entry&gt;<span style="color: red">&lt;code&gt;boolean&lt;/code&gt;</span>&lt;/entry&gt;</span>
+                        <span style="color: red">&lt;entry&gt;<span style="color: red">&lt;code&gt;true&lt;/code&gt;</span>&lt;/entry&gt;</span>
+                        <span style="color: red">&lt;entry&gt;If true the link generated will contain a href attribute to the given link for non-javascript enabled browsers. If false href will resolve to "#".&lt;/entry&gt;</span>
+                    &lt;/row&gt;</span>
+                    <span style="color: red">&lt;row&gt;
+                        <span style="color: red">&lt;entry&gt;<span style="color: red">&lt;code&gt;dataType&lt;/code&gt;</span>&lt;/entry&gt;</span>
+                        <span style="color: red">&lt;entry&gt;<span style="color: red">&lt;code&gt;string&lt;/code&gt;</span>&lt;/entry&gt;</span>
+                        <span style="color: red">&lt;entry&gt;<span style="color: red">&lt;code&gt;html&lt;/code&gt;</span>&lt;/entry&gt;</span>
+                        <span style="color: red">&lt;entry&gt;What type of data is the Ajax Response of? Possible are Html, Text, Json. Processing Json responses has to be done with custom "complete" callback functions.&lt;/entry&gt;</span>
+                    &lt;/row&gt;</span>
+                    <span style="color: red">&lt;row&gt;
+                        <span style="color: red">&lt;entry&gt;<span style="color: red">&lt;code&gt;attribs&lt;/code&gt;</span>&lt;/entry&gt;</span>
+                        <span style="color: red">&lt;entry&gt;<span style="color: red">&lt;code&gt;array&lt;/code&gt;</span>&lt;/entry&gt;</span>
+                        <span style="color: red">&lt;entry&gt;<span style="color: red">&lt;code&gt;null&lt;/code&gt;</span>&lt;/entry&gt;</span>
+                        <span style="color: red">&lt;entry&gt;Additional HTML attributes the ajaxable link should have.&lt;/entry&gt;</span>
+                    &lt;/row&gt;</span>
+                    <span style="color: red">&lt;row&gt;
+                        <span style="color: red">&lt;entry&gt;<span style="color: red">&lt;code&gt;title, id, class&lt;/code&gt;</span>&lt;/entry&gt;</span>
+                        <span style="color: red">&lt;entry&gt;<span style="color: red">&lt;code&gt;string&lt;/code&gt;</span>&lt;/entry&gt;</span>
+                        <span style="color: red">&lt;entry&gt;<span style="color: red">&lt;code&gt;false&lt;/code&gt;</span>&lt;/entry&gt;</span>
+                        <span style="color: red">&lt;entry&gt;Convenience shortcuts for HTML Attributes.&lt;/entry&gt;</span>
+                    &lt;/row&gt;</span>
+                    <span style="color: red">&lt;row&gt;
+                        <span style="color: red">&lt;entry&gt;<span style="color: red">&lt;code&gt;inline&lt;/code&gt;</span>&lt;/entry&gt;</span>
+                        <span style="color: red">&lt;entry&gt;<span style="color: red">&lt;code&gt;boolean&lt;/code&gt;</span>&lt;/entry&gt;</span>
+                        <span style="color: red">&lt;entry&gt;<span style="color: red">&lt;code&gt;false&lt;/code&gt;</span>&lt;/entry&gt;</span>
+                        <span style="color: red">&lt;entry&gt;Although far from best practice, you can set javascript for this link inline in "onclick" attribute.&lt;/entry&gt;</span>
+                    &lt;/row&gt;</span>
+                  &lt;/tbody&gt;</span>
+              &lt;/tgroup&gt;</span>
+          &lt;/table&gt;</span>
+
+          <span style="color: red">&lt;para&gt;To enlighten the usage of this helper it is best to show another bunch of more complex examples. This
+            example assumes that you have only one view object that you want to display and don't care a lot about
+            html best practices, since we have to output the jQuery environment just before the closing body tag.&lt;/para&gt;</span>
+
+          <span style="color: red">&lt;programlisting&gt;
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;title&gt;Zend Framework jQuery AjaxLink Example&lt;/title&gt;
+        &lt;script language="javascript"
+                type="text/javascript"
+                src="myCallbackFuncs.js"&gt;&lt;/script&gt;
+    &lt;/head&gt;
+
+    &lt;body&gt;
+        &lt;!-- without echoing jQuery this following --&gt;
+        &lt;!-- list only prints a list of for links --&gt;
+        &lt;ul&gt;
+            &lt;li&gt;
+                &lt;?php echo $this-&gt;ajaxLink("Example 1",
+                                           "/ctrl/action1",
+                                           array('update' =&gt; '#content',
+                                                 'noscript' =&gt; false,
+                                                 'method' =&gt; 'POST')); ?&gt;
+            &lt;/li&gt;
+            &lt;li&gt;
+                &lt;?php echo $this-&gt;ajaxLink("Example 2",
+                                           "/ctrl/action2",
+                                           array('update' =&gt; '#content',
+                                                 'class' =&gt; 'someLink'),
+                                           array('param1' =&gt; 'value1',
+                                                 'param2' =&gt; 'value2')); ?&gt;
+            &lt;/li&gt;
+            &lt;li&gt;&lt;?php echo $this-&gt;ajaxLink("Example 3",
+                                           "/ctrl/action3",
+                                           array('dataType' =&gt; 'json',
+                                                 'complete' =&gt;
+                                                    'alert(data)')); ?&gt;
+            &lt;/li&gt;
+            &lt;li&gt;&lt;?php echo $this-&gt;ajaxLink("Example 4",
+                                           "/ctrl/action4",
+                                           array('beforeSend' =&gt; 'hide',
+                                                 'complete' =&gt; 'show')); ?&gt;
+            &lt;/li&gt;
+            &lt;li&gt;
+                &lt;?php echo $this-&gt;ajaxLink("Example 5",
+                                           "/ctrl/action5",
+                                           array(
+                                            'beforeSend' =&gt;
+                                             'myBeforeSendCallbackJsFunc();',
+                                            'complete' =&gt;
+                                             'myCompleteCallbackJsFunc(data);')
+                                           ); ?&gt;
+            &lt;/li&gt;
+        &lt;/ul&gt;
+
+        &lt;!-- only at this point the javascript is printed to sreen --&gt;
+        &lt;?php echo $this-&gt;jQuery(); ?&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+&lt;/programlisting&gt;</span>
+
+          <span style="color: red">&lt;para&gt;You might have already seen that the 'update', 'complete', and 'beforeSend' options have to be executed in specific order and syntax so that you cannot
+              use those callbacks and override their behaviour completely when you are using <span style="color: red">&lt;methodname&gt;ajaxLink()&lt;/methodname&gt;</span>. For larger use cases you will probably want to
+              write the request via jQuery on your own. The primary use case for the callbacks is effect usage, other uses may very well become hard to maintain.
+              As shown in Example Link 5, you can also forward the beforeSend/complete Callbacks to your own javascript functions.&lt;/para&gt;</span>
+
+          <span style="color: red">&lt;sect4&gt;
+            <span style="color: red">&lt;title&gt;Shortcut Effects&lt;/title&gt;</span>
+
+            <span style="color: red">&lt;para&gt;You can use shortcut effect names to make your links actions more fancy. For example the Container that will contain
+                the ajax response may very well be invisible in the first place. Additionally you can use shortcut effects on the link
+                to hide it after clicking. The following effects can be used for callbacks:&lt;/para&gt;</span>
+
+            <span style="color: red">&lt;itemizedlist&gt;
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;code&gt;complete&lt;/code&gt;</span> callback: 'show', 'showslow', 'shownormal', 'showfast', 'fadein', 'fadeinslow',
+                'fadeinfast', 'slidedown', 'slidedownslow', 'slidedownfast'. These all correspond to the jQuery effects
+                fadeIn(), show() and slideDown() and will be executed on the container specified in <span style="color: red">&lt;code&gt;update&lt;/code&gt;</span>.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;code&gt;beforeSend&lt;/code&gt;</span> callback: 'fadeout', 'fadeoutslow', 'fadeoutfast', 'hide',
+                'hideslow', 'hidefast', 'slideup'. These correspond to the jQuery effects fadeOut(), hide(), slideUp() and
+                are executed on the clicked link.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+            &lt;/itemizedlist&gt;</span>
+
+            <span style="color: red">&lt;programlisting&gt;
+&lt;?php echo $this-&gt;ajaxLink("Example 6",
+                           "/ctrl/action6",
+                           array('beforeSend' =&gt; 'hide',
+                                 'complete' =&gt; 'show')); ?&gt;
+&lt;/programlisting&gt;</span>
+          &lt;/sect4&gt;</span>
+    &lt;/sect3&gt;</span>
+
+    <span style="color: red">&lt;sect3&gt;
+        <span style="color: red">&lt;title&gt;jQuery UI Library Helpers&lt;/title&gt;</span>
+
+        <span style="color: red">&lt;para&gt;The jQuery UI Library offers a range of layout and form specific widgets that are integrated into the
+            Zend Framework via View Helpers. The form-elements are easy to handle and will be described first, whereas
+            the layout specific widgets are a bit more complex to use.&lt;/para&gt;</span>
+
+        <span style="color: red">&lt;sect4&gt;
+            <span style="color: red">&lt;title&gt;jQuery UI Form Helpers&lt;/title&gt;</span>
+
+            <span style="color: red">&lt;para&gt;The method signature for all form view helpers closely resembles the Dojo View helpers signature,
+                <span style="color: red">&lt;methodname&gt;helper($id, $value, $params, $attribs)&lt;/methodname&gt;</span>. A description of the parameters follows:&lt;/para&gt;</span>
+
+            <span style="color: red">&lt;itemizedlist&gt;
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;varname&gt;$id&lt;/varname&gt;</span>: Will act as the identifier name for the helper element inside a form. If in the attributes
+                        no id element is given, this will also become the form element id, that has to be unique across
+                        the DOM.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;varname&gt;$value&lt;/varname&gt;</span>: Default value of the element.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;varname&gt;$params&lt;/varname&gt;</span>: Widget specific parameters that customize the look and feel
+                        of the widget. These options are unique to each widget and <span style="color: red">&lt;ulink&gt;
+                        described in the jQuery UI documentation&lt;/ulink&gt;</span>. The data is casted to JSON, so make sure
+                        to use the <span style="color: red">&lt;classname&gt;Zend_Json_Expr&lt;/classname&gt;</span> class to mark executable javascript as safe.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;varname&gt;$attribs&lt;/varname&gt;</span>: HTML Attributes of the Form Helper&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+            &lt;/itemizedlist&gt;</span>
+
+            <span style="color: red">&lt;para&gt;The following UI widgets are available as form view helpers. Make sure you use the correct
+                version of jQuery UI library to be able to use them. The Google CDN always offers you the latest
+                released version.&lt;/para&gt;</span>
+
+            <span style="color: red">&lt;itemizedlist&gt;
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;autoComplete($id, $value, $params, $attribs)&lt;/methodname&gt;</span>: The AutoComplete View helper
+                    is part of jQuery UI since version 1.8 and creates a text field and registeres
+                    it to have auto complete functionality. The completion data source has to be given as jQuery
+                    related parameters 'url' or 'data' as described in the jQuery UI manual.
+                &lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;colorPicker($id, $value, $params, $attribs)&lt;/methodname&gt;</span>: ColorPicker is still
+                a ZendX_JQuery element for legacy reason, but was removed from jQuery UI completly.
+                &lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;datePicker($id, $value, $params, $attribs)&lt;/methodname&gt;</span>: Create a DatePicker
+                    inside a text field. This widget is available since jQuery UI 1.5 and can therefore currently be used
+                    with the Google CDN. Using the 'handles' option to create multiple handles overwrites the default set value
+                    and the jQuery parameter 'startValue' internally inside the view helper.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;slider($id, $value, $params, $attribs)&lt;/methodname&gt;</span>: Create a Sliding element
+                    that updates its value into a hidden form field. Available since jQuery UI 1.5.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;spinner($id, $value, $params, $attribs)&lt;/methodname&gt;</span>: Create a Spinner element
+                    that can spin through numeric values in a specified range. This element was removed from
+                    the 1.6 jQuery UI release and has not been re-released yet.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+            &lt;/itemizedlist&gt;</span>
+
+            <span style="color: red">&lt;example&gt;
+                <span style="color: red">&lt;title&gt;Showing jQuery Form View Helper Usage&lt;/title&gt;</span>
+
+                <span style="color: red">&lt;para&gt;In this example we want to simulate a fictional web application that offers auctions
+                    on travel locations. A user may specify a city to travel, a start and end date, and a
+                    maximum amount of money he is willing to pay. Therefore we need an autoComplete field
+                    for all the currently known travel locations, a date picker for start and end dates
+                    and a spinner to specify the amount.&lt;/para&gt;</span>
+
+                <span style="color: red">&lt;programlisting&gt;
+&lt;form method="post" action="bid.php"&gt;
+    &lt;label for="locaction"&gt;Where do you want to travel?&lt;/label&gt;
+    &lt;?php echo $this-&gt;autoComplete("location",
+                                   "",
+                                   array('source' =&gt; array('New York',
+                                                         'Mexico City',
+                                                         'Sydney',
+                                                         'Ruegen',
+                                                         'Baden Baden'))); ?&gt;
+    &lt;br /&gt;
+
+    &lt;label for="startDate"&gt;Travel Start Date:&lt;/label&gt;
+    &lt;?php echo $this-&gt;datePicker("startDate", '',
+             array(
+                'defaultDate' =&gt; '+7',
+                'minDate' =&gt; '+7',
+                'onClose' =&gt; new Zend_Json_Expr('myJsonFuncCechkingValidity'))); ?&gt;
+    &lt;br /&gt;
+
+    &lt;label for="startDate"&gt;Travel End Date:&lt;/label&gt;
+    &lt;?php echo $this-&gt;datePicker("endDate", '',
+             array(
+                'defaultDate' =&gt; '+14',
+                'minDate' =&gt; '+7',
+                'onClose' =&gt; new Zend_Json_Expr('myJsonFuncCechkingValidity'))); ?&gt;
+    &lt;br /&gt;
+
+    &lt;label for="bid"&gt;Your Bid:&lt;/label&gt;
+    &lt;?php echo $this-&gt;spinner("bid",
+                              "",
+                              array('min' =&gt; 1205.50,
+                                    'max' =&gt; 10000,
+                                    'start' =&gt; 1205.50,
+                                    'currency' =&gt; '€')); ?&gt;
+    &lt;br /&gt;
+
+    &lt;input type="submit" value="Bid!" /&gt;
+&lt;/form&gt;
+&lt;/programlisting&gt;</span>
+
+                <span style="color: red">&lt;para&gt;You can see the use of jQuery UI Widget specific parameters. These all correspond to those given in the jQuery UI docs
+                    and are converted to JSON and handed through to the view script.&lt;/para&gt;</span>
+            &lt;/example&gt;</span>
+        &lt;/sect4&gt;</span>
+
+        <span style="color: red">&lt;sect4&gt;
+            <span style="color: red">&lt;title&gt;Using an Action Helper to Send Data to AutoComplete&lt;/title&gt;</span>
+
+            <span style="color: red">&lt;para&gt;The jQuery UI Autocomplete Widget can load data from a remote location
+                rather than from an javascript array, making its usage really useful. Zend
+                Framework currently providers a bunch of server-side AutoComplete
+                Helpers and there is one for jQuery too. You register the helper
+                to the controller helper broker and it takes care of disabling layouts
+                and renders an array of data correctly to be read by the AutoComplete field.
+                To use the Action Helper you have to put this rather long statement into
+                your bootstrap or Controller initialization function:
+            &lt;/para&gt;</span>
+
+            <span style="color: red">&lt;programlisting&gt;
+Zend_Controller_Action_HelperBroker::addHelper(
+    new ZendX_JQuery_Controller_Action_Helper_AutoComplete()
+);
+&lt;/programlisting&gt;</span>
+
+            <span style="color: red">&lt;para&gt;You can then directly call the helper to render AutoComplete Output in
+            your Controller&lt;/para&gt;</span>
+
+            <span style="color: red">&lt;programlisting&gt;
+class MyIndexController extends Zend_Controller_Action
+{
+    public function autocompleteAction()
+    {
+        // The data sent via the ajax call is inside $_GET['q']
+        $filter = $_GET['q'];
+
+        // Disable Layout and stuff, just displaying AutoComplete Information.
+        $this-&gt;_helper-&gt;autoComplete(array("New York", "Bonn", "Tokio"));
+    }
+}
+&lt;/programlisting&gt;</span>
+        &lt;/sect4&gt;</span>
+
+        <span style="color: red">&lt;sect4&gt;
+            <span style="color: red">&lt;title&gt;jQuery UI Layout Helpers&lt;/title&gt;</span>
+
+            <span style="color: red">&lt;para&gt;There is a wide range of Layout helpers that the UI library offers. The ones covered by Zend Framework view helpers are
+                Accordion, Dialog, Tabs. Dialog is the most simple one, whereas Accordion and Tab extend a common abstract class and
+                offer a secondary view helper for pane generation. The following view helpers exist in the jQuery view helpers collection,
+                an example accompanies them to show their usage.&lt;/para&gt;</span>
+
+            <span style="color: red">&lt;itemizedlist&gt;
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;dialogContainer($id, $content, $params, $attribs)&lt;/methodname&gt;</span>: Create a Dialog Box that is rendered with
+                        the given content.on startup. If the option 'autoOpen' set to false is specified the box will not be displayed
+                        on load but can be shown with the additional <span style="color: red">&lt;methodname&gt;dialog("open")&lt;/methodname&gt;</span> javascript function. See UI docs
+                        for details.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;tabPane($id, $content, $options)&lt;/methodname&gt;</span>: Add a new pane to a tab container with the given <span style="color: red">&lt;varname&gt;$id&lt;/varname&gt;</span>.
+                        The given <span style="color: red">&lt;varname&gt;$content&lt;/varname&gt;</span> is shown in this tab pane. To set the title use <span style="color: red">&lt;varname&gt;$options['title']&lt;/varname&gt;</span>.
+                        If <span style="color: red">&lt;varname&gt;$options['contentUrl']&lt;/varname&gt;</span> is set, the content of the tab is requested via ajax on tab activation.
+                    &lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;tabContainer($id, $params, $attribs)&lt;/methodname&gt;</span>: Render a tab container with all the currently registered
+                        panes. This view helper also offers to add panes with the following syntax:
+                        <span style="color: red">&lt;code&gt;$this-&gt;tabContainer()-&gt;addPane($id, $label, $content, $options)&lt;/code&gt;</span>.
+                    &lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;accordionPane($id, $content, $options)&lt;/methodname&gt;</span>: Add a new pane to the accordion container with the given <span style="color: red">&lt;varname&gt;$id&lt;/varname&gt;</span>.
+                        The given <span style="color: red">&lt;varname&gt;$content&lt;/varname&gt;</span> is shown in this tab pane. To set the title use <span style="color: red">&lt;varname&gt;$options['title']&lt;/varname&gt;</span>.
+                    &lt;/para&gt;</span>&lt;/listitem&gt;</span>
+                <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;accordionContainer($id, $params, $attribs)&lt;/methodname&gt;</span>: Render an accordion container with all the currently registered
+                        panes. This view helper also offers to add panes with the following syntax:
+                        <span style="color: red">&lt;code&gt;$this-&gt;accordionContainer()-&gt;addPane($id, $label, $content, $options)&lt;/code&gt;</span>.
+                    &lt;/para&gt;</span>&lt;/listitem&gt;</span>
+            &lt;/itemizedlist&gt;</span>
+
+            <span style="color: red">&lt;example&gt;
+                <span style="color: red">&lt;title&gt;Showing the latest news in a Tab Container&lt;/title&gt;</span>
+
+                <span style="color: red">&lt;para&gt;For this example we assume the developer already wrote the controller and model side of the script and assigned
+                    an array of news items to the view script. This array contains at most 5 news elements, so we don't have to care
+                    about the tab container getting to many tabs.&lt;/para&gt;</span>
+
+                <span style="color: red">&lt;programlisting&gt;
+&lt;?php foreach($this-&gt;news AS $article): ?&gt;
+&lt;?php $this-&gt;tabPane("newstab",
+                     $article-&gt;body,
+                     array('title' =&gt; $article-&gt;title)); ?&gt;
+&lt;?php endforeach; ?&gt;
+
+&lt;h2&gt;Latest News&lt;/h2&gt;
+&lt;?php echo $this-&gt;tabContainer("newstab",
+                               array(),
+                               array('class' =&gt; 'flora')); ?&gt;
+&lt;/programlisting&gt;</span>
+            &lt;/example&gt;</span>
+        &lt;/sect4&gt;</span>
+    &lt;/sect3&gt;</span>
+&lt;/sect2&gt;</span>
+&lt;/sect1&gt;</span><span style="color: red">&lt;sect1&gt;
+    <span style="color: red">&lt;title&gt;ZendX_JQuery Form Elements and Decorators&lt;/title&gt;</span>
+
+    <span style="color: red">&lt;para&gt;All View Helpers are pressed into Zend_Form elements or decorators also. They can even be
+        easily integrated into your already existing forms. To enable a Form for Zend_JQuery support
+        you can use two ways: Init your form as <span style="color: red">&lt;code&gt;$form = new ZendX_JQuery_Form();&lt;/code&gt;</span> or
+        use the static method <span style="color: red">&lt;methodname&gt;ZendX_JQuery::enableForm($form)&lt;/methodname&gt;</span> to enable jQuery element support.
+    &lt;/para&gt;</span>
+
+    <span style="color: red">&lt;sect2&gt;
+        <span style="color: red">&lt;title&gt;General Elements and Decorator Usage&lt;/title&gt;</span>
+
+        <span style="color: red">&lt;para&gt;Both elements and decorators of the Zend jQuery Form set can be initialized with
+            the option key <span style="color: red">&lt;code&gt;jQueryParams&lt;/code&gt;</span> to set certain jQuery object related parameters.
+            This jQueryParams array of options matches to the <span style="color: red">&lt;varname&gt;$params&lt;/varname&gt;</span> variable
+            of the corresponding view helpers. For example:&lt;/para&gt;</span>
+
+        <span style="color: red">&lt;programlisting&gt;
+$element = new ZendX_JQuery_Form_Element_DatePicker(
+                    'dp1',
+                    array('jQueryParams' =&gt; array('defaultDate' =&gt; '2007/10/10'))
+                );
+// would internally call to:
+$view-&gt;datePicker("dp1", "", array('defaultDate' =&gt; '2007/10/10'), array());
+&lt;/programlisting&gt;</span>
+
+        <span style="color: red">&lt;para&gt;Additionally elements jQuery options can be customized by the following methods:&lt;/para&gt;</span>
+
+        <span style="color: red">&lt;itemizedlist&gt;
+            <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;setJQueryParam($name, $value)&lt;/methodname&gt;</span>: Set the jQuery option <span style="color: red">&lt;varname&gt;$name&lt;/varname&gt;</span> to
+                    the given value.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+            <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;setJQueryParams($params)&lt;/methodname&gt;</span>: Set key value pairs of jQuery options and merge
+                    them with the already set options.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+            <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;getJQueryParam($name)&lt;/methodname&gt;</span>: Return the jQuery option with the given name.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+            <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;methodname&gt;getJQueryParams()&lt;/methodname&gt;</span>: Return an array of all currently set jQuery options.&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+        &lt;/itemizedlist&gt;</span>
+
+        <span style="color: red">&lt;para&gt;Each jQuery related Decorator also owns a <span style="color: red">&lt;methodname&gt;getJQueryParams()&lt;/methodname&gt;</span> method, to set options you have to
+            use the <span style="color: red">&lt;methodname&gt;setDecorators()&lt;/methodname&gt;</span>, <span style="color: red">&lt;methodname&gt;addDecorator()&lt;/methodname&gt;</span> or <span style="color: red">&lt;methodname&gt;addDecorators()&lt;/methodname&gt;</span> functionality
+            of a form element and set the jQueryParams key as option:&lt;/para&gt;</span>
+
+        <span style="color: red">&lt;programlisting&gt;
+$form-&gt;setDecorators(array(
+    'FormElements',
+    array('AccordionContainer', array(
+        'id'          =&gt; 'tabContainer',
+        'style'       =&gt; 'width: 600px;',
+        'jQueryParams' =&gt; array(
+            'alwaysOpen' =&gt; false,
+            'animated'   =&gt; "easeslide"
+        ),
+    )),
+    'Form'
+));
+&lt;/programlisting&gt;</span>
+    &lt;/sect2&gt;</span>
+
+    <span style="color: red">&lt;sect2&gt;
+        <span style="color: red">&lt;title&gt;Form Elements&lt;/title&gt;</span>
+
+        <span style="color: red">&lt;para&gt;The Zend Framework jQuery Extras Extension comes with the following Form Elements:&lt;/para&gt;</span>
+
+        <span style="color: red">&lt;itemizedlist&gt;
+            <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;code&gt;ZendX_JQuery_Form_Element_AutoComplete&lt;/code&gt;</span>: Proxy to AutoComplete View Helper&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+            <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;code&gt;ZendX_JQuery_Form_Element_ColorPicker&lt;/code&gt;</span>: Proxy to ColorPicker View Helper&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+            <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;code&gt;ZendX_JQuery_Form_Element_DatePicker&lt;/code&gt;</span>: Proxy to DatePicker View Helper&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+            <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;code&gt;ZendX_JQuery_Form_Element_Slider&lt;/code&gt;</span>: Proxy to Slider View Helper&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+            <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;code&gt;ZendX_JQuery_Form_Element_Spinner&lt;/code&gt;</span>: Proxy to Spinner View Helper&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+        &lt;/itemizedlist&gt;</span>
+
+        <span style="color: red">&lt;note&gt;
+            <span style="color: red">&lt;title&gt;jQuery Decorators: Beware the Marker Interface for UiWidgetElements&lt;/title&gt;</span>
+
+            <span style="color: red">&lt;para&gt;By default all the jQuery Form elements use the <span style="color: red">&lt;code&gt;ZendX_JQuery_Form_Decorator_UiWidgetElement&lt;/code&gt;</span> decorator
+                for rendering the jQuery element with its specific view helper. This decorator is inheritly different
+                from the ViewHelper decorator that is used for most of the default form elements in Zend_Form.
+                To ensure that rendering works correctly for jQuery form elements at least one decorator has to
+                implement the <span style="color: red">&lt;code&gt;ZendX_JQuery_Form_Decorator_UiWidgetElementMarker&lt;/code&gt;</span> interface, which
+                the default decorator does. If no marker interface is found an exception is thrown. Use the marker
+                interface if you want to implement your own decorator for the jQuery form element specific rendering.
+            &lt;/para&gt;</span>
+        &lt;/note&gt;</span>
+    &lt;/sect2&gt;</span>
+
+    <span style="color: red">&lt;sect2&gt;
+        <span style="color: red">&lt;title&gt;Form Decorators&lt;/title&gt;</span>
+
+        <span style="color: red">&lt;para&gt;The following Decorators come with the Zend Framework jQuery Extension:&lt;/para&gt;</span>
+
+        <span style="color: red">&lt;itemizedlist&gt;
+            <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;code&gt;ZendX_JQuery_Form_Decorator_AccordionContainer&lt;/code&gt;</span>: Proxy to AccordionContainer View Helper&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+            <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;code&gt;ZendX_JQuery_Form_Decorator_AccordionPane&lt;/code&gt;</span>: Proxy to AccordionPane View Helper&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+            <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;code&gt;ZendX_JQuery_Form_Decorator_DialogContainer&lt;/code&gt;</span>: Proxy to DialogContainer View Helper&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+            <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;code&gt;ZendX_JQuery_Form_Decorator_TabContainer&lt;/code&gt;</span>: Proxy to TabContainer View Helper&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+            <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;code&gt;ZendX_JQuery_Form_Decorator_TabPane&lt;/code&gt;</span>: Proxy to TabPane View Helper&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+            <span style="color: red">&lt;listitem&gt;<span style="color: red">&lt;para&gt;<span style="color: red">&lt;code&gt;ZendX_JQuery_Form_Decorator_UiWidgetElement&lt;/code&gt;</span>: Decorator to Display jQuery Form Elements&lt;/para&gt;</span>&lt;/listitem&gt;</span>
+        &lt;/itemizedlist&gt;</span>
+
+        <span style="color: red">&lt;para&gt;Utilizing the Container elements is a bit more complicated, the following example builds a Form with 2 SubForms in a TabContainer:&lt;/para&gt;</span>
+
+        <span style="color: red">&lt;example&gt;
+            <span style="color: red">&lt;title&gt;SubForms with TabContainer Decorator&lt;/title&gt;</span>
+
+            <span style="color: red">&lt;para&gt;The following example makes use of all Form elements and wraps them into 2 subforms that are decorated with a tab container. First
+                we build the basic <span style="color: red">&lt;code&gt;ZendX_JQuery_Form&lt;/code&gt;</span>:&lt;/para&gt;</span>
+
+            <span style="color: red">&lt;programlisting&gt;
+$form = new ZendX_JQuery_Form();
+$form-&gt;setAction('formdemo.php');
+$form-&gt;setAttrib('id', 'mainForm');
+$form-&gt;setAttrib('class', 'flora');
+
+$form-&gt;setDecorators(array(
+    'FormElements',
+    array('TabContainer', array(
+        'id'          =&gt; 'tabContainer',
+        'style'       =&gt; 'width: 600px;',
+    )),
+    'Form',
+));
+&lt;/programlisting&gt;</span>
+
+            <span style="color: red">&lt;para&gt;Setting the Form Id (in this case to 'mainForm') is an important step for the TabContainer. It is needed that the subforms can relate
+                to the Container Id in a later form building stage. We now initialize two SubForms that will be decorated with the <span style="color: red">&lt;code&gt;TabPane&lt;/code&gt;</span>
+                decorators:&lt;/para&gt;</span>
+
+            <span style="color: red">&lt;programlisting&gt;
+$subForm1 = new ZendX_JQuery_Form();
+$subForm1-&gt;setDecorators(array(
+    'FormElements',
+    array('HtmlTag',
+          array('tag' =&gt; 'dl')),
+    array('TabPane',
+          array('jQueryParams' =&gt; array('containerId' =&gt; 'mainForm',
+                                        'title' =&gt; 'DatePicker and Slider')))
+));
+
+$subForm2 = new ZendX_JQuery_Form();
+$subForm2-&gt;setDecorators(array(
+   'FormElements',
+   array('HtmlTag',
+         array('tag' =&gt; 'dl')),
+   array('TabPane',
+         array('jQueryParams' =&gt; array('containerId' =&gt; 'mainForm',
+                                       'title' =&gt; 'AutoComplete and Spinner')))
+));
+&lt;/programlisting&gt;</span>
+
+            <span style="color: red">&lt;para&gt;In this stage it is important that the <span style="color: red">&lt;code&gt;'containerId'&lt;/code&gt;</span> option is set in each SubForm TabPane, or the subforms
+                cannot relate back to the tab Container and would not be displayed. To enforce this setting, an exception of the type <span style="color: red">&lt;code&gt;ZendX_JQuery_Exception&lt;/code&gt;</span>
+                is thrown if the option is not set. We can now add all the desired elements to the subforms:&lt;/para&gt;</span>
+
+            <span style="color: red">&lt;programlisting&gt;
+// Add Element Date Picker
+$elem = new ZendX_JQuery_Form_Element_DatePicker(
+                "datePicker1", array("label" =&gt; "Date Picker:")
+            );
+$elem-&gt;setJQueryParam('dateFormat', 'dd.mm.yy');
+$subForm1-&gt;addElement($elem);
+
+// Add Element Spinner
+$elem = new ZendX_JQuery_Form_Element_Spinner(
+                "spinner1", array('label' =&gt; 'Spinner:')
+            );
+$elem-&gt;setJQueryParams(array('min' =&gt; 0, 'max' =&gt; 1000, 'start' =&gt; 100));
+$subForm1-&gt;addElement($elem);
+
+// Add Slider Element
+$elem = new ZendX_JQuery_Form_Element_Slider(
+                "slider1", array('label' =&gt; 'Slider:')
+            );
+$elem-&gt;setJQueryParams(array('defaultValue' =&gt; '75'));
+$subForm2-&gt;addElement($elem);
+
+// Add Autocomplete Element
+$elem = new ZendX_JQuery_Form_Element_AutoComplete(
+                "ac1", array('label' =&gt; 'Autocomplete:')
+            );
+$elem-&gt;setJQueryParams(array('source' =&gt; array('New York',
+                                             'Berlin',
+                                             'Bern',
+                                             'Boston')));
+$subForm2-&gt;addElement($elem);
+
+// Submit Button
+$elem = new Zend_Form_Element_Submit("btn1", array('value' =&gt; 'Submit'));
+$subForm1-&gt;addElement($elem);
+&lt;/programlisting&gt;</span>
+
+            <span style="color: red">&lt;para&gt;Three additional lines are missing to put it all together and we have a jQuery animated form:&lt;/para&gt;</span>
+
+            <span style="color: red">&lt;programlisting&gt;
+$form-&gt;addSubForm($subForm1, 'subform1');
+$form-&gt;addSubForm($subForm2, 'subform2');
+
+$formString = $form-&gt;render($view);
+&lt;/programlisting&gt;</span>
+        &lt;/example&gt;</span>
+
+        <span style="color: red">&lt;example&gt;
+            <span style="color: red">&lt;title&gt;Wrapping a Form into the Dialog Container&lt;/title&gt;</span>
+
+            <span style="color: red">&lt;para&gt;The only use for the Dialog Container in Zend Form context is to wrap itself around a form and
+            display it in a dialog. Its important to remember that the order of the decorators has to be different than in the Accordion and
+            Tab Container examples.&lt;/para&gt;</span>
+
+            <span style="color: red">&lt;programlisting&gt;
+// Create new jQuery Form
+$form = new ZendX_JQuery_Form();
+$form-&gt;setAction('formdemo.php');
+
+// Wrap the complete form inside a Dialog box
+$form-&gt;setDecorators(array(
+    'FormElements',
+    'Form',
+    array('DialogContainer', array(
+        'id'          =&gt; 'tabContainer',
+        'style'       =&gt; 'width: 600px;',
+        'jQueryParams' =&gt; array(
+            'tabPosition' =&gt; 'top'
+        ),
+    )),
+));
+
+// Add Element Spinner
+$elem = new ZendX_JQuery_Form_Element_Spinner("spinner1", array('label' =&gt; 'Spinner:', 'attribs' =&gt; array('class' =&gt; 'flora')));
+$elem-&gt;setJQueryParams(array('min' =&gt; 0, 'max' =&gt; 1000, 'start' =&gt; 100));
+
+$form-&gt;addElement($elem);
+&lt;/programlisting&gt;</span>
+        &lt;/example&gt;</span>
+    &lt;/sect2&gt;</span>
+&lt;/sect1&gt;</span>
+</div>
+<div class="navfooter"><table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left">
+<a accesskey="p" href="zendx.console.process.unix.html">Prev</a> </td>
+<td width="20%" align="center"> </td>
+<td width="40%" align="right"> <a accesskey="n" href="the.index.html">Next</a>
+</td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">Chapter 1. ZendX_Console_Process_Unix </td>
+<td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td>
+<td width="40%" align="right" valign="top"> Index</td>
+</tr>
+</table></div>
+<div class="revinfo"></div>
+</body>
+</html>

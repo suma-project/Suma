@@ -1,0 +1,223 @@
+<html>
+    <head>
+        <script
+            type="text/javascript"
+            src="../../../../js/jquery-1.4.2.min.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../../syntax_highlighter/scripts/shCore.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../../syntax_highlighter/scripts/shBrushJScript.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../../syntax_highlighter/scripts/shBrushPhp.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../../syntax_highlighter/scripts/shBrushXml.js">
+        </script>
+        <link
+            href="../../../../syntax_highlighter/styles/shCore.css" rel="stylesheet"
+            type="text/css"
+        />
+        <link
+            href="../../../../syntax_highlighter/styles/shCoreEclipse.css"
+            rel="stylesheet" type="text/css"
+        />
+        <link
+            href="../../../../syntax_highlighter/styles/shThemeWordpress.css"
+            rel="stylesheet" type="text/css"
+        />
+    </head>
+    <body>
+        <pre class="brush: php">&lt;?php
+/**
+ * Zend Framework
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://framework.zend.com/license/new-bsd
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@zend.com so we can send you a copy immediately.
+ *
+ * @category    ZendX
+ * @package     ZendX_JQuery
+ * @subpackage  View
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license     http://framework.zend.com/license/new-bsd     New BSD License
+ * @version     $Id$
+ */
+
+/**
+ * @see Zend_Form_Decorator_ViewHelper
+ */
+require_once &quot;Zend/Form/Decorator/ViewHelper.php&quot;;
+
+/**
+ * @see ZendX_JQuery_Form_Decorator_UiWidgetElementMarker
+ */
+require_once &quot;ZendX/JQuery/Form/Decorator/UiWidgetElementMarker.php&quot;;
+
+/**
+ * Abstract Form Decorator for all jQuery UI Form Elements
+ *
+ * @package    ZendX_JQuery
+ * @subpackage Form
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ */
+class ZendX_JQuery_Form_Decorator_UiWidgetElement
+    extends Zend_Form_Decorator_ViewHelper
+    implements ZendX_JQuery_Form_Decorator_UiWidgetElementMarker
+{
+    /**
+     * Element attributes
+     *
+     * @var array
+     */
+    protected $_attribs;
+
+    /**
+     * jQuery UI View Helper
+     *
+     * @var ZendX_JQuery_View_Helper_UiWidget
+     */
+    public $helper;
+
+    /**
+     * jQuery related attributes/options
+     *
+     * @var array
+     */
+    protected $_jQueryParams = array();
+
+    /**
+     * Get element attributes
+     *
+     * @return array
+     */
+    public function getElementAttribs()
+    {
+        if (null === $this-&gt;_attribs) {
+            if($this-&gt;_attribs = parent::getElementAttribs()) {
+                if (array_key_exists('jQueryParams', $this-&gt;_attribs)) {
+                    $this-&gt;setJQueryParams($this-&gt;_attribs['jQueryParams']);
+                    unset($this-&gt;_attribs['jQueryParams']);
+                }
+            }
+        }
+
+        return $this-&gt;_attribs;
+    }
+
+    /**
+     * Set a single jQuery option parameter
+     *
+     * @param  string $key
+     * @param  mixed $value
+     * @return ZendX_JQuery_Form_Decorator_UiWidgetElement
+     */
+    public function setJQueryParam($key, $value)
+    {
+        $this-&gt;_jQueryParams[(string) $key] = $value;
+        return $this;
+    }
+
+    /**
+     * Set jQuery option parameters
+     *
+     * @param  array $params
+     * @return ZendX_JQuery_Form_Decorator_UiWidgetElement
+     */
+    public function setJQueryParams(array $params)
+    {
+        $this-&gt;_jQueryParams = array_merge($this-&gt;_jQueryParams, $params);
+        return $this;
+    }
+
+    /**
+     * Retrieve a single jQuery option parameter
+     *
+     * @param  string $key
+     * @return mixed|null
+     */
+    public function getJQueryParam($key)
+    {
+        $this-&gt;getElementAttribs();
+        $key = (string) $key;
+        if (array_key_exists($key, $this-&gt;_jQueryParams)) {
+            return $this-&gt;_jQueryParams[$key];
+        }
+
+        return null;
+    }
+
+    /**
+     * Get jQuery option parameters
+     *
+     * @return array
+     */
+    public function getJQueryParams()
+    {
+        $this-&gt;getElementAttribs();
+        return $this-&gt;_jQueryParams;
+    }
+
+    /**
+     * Render an jQuery UI Widget element using its associated view helper
+     *
+     * @param  string $content
+     * @return string
+     * @throws Zend_Form_Decorator_Exception if element or view are not registered
+     */
+    public function render($content)
+    {
+        $element = $this-&gt;getElement();
+        $view = $element-&gt;getView();
+        if (null === $view) {
+            require_once 'Zend/Form/Decorator/Exception.php';
+            throw new Zend_Form_Decorator_Exception('UiWidgetElement decorator cannot render without a registered view object');
+        }
+
+        if(method_exists($element, 'getJQueryParams')) {
+            $this-&gt;setJQueryParams($element-&gt;getJQueryParams());
+        }
+        $jQueryParams = $this-&gt;getJQueryParams();
+
+        $helper    = $this-&gt;getHelper();
+        $separator = $this-&gt;getSeparator();
+        $value     = $this-&gt;getValue($element);
+        $attribs   = $this-&gt;getElementAttribs();
+        $name      = $element-&gt;getFullyQualifiedName();
+
+        $id = $element-&gt;getId();
+        $attribs['id'] = $id;
+
+        $elementContent = $view-&gt;$helper($name, $value, $jQueryParams, $attribs);
+        switch ($this-&gt;getPlacement()) {
+            case self::APPEND:
+                return $content . $separator . $elementContent;
+            case self::PREPEND:
+                return $elementContent . $separator . $content;
+            default:
+                return $elementContent;
+        }
+    }
+}
+</pre>
+        <script type="text/javascript">
+             SyntaxHighlighter.all();
+             jQuery('.gutter div').each(function(key, data){
+                jQuery(data).prepend('<a name="L'+jQuery(data).text()+'"/>');
+             });
+        </script>
+    </body>
+</html>
