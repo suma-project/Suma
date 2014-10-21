@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 require_once 'models/ActivityModel.php';
 
@@ -7,7 +7,7 @@ class ActivityGroupModel
     private $_db;
     private $_metadata;
     private $_id;
-    
+
     public function __construct($id)
     {
         $this->_db = Globals::getDBConn();
@@ -26,7 +26,7 @@ class ActivityGroupModel
         {
             $this->_metadata[$key] = $value;
         }
-        
+
         $this->_id = $id;
     }
 
@@ -38,18 +38,18 @@ class ActivityGroupModel
                 ->from('activity_group')
                 ->where('id = '.$this->_id);
             $row = $select->query()->fetch();
-            
+
             foreach ($row as $index => $val)
             {
                 $this->_metadata[$index] = $val;
             }
         }
-        
+
         if ($key == null)
         {
             return $this->_metadata;
         }
-        else 
+        else
         {
             if (isset($this->_metadata[$key]))
             {
@@ -61,7 +61,7 @@ class ActivityGroupModel
             }
         }
     }
-    
+
     public function getActivities($filterDisabled = true)
     {
         if (isset($this->_id))
@@ -73,22 +73,22 @@ class ActivityGroupModel
 
             if ($filterDisabled)
             {
-                $select->where('a.enabled = true');
+                $select->where('a.enabled = 1');
             }
 
             $select->order('a.rank ASC');
             $rows = $select->query()->fetchAll();
-            
+
             $activities = array();
             foreach($rows as $row)
             {
                 $activities[] = new ActivityModel($row['id']);
             }
-            
+
             return $activities;
-        }    
+        }
     }
-    
+
     public function numberOfActivities($filterDisabled = true) {
         $select = $this->_db->select()
         ->from(array('a' => 'activity'), array('id'))
@@ -97,7 +97,7 @@ class ActivityGroupModel
 
         if ($filterDisabled)
         {
-            $select->where('a.enabled = true');
+            $select->where('a.enabled = 1');
         }
 
         $rows = $select->query()->fetchAll();
@@ -116,27 +116,27 @@ class ActivityGroupModel
         $hash = array('title'        =>  $data['title'],
                       'rank'         =>  $data['rank'],
                       'description'  =>  $data['desc'],
-                      'required'     =>  $data['required'],
-                      'allowMulti'   =>  $data['allowMulti']);
+                      'required'     =>  (int)$data['required'],
+                      'allowMulti'   =>  (int)$data['allowMulti']);
 
         $this->_db->update('activity_group', $hash, 'id = '.$this->_id);
         Globals::getLog()->info('ACTIVITY GROUP UPDATED - id: '.$this->_id.', title: '.$data['title']);
         $this->jettisonMetadata();
     }
 
-    
-    // ------ PRIVATE FUNCTIONS ------        
-    
-    
+
+    // ------ PRIVATE FUNCTIONS ------
+
+
     private function jettisonMetadata()
     {
         $this->_metadata = null;
     }
-    
-    
+
+
     // ------ STATIC FUNCTIONS ------
-    
-    
+
+
     public static function create($data)
     {
         $db = Globals::getDBConn();
@@ -144,8 +144,8 @@ class ActivityGroupModel
         $hash = array('title'          =>  isset($data['title']) ? $data['title'] : 'Default',
                       'rank'           =>  isset($data['rank']) ? $data['rank'] : 1,
                       'description'    =>  isset($data['descr']) ? $data['descr'] : null,
-                      'required'       =>  isset($data['required']) ? $data['required'] : false,
-                      'allowMulti'     =>  isset($data['allowMulti']) ? $data['allowMulti'] : true,
+                      'required'       =>  isset($data['required']) ? (int)$data['required'] : 0,
+                      'allowMulti'     =>  isset($data['allowMulti']) ? (int)$data['allowMulti'] : 1,
                       'fk_initiative'  =>  $data['init']);
 
         $select = $db->select()

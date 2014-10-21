@@ -162,8 +162,8 @@ class QueryModel
                 'title' => 'No Activity',
                 'rank'  => 9999,
                 'description' => '',
-                'required' => FALSE,
-                'allowedMulti' => FALSE
+                'required' => 0,
+                'allowedMulti' => 0
             );
         }
 
@@ -173,7 +173,7 @@ class QueryModel
     public function bySessions($params)
     {
         // SQL to pull valid sessions
-        $this->_sessSql = 'SELECT s.id FROM session s WHERE s.fk_initiative = ' . $this->_initId . ' AND s.deleted = false ';
+        $this->_sessSql = 'SELECT s.id FROM session s WHERE s.fk_initiative = ' . $this->_initId . ' AND s.deleted = 0 ';
 
         // Test if AND clause is needed
         if (isset($params['sDate']) || isset($params['eDate']))
@@ -290,7 +290,7 @@ class QueryModel
             $this->_countsSql = 'SELECT COUNT(c.id)
                     FROM session s,
                     count c LEFT JOIN count_activity_join caj ON c.id = caj.fk_count
-                    WHERE s.deleted = false AND c.fk_session = s.id AND s.fk_initiative = '.$this->_initId.' AND '
+                    WHERE s.deleted = 0 AND c.fk_session = s.id AND s.fk_initiative = '.$this->_initId.' AND '
                     .' s.id IN (';
 
             $sessIds = '';
@@ -316,7 +316,7 @@ class QueryModel
             $this->_countsSql = 'SELECT s.id as sid, s.start, s.end, c.id as cid, c.number as cnum, caj.fk_activity as act, c.fk_location as loc, c.occurrence as oc, s.fk_transaction as transId, t.start as transStart, t.end as transEnd
                     FROM (session s LEFT JOIN transaction t ON s.fk_transaction = t.id), count c
                     LEFT JOIN count_activity_join caj ON c.id = caj.fk_count
-                    WHERE s.deleted = false AND c.fk_session = s.id AND s.fk_initiative = '.$this->_initId.' AND '
+                    WHERE s.deleted = 0 AND c.fk_session = s.id AND s.fk_initiative = '.$this->_initId.' AND '
                     .' s.id IN (';
 
             $this->_countsSql .= substr($sessIds, 0, -2) . ') ';
@@ -339,7 +339,7 @@ class QueryModel
 
         $this->_countsSql = ' FROM session s,
                 count c LEFT JOIN count_activity_join caj ON c.id = caj.fk_count
-                WHERE s.deleted = false AND c.fk_session = s.id AND s.fk_initiative = '.$this->_initId.' ';
+                WHERE s.deleted = 0 AND c.fk_session = s.id AND s.fk_initiative = '.$this->_initId.' ';
 
         // Date filtration
         if (isset($params['sDate']))
@@ -450,7 +450,7 @@ class QueryModel
                    array('title', 'id', 'description', 'rootLocation' => 'fk_root_location'))
             ->join(array('s' => 'session'),
                          'i.id = s.fk_initiative', array())
-            ->where('s.deleted = false')
+            ->where('s.deleted = 0')
             ->group('i.id')
             ->order(array('i.title ASC'));
         $initiatives = $select->query()->fetchAll();

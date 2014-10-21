@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 require_once 'models/InitiativeModel.php';
 
@@ -7,21 +7,21 @@ class SessionModel
     private $_db;
     private $_metadata;
     private $_initiative;
-    
+
     public function __construct($id)
-    {  
+    {
         $this->_db = Globals::getDBConn();
         $select = $this->_db->select()
             ->from('session')
             ->where('id = '.$id);
         $row = $select->query()->fetch();
-        
+
         if (empty($row))
         {
             Globals::getLog()->err('NONEXISTENT SESSION - SessionModel id: '.$id);
             throw new Exception('Session object not found in database with id ' . $id);
         }
-        
+
         foreach ($row as $key => $value)
         {
             $this->_metadata[$key] = $value;
@@ -38,16 +38,16 @@ class SessionModel
         {
             $this->_initiative = new InitiativeModel($this->_metadata['fk_initiative']);
             return $this->_initiative;
-        }        
+        }
     }
-    
+
     public function getMetadata($key = null)
     {
         if ($key == null)
         {
             return $this->_metadata;
         }
-        else 
+        else
         {
             if (isset($this->_metadata[$key]))
             {
@@ -58,10 +58,10 @@ class SessionModel
                 return '';
             }
         }
-    }    
-    
+    }
+
     // ------ STATIC FUNCTIONS ------
-    
+
     public static function getAll($unFiltered = true)
     {
         $db = Globals::getDBConn();
@@ -70,22 +70,22 @@ class SessionModel
             ->order('start DESC');
             if ($unFiltered == false)
             {
-                $select->where('deleted != true');
+                $select->where('deleted != 1');
             }
-            
+
         $rows = $select->query()->fetchAll();
-        
+
         $sessions = array();
         foreach($rows as $row)
         {
             $sessions[] = new SessionModel($row['id']);
         }
-        
+
         return $sessions;
     }
-    
+
     // ------ MISC ------
-    
+
     public function getCounts()
     {
         $select = $this->_db->select()
@@ -95,7 +95,7 @@ class SessionModel
 
         return $select->query()->fetchAll();
     }
-    
+
     public function getCountTotal()
     {
         $select = $this->_db->select()
@@ -103,8 +103,8 @@ class SessionModel
             ->where('fk_session = '.$this->_metadata['id']);
         $row = $select->query()->fetch(Zend_Db::FETCH_NUM);
         return $row[0];
-    }    
-    
+    }
+
     public function getCountsByLoc($locId)
     {
         if (is_numeric($locId))
@@ -128,8 +128,8 @@ class SessionModel
             $row = $select->query()->fetch(Zend_Db::FETCH_NUM);
             return $row[0];
         }
-    }    
-    
+    }
+
     public function getJoinByCntId($cntId)
     {
         if (is_numeric($cntId))
@@ -141,7 +141,7 @@ class SessionModel
             return $select->query()->fetchAll();
         }
     }
-    
+
     public function getTransById($transId)
     {
         if (is_numeric($transId))
@@ -152,6 +152,6 @@ class SessionModel
 
             return $select->query()->fetch();
         }
-    }    
-    
+    }
+
 }

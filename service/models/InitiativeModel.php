@@ -105,7 +105,7 @@ class InitiativeModel
 
             if ($filterDisabled)
             {
-                $select->where('a.enabled = true');
+                $select->where('a.enabled = 1');
             }
 
             $select->order('a.rank ASC');
@@ -130,7 +130,7 @@ class InitiativeModel
         {
             $select = $this->_db->select()
                 ->from('session')
-                ->where('deleted = false AND fk_initiative = '.$this->_id)
+                ->where('deleted = 0 AND fk_initiative = '.$this->_id)
                 ->order('start DESC');
 
             $rows = $select->query()->fetchAll();
@@ -236,7 +236,7 @@ class InitiativeModel
     {
         $select = $this->_db->select()
             ->from('location')
-            ->where('enabled = true AND fk_parent = ' . $parentId)
+            ->where('enabled = 1 AND fk_parent = ' . $parentId)
             ->order('rank ASC');
         $results = $select->query()->fetchAll();
 
@@ -284,8 +284,8 @@ class InitiativeModel
             $activityGroupMetadata[] = array('id'       => (int)$group->getMetadata('id'),
                              'title'    => $group->getMetadata('title'),
                              'rank'     => (int)$group->getMetadata('rank'),
-                             'required' => ($group->getMetadata('required')) ? TRUE : FALSE,
-                             'allowMulti' => ($group->getMetadata('allowMulti')) ? TRUE : FALSE,
+                             'required' => ($group->getMetadata('required')) ? 1 : 0,
+                             'allowMulti' => ($group->getMetadata('allowMulti')) ? 1 : 0,
                              );
         }
 
@@ -334,7 +334,7 @@ class InitiativeModel
             ->from('initiative');
             if ($filterDisabled)
             {
-                $select->where('enabled = true');
+                $select->where('enabled = 1');
             }
 
         $rows = $select->order('title ASC')->query()->fetchAll();
