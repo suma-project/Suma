@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Log
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: SyslogTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
@@ -31,7 +31,7 @@ require_once 'Zend/Log/Writer/Syslog.php';
  * @category   Zend
  * @package    Zend_Log
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Log
  */
@@ -70,7 +70,7 @@ class Zend_Log_Writer_SyslogTest extends PHPUnit_Framework_TestCase
             $writer = new Zend_Log_Writer_Syslog();
             $writer->setFacility(LOG_USER * 1000);
         } catch (Exception $e) {
-            $this->assertType('Zend_Log_Exception', $e);
+            $this->assertTrue($e instanceof Zend_Log_Exception);
             $this->assertContains('Invalid log facility provided', $e->getMessage());
         }
     }
@@ -87,7 +87,7 @@ class Zend_Log_Writer_SyslogTest extends PHPUnit_Framework_TestCase
             $writer = new Zend_Log_Writer_Syslog();
             $writer->setFacility(LOG_AUTH);
         } catch (Exception $e) {
-            $this->assertType('Zend_Log_Exception', $e);
+            $this->assertTrue($e instanceof Zend_Log_Exception);
             $this->assertContains('Only LOG_USER is a valid', $e->getMessage());
         }
     }

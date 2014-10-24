@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Service_Technorati
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: DailyCountsResultTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 
@@ -36,7 +36,7 @@ require_once 'Zend/Service/Technorati/DailyCountsResult.php';
  * @category   Zend
  * @package    Zend_Service_Technorati
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Service
  * @group      Zend_Service_Technorati
@@ -63,9 +63,9 @@ class Zend_Service_Technorati_DailyCountsResultTest extends Zend_Service_Technor
         $object = new Zend_Service_Technorati_DailyCountsResult($this->domElements->item(1));
 
         // check properties
-        $this->assertType('Zend_Date', $object->getDate());
+        $this->assertTrue($object->getDate() instanceof Zend_Date);
         $this->assertEquals(new Zend_Date(strtotime('2007-11-13')), $object->getDate());
-        $this->assertType('integer', $object->getCount());
+        $this->assertTrue(is_int($object->getCount()));
         $this->assertEquals(54414, $object->getCount());
     }
 

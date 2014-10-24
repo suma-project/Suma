@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: StaticTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 
@@ -31,7 +31,7 @@ require_once 'Zend/Db/Select/TestCommon.php';
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Db
  * @group      Zend_Db_Select
@@ -62,7 +62,7 @@ class Zend_Db_Select_StaticTest extends Zend_Db_Select_TestCommon
         $this->assertEquals('SELECT "zfproducts".* FROM "zfproducts"', $sql);
         $stmt = $select->query();
         Zend_Loader::loadClass('Zend_Db_Statement_Static');
-        $this->assertType('Zend_Db_Statement_Static', $stmt);
+        $this->assertTrue($stmt instanceof Zend_Db_Statement_Static);
     }
 
     /**
@@ -78,7 +78,7 @@ class Zend_Db_Select_StaticTest extends Zend_Db_Select_TestCommon
 
         $stmt = $select->query();
         Zend_Loader::loadClass('Zend_Db_Statement_Static');
-        $this->assertType('Zend_Db_Statement_Static', $stmt);
+        $this->assertTrue($stmt instanceof Zend_Db_Statement_Static);
     }
 
     /**
@@ -819,5 +819,95 @@ class Zend_Db_Select_StaticTest extends Zend_Db_Select_TestCommon
     public function getDriver()
     {
         return 'Static';
+    }
+
+    public function testSqlInjectionWithOrder()
+    {
+        $select = $this->_db->select();
+        $select->from(array('p' => 'products'))->order('MD5(1);select');
+        $this->assertEquals('SELECT "p".* FROM "products" AS "p" ORDER BY "MD5(1);select" ASC', $select->assemble());
+
+        $select = $this->_db->select();
+        $select->from(array('p' => 'products'))->order('name;select;MD5(1)');
+        $this->assertEquals('SELECT "p".* FROM "products" AS "p" ORDER BY "name;select;MD5(1)" ASC', $select->assemble());
+
+        $select = $this->_db->select();
+        $select->from(array('p' => 'products'))->order('MD5(1);drop table products; -- )');
+        $this->assertEquals('SELECT "p".* FROM "products" AS "p" ORDER BY "MD5(1);drop table products; -- )" ASC', $select->assemble());
+    }
+
+    public function testSqlInjectionWithGroup()
+    {
+        $select = $this->_db->select();
+        $select->from(array('p' => 'products'))->group('ABS("weight")');
+        $this->assertEquals('SELECT "p".* FROM "products" AS "p" GROUP BY ABS("weight")', $select->assemble());
+
+        $select = $this->_db->select();
+        $select->from(array('p' => 'products'))->group('MD5(1); drop table products; -- )');
+        $this->assertEquals('SELECT "p".* FROM "products" AS "p" GROUP BY "MD5(1); drop table products; -- )"', $select->assemble());
+    }
+
+    public function testSqlInjectionInColumn()
+    {
+        $select = $this->_db->select();
+        $select->from(array('p' => 'products'), array('MD5(1); drop table products; -- )'));
+        $this->assertEquals('SELECT "p"."MD5(1); drop table products; -- )" FROM "products" AS "p"', $select->assemble());
+    }
+
+    /**
+     * @group ZF-378
+     */
+    public function testOrderOfSingleFieldWithDirection()
+    {
+        $select = $this->_db->select();
+        $select->from(array ('p' => 'product'))
+            ->order('productId DESC');
+
+        $expected = 'SELECT "p".* FROM "product" AS "p" ORDER BY "productId" DESC';
+        $this->assertEquals($expected, $select->assemble(),
+            'Order direction of field failed');
+    }
+
+    /**
+     * @group ZF-378
+     */
+    public function testOrderOfMultiFieldWithDirection()
+    {
+        $select = $this->_db->select();
+        $select->from(array ('p' => 'product'))
+            ->order(array ('productId DESC', 'userId ASC'));
+
+        $expected = 'SELECT "p".* FROM "product" AS "p" ORDER BY "productId" DESC, "userId" ASC';
+        $this->assertEquals($expected, $select->assemble(),
+            'Order direction of field failed');
+    }
+
+    /**
+     * @group ZF-378
+     */
+    public function testOrderOfMultiFieldButOnlyOneWithDirection()
+    {
+        $select = $this->_db->select();
+        $select->from(array ('p' => 'product'))
+            ->order(array ('productId', 'userId DESC'));
+
+        $expected = 'SELECT "p".* FROM "product" AS "p" ORDER BY "productId" ASC, "userId" DESC';
+        $this->assertEquals($expected, $select->assemble(),
+            'Order direction of field failed');
+    }
+
+    /**
+     * @group ZF-378
+     * @group ZF-381
+     */
+    public function testOrderOfConditionalFieldWithDirection()
+    {
+        $select = $this->_db->select();
+        $select->from(array ('p' => 'product'))
+            ->order('IF("productId" > 5,1,0) ASC');
+
+        $expected = 'SELECT "p".* FROM "product" AS "p" ORDER BY IF("productId" > 5,1,0) ASC';
+        $this->assertEquals($expected, $select->assemble(),
+            'Order direction of field failed');
     }
 }

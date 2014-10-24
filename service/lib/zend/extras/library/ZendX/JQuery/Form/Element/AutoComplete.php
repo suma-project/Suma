@@ -15,9 +15,9 @@
  * @category    ZendX
  * @package     ZendX_JQuery
  * @subpackage  View
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license     http://framework.zend.com/license/new-bsd     New BSD License
- * @version     $Id: AutoComplete.php 20165 2010-01-09 18:57:56Z bkarwin $
+ * @version     $Id$
  */
 
 /**
@@ -30,7 +30,7 @@ require_once "UiWidget.php";
  *
  * @package    ZendX_JQuery
  * @subpackage Form
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
   */
 class ZendX_JQuery_Form_Element_AutoComplete extends ZendX_JQuery_Form_Element_UiWidget

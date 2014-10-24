@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Registry
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: RegistryTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 /**
@@ -29,7 +29,7 @@ require_once 'Zend/Registry.php';
  * @category   Zend
  * @package    Zend_Registry
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Registry
  */
@@ -56,7 +56,7 @@ class Zend_RegistryTest extends PHPUnit_Framework_TestCase
     {
         // getting instance initializes instance
         $registry = Zend_Registry::getInstance();
-        $this->assertType('Zend_Registry', $registry);
+        $this->assertTrue($registry instanceof Zend_Registry);
     }
 
     public function testRegistryUninitSet()
@@ -64,7 +64,7 @@ class Zend_RegistryTest extends PHPUnit_Framework_TestCase
         // setting value initializes instance
         Zend_Registry::set('foo', 'bar');
         $registry = Zend_Registry::getInstance();
-        $this->assertType('Zend_Registry', $registry);
+        $this->assertTrue($registry instanceof Zend_Registry);
     }
 
     public function testRegistryUninitGet()
@@ -79,15 +79,15 @@ class Zend_RegistryTest extends PHPUnit_Framework_TestCase
             $this->assertContains('No entry is registered for key', $e->getMessage());
         }
         $registry = Zend_Registry::getInstance();
-        $this->assertType('Zend_Registry', $registry);
+        $this->assertTrue($registry instanceof Zend_Registry);
     }
 
     public function testRegistrySingletonSameness()
     {
         $registry1 = Zend_Registry::getInstance();
         $registry2 = Zend_Registry::getInstance();
-        $this->assertType('Zend_Registry', $registry1);
-        $this->assertType('Zend_Registry', $registry2);
+        $this->assertTrue($registry1 instanceof Zend_Registry);
+        $this->assertTrue($registry2 instanceof Zend_Registry);
         $this->assertEquals($registry1, $registry2);
         $this->assertSame($registry1, $registry2);
     }
@@ -125,17 +125,7 @@ class Zend_RegistryTest extends PHPUnit_Framework_TestCase
 
     public function testRegistryArrayObject()
     {
-        $registry = Zend_Registry::getInstance();
-        $registry['emptyArray'] = array();
-        $registry['null'] = null;
-
-        $this->assertTrue(isset($registry['emptyArray']));
-        $this->assertTrue(isset($registry['null']));
-        $this->assertFalse(isset($registry['noIndex']));
-
-        $this->assertTrue(Zend_Registry::isRegistered('emptyArray'));
-        $this->assertTrue(Zend_Registry::isRegistered('null'));
-        $this->assertFalse(Zend_Registry::isRegistered('noIndex'));
+        $this->assertTrue(Zend_Registry::getInstance() instanceof ArrayObject);
     }
 
     public function testRegistryArrayAsProps()

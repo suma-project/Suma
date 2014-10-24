@@ -16,7 +16,7 @@
  * @category   ZendX
  * @package    ZendX_Application
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: AllTests.php 12231 2008-10-31 23:55:11Z dasprid $
  */
@@ -36,7 +36,7 @@ require_once 'ZendX/Application/Resource/AllTests.php';
  * @category   ZendX
  * @package    ZendX_Application
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class ZendX_Application_AllTests
@@ -57,5 +57,5 @@ class ZendX_Application_AllTests
 }
 
 if (PHPUnit_MAIN_METHOD == 'ZendX_Application_AllTests::main') {
-    ZendX_Console_AllTests::main();
+    ZendX_Application_AllTests::main();
 }

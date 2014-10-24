@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: FormTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 // Call Zend_View_Helper_FormTest::main() if this source file is executed directly.
@@ -34,7 +34,7 @@ require_once 'Zend/View/Helper/Form.php';
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_View
  * @group      Zend_View_Helper
@@ -167,6 +167,17 @@ class Zend_View_Helper_FormTest extends PHPUnit_Framework_TestCase
         $form = $this->helper->form('FormName', array('action' => '/foo', 'method' => 'get'));
         $this->assertNotRegexp('/<form[^>]*(name="FormName")/', $form);
     }    
+
+    public function testEmptyActionShouldNotRenderActionAttributeInHTML5()
+    {
+        $this->view->doctype(Zend_View_Helper_Doctype::HTML5);
+        $form = $this->helper->form('', array('action' => ''));
+        $this->assertNotRegexp('/<form[^>]*(action="")/', $form);
+        $form = $this->helper->form('', array('action' => null));
+        $this->assertNotRegexp('/<form[^>]*(action="")/', $form);
+        $form = $this->helper->form('');
+        $this->assertNotRegexp('/<form[^>]*(action="")/', $form);
+    }
 }
 
 // Call Zend_View_Helper_FormTest::main() if this source file is executed directly.

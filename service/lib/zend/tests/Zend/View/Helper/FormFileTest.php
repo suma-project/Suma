@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: FormFileTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 // Call Zend_View_Helper_FormFileTest::main() if this source file is executed directly.
@@ -37,13 +37,23 @@ require_once 'Zend/Registry.php';
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_View
  * @group      Zend_View_Helper
  */
 class Zend_View_Helper_FormFileTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @var Zend_View
+     */
+    protected $view;
+
+    /**
+     * @var Zend_View_Helper_FormFile
+     */
+    protected $helper;
+
     /**
      * Runs the test methods of this class.
      *
@@ -53,7 +63,7 @@ class Zend_View_Helper_FormFileTest extends PHPUnit_Framework_TestCase
     public static function main()
     {
         $suite  = new PHPUnit_Framework_TestSuite("Zend_View_Helper_FormFileTest");
-        $result = PHPUnit_TextUI_TestRunner::run($suite);
+        PHPUnit_TextUI_TestRunner::run($suite);
     }
 
     /**
@@ -103,7 +113,7 @@ class Zend_View_Helper_FormFileTest extends PHPUnit_Framework_TestCase
     public function testRendersAsHtmlByDefault()
     {
         $test = $this->helper->formFile(array(
-            'name'    => 'foo',
+            'name' => 'foo',
         ));
         $this->assertNotContains(' />', $test);
     }
@@ -112,9 +122,27 @@ class Zend_View_Helper_FormFileTest extends PHPUnit_Framework_TestCase
     {
         $this->view->doctype('XHTML1_STRICT');
         $test = $this->helper->formFile(array(
-            'name'    => 'foo',
+            'name' => 'foo',
         ));
         $this->assertContains(' />', $test);
+    }
+
+    /**
+     * @group GH-191
+     */
+    public function testRendersCustomAttributes()
+    {
+        $test = $this->helper->formFile(
+            'foo',
+            array(
+                 'data-image-old' => 100,
+                 'data-image-new' => 200,
+            )
+        );
+        $this->assertEquals(
+            '<input type="file" name="foo" id="foo" data-image-old="100" data-image-new="200">',
+            $test
+        );
     }
 }
 

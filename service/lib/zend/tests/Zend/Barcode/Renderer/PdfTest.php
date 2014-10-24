@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Barcode
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: PdfTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 require_once dirname(__FILE__) . '/TestCommon.php';
@@ -31,7 +31,7 @@ require_once 'Zend/Barcode/Object/Code39.php';
  * @package    Zend_Barcode
  * @subpackage UnitTests
  * @group      Zend_Barcode
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Barcode_Renderer_PdfTest extends Zend_Barcode_Renderer_TestCommon

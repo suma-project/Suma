@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Version
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: VersionTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
@@ -33,7 +33,7 @@ require_once 'Zend/Version.php';
  * @category   Zend
  * @package    Zend_Version
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Version
  */
@@ -54,7 +54,7 @@ class Zend_VersionTest extends PHPUnit_Framework_TestCase
         $expect = -1;
         // unit test breaks if ZF version > 1.x
         for ($i=0; $i <= 1; $i++) {
-            for ($j=0; $j < 12; $j++) {
+            for ($j=0; $j <= 12; $j++) {
                 for ($k=0; $k < 20; $k++) {
                     foreach (array('dev', 'pr', 'PR', 'alpha', 'a1', 'a2', 'beta', 'b1', 'b2', 'RC', 'RC1', 'RC2', 'RC3', '', 'pl1', 'PL1') as $rel) {
                         $ver = "$i.$j.$k$rel";
@@ -89,6 +89,13 @@ class Zend_VersionTest extends PHPUnit_Framework_TestCase
      */
     public function testFetchLatestVersion()
     {
+        if (!defined('TESTS_ZEND_VERSION_ONLINE_ENABLED')
+            || !constant('TESTS_ZEND_VERSION_ONLINE_ENABLED')
+        ) {
+            $this->markTestSkipped('Testing fetchLatersVersion only works when TESTS_ZEND_VERSION_ONLINE_ENABLED is set.');
+            return;
+        }
+
         $actual = Zend_Version::getLatest();
         if ('not available' === $actual) {
             $this->markTestIncomplete('http://framework.zend.com/ may be down');

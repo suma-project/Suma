@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Paginator
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: DbSelectTest.php 24754 2012-05-05 02:30:56Z adamlundrigan $
+ * @version    $Id$
  */
 
 /**
@@ -30,6 +30,7 @@ require_once 'Zend/Paginator/Adapter/DbSelect.php';
  */
 require_once 'Zend/Db/Adapter/Pdo/Sqlite.php';
 require_once 'Zend/Debug.php';
+require_once 'Zend/Db/Adapter/Abstract.php';
 
 /**
  * @see PHPUnit_Framework_TestCase
@@ -41,7 +42,7 @@ require_once dirname(__FILE__) . '/../_files/TestTable.php';
  * @category   Zend
  * @package    Zend_Paginator
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Paginator
  */
@@ -147,7 +148,7 @@ class Zend_Paginator_Adapter_DbSelectTest extends PHPUnit_Framework_TestCase
         try {
             $this->_adapter->setRowCount($this->_db->select()->from('test'));
         } catch (Exception $e) {
-            $this->assertType('Zend_Paginator_Exception', $e);
+            $this->assertTrue($e instanceof Zend_Paginator_Exception);
             $this->assertContains('Row count column not found', $e->getMessage());
         }
 
@@ -158,7 +159,7 @@ class Zend_Paginator_Adapter_DbSelectTest extends PHPUnit_Framework_TestCase
 
             $this->_adapter->setRowCount($query);
         } catch (Exception $e) {
-            $this->assertType('Zend_Paginator_Exception', $e);
+            $this->assertTrue($e instanceof Zend_Paginator_Exception);
             $this->assertEquals('Row count column not found', $e->getMessage());
         }
     }
@@ -185,7 +186,7 @@ class Zend_Paginator_Adapter_DbSelectTest extends PHPUnit_Framework_TestCase
         try {
             $this->_adapter->setRowCount('invalid');
         } catch (Exception $e) {
-            $this->assertType('Zend_Paginator_Exception', $e);
+            $this->assertTrue($e instanceof Zend_Paginator_Exception);
             $this->assertEquals('Invalid row count', $e->getMessage());
         }
     }

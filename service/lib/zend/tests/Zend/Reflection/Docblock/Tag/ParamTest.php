@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Reflection
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: ParamTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 require_once 'Zend/Reflection/File.php';
@@ -27,7 +27,7 @@ require_once 'Zend/Reflection/Docblock/Tag/Param.php';
  * @category   Zend
  * @package    Zend_Reflection
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Reflection
  * @group      Zend_Reflection_Docblock

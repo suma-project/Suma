@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_XmlRpc
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version $Id: ValueTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version $Id$
  */
 
 require_once 'Zend/XmlRpc/Value.php';
@@ -41,7 +41,7 @@ require_once 'Zend/Date.php';
  * @category   Zend
  * @package    Zend_XmlRpc
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_XmlRpc
  */
@@ -231,6 +231,21 @@ class Zend_XmlRpc_ValueTest extends PHPUnit_Framework_TestCase
 
         $this->assertXmlRpcType('string', $val);
         $this->assertSame($native, $val->getValue());
+    }
+
+    public function testFactoryAutodetectsStringAndSetsValueInArray()
+    {
+        $val = Zend_XmlRpc_Value::getXmlRpcValue('<value><array><data>'.
+            '<value><i4>8</i4></value>'.
+            '<value>a</value>'.
+            '<value>false</value>'.
+            '</data></array></value>', Zend_XmlRpc_Value::XML_STRING
+        );
+        $this->assertXmlRpcType('array', $val);
+        $a = $val->getValue();
+        $this->assertSame(8, $a[0]);
+        $this->assertSame('a', $a[1]);
+        $this->assertSame('false', $a[2]);
     }
 
     /**
@@ -596,6 +611,11 @@ class Zend_XmlRpc_ValueTest extends PHPUnit_Framework_TestCase
 
     public function testMarshalDateTimeFromInvalidString()
     {
+        $phpunitVersion = PHPUnit_Runner_Version::id();
+        if (version_compare($phpunitVersion, '3.7.0', '<=')) {
+            $this->markTestSkipped('Cannot expect generic exceptions prior to PHPUnit 3.7.');
+        }
+
         $this->setExpectedException('Exception', "foobarbaz");
         Zend_XmlRpc_Value::getXmlRpcValue('foobarbaz', Zend_XmlRpc_Value::XMLRPC_TYPE_DATETIME);
     }
@@ -910,7 +930,7 @@ class Zend_XmlRpc_ValueTest extends PHPUnit_Framework_TestCase
     public function assertXmlRpcType($type, $object)
     {
         $type = 'Zend_XmlRpc_Value_' . ucfirst($type);
-        $this->assertType($type, $object);
+        $this->assertTrue($object instanceof $type);
     }
 
     public function wrapXml($xml)

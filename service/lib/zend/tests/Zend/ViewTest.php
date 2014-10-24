@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id $
  */
@@ -43,7 +43,7 @@ require_once 'Zend/Loader.php';
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_View
  */
@@ -136,7 +136,7 @@ class Zend_ViewTest extends PHPUnit_Framework_TestCase
         $paths     = $this->_filterPath($reflector[$pathType]);
 
         // test default helper path
-        $this->assertType('array', $paths);
+        $this->assertTrue(is_array($paths));
         if ('script' == $pathType) {
             $this->assertEquals(0, count($paths));
         } else {
@@ -392,7 +392,7 @@ class Zend_ViewTest extends PHPUnit_Framework_TestCase
         // add a path
         $view->setScriptPath('foo');
         $scriptPaths = $view->getScriptPaths();
-        $this->assertType('array', $scriptPaths);
+        $this->assertTrue(is_array($scriptPaths));
         $this->assertEquals(1, count($scriptPaths));
 
         // clear paths
@@ -1160,7 +1160,7 @@ class Zend_ViewTest extends PHPUnit_Framework_TestCase
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_ViewTest_Extension extends Zend_View

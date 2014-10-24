@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Loader
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: NamespacedClass.php 24678 2012-03-15 18:07:48Z matthew $
+ * @version    $Id$
  */
 
 namespace Zend\UnusualNamespace;
@@ -26,7 +26,7 @@ namespace Zend\UnusualNamespace;
  * @category   Zend
  * @package    Loader
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Loader
  */

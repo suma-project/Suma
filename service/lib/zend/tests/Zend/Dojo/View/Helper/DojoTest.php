@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Dojo
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: DojoTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 // Call Zend_Dojo_View_Helper_DojoTest::main() if this source file is executed directly.
@@ -43,13 +43,18 @@ require_once 'Zend/View.php';
  * @category   Zend
  * @package    Zend_Dojo
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Dojo
  * @group      Zend_Dojo_View
  */
 class Zend_Dojo_View_Helper_DojoTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @var Zend_Dojo_View_Helper_Dojo_Container
+     */
+    protected $helper;
+
     /**
      * Runs the test methods of this class.
      *
@@ -907,6 +912,34 @@ function() {
                       ));
         $output = $this->helper->dijitsToJson();
         $this->assertRegexp('#(function\\(\\){alert\\(\'foo\'\\);})#', $output);
+    }
+
+    /**
+     * @group GH-340
+     */
+    public function testRenderStylesheetsOrder()
+    {
+        $helper = $this->helper;
+        $options = array(
+            'localPath'              => '',
+            'stylesheetmodules'      => 'test.stylesheet.module',
+            'registerdojostylesheet' => true,
+            'enable'                 => true,
+        );
+        $helper->setOptions($options);
+
+        $expected = '<style type="text/css">' . "\n"
+                  . '<!--' . "\n"
+                  . '    @import "/dojo/resources/dojo.css";' . "\n"
+                  . '    @import "/test/stylesheet/module/module.css";' . "\n"
+                  . '-->' . "\n"
+                  . '</style>';
+
+        $actual = (string) $helper;
+        $end    = '</style>';
+        $actual = substr($actual, 0, strpos($actual, $end) + strlen($end));
+
+        $this->assertEquals($expected, $actual);
     }
 
     public function setupDojo()

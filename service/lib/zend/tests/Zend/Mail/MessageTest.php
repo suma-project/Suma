@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Mail
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: MessageTest.php 24759 2012-05-05 02:58:55Z adamlundrigan $
+ * @version    $Id$
  */
 
 /**
@@ -39,7 +39,7 @@ require_once 'Zend/Mime/Decode.php';
  * @category   Zend
  * @package    Zend_Mail
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Mail
  */
@@ -81,8 +81,11 @@ class Zend_Mail_MessageTest extends PHPUnit_Framework_TestCase
     {
         $message = new Zend_Mail_Message(array('file' => $this->_file));
 
-        $this->assertEquals($message->from, iconv('UTF-8', iconv_get_encoding('internal_encoding'),
-                                                                   '"Peter Müller" <peter-mueller@example.com>'));
+        $enc = PHP_VERSION_ID < 50600
+            ? iconv_get_encoding('internal_encoding')
+            : ini_get('default_charset');
+
+        $this->assertEquals($message->from, iconv('UTF-8', $enc, '"Peter Müller" <peter-mueller@example.com>'));
     }
 
     public function testGetHeaderAsArray()

@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: InArrayTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 /**
@@ -30,7 +30,7 @@ require_once 'Zend/Validate/InArray.php';
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Validate
  */
@@ -194,5 +194,36 @@ class Zend_Validate_InArrayTest extends PHPUnit_Framework_TestCase
 
         $validator->setRecursive(true);
         $this->assertTrue($validator->isValid('A'));
+    }
+
+    /**
+     * @group GH-365
+     */
+    public function testMultidimensionalArrayNotFound()
+    {
+        $input = array(
+            array('x'),
+            array('y'),
+        );
+        $validator = new Zend_Validate_InArray(array('a'));
+        $this->assertFalse($validator->isValid($input));
+    }
+
+    /**
+     * @group GH-365
+     */
+    public function testErrorMessageWithArrayValue()
+    {
+        $input = array(
+            array('x'),
+            array('y'),
+        );
+        $validator = new Zend_Validate_InArray(array('a'));
+        $validator->isValid($input);
+        $messages  = $validator->getMessages();
+        $this->assertEquals(
+            "'x, y' was not found in the haystack",
+            current($messages)
+        );
     }
 }

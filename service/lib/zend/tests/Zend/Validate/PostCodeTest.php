@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: PostCodeTest.php 17798 2009-08-24 20:07:53Z thomas $
  */
@@ -33,7 +33,7 @@ require_once 'Zend/Validate/PostCode.php';
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Validate
  */
@@ -123,7 +123,7 @@ class Zend_Validate_PostCodeTest extends PHPUnit_Framework_TestCase
     public function testSettingLocalesWithoutPostalCodes()
     {
         try {
-            $this->_validator->setLocale('gez_ER');
+            $this->_validator->setLocale('nus_SD');
             $this->fail();
         } catch (Zend_Validate_Exception $e) {
             $this->assertContains('Unable to detect a postcode format', $e->getMessage());

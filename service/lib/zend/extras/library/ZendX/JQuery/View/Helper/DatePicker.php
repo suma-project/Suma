@@ -15,9 +15,9 @@
  * @category    ZendX
  * @package     ZendX_JQuery
  * @subpackage  View
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license     http://framework.zend.com/license/new-bsd     New BSD License
- * @version     $Id: DatePicker.php 21867 2010-04-16 07:45:34Z beberlei $
+ * @version     $Id$
  */
 
 /**
@@ -36,7 +36,7 @@ require_once "ZendX/JQuery/View/Helper/UiWidget.php";
  * @uses 	   Zend_View_Helper_FormText
  * @package    ZendX_JQuery
  * @subpackage View
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class ZendX_JQuery_View_Helper_DatePicker extends ZendX_JQuery_View_Helper_UiWidget
@@ -80,6 +80,8 @@ class ZendX_JQuery_View_Helper_DatePicker extends ZendX_JQuery_View_Helper_UiWid
      * because of its easy nature and is therefore stripped from the core functionality
      * to be easily overriden.
      *
+     * @param  string $format
+     * @throws ZendX_JQuery_Exception
      * @return string
      */
     public static function resolveZendLocaleToDatePickerFormat($format=null)

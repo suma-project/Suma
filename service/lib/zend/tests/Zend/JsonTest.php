@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Json
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: JsonTest.php 25059 2012-11-02 21:01:06Z rob $
+ * @version    $Id$
  */
 
 /**
@@ -44,7 +44,7 @@ require_once 'Zend/Json/Decoder.php';
  * @category   Zend
  * @package    Zend_Json
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Json
  */

@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Paginator
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: OracleTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 /**
@@ -30,7 +30,7 @@ require_once 'Zend/Paginator/Adapter/DbSelect/OracleTest.php';
  * @category   Zend
  * @package    Zend_Paginator
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Paginator
  */
@@ -45,6 +45,6 @@ class Zend_Paginator_Adapter_DbTableSelect_OracleTest extends Zend_Paginator_Ada
         $adapter = new Zend_Paginator_Adapter_DbTableSelect($query);
         $items   = $adapter->getItems(0, 10);
 
-        $this->assertType('Zend_Db_Table_Rowset', $items);
+        $this->assertTrue($items instanceof Zend_Db_Table_Rowset);
     }
 }

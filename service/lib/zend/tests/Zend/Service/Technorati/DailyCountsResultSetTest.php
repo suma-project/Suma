@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Service_Technorati
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: DailyCountsResultSetTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 
@@ -36,7 +36,7 @@ require_once 'Zend/Service/Technorati/DailyCountsResultSet.php';
  * @category   Zend
  * @package    Zend_Service_Technorati
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Service
  * @group      Zend_Service_Technorati
@@ -63,13 +63,13 @@ class Zend_Service_Technorati_DailyCountsResultSetTest extends Zend_Service_Tech
         $object = new Zend_Service_Technorati_DailyCountsResultSet($this->dom);
 
         // check counts
-        $this->assertType('integer', $object->totalResults());
+        $this->assertTrue(is_int($object->totalResults()));
         $this->assertEquals(5, $object->totalResults());
-        $this->assertType('integer', $object->totalResultsAvailable());
+        $this->assertTrue(is_int($object->totalResultsAvailable()));
         $this->assertEquals(5, $object->totalResultsAvailable());
 
         // check properties
-        $this->assertType('Zend_Uri_Http', $object->getSearchUrl());
+        $this->assertTrue($object->getSearchUrl() instanceof Zend_Uri_Http);
         $this->assertEquals(Zend_Uri::factory('http://technorati.com/search/google'), $object->getSearchUrl());
     }
 

@@ -1,0 +1,209 @@
+<html>
+    <head>
+        <script
+            type="text/javascript"
+            src="../../../../js/jquery-1.4.2.min.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../../syntax_highlighter/scripts/shCore.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../../syntax_highlighter/scripts/shBrushJScript.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../../syntax_highlighter/scripts/shBrushPhp.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../../syntax_highlighter/scripts/shBrushXml.js">
+        </script>
+        <link
+            href="../../../../syntax_highlighter/styles/shCore.css" rel="stylesheet"
+            type="text/css"
+        />
+        <link
+            href="../../../../syntax_highlighter/styles/shCoreEclipse.css"
+            rel="stylesheet" type="text/css"
+        />
+        <link
+            href="../../../../syntax_highlighter/styles/shThemeWordpress.css"
+            rel="stylesheet" type="text/css"
+        />
+    </head>
+    <body>
+        <pre class="brush: php">&lt;?php
+/**
+ * Zend Framework
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://framework.zend.com/license/new-bsd
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@zend.com so we can send you a copy immediately.
+ *
+ * @category    ZendX
+ * @package     ZendX_JQuery
+ * @subpackage  View
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license     http://framework.zend.com/license/new-bsd     New BSD License
+ * @version     $Id$
+ */
+
+/**
+ * @see ZendX_JQuery_View_Helper_UiWidget
+ */
+require_once &quot;ZendX/JQuery/View/Helper/UiWidget.php&quot;;
+
+/**
+ * jQuery Slider View Helper
+ *
+ * @uses 	   Zend_Json
+ * @package    ZendX_JQuery
+ * @subpackage View
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ */
+class ZendX_JQuery_View_Helper_Slider extends ZendX_JQuery_View_Helper_UiWidget
+{
+    /**
+     * Create jQuery slider that updates its values into a hidden form input field.
+     *
+     * @link   http://docs.jquery.com/UI/Slider
+     * @param  string $id
+     * @param  string $value
+     * @param  array  $params
+     * @param  array  $attribs
+     * @return string
+     */
+    public function slider($id, $value = null, array $params = array(), array $attribs = array())
+    {
+        if(!isset($attribs['id'])) {
+            $attribs['id'] = $id;
+        }
+
+        $jqh = ZendX_JQuery_View_Helper_JQuery::getJQueryHandler();
+
+        $params = $this-&gt;initializeStartingValues($value, $params);
+        $handleCount = $this-&gt;getHandleCount($params);
+
+        // Build the Change/Update functionality of the Slider via javascript, updating hidden fields. aswell as hidden fields
+        $hidden = &quot;&quot;;
+        if(!isset($params['change'])) {
+            $sliderUpdateFn = 'function(e, ui) {'.PHP_EOL;
+            for($i = 0; $i &lt; $handleCount; $i++) {
+                // Js Func
+                if($i === 0) {
+                    $sliderHiddenId = $attribs['id'];
+                } else {
+                    $sliderHiddenId = $attribs['id'].&quot;-&quot;.$i;
+                }
+                $sliderUpdateFn .= $this-&gt;getChangeCallback($jqh, $sliderHiddenId, $attribs['id'], $i);
+
+                // Hidden Fields
+                $startValue = $this-&gt;getHandleValue($i, $params);
+                $hiddenAttribs = array('type' =&gt; 'hidden', 'id' =&gt; $sliderHiddenId, 'name' =&gt; $sliderHiddenId, 'value' =&gt; $startValue);
+                $hidden .= '&lt;input' . $this-&gt;_htmlAttribs($hiddenAttribs) . $this-&gt;getClosingBracket(). PHP_EOL;
+            }
+            $sliderUpdateFn .= &quot;}&quot;.PHP_EOL;
+            $params['change'] = new Zend_Json_Expr($sliderUpdateFn);
+        }
+
+        $attribs['id'] .= &quot;-slider&quot;;
+
+        if(count($params) &gt; 0) {
+            $params = ZendX_JQuery::encodeJson($params);
+        } else {
+            $params = '{}';
+        }
+
+        $js = sprintf('%s(&quot;#%s&quot;).slider(%s);', $jqh, $attribs['id'], $params);
+        $this-&gt;jquery-&gt;addOnLoad($js);
+
+        $html = '&lt;div' . $this-&gt;_htmlAttribs($attribs) . '&gt;';
+        for($i = 0; $i &lt; $handleCount; $i++) {
+            $html .= '&lt;div class=&quot;ui-slider-handle&quot;&gt;&lt;/div&gt;';
+        }
+        $html .= '&lt;/div&gt;';
+
+        return $hidden.$html;
+    }
+
+    protected function getChangeCallback($jqh, $sliderHiddenId, $elementId, $handlerNum)
+    {
+        if(version_compare($this-&gt;jquery-&gt;getUiVersion(), &quot;1.7.0&quot;) &gt;= 0) {
+            return sprintf('    %s(&quot;#%s&quot;).attr(&quot;value&quot;, %s(&quot;#%s-slider&quot;).slider(&quot;values&quot;, %d));'.PHP_EOL,
+                $jqh, $sliderHiddenId, $jqh, $elementId, $handlerNum
+            );
+        } else {
+            return sprintf('    %s(&quot;#%s&quot;).attr(&quot;value&quot;, %s(&quot;#%s-slider&quot;).slider(&quot;value&quot;, %d));'.PHP_EOL,
+                $jqh, $sliderHiddenId, $jqh, $elementId, $handlerNum
+            );
+        }
+    }
+
+    protected function getHandleCount($params)
+    {
+        if(version_compare($this-&gt;jquery-&gt;getUiVersion(), &quot;1.7.0&quot;) &gt;= 0) {
+            return count($params['values']);
+        } else {
+            return count($params['handles']);
+        }
+    }
+
+    protected function getHandleValue($handleNum, $params)
+    {
+        if(version_compare($this-&gt;jquery-&gt;getUiVersion(), &quot;1.7.0&quot;) &gt;= 0) {
+            return $params['values'][$handleNum];
+        } else {
+            return $params['handles'][$handleNum]['start'];
+        }
+    }
+
+    protected function initializeStartingValues($value, $params)
+    {
+        $values = array();
+        if(isset($params['value'])) {
+            $values[] = $params['value'];
+            unset($params['value']);
+        } else if(isset($params['values'])) {
+            $values = $params['values'];
+            unset($params['values']);
+        } else if(isset($params['handles'])) {
+            for($i = 0; $i &lt; count($params['handles']); $i++) {
+                $values[] = $params['handles'][$i]['start'];
+            }
+            unset($params['handles']);
+        } else if(isset($params['startValue'])) {
+            $values[] = $params['startValue'];
+            unset($params['startValue']);
+        } else if(is_numeric($value)) {
+            $values[] = $value;
+        }
+
+        if(version_compare($this-&gt;jquery-&gt;getUiVersion(), &quot;1.7.0&quot;) &gt;= 0) {
+            $params['values'] = $values;
+        } else {
+            $params['handles'] = array();
+            for($i = 0; $i &lt; count($values); $i++) {
+                $params['handles'][$i]['start'] = $values[$i];
+            }
+        }
+        return $params;
+    }
+}
+</pre>
+        <script type="text/javascript">
+             SyntaxHighlighter.all();
+             jQuery('.gutter div').each(function(key, data){
+                jQuery(data).prepend('<a name="L'+jQuery(data).text()+'"/>');
+             });
+        </script>
+    </body>
+</html>

@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Log
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: LogTest.php 24703 2012-03-29 09:52:39Z andries $
+ * @version    $Id$
  */
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
@@ -40,7 +40,7 @@ require_once 'Zend/Log/FactoryInterface.php';
  * @category   Zend
  * @package    Zend_Log
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Log
  */
@@ -146,7 +146,7 @@ class Zend_Log_LogTest extends PHPUnit_Framework_TestCase
             $logger->log('foo', 42);
             $this->fail();
         } catch (Exception $e) {
-            $this->assertType('Zend_Log_Exception', $e);
+            $this->assertTrue($e instanceof Zend_Log_Exception);
             $this->assertRegExp('/bad log priority/i', $e->getMessage());
         }
     }
@@ -158,7 +158,7 @@ class Zend_Log_LogTest extends PHPUnit_Framework_TestCase
             $logger->nonexistantPriority('');
             $this->fail();
         } catch (Exception $e) {
-            $this->assertType('Zend_Log_Exception', $e);
+            $this->assertTrue($e instanceof Zend_Log_Exception);
             $this->assertRegExp('/bad log priority/i', $e->getMessage());
         }
     }
@@ -170,7 +170,7 @@ class Zend_Log_LogTest extends PHPUnit_Framework_TestCase
             $logger->addPriority('BOB', 0);
             $this->fail();
         } catch (Exception $e) {
-            $this->assertType('Zend_Log_Exception', $e);
+            $this->assertTrue($e instanceof Zend_Log_Exception);
             $this->assertRegExp('/existing priorities/i', $e->getMessage());
         }
 
@@ -389,7 +389,7 @@ class Zend_Log_LogTest extends PHPUnit_Framework_TestCase
             $writer = array('writerName' => 'NotExtendedWriterAbstract');
             $logger->addWriter($writer);
         } catch (Exception $e) {
-            $this->assertType('Zend_Log_Exception', $e);
+            $this->assertTrue($e instanceof Zend_Log_Exception);
             $this->assertRegExp('#^(Zend_Log_Writer_NotExtendedWriterAbstract|The\sspecified\swriter)#', $e->getMessage());
         }
     }
@@ -404,7 +404,7 @@ class Zend_Log_LogTest extends PHPUnit_Framework_TestCase
             $filter = array('filterName' => 'NotImplementsFilterInterface');
             $logger->addFilter($filter);
         } catch (Exception $e) {
-            $this->assertType('Zend_Log_Exception', $e);
+            $this->assertTrue($e instanceof Zend_Log_Exception);
             $this->assertRegExp('#^(Zend_Log_Filter_NotImplementsFilterInterface|The\sspecified\sfilter)#', $e->getMessage());
         }
     }
@@ -435,7 +435,7 @@ class Zend_Log_LogTest extends PHPUnit_Framework_TestCase
             $logger->addPriority('emerg', 8);
             $this->fail();
         } catch(Exception $e) {
-            $this->assertType('Zend_Log_Exception', $e);
+            $this->assertTrue($e instanceof Zend_Log_Exception);
             $this->assertEquals('Existing priorities cannot be overwritten', $e->getMessage());
         }
 
@@ -444,7 +444,7 @@ class Zend_Log_LogTest extends PHPUnit_Framework_TestCase
             $logger->log('clone zf10170', 8);
             $this->fail();
         } catch (Exception $e) {
-            $this->assertType('Zend_Log_Exception', $e);
+            $this->assertTrue($e instanceof Zend_Log_Exception);
             $this->assertEquals('Bad log priority', $e->getMessage());
         }
         $this->assertEquals(0, $mock->events[0]['priority']);
@@ -548,6 +548,35 @@ class Zend_Log_LogTest extends PHPUnit_Framework_TestCase
             $this->fail('Unable to load namespaced class');
         }
     }
+
+    /**
+     * @group #85
+     */
+    public function testZendLogCanBeExtendedWhenUsingFactory()
+    {
+        $writer = new Zend_Log_Writer_Null();
+        $log = ZLTest_My_Log::factory(
+            array(
+                'writerName' => $writer,
+                'className' => 'ZLTest_My_Log'
+            )
+        );
+        $this->assertTrue($log instanceof ZLTest_My_Log);
+    }
+
+    /**
+     * @expectedException Zend_Log_Exception
+     */
+    public function testZendLogThrowsAnExceptionWhenPassingIncorrectClassToFactory()
+    {
+        $writer = new Zend_Log_Writer_Null();
+        ZLTest_My_Log::factory(
+            array(
+                'writerName' => $writer,
+                'className' => 'ZLTest_My_LogNotExtending'
+            )
+        );
+    }
 }
 
 class Zend_Log_Writer_NotExtendedWriterAbstract implements Zend_Log_FactoryInterface
@@ -575,6 +604,14 @@ class Custom_Formatter_Mock extends Zend_Log_Formatter_Abstract
     {
     }
 }
+
+/**
+ * Helper classes for testZendLogCanBeExtendedWhenUsingFactory()
+ *
+ * @group #85
+ */
+class ZLTest_My_Log extends Zend_Log {}
+class ZLTest_My_LogNotExtending {}
 
 if (PHPUnit_MAIN_METHOD == 'Zend_Log_LogTest::main') {
     Zend_Log_LogTest::main();

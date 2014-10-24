@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Auth
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: AllTests.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
@@ -35,7 +35,7 @@ if (defined('TESTS_ZEND_AUTH_ADAPTER_LDAP_ONLINE_ENABLED')
  * @category   Zend
  * @package    Zend_Ldap
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Auth
  */
@@ -67,7 +67,7 @@ class Zend_Auth_Adapter_Ldap_AllTests
  * @category   Zend
  * @package    Zend_Ldap
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Auth
  */

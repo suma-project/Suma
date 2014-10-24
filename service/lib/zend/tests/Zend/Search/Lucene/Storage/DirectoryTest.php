@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: DirectoryTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 /**
@@ -29,7 +29,7 @@ require_once 'Zend/Search/Lucene/Storage/Directory/Filesystem.php';
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Search_Lucene
  */
@@ -39,14 +39,16 @@ class Zend_Search_Lucene_Storage_DirectoryTest extends PHPUnit_Framework_TestCas
     {
         $tempPath = dirname(__FILE__) . '/_tempFiles/_files';
 
-        // remove files from temporary direcytory
-        $dir = opendir($tempPath);
-        while (($file = readdir($dir)) !== false) {
-            if (!is_dir($tempPath . '/' . $file)) {
-                @unlink($tempPath . '/' . $file);
+        if (is_dir($tempPath)) {
+            // remove files from temporary direcytory
+            $dir = opendir($tempPath);
+            while (($file = readdir($dir)) !== false) {
+                if (!is_dir($tempPath . '/' . $file)) {
+                    @unlink($tempPath . '/' . $file);
+                }
             }
+            closedir($dir);
         }
-        closedir($dir);
 
         $directory = new Zend_Search_Lucene_Storage_Directory_Filesystem($tempPath);
 

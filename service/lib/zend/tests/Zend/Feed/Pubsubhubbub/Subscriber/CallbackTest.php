@@ -14,15 +14,18 @@
  *
  * @category   Zend
  * @package    UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: CallbackTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 require_once 'Zend/Feed/Pubsubhubbub/Subscriber/Callback.php';
 require_once 'Zend/Feed/Pubsubhubbub/Model/Subscription.php';
 require_once 'Zend/Db/Table/Rowset/Abstract.php';
 require_once 'Zend/Db/Table/Row.php';
+require_once 'Zend/Db/Adapter/Abstract.php';
+require_once 'Zend/Db/Table/Abstract.php';
+require_once 'Zend/Db/Table/Rowset/Abstract.php';
 
 /**
  * @category   Zend
@@ -30,7 +33,7 @@ require_once 'Zend/Db/Table/Row.php';
  * @subpackage UnitTests
  * @group      Zend_Feed
  * @group      Zend_Feed_Subsubhubbub
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Feed_Pubsubhubbub_Subscriber_CallbackTest extends PHPUnit_Framework_TestCase

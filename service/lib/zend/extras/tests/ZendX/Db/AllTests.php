@@ -16,31 +16,19 @@
  * @category   ZendX
  * @package    ZendX_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: $
  */
-
-
-if (!defined('PHPUnit_MAIN_METHOD')) {
-    define('PHPUnit_MAIN_METHOD', 'ZendX_Db_AllTests::main');
-}
-
 
 /**
  * Test helper
  */
 require_once dirname(__FILE__) . '/../../TestHelper.php';
 
-/**
- * PHPUnit_Framework_TestSuite
- */
-require_once 'PHPUnit/Framework/TestSuite.php';
-
-/**
- * PHPUnit_TextUI_TestRunner
- */
-require_once 'PHPUnit/TextUI/TestRunner.php';
+if (!defined('PHPUnit_MAIN_METHOD')) {
+    define('PHPUnit_MAIN_METHOD', 'ZendX_Db_AllTests::main');
+}
 
 /**
  * @see Zend_Loader
@@ -61,7 +49,7 @@ require_once 'Zend/Db/Profiler/AllTests.php';
  * @category   ZendX
  * @package    ZendX_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class ZendX_Db_AllTests

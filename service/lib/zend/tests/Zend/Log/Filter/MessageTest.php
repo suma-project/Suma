@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Log
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: MessageTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
@@ -34,7 +34,7 @@ require_once 'Zend/Log/Filter/Message.php';
  * @category   Zend
  * @package    Zend_Log
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Log
  */
@@ -52,7 +52,7 @@ class Zend_Log_Filter_MessageTest extends PHPUnit_Framework_TestCase
             $filter = new Zend_Log_Filter_Message('invalid regexp');
             $this->fail();
         } catch (Exception $e) {
-            $this->assertType('Zend_Log_Exception', $e);
+            $this->assertTrue($e instanceof Zend_Log_Exception);
             $this->assertRegexp('/invalid reg/i', $e->getMessage());
         }
     }

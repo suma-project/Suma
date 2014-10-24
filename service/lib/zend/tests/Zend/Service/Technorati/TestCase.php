@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Service_Technorati
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: TestCase.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 
@@ -38,7 +38,7 @@ require_once 'Zend/Service/Technorati.php';
  * @category   Zend
  * @package    Zend_Service_Technorati
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Service
  * @group      Zend_Service_Technorati
@@ -50,7 +50,7 @@ class Zend_Service_Technorati_TestCase extends PHPUnit_Framework_TestCase
         $reflection = new ReflectionClass($className);
         try {
             $object = $reflection->newInstanceArgs($args);
-            $this->assertType($className, $object);
+            $this->assertTrue($object instanceof $className);
         } catch (Zend_Service_Technorati_Exception $e) {
             $this->fail("Exception " . $e->getMessage() . " thrown");
         }
@@ -72,7 +72,7 @@ class Zend_Service_Technorati_TestCase extends PHPUnit_Framework_TestCase
         $reflection = new ReflectionClass($resultSetClassName);
         $resultset = $reflection->newInstanceArgs($args);
         foreach ($resultset as $result) {
-            $this->assertType($resultClassName, $result);
+            $this->assertTrue($result instanceof $resultClassName);
         }
     }
 
@@ -81,7 +81,8 @@ class Zend_Service_Technorati_TestCase extends PHPUnit_Framework_TestCase
         $unobject = unserialize(serialize($resultSet));
         $unresult = null;
 
-        $this->assertType(get_class($resultSet), $unobject);
+        $class = get_class($resultSet);
+        $this->assertTrue($unobject instanceof $class);
 
         foreach ($resultSet as $index => $result) {
             try {
@@ -116,7 +117,8 @@ class Zend_Service_Technorati_TestCase extends PHPUnit_Framework_TestCase
          */
         $unresult = unserialize(serialize($result));
 
-        $this->assertType(get_class($result), $unresult);
+        $class = get_class($result);
+        $this->assertTrue($unresult instanceof $class);
         $this->assertEquals($result, $unresult);
     }
 

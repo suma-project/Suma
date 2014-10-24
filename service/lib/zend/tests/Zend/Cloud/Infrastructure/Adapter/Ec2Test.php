@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Cloud_Infrastructure_Adapter
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -136,7 +136,9 @@ class Zend_Cloud_Infrastructure_Adapter_Ec2Test extends PHPUnit_Framework_TestCa
      */
     public function testGetAdapter()
     {
-        $this->assertType('Zend_Service_Amazon_Ec2_Instance',$this->infrastructure->getAdapter());
+        $this->assertTrue(
+            $this->infrastructure->getAdapter() instanceof Zend_Service_Amazon_Ec2_Instance
+        );
     }
 
     /**

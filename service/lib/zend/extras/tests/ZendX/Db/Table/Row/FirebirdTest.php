@@ -15,7 +15,7 @@
  * @category   ZendX
  * @package    ZendX_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -49,7 +49,7 @@ class ZendX_Db_Table_Row_FirebirdTest extends Zend_Db_Table_Row_TestCommon
             $row2->save();
             $this->fail('Expected to catch Zend_Db_Table_Row_Exception');
         } catch (Zend_Exception $e) {
-            $this->assertType('Zend_Db_Table_Row_Exception', $e,
+            $this->assertTrue($e instanceof Zend_Db_Table_Row_Exception,
                 'Expecting object of type Zend_Db_Table_Row_Exception, got '.get_class($e));
             $this->assertEquals('This row has been marked read-only', $e->getMessage());
         }
@@ -64,7 +64,7 @@ class ZendX_Db_Table_Row_FirebirdTest extends Zend_Db_Table_Row_TestCommon
             $row2->save();
             $this->fail('Expected to catch Zend_Db_Table_Row_Exception');
         } catch (Zend_Exception $e) {
-            $this->assertType('Zend_Db_Table_Row_Exception', $e,
+            $this->assertTrue($e instanceof Zend_Db_Table_Row_Exception,
                 'Expecting object of type Zend_Db_Table_Row_Exception, got '.get_class($e));
             $this->assertEquals('This row has been marked read-only', $e->getMessage());
         }

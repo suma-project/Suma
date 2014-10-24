@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Service_DeveloperGarden
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: LocalSearchTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
@@ -35,9 +35,9 @@ require_once 'Zend/Service/DeveloperGarden/LocalSearch.php';
  * @category   Zend
  * @package    Zend_Service_DeveloperGarden
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: LocalSearchTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 class Zend_Service_DeveloperGarden_LocalSearchTest extends PHPUnit_Framework_TestCase
 {
@@ -79,8 +79,9 @@ class Zend_Service_DeveloperGarden_LocalSearchTest extends PHPUnit_Framework_Tes
                          ->setHits(3);
         try {
             $result = $this->service->localSearch($searchParameters);
-            $this->assertType('Zend_Service_DeveloperGarden_Response_LocalSearch_LocalSearchResponseType',
-                              $result->getSearchResult());
+            $this->assertTrue(
+                $result->getSearchResult() instanceof Zend_Service_DeveloperGarden_Response_LocalSearch_LocalSearchResponseType
+            );
             $this->assertEquals('0000', $result->getErrorCode());
         } catch (Exception $e) {
             if ($e->getMessage() != 'quotas have exceeded') {

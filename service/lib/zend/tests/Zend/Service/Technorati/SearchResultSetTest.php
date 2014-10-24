@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Service_Technorati
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: SearchResultSetTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 
@@ -36,7 +36,7 @@ require_once 'Zend/Service/Technorati/SearchResultSet.php';
  * @category   Zend
  * @package    Zend_Service_Technorati
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Service
  * @group      Zend_Service_Technorati
@@ -63,9 +63,9 @@ class Zend_Service_Technorati_SearchResultSetTest extends Zend_Service_Technorat
         $object = new Zend_Service_Technorati_SearchResultSet($this->dom);
 
         // check counts
-        $this->assertType('integer', $object->totalResults());
+        $this->assertTrue(is_int($object->totalResults()));
         $this->assertEquals(3, $object->totalResults());
-        $this->assertType('integer', $object->totalResultsAvailable());
+        $this->assertTrue(is_int($object->totalResultsAvailable()));
         $this->assertEquals(4298362, $object->totalResultsAvailable());
     }
 

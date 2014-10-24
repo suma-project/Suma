@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Cache
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: CoreTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 /**
@@ -34,7 +34,7 @@ require_once 'Zend/Config.php';
  * @category   Zend
  * @package    Zend_Cache
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Cache
  */
@@ -120,7 +120,7 @@ class Zend_Cache_CoreTest extends PHPUnit_Framework_TestCase
         $this->_instance->setBackend($backend);
         $log = $backend->getLastLog();
         $this->assertEquals('setDirectives', $log['methodName']);
-        $this->assertType('array', $log['args'][0]);
+        $this->assertTrue(is_array($log['args'][0]));
     }
 
     public function testSetOptionCorrectCall()
@@ -527,7 +527,7 @@ class Zend_Cache_CoreTest extends PHPUnit_Framework_TestCase
         $this->_instance->setBackend($this->_backend);
 
         $logger = $this->_instance->getOption('logger');
-        $this->assertType('Zend_Log', $logger);
+        $this->assertTrue($logger instanceof Zend_Log);
     }
 
     /**

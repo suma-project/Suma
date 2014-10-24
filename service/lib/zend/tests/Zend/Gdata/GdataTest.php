@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id $
  */
@@ -27,7 +27,7 @@ require_once 'Zend/Gdata.php';
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Gdata
  */
@@ -78,7 +78,7 @@ class Zend_Gdata_GdataTest extends PHPUnit_Framework_TestCase
             $feed = $gdata->getFeed(new stdClass());
             $this->fail('Expecting to catch Zend_Gdata_App_InvalidArgumentException');
         } catch (Zend_Exception $e) {
-            $this->assertType('Zend_Gdata_App_InvalidArgumentException', $e,
+            $this->assertTrue($e instanceof Zend_Gdata_App_InvalidArgumentException,
                 'Expecting Zend_Gdata_App_InvalidArgumentException, got '.get_class($e));
             $this->assertEquals('You must specify the location as either a string URI or a child of Zend_Gdata_Query', $e->getMessage());
         }
@@ -93,7 +93,7 @@ class Zend_Gdata_GdataTest extends PHPUnit_Framework_TestCase
             $feed = $gdata->getEntry(new stdClass());
             $this->fail('Expecting to catch Zend_Gdata_App_InvalidArgumentException');
         } catch (Zend_Exception $e) {
-            $this->assertType('Zend_Gdata_App_InvalidArgumentException', $e,
+            $this->assertTrue($e instanceof Zend_Gdata_App_InvalidArgumentException,
                 'Expecting Zend_Gdata_App_InvalidArgumentException, got '.get_class($e));
             $this->assertEquals('You must specify the location as either a string URI or a child of Zend_Gdata_Query', $e->getMessage());
         }

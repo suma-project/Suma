@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Text
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: MultiByteTest.php 24762 2012-05-06 00:06:46Z adamlundrigan $
+ * @version    $Id$
  */
 
 // Call Zend_Text_MultiByteTest::main() if this source file is executed directly.
@@ -34,7 +34,7 @@ require_once 'Zend/Text/MultiByte.php';
  * @category   Zend
  * @package    Zend_Text
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Text
  */

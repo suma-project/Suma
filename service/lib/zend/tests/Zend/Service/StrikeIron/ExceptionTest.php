@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Service_StrikeIron
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: ExceptionTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 /**
@@ -30,7 +30,7 @@ require_once 'Zend/Service/StrikeIron/Exception.php';
  * @category   Zend
  * @package    Zend_Service_StrikeIron
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Service
  * @group      Zend_Service_StrikeIron
@@ -40,6 +40,6 @@ class Zend_Service_StrikeIron_ExceptionTest extends PHPUnit_Framework_TestCase
     public function testInheritsFromZendException()
     {
         $exception = new Zend_Service_StrikeIron_Exception();
-        $this->assertType('Zend_Exception', $exception);
+        $this->assertTrue($exception instanceof Zend_Exception);
     }
 }

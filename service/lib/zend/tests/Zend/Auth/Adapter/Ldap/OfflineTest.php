@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Auth
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: OfflineTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 /**
@@ -34,7 +34,7 @@ require_once 'Zend/Ldap.php';
  * @category   Zend
  * @package    Zend_Auth
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Auth
  */
@@ -65,7 +65,7 @@ class Zend_Auth_Adapter_Ldap_OfflineTest extends PHPUnit_Framework_TestCase
             $this->markTestSkipped('LDAP is not enabled');
         }
         $this->_adapter->setLdap(new Zend_Ldap());
-        $this->assertType('Zend_Ldap', $this->_adapter->getLdap());
+        $this->assertTrue($this->_adapter->getLdap() instanceof Zend_Ldap);
     }
 
     public function testUsernameIsNullIfNotSet()

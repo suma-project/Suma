@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Service_DeveloperGarden
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: SmsValidationTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
@@ -35,9 +35,9 @@ require_once 'Zend/Service/DeveloperGarden/SmsValidation.php';
  * @category   Zend
  * @package    Zend_Service_DeveloperGarden
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: SmsValidationTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 class Zend_Service_DeveloperGarden_SmsValidationTest extends PHPUnit_Framework_TestCase
 {

@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Queue
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: DbForUpdate.php 24670 2012-02-27 04:43:26Z adamlundrigan $
+ * @version    $Id$
  */
 
 /**
@@ -35,7 +35,7 @@ require_once 'Zend/Queue/Adapter/Db.php';
  * @category   Zend
  * @package    Zend_Queue
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Custom_DbForUpdate extends Zend_Queue_Adapter_Db

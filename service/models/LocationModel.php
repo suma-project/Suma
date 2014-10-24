@@ -90,7 +90,7 @@ class LocationModel
 
             if (true === $filterDisabled)
             {
-                $select->where('enabled = true');
+                $select->where('enabled = 1');
             }
 
             $select->order('rank ASC');
@@ -133,7 +133,7 @@ class LocationModel
     {
         // FIXME: make sure all of the fields are passed in
         $hash = array('title'       =>  $data['title'],
-                      'enabled'     =>  $data['enabled'],
+                      'enabled'     =>  (int)$data['enabled'],
                       'fk_parent'   =>  $data['fk_parent'],
                       'description' =>  $data['description'],
                       'rank'        =>  $data['rank']);
@@ -143,14 +143,14 @@ class LocationModel
 
     public function enable()
     {
-        $data = array('enabled'  =>  true);
+        $data = array('enabled'  =>  1);
         $this->_db->update('location', $data, 'id = '.$this->_id);
         Globals::getLog()->info('LOCATION ENABLED - id: '.$this->_id);
     }
 
     public function disable()
     {
-        $data = array('enabled'  =>  false);
+        $data = array('enabled'  =>  0);
         $this->_db->update('location', $data, 'id = '.$this->_id);
         Globals::getLog()->info('LOCATION DISABLED - id: '.$this->_id);
     }
@@ -163,7 +163,7 @@ class LocationModel
         $db = Globals::getDBConn();
 
         $hash =     array('title'       =>  isset($data['title']) ? $data['title']: '',
-                          'enabled'     =>  isset($data['enabled']) ? $data['enabled'] : true,
+                          'enabled'     =>  isset($data['enabled']) ? (int)$data['enabled'] : 1,
                           'fk_parent'   =>  isset($data['fk_parent']) ? $data['fk_parent'] : null,
                           'description' =>  isset($data['description']) ? $data['description'] : '',
                           'rank'        =>  isset($data['rank']) ? $data['rank'] : 0);
@@ -181,7 +181,7 @@ class LocationModel
             $db = Globals::getDBConn();
             $select = $db->select()
                 ->from('location')
-                ->where('enabled = true AND fk_parent = ' . $root);
+                ->where('enabled = 1 AND fk_parent = ' . $root);
             $locations = $select->query()->fetchAll();
 
             if (empty($locations))
@@ -218,7 +218,7 @@ class LocationModel
 
         if ($filterDisabled)
         {
-            $select->where('enabled = true AND fk_parent IS NULL');
+            $select->where('enabled = 1 AND fk_parent IS NULL');
         }
         else
         {
@@ -271,7 +271,7 @@ class LocationModel
             $locDataArr = Array('fk_parent'   => $parentID,
                                 'title'       => $locTree['title'],
                                 'description' => $locTree['description'],
-                                'enabled'     => $locTree['enabled'],
+                                'enabled'     => (int)$locTree['enabled'],
                                 'rank'        => $rank);
 
             if (is_numeric($locTree['id']))

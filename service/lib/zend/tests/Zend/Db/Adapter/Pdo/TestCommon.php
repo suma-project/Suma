@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: TestCommon.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 
@@ -35,7 +35,7 @@ require_once 'Zend/Db/Adapter/TestCommon.php';
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Db_Adapter_Pdo_TestCommon extends Zend_Db_Adapter_TestCommon
@@ -57,7 +57,7 @@ abstract class Zend_Db_Adapter_Pdo_TestCommon extends Zend_Db_Adapter_TestCommon
             $this->_db->exec('Bogus query');
             $this->fail('Expected exception not thrown');
         } catch (Zend_Db_Adapter_Exception $e) {
-            $this->assertType('Zend_Db_Adapter_Exception', $e,
+            $this->assertTrue($e instanceof Zend_Db_Adapter_Exception,
                 'Expecting object of type Zend_Db_Adapter_Exception, got ' . get_class($e));
         }
     }
@@ -73,7 +73,7 @@ abstract class Zend_Db_Adapter_Pdo_TestCommon extends Zend_Db_Adapter_TestCommon
             $this->_db->exec('DELETE FROM BogusTable');
             $this->fail('Expected exception not thrown');
         } catch (Zend_Db_Adapter_Exception $e) {
-            $this->assertType('Zend_Db_Adapter_Exception', $e,
+            $this->assertTrue($e instanceof Zend_Db_Adapter_Exception,
                 'Expecting object of type Zend_Db_Adapter_Exception, got ' . get_class($e));
         }
     }

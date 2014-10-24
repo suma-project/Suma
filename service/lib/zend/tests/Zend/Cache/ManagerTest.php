@@ -14,7 +14,7 @@
  *
  * @category   Zend_Cache
  * @package    UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -26,7 +26,7 @@ require_once 'Zend/Config.php';
 /**
  * @category   Zend_Cache
  * @package    UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Cache_ManagerTest extends PHPUnit_Framework_TestCase
@@ -63,7 +63,7 @@ class Zend_Cache_ManagerTest extends PHPUnit_Framework_TestCase
         $manager = new Zend_Cache_Manager();
         $caches  = $manager->getCaches();
 
-        $this->assertType('array', $caches);
+        $this->assertTrue(is_array($caches));
         $this->assertArrayHasKey('default', $caches);
     }
 
@@ -233,6 +233,30 @@ class Zend_Cache_ManagerTest extends PHPUnit_Framework_TestCase
         $manager->setTemplateOptions('pagetag', $tagCacheConfig);
         $tagCache = $manager->getCache('page')->getBackend()->getOption('tag_cache');
         $this->assertTrue($tagCache instanceof Zend_Cache_Core);
+    }
+
+    /**
+     * @group GH-189
+     */
+    public function testSetsOptionsWithCustomFrontendAndBackendNamingAndAutoload()
+    {
+        $manager = new Zend_Cache_Manager;
+        $manager->setTemplateOptions(
+            'page',
+            array(
+                 'frontend' => array(
+                     'customFrontendNaming' => true,
+                 ),
+                 'backend'  => array(
+                     'customBackendNaming' => true,
+                 ),
+                 'frontendBackendAutoload' => true,
+            )
+        );
+        $config = $manager->getCacheTemplate('page');
+        $this->assertTrue($config['frontend']['customFrontendNaming']);
+        $this->assertTrue($config['backend']['customBackendNaming']);
+        $this->assertTrue($config['frontendBackendAutoload']);
     }
 
     // Helper Methods

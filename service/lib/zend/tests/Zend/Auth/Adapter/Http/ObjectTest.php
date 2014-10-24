@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Auth
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: ObjectTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 
@@ -58,7 +58,7 @@ require_once 'Zend/Debug.php';
  * @category   Zend
  * @package    Zend_Auth
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Auth
  */
@@ -142,7 +142,7 @@ class Zend_Auth_Adapter_Http_ObjectTest extends PHPUnit_Framework_TestCase
             $this->fail('Valid config deemed invalid');
         }
         $this->assertFalse(empty($t));
-        $this->assertType('Zend_Auth_Adapter_Http', $t);
+        $this->assertTrue($t instanceof Zend_Auth_Adapter_Http);
         unset($t);
 
         try {
@@ -151,7 +151,7 @@ class Zend_Auth_Adapter_Http_ObjectTest extends PHPUnit_Framework_TestCase
             $this->fail('Valid config deemed invalid');
         }
         $this->assertFalse(empty($t));
-        $this->assertType('Zend_Auth_Adapter_Http', $t);
+        $this->assertTrue($t instanceof Zend_Auth_Adapter_Http);
         unset($t);
 
         try {
@@ -160,7 +160,7 @@ class Zend_Auth_Adapter_Http_ObjectTest extends PHPUnit_Framework_TestCase
             $this->fail('Valid config deemed invalid');
         }
         $this->assertFalse(empty($t));
-        $this->assertType('Zend_Auth_Adapter_Http', $t);
+        $this->assertTrue($t instanceof Zend_Auth_Adapter_Http);
         unset($t);
     }
 

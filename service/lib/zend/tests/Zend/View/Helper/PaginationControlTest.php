@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: PaginationControlTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 // Call Zend_View_Helper_PaginationControlTest::main() if this source file is executed directly.
@@ -33,7 +33,7 @@ require_once 'Zend/View/Helper/PaginationControl.php';
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_View
  * @group      Zend_View_Helper
@@ -89,7 +89,7 @@ class Zend_View_Helper_PaginationControlTest extends PHPUnit_Framework_TestCase
         $helper = new Zend_View_Helper_PaginationControl();
         $this->assertNull($helper->view);
         $helper->setView($view);
-        $this->assertType('Zend_View_Interface', $helper->view);
+        $this->assertTrue($helper->view instanceof Zend_View_Interface);
     }
 
     public function testGetsAndSetsDefaultViewPartial()
@@ -113,7 +113,7 @@ class Zend_View_Helper_PaginationControlTest extends PHPUnit_Framework_TestCase
         try {
             $this->_viewHelper->paginationControl($this->_paginator);
         } catch (Exception $e) {
-            $this->assertType('Zend_View_Exception', $e);
+            $this->assertTrue($e instanceof Zend_View_Exception);
             $this->assertEquals('No view partial provided and no default set', $e->getMessage());
         }
     }
@@ -163,7 +163,7 @@ class Zend_View_Helper_PaginationControlTest extends PHPUnit_Framework_TestCase
         try {
             $output = $this->_viewHelper->paginationControl();
         } catch (Exception $e) {
-            $this->assertType('Zend_View_Exception', $e);
+            $this->assertTrue($e instanceof Zend_View_Exception);
             $this->assertEquals('No paginator instance provided or incorrect type', $e->getMessage());
         }
     }
@@ -179,7 +179,7 @@ class Zend_View_Helper_PaginationControlTest extends PHPUnit_Framework_TestCase
             /* We don't care whether or not the module exists--we just want to
              * make sure it gets to Zend_View_Helper_Partial and it's recognized
              * as a module. */
-            $this->assertType('Zend_View_Helper_Partial_Exception', $e);
+            $this->assertTrue($e instanceof Zend_View_Helper_Partial_Exception);
             $this->assertEquals('Cannot render partial; module does not exist', $e->getMessage());
         }
     }

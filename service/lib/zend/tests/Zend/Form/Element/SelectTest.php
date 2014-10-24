@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Form
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: SelectTest.php 25191 2013-01-08 08:39:41Z frosch $
+ * @version    $Id$
  */
 
 // Call Zend_Form_Element_SelectTest::main() if this source file is executed directly.
@@ -33,7 +33,7 @@ require_once 'Zend/Form/Element/Select.php';
  * @category   Zend
  * @package    Zend_Form
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Form
  */
@@ -262,9 +262,9 @@ class Zend_Form_Element_SelectTest extends PHPUnit_Framework_TestCase
         $actual   = $this->element->render($this->getView());
         $expected = PHP_EOL
                   . '<select name="foo[]" id="foo">'
-                  . PHP_EOL
+                  . "\n"
                   . '    <option value="bar">Bar</option>'
-                  . PHP_EOL
+                  . "\n"
                   . '</select>';
 
         $this->assertSame($expected, $actual);

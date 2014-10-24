@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Service_DeveloperGarden
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: OfflineSecurityTokenServerTest.php 24791 2012-05-11 06:18:17Z bate $
+ * @version    $Id$
  */
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
@@ -40,9 +40,9 @@ require_once 'Zend/Service/DeveloperGarden/SecurityTokenServer/Cache.php';
  * @category   Zend
  * @package    Zend_Service_DeveloperGarden
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: OfflineSecurityTokenServerTest.php 24791 2012-05-11 06:18:17Z bate $
+ * @version    $Id$
  */
 class Zend_Service_DeveloperGarden_OfflineSecurityTokenServerTest extends PHPUnit_Framework_TestCase
 {
@@ -241,9 +241,8 @@ class Zend_Service_DeveloperGarden_OfflineSecurityTokenServerTest extends PHPUni
         $this->assertNull(
             Zend_Service_DeveloperGarden_SecurityTokenServer_Cache::setCache($cache)
         );
-        $this->assertType(
-            'Zend_Cache_Core',
-            Zend_Service_DeveloperGarden_SecurityTokenServer_Cache::getCache()
+        $this->assertTrue(
+            Zend_Service_DeveloperGarden_SecurityTokenServer_Cache::getCache() instanceof Zend_Cache_Core
         );
     }
 
@@ -254,9 +253,8 @@ class Zend_Service_DeveloperGarden_OfflineSecurityTokenServerTest extends PHPUni
         $this->assertNull(
             Zend_Service_DeveloperGarden_SecurityTokenServer_Cache::setCache($cache)
         );
-        $this->assertType(
-            'Zend_Cache_Core',
-            Zend_Service_DeveloperGarden_SecurityTokenServer_Cache::getCache()
+        $this->assertTrue(
+            Zend_Service_DeveloperGarden_SecurityTokenServer_Cache::getCache() instanceof Zend_Cache_Core
         );
 
         Zend_Service_DeveloperGarden_SecurityTokenServer_Cache::removeCache();
@@ -272,9 +270,8 @@ class Zend_Service_DeveloperGarden_OfflineSecurityTokenServerTest extends PHPUni
         $this->assertNull(
             Zend_Service_DeveloperGarden_SecurityTokenServer_Cache::setCache($cache)
         );
-        $this->assertType(
-            'Zend_Cache_Core',
-            Zend_Service_DeveloperGarden_SecurityTokenServer_Cache::getCache()
+        $this->assertTrue(
+            Zend_Service_DeveloperGarden_SecurityTokenServer_Cache::getCache() instanceof Zend_Cache_Core
         );
 
         Zend_Service_DeveloperGarden_SecurityTokenServer_Cache::clearCache();
@@ -292,9 +289,8 @@ class Zend_Service_DeveloperGarden_OfflineSecurityTokenServerTest extends PHPUni
         $this->assertNull(
             Zend_Service_DeveloperGarden_SecurityTokenServer_Cache::setCache($cache)
         );
-        $this->assertType(
-            'Zend_Cache_Core',
-            Zend_Service_DeveloperGarden_SecurityTokenServer_Cache::getCache()
+        $this->assertTrue(
+            Zend_Service_DeveloperGarden_SecurityTokenServer_Cache::getCache() instanceof Zend_Cache_Core
         );
 
         Zend_Service_DeveloperGarden_SecurityTokenServer_Cache::resetTokenCache();

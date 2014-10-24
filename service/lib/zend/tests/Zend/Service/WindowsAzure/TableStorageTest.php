@@ -16,7 +16,7 @@
  * @package    Zend_Service_WindowsAzure
  * @subpackage UnitTests
  * @version    $Id$
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -29,7 +29,6 @@ if (!defined('PHPUnit_MAIN_METHOD')) {
  */
 require_once dirname(__FILE__) . '/../../../TestHelper.php';
 require_once dirname(__FILE__) . '/../../../TestConfiguration.php.dist';
-require_once 'PHPUnit/Framework/TestCase.php';
 
 /** Zend_Service_WindowsAzure_Storage_Table */
 require_once 'Zend/Service/WindowsAzure/Storage/Table.php';
@@ -39,7 +38,7 @@ require_once 'Zend/Service/WindowsAzure/Storage/Table.php';
  * @package    Zend_Service_WindowsAzure
  * @subpackage UnitTests
  * @version    $Id$
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_WindowsAzure_TableStorageTest extends PHPUnit_Framework_TestCase
@@ -372,7 +371,7 @@ class Zend_Service_WindowsAzure_TableStorageTest extends PHPUnit_Framework_TestC
             
             $result = $storageClient->retrieveEntityById($tableName, $entity->getPartitionKey(), $entity->getRowKey());
             $this->assertEquals($entity->FullName, $result->Name);
-            $this->assertType('Zend_Service_WindowsAzure_Storage_DynamicTableEntity', $result);
+            $this->assertTrue($result instanceof Zend_Service_WindowsAzure_Storage_DynamicTableEntity);
         }
     }
     
@@ -538,7 +537,7 @@ class Zend_Service_WindowsAzure_TableStorageTest extends PHPUnit_Framework_TestC
             
             foreach ($result as $item)
             {
-                $this->assertType('Zend_Service_WindowsAzure_Storage_DynamicTableEntity', $item);
+                $this->assertTrue($item instanceof Zend_Service_WindowsAzure_Storage_DynamicTableEntity);
             }
         }
     }
@@ -670,7 +669,7 @@ class Zend_Service_WindowsAzure_TableStorageTest extends PHPUnit_Framework_TestC
             
             // Start batch
             $batch = $storageClient->startBatch();
-            $this->assertType('Zend_Service_WindowsAzure_Storage_Batch', $batch);
+            $this->assertTrue($batch instanceof Zend_Service_WindowsAzure_Storage_Batch);
             
             // Insert entities in batch
             foreach ($entities2 as $entity)
@@ -707,7 +706,7 @@ class Zend_Service_WindowsAzure_TableStorageTest extends PHPUnit_Framework_TestC
             
             // Start batch
             $batch = $storageClient->startBatch();
-            $this->assertType('Zend_Service_WindowsAzure_Storage_Batch', $batch);
+            $this->assertTrue($batch instanceof Zend_Service_WindowsAzure_Storage_Batch);
             
             // Insert entities in batch
             foreach ($entities as $entity)
@@ -749,7 +748,7 @@ class Zend_Service_WindowsAzure_TableStorageTest extends PHPUnit_Framework_TestC
             
             // Start batch
             $batch = $storageClient->startBatch();
-            $this->assertType('Zend_Service_WindowsAzure_Storage_Batch', $batch);
+            $this->assertTrue($batch instanceof Zend_Service_WindowsAzure_Storage_Batch);
             
             // Update entities in batch
             $storageClient->updateEntity($tableName, $entities[0], true);
@@ -781,7 +780,7 @@ class Zend_Service_WindowsAzure_TableStorageTest extends PHPUnit_Framework_TestC
             
             // Start batch
             $batch = $storageClient->startBatch();
-            $this->assertType('Zend_Service_WindowsAzure_Storage_Batch', $batch);
+            $this->assertTrue($batch instanceof Zend_Service_WindowsAzure_Storage_Batch);
             
             // Insert entities in batch
             foreach ($entities as $entity)

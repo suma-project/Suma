@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_File
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -31,7 +31,7 @@ require_once 'Zend/File/ClassFileLocator.php';
  * @category   Zend
  * @package    Zend_File
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_File
  */
@@ -53,6 +53,10 @@ class Zend_File_ClassFileLocatorTest extends PHPUnit_Framework_TestCase
 
     public function testIterationShouldReturnOnlyPhpFiles()
     {
+        if (version_compare(PHP_VERSION, '5.3', 'lt')) {
+            $this->markTestSkipped('Test can only be run under 5.3 or later');
+        }
+
         $locator = new Zend_File_ClassFileLocator(dirname(__FILE__));
         foreach ($locator as $file) {
             $this->assertRegexp('/\.php$/', $file->getFilename());
@@ -61,6 +65,10 @@ class Zend_File_ClassFileLocatorTest extends PHPUnit_Framework_TestCase
 
     public function testIterationShouldReturnOnlyPhpFilesContainingClasses()
     {
+        if (version_compare(PHP_VERSION, '5.3', 'lt')) {
+            $this->markTestSkipped('Test can only be run under 5.3 or later');
+        }
+
         $locator = new Zend_File_ClassFileLocator(dirname(__FILE__));
         $found = false;
         foreach ($locator as $file) {
@@ -73,6 +81,10 @@ class Zend_File_ClassFileLocatorTest extends PHPUnit_Framework_TestCase
 
     public function testIterationShouldReturnInterfaces()
     {
+        if (version_compare(PHP_VERSION, '5.3', 'lt')) {
+            $this->markTestSkipped('Test can only be run under 5.3 or later');
+        }
+
         $locator = new Zend_File_ClassFileLocator(dirname(__FILE__));
         $found = false;
         foreach ($locator as $file) {
@@ -83,13 +95,77 @@ class Zend_File_ClassFileLocatorTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($found, "Locator skipped an interface?");
     }
 
-    public function testIterationShouldInjectClassInFoundItems()
+    public function testIterationShouldInjectNamespaceInFoundItems()
     {
+        if (version_compare(PHP_VERSION, '5.3', 'lt')) {
+            $this->markTestSkipped('Test can only be run under 5.3 or later');
+        }
+
         $locator = new Zend_File_ClassFileLocator(dirname(__FILE__));
         $found = false;
         foreach ($locator as $file) {
-            $this->assertTrue(isset($file->classname));
+            $classes = $file->getClasses();
+            foreach ($classes as $class) {
+                if (strpos($class, '\\', 1)) {
+                    $found = true;
+                }
+            }
         }
+        $this->assertTrue($found);
+    }
+
+    public function testIterationShouldInjectClassInFoundItems()
+    {
+        if (version_compare(PHP_VERSION, '5.3', 'lt')) {
+            $this->markTestSkipped('Test can only be run under 5.3 or later');
+        }
+
+        $locator = new Zend_File_ClassFileLocator(dirname(__FILE__));
+        $found = false;
+        foreach ($locator as $file) {
+            $classes = $file->getClasses();
+            foreach ($classes as $class) {
+                $found = true;
+                break;
+            }
+        }
+        $this->assertTrue($found);
+    }
+
+    public function testIterationShouldFindMultipleClassesInMultipleNamespacesInSinglePhpFile()
+    {
+        if (version_compare(PHP_VERSION, '5.3', 'lt')) {
+            $this->markTestSkipped('Test can only be run under 5.3 or later');
+        }
+
+        $locator = new Zend_File_ClassFileLocator(dirname(__FILE__));
+        $foundFirst = false;
+        $foundSecond = false;
+        $foundThird = false;
+        $foundFourth = false;
+        foreach ($locator as $file) {
+            if (preg_match('/MultipleClassesInMultipleNamespaces\.php$/', $file->getFilename())) {
+                $classes = $file->getClasses();
+                foreach ($classes as $class) {
+                    if ($class === 'ZendTest\File\TestAsset\LocatorShouldFindFirstClass') {
+                        $foundFirst = true;
+                    }
+                    if ($class === 'ZendTest\File\TestAsset\LocatorShouldFindSecondClass') {
+                        $foundSecond = true;
+                    }
+                    if ($class === 'ZendTest\File\TestAsset\SecondTestNamespace\LocatorShouldFindThirdClass') {
+                        $foundThird = true;
+                    }
+                    if ($class === 'ZendTest\File\TestAsset\SecondTestNamespace\LocatorShouldFindFourthClass') {
+                        $foundFourth = true;
+                    }
+                }
+            }
+        }
+        $this->assertTrue($foundFirst);
+        $this->assertTrue($foundSecond);
+        $this->assertTrue($foundThird);
+        $this->assertTrue($foundFourth);
     }
 }
 

@@ -16,7 +16,7 @@
  * @package    Zend_Service_WindowsAzure
  * @subpackage UnitTests
  * @version    $Id$
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -29,7 +29,6 @@ if (!defined('PHPUnit_MAIN_METHOD')) {
  */
 require_once dirname(__FILE__) . '/../../../../TestHelper.php';
 require_once dirname(__FILE__) . '/../../../../TestConfiguration.php.dist';
-require_once 'PHPUnit/Framework/TestCase.php';
 
 /** Zend_Service_WindowsAzure_Credentials_SharedKey */
 require_once 'Zend/Service/WindowsAzure/Credentials/SharedKey.php';
@@ -39,7 +38,7 @@ require_once 'Zend/Service/WindowsAzure/Credentials/SharedKey.php';
  * @package    Zend_Service_WindowsAzure
  * @subpackage UnitTests
  * @version    $Id$
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_WindowsAzure_Credentials_SharedKeyTest extends PHPUnit_Framework_TestCase
@@ -64,7 +63,7 @@ class Zend_Service_WindowsAzure_Credentials_SharedKeyTest extends PHPUnit_Framew
                               false
                           );
                           
-        $this->assertType('array', $signedHeaders);
+        $this->assertTrue(is_array($signedHeaders));
         $this->assertEquals(2, count($signedHeaders));
         $this->assertEquals("SharedKey devstoreaccount1:9tokqwSDIqvRioVZ1k0mv5m/iseHsGRYmAMGJVu6NcU=", $signedHeaders["Authorization"]);
     }
@@ -83,7 +82,7 @@ class Zend_Service_WindowsAzure_Credentials_SharedKeyTest extends PHPUnit_Framew
                               false
                           );
   
-        $this->assertType('array', $signedHeaders);
+        $this->assertTrue(is_array($signedHeaders));
         $this->assertEquals(2, count($signedHeaders));
         $this->assertEquals("SharedKey devstoreaccount1:YHPfUXoeL/XZjEYii2pfSZi3CsOB++5sA4QT7CAvPig=", $signedHeaders["Authorization"]);
     }
@@ -102,7 +101,7 @@ class Zend_Service_WindowsAzure_Credentials_SharedKeyTest extends PHPUnit_Framew
                               false
                           );
   
-        $this->assertType('array', $signedHeaders);
+        $this->assertTrue(is_array($signedHeaders));
         $this->assertEquals(2, count($signedHeaders));
         $this->assertEquals("SharedKey devstoreaccount1:S1+AcI8z19N0EP0eRTEj4UUCtPbKyUcZDAt299AWudw=", $signedHeaders["Authorization"]);
     }
@@ -121,7 +120,7 @@ class Zend_Service_WindowsAzure_Credentials_SharedKeyTest extends PHPUnit_Framew
                               false
                           );
                           
-        $this->assertType('array', $signedHeaders);
+        $this->assertTrue(is_array($signedHeaders));
         $this->assertEquals(2, count($signedHeaders));
         $this->assertEquals("SharedKey testing:amg3/Z6Yx0KxwhRz9yn1ZCPZXYWIp5aEDCeZ1H5UIwo=", $signedHeaders["Authorization"]);
     }
@@ -140,7 +139,7 @@ class Zend_Service_WindowsAzure_Credentials_SharedKeyTest extends PHPUnit_Framew
                               false
                           );
   
-        $this->assertType('array', $signedHeaders);
+        $this->assertTrue(is_array($signedHeaders));
         $this->assertEquals(2, count($signedHeaders));
         $this->assertEquals("SharedKey testing:ISA0m0Gy2SrxxjBO9ogtIbz0xNNyJ/GujUv5s1ibQrY=", $signedHeaders["Authorization"]);
     }
@@ -159,7 +158,7 @@ class Zend_Service_WindowsAzure_Credentials_SharedKeyTest extends PHPUnit_Framew
                               false
                           );
   
-        $this->assertType('array', $signedHeaders);
+        $this->assertTrue(is_array($signedHeaders));
         $this->assertEquals(2, count($signedHeaders));
         $this->assertEquals("SharedKey testing:vlfVjEbBaRVTv35e924cR4B/Z5zCaSYjbtMz9/k3UCY=", $signedHeaders["Authorization"]);
     }

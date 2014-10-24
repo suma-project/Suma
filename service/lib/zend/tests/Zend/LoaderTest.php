@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Loader
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: LoaderTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 // Call Zend_LoaderTest::main() if this source file is executed directly.
@@ -39,7 +39,7 @@ require_once 'Zend/Loader/Autoloader.php';
  * @category   Zend
  * @package    Zend_Loader
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Loader
  */
@@ -361,7 +361,7 @@ class Zend_LoaderTest extends PHPUnit_Framework_TestCase
             'Expected Zend_Loader_AutoloadableClass to be loaded');
 
         // and we verify it is the correct type
-        $this->assertType('Zend_Loader_AutoloadableClass', $obj,
+        $this->assertTrue($obj instanceof Zend_Loader_AutoloadableClass,
             'Expected to instantiate Zend_Loader_AutoloadableClass, got '.get_class($obj));
 
         spl_autoload_unregister($function);

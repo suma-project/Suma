@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Ldap
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: ChildrenTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 /**
@@ -33,7 +33,7 @@ require_once 'Zend/Ldap/Node.php';
  * @category   Zend
  * @package    Zend_Ldap
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Ldap
  * @group      Zend_Ldap_Node
@@ -56,9 +56,9 @@ class Zend_Ldap_Node_ChildrenTest extends Zend_Ldap_OnlineTestCase
     {
         $node=$this->_getLdap()->getBaseNode();
         $children=$node->getChildren();
-        $this->assertType('Zend_Ldap_Node_ChildrenIterator', $children);
+        $this->assertTrue($children instanceof Zend_Ldap_Node_ChildrenIterator);
         $this->assertEquals(6, count($children));
-        $this->assertType('Zend_Ldap_Node', $children['ou=Node']);
+        $this->assertTrue($children['ou=Node'] instanceof Zend_Ldap_Node);
     }
 
     public function testGetChildrenOnDetachedNode()
@@ -66,16 +66,16 @@ class Zend_Ldap_Node_ChildrenTest extends Zend_Ldap_OnlineTestCase
         $node=$this->_getLdap()->getBaseNode();
         $node->detachLdap();
         $children=$node->getChildren();
-        $this->assertType('Zend_Ldap_Node_ChildrenIterator', $children);
+        $this->assertTrue($children instanceof Zend_Ldap_Node_ChildrenIterator);
         $this->assertEquals(0, count($children));
 
         $node->attachLdap($this->_getLdap());
         $node->reload();
         $children=$node->getChildren();
 
-        $this->assertType('Zend_Ldap_Node_ChildrenIterator', $children);
+        $this->assertTrue($children instanceof Zend_Ldap_Node_ChildrenIterator);
         $this->assertEquals(6, count($children));
-        $this->assertType('Zend_Ldap_Node', $children['ou=Node']);
+        $this->assertTrue($children['ou=Node'] instanceof Zend_Ldap_Node);
     }
 
     public function testHasChildrenOnAttachedNode()

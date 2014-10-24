@@ -1,0 +1,177 @@
+<html>
+    <head>
+        <script
+            type="text/javascript"
+            src="../../../../js/jquery-1.4.2.min.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../../syntax_highlighter/scripts/shCore.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../../syntax_highlighter/scripts/shBrushJScript.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../../syntax_highlighter/scripts/shBrushPhp.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../../syntax_highlighter/scripts/shBrushXml.js">
+        </script>
+        <link
+            href="../../../../syntax_highlighter/styles/shCore.css" rel="stylesheet"
+            type="text/css"
+        />
+        <link
+            href="../../../../syntax_highlighter/styles/shCoreEclipse.css"
+            rel="stylesheet" type="text/css"
+        />
+        <link
+            href="../../../../syntax_highlighter/styles/shThemeWordpress.css"
+            rel="stylesheet" type="text/css"
+        />
+    </head>
+    <body>
+        <pre class="brush: php">&lt;?php
+/**
+ * Zend Framework
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://framework.zend.com/license/new-bsd
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@zend.com so we can send you a copy immediately.
+ *
+ * @category    ZendX
+ * @package     ZendX_JQuery
+ * @subpackage  View
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license     http://framework.zend.com/license/new-bsd     New BSD License
+ * @version     $Id$
+ */
+
+/**
+ * @see ZendX_JQuery_View_Helper_UiWidget
+ */
+require_once &quot;ZendX/JQuery/View/Helper/UiWidget.php&quot;;
+
+/**
+ * jQuery Tabs Container View Helper
+ *
+ * @uses 	   Zend_Json
+ * @package    ZendX_JQuery
+ * @subpackage View
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ */
+class ZendX_JQuery_View_Helper_TabContainer extends ZendX_JQuery_View_Helper_UiWidget
+{
+    /**
+     * Save all the pre-rendered tab panes to each tab container
+     *
+     * @var array
+     */
+    protected $_tabs = array();
+
+    /**
+     * Add Tab to TabsContainer
+     *
+     * @param  string $id
+     * @param  string $name
+     * @param  string $content
+     * @param  array  $options
+     * @return ZendX_JQuery_View_Helper_TabsContainer
+     */
+    public function addPane($id, $name, $content, array $options=array())
+    {
+        if(!isset($this-&gt;_tabs[$id])) {
+            $this-&gt;_tabs[$id] = array();
+        }
+        if(strlen($name) == 0 &amp;&amp; isset($options['title'])) {
+            $name = $options['title'];
+        }
+
+        $this-&gt;_tabs[$id][] = array('name' =&gt; $name, 'content' =&gt; $content, 'options' =&gt; $options);
+        return $this;
+    }
+
+    /**
+     * Render TabsContainer with all the currently registered tabs.
+     *
+     * Render all tabs to the given $id. If no arguments are given the
+     * tabsContainer view helper object is returned and can be used
+     * for chaining {@link addPane()} for tab pane adding.
+     *
+     * @link   http://docs.jquery.com/UI/Tabs
+     * @param  string $id
+     * @param  array  $params
+     * @param  array  $attribs
+     * @return string|ZendX_JQuery_View_Helper_TabsContainer
+     */
+    public function tabContainer($id=null, $params=array(), $attribs=array())
+    {
+        if(func_num_args() === 0) {
+            return $this;
+        }
+
+        if(!isset($attribs['id'])) {
+            $attribs['id'] = $id;
+        }
+
+        $content = &quot;&quot;;
+        if(isset($this-&gt;_tabs[$id])) {
+            $list = '&lt;ul class=&quot;ui-tabs-nav&quot;&gt;'.PHP_EOL;
+            $html = '';
+            $fragment_counter = 1;
+            foreach($this-&gt;_tabs[$id] AS $k =&gt; $v) {
+                $frag_name = sprintf('%s-frag-%d', $attribs['id'], $fragment_counter++);
+                $opts = $v['options'];
+                if(isset($opts['contentUrl'])) {
+                    $list .= '&lt;li class=&quot;ui-tabs-nav-item&quot;&gt;&lt;a href=&quot;'.$opts['contentUrl'].'&quot;&gt;&lt;span&gt;'.$v['name'].'&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;'.PHP_EOL;
+                } else {
+                    $list .= '&lt;li class=&quot;ui-tabs-nav-item&quot;&gt;&lt;a href=&quot;#'.$frag_name.'&quot;&gt;&lt;span&gt;'.$v['name'].'&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;'.PHP_EOL;
+                    $html .= '&lt;div id=&quot;'.$frag_name.'&quot; class=&quot;ui-tabs-panel&quot;&gt;'.$v['content'].'&lt;/div&gt;'.PHP_EOL;
+                }
+            }
+            $list .= '&lt;/ul&gt;'.PHP_EOL;
+
+            $content = $list.$html;
+            unset($this-&gt;_tabs[$id]);
+        }
+
+        if(count($params)) {
+            $params = ZendX_JQuery::encodeJson($params);
+        } else {
+            $params = '{}';
+        }
+
+        $js = sprintf('%s(&quot;#%s&quot;).tabs(%s);',
+            ZendX_JQuery_View_Helper_JQuery::getJQueryHandler(),
+            $attribs['id'],
+            $params
+        );
+        $this-&gt;jquery-&gt;addOnLoad($js);
+
+        $html = '&lt;div'
+              . $this-&gt;_htmlAttribs($attribs)
+              . '&gt;'.PHP_EOL
+              . $content
+              . '&lt;/div&gt;'.PHP_EOL;
+        return $html;
+    }
+}
+</pre>
+        <script type="text/javascript">
+             SyntaxHighlighter.all();
+             jQuery('.gutter div').each(function(key, data){
+                jQuery(data).prepend('<a name="L'+jQuery(data).text()+'"/>');
+             });
+        </script>
+    </body>
+</html>

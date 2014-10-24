@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: BaseUrlTest.php 20096 2010-01-06 02:05:09Z bkarwin $
  */
@@ -39,7 +39,7 @@ require_once 'Zend/View.php';
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_View
  * @group      Zend_View_Helper
@@ -152,7 +152,7 @@ class Zend_View_Helper_GravatarTest extends PHPUnit_Framework_TestCase
         $imgSizesRight = array(1, 500, "600");
         foreach ($imgSizesRight as $value) {
             $this->_object->setImgSize($value);
-            $this->assertType('int', $this->_object->getImgSize());
+            $this->assertTrue(is_int($this->_object->getImgSize()));
         }
     }
 
@@ -179,7 +179,7 @@ class Zend_View_Helper_GravatarTest extends PHPUnit_Framework_TestCase
         $values = array("true", "false", "text", $this->_view, 100, true, "", null, 0, false);
         foreach ($values as $value) {
             $this->_object->setSecure($value);
-            $this->assertType('bool', $this->_object->getSecure());
+            $this->assertTrue(is_bool($this->_object->getSecure()));
         }
     }
 
@@ -271,7 +271,9 @@ class Zend_View_Helper_GravatarTest extends PHPUnit_Framework_TestCase
 
     public function testReturnThisObject()
     {
-        $this->assertType('Zend_View_Helper_Gravatar', $this->_object->gravatar());
+        $this->assertTrue(
+            $this->_object->gravatar() instanceof Zend_View_Helper_Gravatar
+        );
     }
 
     public function testInvalidKeyPassedToSetOptionsMethod()

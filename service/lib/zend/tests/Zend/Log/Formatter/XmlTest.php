@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Log
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: XmlTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
@@ -31,7 +31,7 @@ require_once 'Zend/Log/Formatter/Xml.php';
  * @category   Zend
  * @package    Zend_Log
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Log
  */
@@ -73,7 +73,7 @@ class Zend_Log_Formatter_XmlTest extends PHPUnit_Framework_TestCase
         $line = $f->format(array('message' => 'foo', 'priority' => 42));
 
         $sxml = @simplexml_load_string($line);
-        $this->assertType('SimpleXMLElement', $sxml, 'Formatted XML is invalid');
+        $this->assertTrue($sxml instanceof SimpleXMLElement, 'Formatted XML is invalid');
     }
 
     /**
@@ -135,7 +135,7 @@ class Zend_Log_Formatter_XmlTest extends PHPUnit_Framework_TestCase
             )
         );
         $formatter = Zend_Log_Formatter_Xml::factory($options);
-        $this->assertType('Zend_Log_Formatter_Xml', $formatter);
+        $this->assertTrue($formatter instanceof Zend_Log_Formatter_Xml);
     }
     
     /**

@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Oauth
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -26,7 +26,7 @@ require_once 'Zend/Oauth/Http/RequestToken.php';
  * @category   Zend
  * @package    Zend_Oauth
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Oauth
  * @group      Zend_Oauth_Http
@@ -52,7 +52,7 @@ class Zend_Oauth_Http_RequestTokenTest extends PHPUnit_Framework_TestCase
     public function testConstructorSetsConsumerInstance()
     {
         $request = new Zend_Oauth_Http_RequestToken($this->stubConsumer, null, $this->stubHttpUtility);
-        $this->assertType('Test_Consumer_32874', $request->getConsumer());
+        $this->assertTrue($request->getConsumer() instanceof Test_Consumer_32874);
     }
 
     public function testConstructorSetsCustomServiceParameters()

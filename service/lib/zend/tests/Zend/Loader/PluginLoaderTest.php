@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Loader
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: PluginLoaderTest.php 24877 2012-06-04 14:04:53Z adamlundrigan $
+ * @version    $Id$
  */
 
 // Call Zend_Loader_PluginLoaderTest::main() if this source file is executed directly.
@@ -33,7 +33,7 @@ require_once 'Zend/Loader/PluginLoader.php';
  * @category   Zend
  * @package    Zend_Loader
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Loader
  */
@@ -114,7 +114,7 @@ class Zend_Loader_PluginLoaderTest extends PHPUnit_Framework_TestCase
                ->addPrefixPath('Zend_Loader', $this->libPath . '/Zend/Loader');
         $paths = $loader->getPaths();
 
-        $this->assertType('array', $paths);
+        $this->assertTrue(is_array($paths));
         $this->assertEquals(1, count($paths['Zend_Loader_']));
     }
 
@@ -505,7 +505,7 @@ class Zend_Loader_PluginLoaderTest extends PHPUnit_Framework_TestCase
             $loader->removePrefixPath('My_Namespace_', 'ZF9721');
             $this->fail();
         } catch (Exception $e) {
-            $this->assertType('Zend_Loader_PluginLoader_Exception', $e);
+            $this->assertTrue($e instanceof Zend_Loader_PluginLoader_Exception);
             $this->assertContains('Prefix My_Namespace_ / Path ZF9721', $e->getMessage());
         }
         $this->assertEquals(1, count($loader->getPaths('My_Namespace_')));
@@ -528,6 +528,28 @@ class Zend_Loader_PluginLoaderTest extends PHPUnit_Framework_TestCase
             $this->fail(sprintf("Failed loading helper with backslashes in name"));
         }
         $this->assertEquals('Zfns\\Foo\\Bar', $className);
+    }
+
+    /**
+     * @url https://github.com/zendframework/zf1/issues/152
+     */
+    public function testLoadClassesWithBackslashAndUnderscoreInName()
+    {
+        if (version_compare(PHP_VERSION, '5.3.0', '<')) {
+            $this->markTestSkipped(__CLASS__ . '::' . __METHOD__ . ' requires PHP 5.3.0 or greater');
+            return;
+        }
+
+        $loader = new Zend_Loader_PluginLoader(array());
+        $loader->addPrefixPath('Zfns\\Foo_', dirname(__FILE__) . '/_files/Zfns/Foo');
+
+        try {
+            $className = $loader->load('Demo');
+        } catch (Exception $e) {
+            $this->fail(sprintf("Failed loading helper with backslashes and underscores in name"));
+        }
+
+        $this->assertEquals('Zfns\Foo_Demo', $className);
     }
 }
 

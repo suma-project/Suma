@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    ZendX_Console
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: AllTests.php 12231 2008-10-31 23:55:11Z dasprid $
  */
@@ -35,7 +35,7 @@ require_once 'ZendX/Application/Resource/JqueryTest.php';
  * @category   Zend
  * @package    ZendX_Applicatoin
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class ZendX_Application_Resource_AllTests

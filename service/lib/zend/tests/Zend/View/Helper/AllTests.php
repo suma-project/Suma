@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: AllTests.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
@@ -69,16 +69,15 @@ require_once 'Zend/View/Helper/Placeholder/ContainerTest.php';
 require_once 'Zend/View/Helper/Placeholder/RegistryTest.php';
 require_once 'Zend/View/Helper/Placeholder/StandaloneContainerTest.php';
 require_once 'Zend/View/Helper/ServerUrlTest.php';
-require_once 'Zend/View/Helper/TinySrcTest.php';
 require_once 'Zend/View/Helper/TranslateTest.php';
 require_once 'Zend/View/Helper/UrlTest.php';
-
+require_once 'Zend/View/Helper/UserAgentTest.php';
 
 /**
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_View
  * @group      Zend_View_Helper
@@ -139,9 +138,9 @@ class Zend_View_Helper_AllTests
         $suite->addTestSuite('Zend_View_Helper_Placeholder_RegistryTest');
         $suite->addTestSuite('Zend_View_Helper_Placeholder_StandaloneContainerTest');
         $suite->addTestSuite('Zend_View_Helper_ServerUrlTest');
-        $suite->addTestSuite('Zend_View_Helper_TinySrcTest');
         $suite->addTestSuite('Zend_View_Helper_TranslateTest');
         $suite->addTestSuite('Zend_View_Helper_UrlTest');
+        $suite->addTestSuite('Zend_View_Helper_UserAgentTest');
 
         return $suite;
     }

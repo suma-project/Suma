@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Test
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: MysqlIntegrationTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 require_once "AbstractTestCase.php";
@@ -26,7 +26,7 @@ require_once "AbstractTestCase.php";
  * @category   Zend
  * @package    Zend_Test
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Test
  */
@@ -57,8 +57,8 @@ class Zend_Test_PHPUnit_Db_Integration_MysqlIntegrationTest extends Zend_Test_PH
         );
 
         $this->dbAdapter = Zend_Db::factory('pdo_mysql', $params);
-        $this->dbAdapter->query("DROP TABLE foo");
-        $this->dbAdapter->query("DROP TABLE bar");
+        $this->dbAdapter->query("DROP TABLE IF EXISTS foo");
+        $this->dbAdapter->query("DROP TABLE IF EXISTS bar");
         $this->dbAdapter->query(
             'CREATE TABLE foo (id INT(10) AUTO_INCREMENT PRIMARY KEY, foo VARCHAR(255), bar VARCHAR(255), baz VARCHAR(255)) AUTO_INCREMENT=1'
         );

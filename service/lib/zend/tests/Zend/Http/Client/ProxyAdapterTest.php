@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Http_Client
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: ProxyAdapterTest.php 24818 2012-05-28 18:49:53Z rob $
+ * @version    $Id$
  */
 
 require_once dirname(__FILE__) . '/SocketTest.php';
@@ -35,7 +35,7 @@ require_once 'Zend/Http/Client/Adapter/Proxy.php';
  * @category   Zend
  * @package    Zend_Http_Client
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Http
  * @group      Zend_Http_Client

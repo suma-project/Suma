@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id $
  */
@@ -27,7 +27,7 @@ require_once 'Zend/Db/Statement/TestCommon.php';
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Db
  * @group      Zend_Db_Statement
@@ -92,7 +92,7 @@ class Zend_Db_Statement_OracleTest extends Zend_Db_Statement_TestCommon
             $stmt->nextRowset();
             $this->fail('Expected to catch Zend_Db_Statement_Oracle_Exception');
         } catch (Zend_Exception $e) {
-            $this->assertType('Zend_Db_Statement_Oracle_Exception', $e,
+            $this->assertTrue($e instanceof Zend_Db_Statement_Oracle_Exception,
                 'Expecting object of type Zend_Db_Statement_Oracle_Exception, got '.get_class($e));
             $this->assertEquals('HYC00 Optional feature not implemented', $e->getMessage());
         }

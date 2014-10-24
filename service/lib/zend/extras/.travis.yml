@@ -1,0 +1,32 @@
+language: php
+
+php:
+  - 5.2
+  - 5.3
+  - 5.4
+  - 5.5
+  - 5.6
+  - hhvm
+
+env: TMPDIR=/tmp
+
+before_install:
+ - phpenv rehash
+ - if [[ "$TRAVIS_PHP_VERSION" == "5.2" ]]; then pecl install -a phar; fi
+ - phpenv rehash
+ - sh ./tests/install_dependencies.sh
+ - phpenv rehash
+
+before_script:
+ - if [[ "$TRAVIS_PHP_VERSION" == "5.2" ]]; then git clone https://github.com/zendframework/zf1; cp -rf zf1/library/Zend library/Zend; cp -rf zf1/tests/Zend tests/Zend; fi
+ - if [[ "$TRAVIS_PHP_VERSION" != "5.2" ]]; then composer require zendframework/zendframework1:1.12.*@dev; composer install; fi
+ - if [[ "$TRAVIS_PHP_VERSION" != "5.2" ]]; then cp -rf vendor/zendframework/zendframework1/library/Zend library/Zend; fi
+ - if [[ "$TRAVIS_PHP_VERSION" != "5.2" ]]; then cp -rf vendor/zendframework/zendframework1/tests/Zend tests/Zend; fi
+
+script:
+ - cd tests/
+ - php runalltests.php
+
+matrix:
+  allow_failures:
+   - php: hhvm

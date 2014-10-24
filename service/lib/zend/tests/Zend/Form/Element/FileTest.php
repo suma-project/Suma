@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Form
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: FileTest.php 25225 2013-01-17 15:59:16Z frosch $
+ * @version    $Id$
  */
 
 // Call Zend_Form_Element_FileTest::main() if this source file is executed directly.
@@ -39,12 +39,20 @@ require_once 'Zend/View.php';
  * @category   Zend
  * @package    Zend_Form
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Form
  */
 class Zend_Form_Element_FileTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @var Zend_Form_Element_File
+     */
+    protected $element;
+
+    /**
+     * @var bool
+     */
     protected $_errorOccurred = false;
 
     /**
@@ -510,8 +518,10 @@ class Zend_Form_Element_FileTest extends PHPUnit_Framework_TestCase
         );
         $this->element->setTransferAdapter('Bar');
         $test = $this->element->getTransferAdapter();
+        
+        $expectedType = 'Zend\Form\Element\FileTest\Adapter\Bar';
         $this->assertTrue(
-            $test instanceof \Zend\Form\Element\FileTest\Adapter\Bar
+            $test instanceof $expectedType
         );
     }
 
@@ -531,6 +541,41 @@ class Zend_Form_Element_FileTest extends PHPUnit_Framework_TestCase
 
         $this->assertTrue(
             $this->element->getValidator('NotEmpty') instanceof Zend_Validate_NotEmpty
+        );
+    }
+
+    /**
+     * @group GH-247
+     */
+    public function testCallbackFunctionAtHtmlTag()
+    {
+        $this->assertEquals(
+            array(
+                 'callback' => array(
+                     'Zend_Form_Element_File',
+                     'resolveElementId',
+                 ),
+            ),
+            $this->element->getDecorator('HtmlTag')->getOption('id')
+        );
+    }
+
+    /**
+     * @group GH-247
+     */
+    public function testDefaultDecoratorOrder()
+    {
+        $expected = array(
+            'Zend_Form_Decorator_File',
+            'Zend_Form_Decorator_Errors',
+            'Zend_Form_Decorator_Description',
+            'Zend_Form_Decorator_HtmlTag',
+            'Zend_Form_Decorator_Label',
+        );
+
+        $this->assertEquals(
+            $expected,
+            array_keys($this->element->getDecorators())
         );
     }
 }

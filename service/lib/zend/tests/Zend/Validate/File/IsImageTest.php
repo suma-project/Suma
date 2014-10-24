@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Validate_File
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: IsImageTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 // Call Zend_Validate_File_IsImageTest::main() if this source file is executed directly.
@@ -36,7 +36,7 @@ require_once 'Zend/Validate/File/IsImage.php';
  * @category   Zend
  * @package    Zend_Validate_File
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Validate
  */
@@ -178,13 +178,19 @@ class Zend_Validate_File_IsImageTest extends PHPUnit_Framework_TestCase
             $this->markTestSkipped('This PHP Version has no finfo installed');
         }
 
+        if (version_compare(PHP_VERSION, '5.3', '>=')) {
+            $magicFile = dirname(__FILE__) . '/_files/magic-php53.mime';
+        } else {
+            $magicFile = dirname(__FILE__) . '/_files/magic.mime';
+        }
+
         $validator = new Zend_Validate_File_IsImage(array(
             'image/gif',
             'image/jpg',
-            'magicfile' => dirname(__FILE__) . '/_files/magic.mime',
+            'magicfile' => $magicFile,
             'headerCheck' => true));
 
-        $this->assertEquals(dirname(__FILE__) . '/_files/magic.mime', $validator->getMagicFile());
+        $this->assertEquals($magicFile, $validator->getMagicFile());
         $this->assertTrue($validator->getHeaderCheck());
         $this->assertEquals('image/gif,image/jpg', $validator->getMimeType());
     }

@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Log
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: MailTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 // Call Zend_Log_Writer_MailTest::main() if this source file is executed directly.
@@ -43,15 +43,15 @@ require_once 'Zend/Mail/Transport/Exception.php';
 /** Zend_View_Exception */
 require_once 'Zend/View/Exception.php';
 
-/** For some reason these classed have to be manually loaded, because PHPUnit fails to autoload them */
-require_once 'PHPUnit/Framework/MockObject/Stub/Exception.php';
+/** Zend_Mail_Transport_Abstract */
+require_once 'Zend/Mail/Transport/Abstract.php';
 
 
 /**
  * @category   Zend
  * @package    Zend_Log
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Log
  */
@@ -319,7 +319,7 @@ class Zend_Log_Writer_MailTest extends PHPUnit_Framework_TestCase
     	);
 
     	$writer = Zend_Log_Writer_Mail::factory($config);
-    	$this->assertType('Zend_Log_Writer_Mail', $writer);
+    	$this->assertTrue($writer instanceof Zend_Log_Writer_Mail);
 
     	$writer->write($this->_getEvent());
     	$writer->shutdown();
@@ -358,7 +358,7 @@ class Zend_Log_Writer_MailTest extends PHPUnit_Framework_TestCase
     	);
 
     	$writer = Zend_Log_Writer_Mail::factory($config);
-    	$this->assertType('Zend_Log_Writer_Mail', $writer);
+    	$this->assertTrue($writer instanceof Zend_Log_Writer_Mail);
     }
 
     /**
@@ -444,7 +444,7 @@ class Zend_Log_Writer_MailTest extends PHPUnit_Framework_TestCase
     	);
 
     	$writer = Zend_Log_Writer_Mail::factory($config);
-    	$this->assertType('Zend_Log_Formatter_Simple', $writer->getLayoutFormatter());
+    	$this->assertTrue($writer->getLayoutFormatter() instanceof Zend_Log_Formatter_Simple);
     }
 
     /**
@@ -458,7 +458,7 @@ class Zend_Log_Writer_MailTest extends PHPUnit_Framework_TestCase
     	);
 
     	$writer = Zend_Log_Writer_Mail::factory($config);
-    	$this->assertType('Zend_Log_Writer_Mail', $writer);
+    	$this->assertTrue($writer instanceof Zend_Log_Writer_Mail);
     }
 
     /**

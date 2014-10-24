@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Test
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: DbStatementTest.php 25024 2012-07-30 15:08:15Z rob $
+ * @version    $Id$
  */
 
 require_once "Zend/Test/DbAdapter.php";
@@ -27,7 +27,7 @@ require_once "Zend/Test/DbStatement.php";
  * @category   Zend
  * @package    Zend_Test
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Test
  */
@@ -52,7 +52,7 @@ class Zend_Test_DbStatementTest extends PHPUnit_Framework_TestCase
 
         $stmt = Zend_Test_DbStatement::createSelectStatement($rows);
 
-        $this->assertType('Zend_Test_DbStatement', $stmt);
+        $this->assertTrue($stmt instanceof Zend_Test_DbStatement);
         $this->assertEquals($rows, $stmt->fetchAll());
     }
 
@@ -60,7 +60,7 @@ class Zend_Test_DbStatementTest extends PHPUnit_Framework_TestCase
     {
         $stmt = Zend_Test_DbStatement::createInsertStatement(1234);
 
-        $this->assertType('Zend_Test_DbStatement', $stmt);
+        $this->assertTrue($stmt instanceof Zend_Test_DbStatement);
         $this->assertEquals(1234, $stmt->rowCount());
     }
 
@@ -68,7 +68,7 @@ class Zend_Test_DbStatementTest extends PHPUnit_Framework_TestCase
     {
         $stmt = Zend_Test_DbStatement::createUpdateStatement(1234);
 
-        $this->assertType('Zend_Test_DbStatement', $stmt);
+        $this->assertTrue($stmt instanceof Zend_Test_DbStatement);
         $this->assertEquals(1234, $stmt->rowCount());
     }
 
@@ -76,7 +76,7 @@ class Zend_Test_DbStatementTest extends PHPUnit_Framework_TestCase
     {
         $stmt = Zend_Test_DbStatement::createDeleteStatement(1234);
 
-        $this->assertType('Zend_Test_DbStatement', $stmt);
+        $this->assertTrue($stmt instanceof Zend_Test_DbStatement);
         $this->assertEquals(1234, $stmt->rowCount());
     }
 
@@ -145,7 +145,7 @@ class Zend_Test_DbStatementTest extends PHPUnit_Framework_TestCase
         $stmt->append($row);
 
         $object = $stmt->fetchObject();
-        $this->assertType('stdClass', $object);
+        $this->assertTrue($object instanceof stdClass);
         $this->assertEquals('bar', $object->foo);
         $this->assertEquals('baz', $object->bar);
     }

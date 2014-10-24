@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Soap
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: server1.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 require_once "Zend/Soap/AutoDiscover.php";
@@ -28,7 +28,7 @@ require_once "Zend/Soap/Wsdl/Strategy/ArrayOfTypeComplex.php";
  * @category   Zend
  * @package    Zend_Soap
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Soap_Service_Server1
@@ -61,7 +61,7 @@ class Zend_Soap_Service_Server1
  * @category   Zend
  * @package    Zend_Soap
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Soap_Wsdl_ComplexTypeB
@@ -80,7 +80,7 @@ class Zend_Soap_Wsdl_ComplexTypeB
  * @category   Zend
  * @package    Zend_Soap
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Soap_Wsdl_ComplexTypeA

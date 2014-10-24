@@ -16,7 +16,7 @@
  * @category   ZendX
  * @package    ZendX_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: $
  */
@@ -57,7 +57,7 @@ PHPUnit_Util_Filter::addFileToFilter(__FILE__);
  * @category   ZendX
  * @package    ZendX_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class ZendX_Db_TestSetup extends PHPUnit_Framework_TestCase
@@ -108,7 +108,7 @@ abstract class ZendX_Db_TestSetup extends PHPUnit_Framework_TestCase
             $conn = $this->_db->getConnection();
         } catch (Zend_Exception $e) {
             $this->_db = null;
-            $this->assertType('Zend_Db_Adapter_Exception', $e,
+            $this->asserTrue($e instanceof Zend_Db_Adapter_Exception,
                 'Expecting Zend_Db_Adapter_Exception, got ' . get_class($e));
             $this->markTestSkipped($e->getMessage());
         }

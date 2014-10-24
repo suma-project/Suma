@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Oauth
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -27,7 +27,7 @@ require_once 'Zend/Oauth/Config.php';
  * @category   Zend
  * @package    Zend_Oauth
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Oauth
  * @group      Zend_Oauth_Token
@@ -39,7 +39,7 @@ class Zend_Oauth_Token_AccessTest extends PHPUnit_Framework_TestCase
     {
         $response = new Zend_Http_Response(200, array());
         $token = new Zend_Oauth_Token_Access($response);
-        $this->assertType('Zend_Http_Response', $token->getResponse());
+        $this->assertTrue($token->getResponse() instanceof Zend_Http_Response);
     }
 
     public function testConstructorParsesRequestTokenFromResponseBody()

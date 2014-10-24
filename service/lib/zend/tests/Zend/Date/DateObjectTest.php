@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Date
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: DateObjectTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 /**
@@ -29,7 +29,7 @@ require_once 'Zend/Date.php';
  * @category   Zend
  * @package    Zend_Date
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Date
  */
@@ -556,7 +556,18 @@ class Zend_Date_DateObjectTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($date->set("Mon, 15 Aug 2005 15:52:01 I", Zend_Date::RFC_2822) instanceof Zend_Date);
         $this->assertTrue($date->set("Mon, 15 Aug 2005 15:52:01 Z", Zend_Date::RFC_2822) instanceof Zend_Date);
     }
+
+    public function testToStringShouldEqualWithAndWithoutPhpFormat()
+    {
+        $date = new Zend_Date('22.05.2014');
+        $date->setTime('12:00');
+        $date->setTimezone('America/Los_Angeles');
     
+        $this->assertEquals(
+            $date->toString(Zend_Date::ATOM),
+            $date->toString(DateTime::ATOM, 'php')
+        );
+    }
 }
 
 class Zend_Date_DateObjectTestHelper extends Zend_Date

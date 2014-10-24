@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Acl
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: AclTest.php 25024 2012-07-30 15:08:15Z rob $
+ * @version    $Id$
  */
 
 require_once 'Zend/Acl.php';
@@ -30,7 +30,7 @@ require_once dirname(__FILE__) . '/_files/MockAssertion.php';
  * @package    Zend_Acl
  * @subpackage UnitTests
  * @group      Zend_Acl
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Acl_AclTest extends PHPUnit_Framework_TestCase
@@ -75,7 +75,7 @@ class Zend_Acl_AclTest extends PHPUnit_Framework_TestCase
     {
         $role = $this->_acl->addRole('area')
                           ->getRole('area');
-        $this->assertType('Zend_Acl_Role', $role);
+        $this->assertTrue($role instanceof Zend_Acl_Role);
         $this->assertEquals('area', $role->getRoleId());
     }
 
@@ -279,7 +279,7 @@ class Zend_Acl_AclTest extends PHPUnit_Framework_TestCase
     {
         $resource = $this->_acl->addResource('area')
                           ->get('area');
-        $this->assertType('Zend_Acl_Resource', $resource);
+        $this->assertTrue($resource instanceof Zend_Acl_Resource);
         $this->assertEquals('area', $resource->getResourceId());
     }
 
@@ -1158,8 +1158,8 @@ class Zend_Acl_AclTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($acl->isAllowed($user, $blogPost, 'modify'), 'Assertion should return false');
 
         // check to see if the last assertion has the proper objets
-        $this->assertType('Zend_Acl_UseCase1_User', $assertion->lastAssertRole, 'Assertion did not recieve proper role object');
-        $this->assertType('Zend_Acl_UseCase1_BlogPost', $assertion->lastAssertResource, 'Assertion did not recieve proper resource object');
+        $this->assertTrue($assertion->lastAssertRole instanceof Zend_Acl_UseCase1_User, 'Assertion did not recieve proper role object');
+        $this->assertTrue($assertion->lastAssertResource instanceof Zend_Acl_UseCase1_BlogPost, 'Assertion did not recieve proper resource object');
 
     }
 

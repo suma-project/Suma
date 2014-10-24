@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Form
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: MultiselectTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 // Call Zend_Form_Element_MultiselectTest::main() if this source file is executed directly.
@@ -35,7 +35,7 @@ require_once 'Zend/Translate.php';
  * @category   Zend
  * @package    Zend_Form
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Form
  */
@@ -51,6 +51,11 @@ class Zend_Form_Element_MultiselectTest extends PHPUnit_Framework_TestCase
         $suite  = new PHPUnit_Framework_TestSuite("Zend_Form_Element_MultiselectTest");
         $result = PHPUnit_TextUI_TestRunner::run($suite);
     }
+
+    /**
+     * @var Zend_Form_Element_Multiselect
+     */
+    public $element;
 
     /**
      * Sets up the fixture, for example, open a network connection.
@@ -341,6 +346,35 @@ class Zend_Form_Element_MultiselectTest extends PHPUnit_Framework_TestCase
         if (strtolower(substr(PHP_OS, 0, 3)) == 'win' && version_compare(PHP_VERSION, '5.1.4', '=')) {
             $this->markTestIncomplete('Error occurs for PHP 5.1.4 on Windows');
         }
+    }
+
+    /**
+     * @group ZF-11667
+     */
+    public function testSimilarErrorMessagesForMultiElementAreNotDuplicated()
+    {
+        $this->element->setConcatJustValuesInErrorMessage(true);
+
+        // create element with 4 checkboxes
+        $this->element->setMultiOptions(array(
+            'multiOptions' => array(
+                array('key' => 'a', 'value' => 'A'),
+                array('key' => 'b', 'value' => 'B'),
+                array('key' => 'c', 'value' => 'C'),
+                array('key' => 'd', 'value' => 'D'),
+            )
+        ));
+
+        // check 3 of them
+        $this->element->setValue(array('A', 'B', 'D'));
+
+        // later on, fails some validation on submit
+        $this->element->addError('some error! %value%');
+
+        $this->assertEquals(
+            array('some error! A; B; D'),
+            $this->element->getMessages()
+        );
     }
 }
 

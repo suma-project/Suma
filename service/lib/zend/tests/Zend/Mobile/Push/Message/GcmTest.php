@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Mobile
  * @subpackage Push
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id $
  */
@@ -26,7 +26,7 @@ require_once 'Zend/Mobile/Push/Message/Gcm.php';
  * @category   Zend
  * @package    Zend_Mobile
  * @subpackage Push
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Mobile
  * @group      Zend_Mobile_Push
@@ -105,6 +105,14 @@ class Zend_Mobile_Push_Message_GcmTest extends PHPUnit_Framework_TestCase
         $msg = new Zend_Mobile_Push_Message_Gcm();
         $msg->setTtl(10);
         $this->assertEquals(10, $msg->getTtl());
+    }
+
+    public function testTtlSendMessageOnZero()
+    {
+        $msg = new Zend_Mobile_Push_Message_Gcm();
+        $msg->setTtl(0);
+        $this->assertEquals(0, $msg->getTtl());
+        $this->assertEquals('{"time_to_live":0}', $msg->toJson());
     }
 
     /**

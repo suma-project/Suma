@@ -16,7 +16,7 @@
  * @package    Zend_Service_WindowsAzure
  * @subpackage UnitTests
  * @version    $Id$
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -31,7 +31,6 @@ if (!defined('PHPUnit_MAIN_METHOD')) {
  */
 require_once dirname(__FILE__) . '/../../../../TestHelper.php';
 require_once dirname(__FILE__) . '/../../../../TestConfiguration.php.dist';
-require_once 'PHPUnit/Framework/TestCase.php';
 
 /** Zend_Service_SqlAzure_Management_Client */
 require_once 'Zend/Service/SqlAzure/Management/Client.php';
@@ -41,7 +40,7 @@ require_once 'Zend/Service/SqlAzure/Management/Client.php';
  * @package    Zend_Service_SqlAzure
  * @subpackage UnitTests
  * @version    $Id$
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_SqlAzure_Management_ManagementClientTest extends PHPUnit_Framework_TestCase

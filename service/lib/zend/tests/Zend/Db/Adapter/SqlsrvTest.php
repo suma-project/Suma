@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: SqlsrvTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 /**
@@ -34,7 +34,7 @@ require_once 'Zend/Db/Adapter/Sqlsrv.php';
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Db_Adapter_SqlsrvTest extends Zend_Db_Adapter_TestCommon
@@ -98,7 +98,7 @@ class Zend_Db_Adapter_SqlsrvTest extends Zend_Db_Adapter_TestCommon
         $this->assertEquals(1, $rowsAffected);
 
         $lastInsertId = $this->_db->lastInsertId();
-        $this->assertType('string', $lastInsertId);
+        $this->assertTrue(is_string($lastInsertId));
         $this->assertEquals('5', (string) $lastInsertId,
             'Expected new id to be 5');
 
@@ -557,5 +557,16 @@ class Zend_Db_Adapter_SqlsrvTest extends Zend_Db_Adapter_TestCommon
     public function getDriver()
     {
         return 'Sqlsrv';
+    }
+
+    /**
+     * test that quote() escapes null byte character
+     * in a string.
+     */
+    public function testAdapterQuoteNullByteCharacter()
+    {
+        $string = "1\0";
+        $value  = $this->_db->quote($string);
+        $this->assertEquals("'1\\000'", $value);
     }
 }

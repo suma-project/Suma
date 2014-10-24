@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Service_StrikeIron
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: BaseTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 /**
@@ -29,7 +29,7 @@ require_once 'Zend/Service/StrikeIron/BaseTest.php';
  * @category   Zend
  * @package    Zend_Service_StrikeIron
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Service
  * @group      Zend_Service_StrikeIron
@@ -68,7 +68,7 @@ class Zend_Service_StrikeIron_BaseTest extends PHPUnit_Framework_TestCase
         // soapclient instance without hitting the network
         $base = new Zend_Service_StrikeIron_Base(array('options' => array('location' => '',
                                                                           'uri'      => '')));
-        $this->assertType('SOAPClient', $base->getSoapClient());
+        $this->assertTrue($base->getSoapClient() instanceof SOAPClient);
     }
 
     public function testDefaultSoapHeadersHasTheLicenseInfoHeader()
@@ -76,11 +76,11 @@ class Zend_Service_StrikeIron_BaseTest extends PHPUnit_Framework_TestCase
         $this->base->foo();
         $headers = $this->soapClient->calls[0]['headers'];
 
-        $this->assertType('array', $headers);
+        $this->assertTrue(is_array($headers));
         $this->assertEquals(1, count($headers));
         $header = $headers[0];
 
-        $this->assertType('SoapHeader', $header);
+        $this->assertTrue($header instanceof SoapHeader);
         $this->assertEquals('LicenseInfo', $header->name);
         $this->assertEquals('user', $header->data['RegisteredUser']['UserID']);
         $this->assertEquals('pass', $header->data['RegisteredUser']['Password']);
@@ -135,11 +135,11 @@ class Zend_Service_StrikeIron_BaseTest extends PHPUnit_Framework_TestCase
 
         $headers = $this->soapClient->calls[0]['headers'];
 
-        $this->assertType('array', $headers);
+        $this->assertTrue(is_array($headers));
         $this->assertEquals(1, count($headers));
         $header = $headers[0];
 
-        $this->assertType('SoapHeader', $header);
+        $this->assertTrue($header instanceof SoapHeader);
         $this->assertEquals('LicenseInfo', $header->name);
         $this->assertEquals('foo', $header->data['RegisteredUser']['UserID']);
         $this->assertEquals('bar', $header->data['RegisteredUser']['Password']);
@@ -156,7 +156,7 @@ class Zend_Service_StrikeIron_BaseTest extends PHPUnit_Framework_TestCase
 
         $headers = $this->soapClient->calls[0]['headers'];
 
-        $this->assertType('array', $headers);
+        $this->assertTrue(is_array($headers));
         $this->assertEquals(3, count($headers));  // these 2 + default LicenseInfo
     }
 
@@ -173,8 +173,9 @@ class Zend_Service_StrikeIron_BaseTest extends PHPUnit_Framework_TestCase
 
     public function testMethodResultWrappingAnyObject()
     {
-        $this->assertType('Zend_Service_StrikeIron_Decorator',
-                          $this->base->returnTheObject());
+        $this->assertTrue(
+            $this->base->returnTheObject() instanceof Zend_Service_StrikeIron_Decorator
+        );
     }
 
     public function testMethodResultWrappingAnObjectAndSelectingDefaultResultProperty()
@@ -188,7 +189,7 @@ class Zend_Service_StrikeIron_BaseTest extends PHPUnit_Framework_TestCase
             $this->base->throwTheException();
             $this->fail();
         } catch (Exception $e) {
-            $this->assertType('Zend_Service_StrikeIron_Exception', $e);
+            $this->assertTrue($e instanceof Zend_Service_StrikeIron_Exception);
             $this->assertEquals('Exception: foo', $e->getMessage());
             $this->assertEquals(43, $e->getCode());
         }
@@ -255,7 +256,7 @@ class Zend_Service_StrikeIron_BaseTest extends PHPUnit_Framework_TestCase
  * @category   Zend
  * @package    Zend_Service_StrikeIron
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_StrikeIron_BaseTest_MockSoapClient

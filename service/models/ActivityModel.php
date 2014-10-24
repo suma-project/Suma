@@ -70,7 +70,7 @@ class ActivityModel
     public function update($data)
     {
         $hash = array('title'             =>  isset($data['title']) ? $data['title'] : $this->getMetadata('title'),
-                      'enabled'           =>  (isset($data['enabled']) && is_bool($data['enabled'])) ? $data['enabled'] : $this->getMetadata('enabled'),
+                      'enabled'           =>  (isset($data['enabled']) && is_bool($data['enabled'])) ? (int)$data['enabled'] : $this->getMetadata('enabled'),
                       'fk_activity_group' =>  isset($data['group']) ? $data['group'] : $this->getMetadata('fk_activity_group'),
                       'description'       =>  isset($data['desc']) ? $data['desc'] : $this->getMetadata('desc'),
                       'rank'              =>  isset($data['rank']) ? $data['rank'] : $this->getMetadata('rank'));
@@ -81,7 +81,7 @@ class ActivityModel
 
     public function enable()
     {
-        $data = array('enabled'  =>  true);
+        $data = array('enabled'  =>  1);
         $this->_db->update('activity', $data, 'id = '.$this->_id);
         Globals::getLog()->info('ACTIVITY ENABLED - id: '.$this->_id.', init: '.$this->getMetadata('fk_initiative'));
         $this->jettisonMetadata();
@@ -89,7 +89,7 @@ class ActivityModel
 
     public function disable()
     {
-        $data = array('enabled'  =>  false);
+        $data = array('enabled'  =>  0);
         $this->_db->update('activity', $data, 'id = '.$this->_id);
         Globals::getLog()->info('ACTIVITY DISABLED - id: '.$this->_id.', init: '.$this->getMetadata('fk_initiative'));
         $this->jettisonMetadata();
@@ -120,7 +120,7 @@ class ActivityModel
             if (empty($existingActivity)) {
                 $hash = array(
                     'title'             =>  $data['title'],
-                    'enabled'           =>  isset($data['enabled']) ? $data['enabled'] : false,
+                    'enabled'           =>  isset($data['enabled']) ? (int)$data['enabled'] : 0,
                     'fk_activity_group' =>  $data['group'],
                     'description'       =>  isset($data['desc']) ? $data['desc'] : null,
                     'rank'              =>  isset($data['rank']) ? $data['rank'] : null
@@ -164,8 +164,8 @@ class ActivityModel
                         'title'    => $activityGroup['title'],
                         'desc'     => $activityGroup['desc'],
                         'rank'     => $actGroupKey,
-                        'required' => $activityGroup['required'],
-                        'allowMulti' => $activityGroup['allowMulti']
+                        'required' => (int)$activityGroup['required'],
+                        'allowMulti' => (int)$activityGroup['allowMulti']
                         );
 
                     if (is_numeric($activityGroup['id']))
@@ -198,7 +198,7 @@ class ActivityModel
                             $actData = Array(
                                 'title'   => $activity['title'],
                                 'desc'    => $activity['desc'],
-                                'enabled' => $activity['enabled'],
+                                'enabled' => (int)$activity['enabled'],
                                 'group'   => $activityGroupID,
                                 'rank'    => $actKey
                                 );

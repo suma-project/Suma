@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Application
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -34,7 +34,7 @@ require_once 'Zend/Application/Resource/Useragent.php';
  * @category   Zend
  * @package    Zend_Application
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Application
  */
@@ -101,7 +101,7 @@ class Zend_Application_Resource_UseragentTest extends PHPUnit_Framework_TestCase
         $resource->init();
         $ua      = $resource->getUserAgent();
         $storage = $ua->getStorage();
-        $this->assertType('Zend_Http_UserAgent_Storage_NonPersistent', $storage);
+        $this->assertTrue($storage instanceof Zend_Http_UserAgent_Storage_NonPersistent);
     }
 
     public function testInjectsUserAgentIntoViewHelperWhenViewResourcePresent()

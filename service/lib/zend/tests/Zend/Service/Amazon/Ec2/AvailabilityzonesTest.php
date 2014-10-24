@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Service_Amazon
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: AvailabilityzonesTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 require_once 'Zend/Http/Client.php';
@@ -30,7 +30,7 @@ require_once 'Zend/Service/Amazon/Ec2/Availabilityzones.php';
  * @category   Zend
  * @package    Zend_Service_Amazon
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Service
  * @group      Zend_Service_Amazon
@@ -96,7 +96,7 @@ class Zend_Service_Amazon_Ec2_AvailabilityzonesTest extends PHPUnit_Framework_Te
         $this->adapter->setResponse($rawHttpResponse);
 
         $response = $this->Zend_Service_Amazon_Ec2_Availabilityzones->describe('us-east-1a');
-        $this->assertType('array', $response);
+        $this->assertTrue(is_array($response));
         $this->assertEquals('us-east-1a', $response[0]['zoneName']);
         $this->assertEquals('available', $response[0]['zoneState']);
     }
@@ -132,7 +132,7 @@ class Zend_Service_Amazon_Ec2_AvailabilityzonesTest extends PHPUnit_Framework_Te
 
         $response = $this->Zend_Service_Amazon_Ec2_Availabilityzones->describe();
 
-        $this->assertType('array', $response);
+        $this->assertTrue(is_array($response));
 
         $arrExpected = array('us-east-1a', 'us-east-1b', 'us-east-1c');
         foreach ($response as $k => $node) {

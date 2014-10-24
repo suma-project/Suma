@@ -15,9 +15,9 @@
  * @category    ZendX
  * @package     ZendX_JQuery
  * @subpackage  View
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license     http://framework.zend.com/license/new-bsd     New BSD License
- * @version     $Id: DialogContainer.php 20744 2010-01-29 09:55:19Z beberlei $
+ * @version     $Id$
  */
 
 /**
@@ -30,7 +30,7 @@ require_once "ZendX/JQuery/View/Helper/UiWidget.php";
  *
  * @package    ZendX_JQuery
  * @subpackage View
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class ZendX_JQuery_View_Helper_DialogContainer extends ZendX_JQuery_View_Helper_UiWidget

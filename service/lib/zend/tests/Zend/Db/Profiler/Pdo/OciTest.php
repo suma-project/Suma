@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: OciTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 
@@ -34,7 +34,7 @@ require_once 'Zend/Db/Profiler/TestCommon.php';
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Db
  * @group      Zend_Db_Profiler
@@ -65,7 +65,7 @@ class Zend_Db_Profiler_Pdo_OciTest extends Zend_Db_Profiler_TestCommon
         $this->_db->query("UPDATE $bugs SET $bug_status = :status", array(':status'=>'FIXED'));
 
         $qps = $prof->getQueryProfiles();
-        $this->assertType('array', $qps, 'Expecting some query profiles, got none');
+        $this->assertTrue(is_array($qps), 'Expecting some query profiles, got none');
         foreach ($qps as $qp) {
             $qtype = $qp->getQueryType();
             $this->assertEquals($queryType, $qtype,

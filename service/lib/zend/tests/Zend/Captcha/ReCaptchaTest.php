@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Captcha
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: ReCaptchaTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 // Call Zend_Captcha_ReCaptchaTest::main() if this source file is executed directly.
@@ -32,7 +32,7 @@ require_once 'Zend/View.php';
  * @category   Zend
  * @package    Zend_Captcha
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Captcha
  */
@@ -184,6 +184,24 @@ class Zend_Captcha_ReCaptchaTest extends PHPUnit_Framework_TestCase
     {
         $captcha = new Zend_Captcha_ReCaptcha;
         $this->assertEquals('Captcha_ReCaptcha', $captcha->getDecorator());
+    }
+
+    /**
+     * @group ZF-12086
+     */
+    public function testAllowsSettingCustomTranslationsOptionOnServiceObject()
+    {
+        $options = array(
+            'instructions_visual' => 'Wpisz dwa wyrazy:',
+            'instructions_audio'  => 'Wpisz uslyszany tekst:'
+        );
+
+        $captcha = new Zend_Captcha_ReCaptcha;
+        $captcha->setOption('custom_translations', $options);
+        $this->assertEquals(
+            $options,
+            $captcha->getService()->getOption('custom_translations')
+        );
     }
 }
 

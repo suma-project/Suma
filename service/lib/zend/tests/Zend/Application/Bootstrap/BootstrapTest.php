@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Application
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: BootstrapTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 if (!defined('PHPUnit_MAIN_METHOD')) {
@@ -33,7 +33,7 @@ require_once 'Zend/Loader/Autoloader.php';
  * @category   Zend
  * @package    Zend_Application
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Application
  */
@@ -161,6 +161,29 @@ class Zend_Application_Bootstrap_BootstrapTest extends PHPUnit_Framework_TestCas
         );
         $al = $bootstrap->getResourceLoader();
         $this->assertEquals('Default', $al->getNamespace());
+    }
+
+    /**
+     * @group ZF-9435
+     */
+    public function testBootstrapShouldInitializeModuleAutoloaderWhenNamespaceSpecifiedAsEmpty()
+    {
+        $application = new Zend_Application(
+            'testing',
+            array(
+                 'appnamespace' => null,
+            )
+        );
+        $bootstrap   = new Zend_Application_Bootstrap_Bootstrap(
+            $application
+        );
+
+        // Tests
+        $this->assertTrue(
+            $bootstrap->getResourceLoader() instanceof Zend_Application_Module_Autoloader
+        );
+        $al = $bootstrap->getResourceLoader();
+        $this->assertEquals('', $al->getNamespace());
     }
 
     /**

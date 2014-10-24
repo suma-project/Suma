@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Service_Ebay
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: OnlineTest.php 22824 2010-08-09 18:59:54Z renanbr $
  */
@@ -29,7 +29,7 @@ require_once 'Zend/Service/Ebay/Finding.php';
  * @category   Zend
  * @package    Zend_Service_Ebay
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_Ebay_Finding_OnlineTest extends PHPUnit_Framework_TestCase
@@ -62,7 +62,7 @@ class Zend_Service_Ebay_Finding_OnlineTest extends PHPUnit_Framework_TestCase
             $response = $this->_finding->findItemsByKeywords('harry+potter');
             $this->fail('No exception found');
         } catch (Exception $e) {
-            $this->assertType('Zend_Service_Ebay_Finding_Exception', $e);
+            $this->assertTrue($e instanceof Zend_Service_Ebay_Finding_Exception);
             $this->assertContains('eBay error', $e->getMessage());
         }
     }
@@ -134,7 +134,7 @@ class Zend_Service_Ebay_Finding_OnlineTest extends PHPUnit_Framework_TestCase
             $page1->page($this->_finding, 0);
             $this->fail('No exception found for page #0');
         } catch (Exception $e) {
-            $this->assertType('Zend_Service_Ebay_Finding_Exception', $e);
+            $this->assertTrue($e instanceof Zend_Service_Ebay_Finding_Exception);
             $this->assertContains('Page number ', $e->getMessage());
         }
 
@@ -144,7 +144,7 @@ class Zend_Service_Ebay_Finding_OnlineTest extends PHPUnit_Framework_TestCase
             $page1->page($this->_finding, $number);
             $this->fail("No exception found for page out of range #$number");
         } catch (Exception $e) {
-            $this->assertType('Zend_Service_Ebay_Finding_Exception', $e);
+            $this->assertTrue($e instanceof Zend_Service_Ebay_Finding_Exception);
             $this->assertContains('Page number ', $e->getMessage());
         }
 
@@ -175,7 +175,7 @@ class Zend_Service_Ebay_Finding_OnlineTest extends PHPUnit_Framework_TestCase
  * @category   Zend
  * @package    Zend_Service_Ebay
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Service
  * @group      Zend_Service_Ebay

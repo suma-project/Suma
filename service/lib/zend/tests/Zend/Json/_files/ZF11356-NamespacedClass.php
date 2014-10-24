@@ -14,9 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Json
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: ZF11356-NamespacedClass.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 namespace Zend\JsonTest\ZF11356;
@@ -26,7 +26,7 @@ namespace Zend\JsonTest\ZF11356;
  *
  * @category   Zend
  * @package    Zend_Json
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class NamespacedClass extends \ArrayIterator

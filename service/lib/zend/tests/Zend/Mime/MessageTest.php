@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Mime
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: MessageTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 /**
@@ -29,7 +29,7 @@ require_once 'Zend/Mime/Message.php';
  * @category   Zend
  * @package    Zend_Mime
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Mime
  */
@@ -62,13 +62,13 @@ class Zend_Mime_MessageTest extends PHPUnit_Framework_TestCase
     {
         $msg = new Zend_Mime_Message();  // No Parts
         $m = $msg->getMime();
-        $this->assertType('Zend_Mime', $m);
+        $this->assertTrue($m instanceof Zend_Mime);
 
         $msg = new Zend_Mime_Message();  // No Parts
         $mime = new Zend_Mime('1234');
         $msg->setMime($mime);
         $m2 = $msg->getMime();
-        $this->assertType('Zend_Mime', $m2);
+        $this->assertTrue($m2 instanceof Zend_Mime);
         $this->assertEquals('1234', $m2->boundary());
     }
 

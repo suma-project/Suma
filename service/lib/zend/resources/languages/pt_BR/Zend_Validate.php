@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Translate
  * @subpackage Ressource
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id:$
  */
@@ -68,7 +68,7 @@ return array(
 
     // Zend_Validate_Db_Abstract
     "No record matching %value% was found" => "Não foram encontrados registros para %value%",
-    "A record matching %value% was found" => "Um registro foi encontrado para %value%",
+    "A record matching '%value%' was found" => "Um registro foi encontrado para %value%",
 
     // Zend_Validate_Digits
     "Invalid type given, value should be string, integer or float" => "O tipo especificado é inválido, o valor deve ser string, inteiro ou float",

@@ -1,0 +1,182 @@
+<html>
+    <head>
+        <script
+            type="text/javascript"
+            src="../../../../js/jquery-1.4.2.min.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../../syntax_highlighter/scripts/shCore.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../../syntax_highlighter/scripts/shBrushJScript.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../../syntax_highlighter/scripts/shBrushPhp.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../../syntax_highlighter/scripts/shBrushXml.js">
+        </script>
+        <link
+            href="../../../../syntax_highlighter/styles/shCore.css" rel="stylesheet"
+            type="text/css"
+        />
+        <link
+            href="../../../../syntax_highlighter/styles/shCoreEclipse.css"
+            rel="stylesheet" type="text/css"
+        />
+        <link
+            href="../../../../syntax_highlighter/styles/shThemeWordpress.css"
+            rel="stylesheet" type="text/css"
+        />
+    </head>
+    <body>
+        <pre class="brush: php">&lt;?php
+/**
+ * Zend Framework
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://framework.zend.com/license/new-bsd
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@zend.com so we can send you a copy immediately.
+ *
+ * @category    ZendX
+ * @package     ZendX_JQuery
+ * @subpackage  View
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license     http://framework.zend.com/license/new-bsd     New BSD License
+ * @version     $Id$
+ */
+
+/**
+ * @see Zend_Registry
+ */
+require_once &quot;Zend/Registry.php&quot;;
+
+/**
+ * @see ZendX_JQuery_View_Helper_UiWidget
+ */
+require_once &quot;ZendX/JQuery/View/Helper/UiWidget.php&quot;;
+
+/**
+ * jQuery Date Picker View Helper
+ *
+ * @uses 	   Zend_View_Helper_FormText
+ * @package    ZendX_JQuery
+ * @subpackage View
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ */
+class ZendX_JQuery_View_Helper_DatePicker extends ZendX_JQuery_View_Helper_UiWidget
+{
+    /**
+     * Create a jQuery UI Widget Date Picker
+     *
+     * @link   http://docs.jquery.com/UI/Datepicker
+     * @param  string $id
+     * @param  string $value
+     * @param  array  $params jQuery Widget Parameters
+     * @param  array  $attribs HTML Element Attributes
+     * @return string
+     */
+    public function datePicker($id, $value = null, array $params = array(), array $attribs = array())
+    {
+        $attribs = $this-&gt;_prepareAttributes($id, $value, $attribs);
+
+        if(!isset($params['dateFormat']) &amp;&amp; Zend_Registry::isRegistered('Zend_Locale')) {
+            $params['dateFormat'] = self::resolveZendLocaleToDatePickerFormat();
+        }
+
+        // TODO: Allow translation of DatePicker Text Values to get this action from client to server
+        $params = ZendX_JQuery::encodeJson($params);
+
+        $js = sprintf('%s(&quot;#%s&quot;).datepicker(%s);',
+                ZendX_JQuery_View_Helper_JQuery::getJQueryHandler(),
+                $attribs['id'],
+                $params
+        );
+
+        $this-&gt;jquery-&gt;addOnLoad($js);
+
+        return $this-&gt;view-&gt;formText($id, $value, $attribs);
+    }
+
+    /**
+     * A Check for Zend_Locale existance has already been done in {@link datePicker()}
+     * this function only resolves the default format from Zend Locale to
+     * a jQuery Date Picker readable format. This function can be potentially buggy
+     * because of its easy nature and is therefore stripped from the core functionality
+     * to be easily overriden.
+     *
+     * @param  string $format
+     * @throws ZendX_JQuery_Exception
+     * @return string
+     */
+    public static function resolveZendLocaleToDatePickerFormat($format=null)
+    {
+        if($format == null) {
+            $locale = Zend_Registry::get('Zend_Locale');
+            if( !($locale instanceof Zend_Locale) ) {
+                require_once &quot;ZendX/JQuery/Exception.php&quot;;
+                throw new ZendX_JQuery_Exception(&quot;Cannot resolve Zend Locale format by default, no application wide locale is set.&quot;);
+            }
+            /**
+             * @see Zend_Locale_Format
+             */
+            require_once &quot;Zend/Locale/Format.php&quot;;
+            $format = Zend_Locale_Format::getDateFormat($locale);
+        }
+
+        $dateFormat = array(
+            'EEEEE' =&gt; 'D', 'EEEE' =&gt; 'DD', 'EEE' =&gt; 'D', 'EE' =&gt; 'D', 'E' =&gt; 'D',
+            'MMMM' =&gt; 'MM', 'MMM' =&gt; 'M', 'MM' =&gt; 'mm', 'M' =&gt; 'm',
+            'YYYYY' =&gt; 'yy', 'YYYY' =&gt; 'yy', 'YYY' =&gt; 'yy', 'YY' =&gt; 'y', 'Y' =&gt; 'yy',
+            'yyyyy' =&gt; 'yy', 'yyyy' =&gt; 'yy', 'yyy' =&gt; 'yy', 'yy' =&gt; 'y', 'y' =&gt; 'yy',
+            'G' =&gt; '', 'e' =&gt; '', 'a' =&gt; '', 'h' =&gt; '', 'H' =&gt; '', 'm' =&gt; '',
+            's' =&gt; '', 'S' =&gt; '', 'z' =&gt; '', 'Z' =&gt; '', 'A' =&gt; '',
+        );
+
+        $newFormat = &quot;&quot;;
+        $isText = false;
+        $i = 0;
+        while($i &lt; strlen($format)) {
+            $chr = $format[$i];
+            if($chr == '&quot;' || $chr == &quot;'&quot;) {
+                $isText = !$isText;
+            }
+            $replaced = false;
+            if($isText == false) {
+                foreach($dateFormat AS $zl =&gt; $jql) {
+                    if(substr($format, $i, strlen($zl)) == $zl) {
+                        $chr = $jql;
+                        $i += strlen($zl);
+                        $replaced = true;
+                    }
+                }
+            }
+            if($replaced == false) {
+                $i++;
+            }
+            $newFormat .= $chr;
+        }
+
+        return $newFormat;
+    }
+}
+</pre>
+        <script type="text/javascript">
+             SyntaxHighlighter.all();
+             jQuery('.gutter div').each(function(key, data){
+                jQuery(data).prepend('<a name="L'+jQuery(data).text()+'"/>');
+             });
+        </script>
+    </body>
+</html>

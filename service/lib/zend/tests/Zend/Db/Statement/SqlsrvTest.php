@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: SqlsrvTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 require_once 'Zend/Db/Statement/TestCommon.php';
@@ -27,7 +27,7 @@ require_once 'Zend/Db/Statement/TestCommon.php';
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Db
  * @group      Zend_Db_Statement
@@ -183,7 +183,7 @@ class Zend_Db_Statement_SqlsrvTest extends Zend_Db_Statement_TestCommon
         $errors = $stmt->errorInfo();
         $this->assertEquals(2, count($errors));
         $this->assertEquals($stmt->errorCode(), $errors[0]);
-        $this->assertType('string', $errors[1]);
+        $this->assertTrue(is_string($errors[1]));
     }
 
     public function getDriver()

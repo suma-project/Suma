@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Validate_File
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: MimeTypeTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 // Call Zend_Validate_File_MimeTypeTest::main() if this source file is executed directly.
@@ -36,7 +36,7 @@ require_once 'Zend/Validate/File/MimeType.php';
  * @category   Zend
  * @package    Zend_Validate_File
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Validate
  */
@@ -236,7 +236,7 @@ class Zend_Validate_File_MimeTypeTest extends PHPUnit_Framework_TestCase
             );
         }
     }
-    
+
     /**
      * @group ZF-11784
      */
@@ -244,10 +244,10 @@ class Zend_Validate_File_MimeTypeTest extends PHPUnit_Framework_TestCase
     {
         $validator = new Zend_Validate_File_MimeType('image/jpeg');
         $this->assertTrue($validator->shouldTryCommonMagicFiles());
-        
+
         $validator->setTryCommonMagicFilesFlag(false);
         $this->assertFalse($validator->shouldTryCommonMagicFiles());
-        
+
         $validator->setTryCommonMagicFilesFlag(true);
         $this->assertTrue($validator->shouldTryCommonMagicFiles());
     }
@@ -257,6 +257,10 @@ class Zend_Validate_File_MimeTypeTest extends PHPUnit_Framework_TestCase
      */
     public function testDisablingTryCommonMagicFilesIgnoresCommonLocations()
     {
+        if (version_compare(PHP_VERSION, '5.3.0', '<')) {
+            $this->markTestSkipped('Behavior is only applicable and testable for PHP 5.3+');
+        }
+
         $filetest = dirname(__FILE__) . '/_files/picture.jpg';
         $files = array(
             'name'     => 'picture.jpg',
@@ -264,13 +268,13 @@ class Zend_Validate_File_MimeTypeTest extends PHPUnit_Framework_TestCase
             'tmp_name' => $filetest,
             'error'    => 0
         );
-        
+
         $validator = new Zend_Validate_File_MimeType(array('image/jpeg', 'image/jpeg; charset=binary'));
-        
+
         $goodEnvironment = $validator->isValid($filetest, $files);
-        
+
         if ($goodEnvironment) {
-            /** 
+            /**
              * The tester's environment has magic files that are properly read by PHP
              * This prevents the test from being relevant in the environment
              */

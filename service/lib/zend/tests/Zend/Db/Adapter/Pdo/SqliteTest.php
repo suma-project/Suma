@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: SqliteTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 
@@ -31,7 +31,7 @@ require_once 'Zend/Db/Adapter/Pdo/TestCommon.php';
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Db
  * @group      Zend_Db_Adapter
@@ -77,7 +77,7 @@ class Zend_Db_Adapter_Pdo_SqliteTest extends Zend_Db_Adapter_Pdo_TestCommon
             $stmt = $this->_db->query($select);
             $result2 = $stmt->fetchAll();
         } catch (Zend_Exception $e) {
-            $this->assertType('Zend_Db_Statement_Exception', $e,
+            $this->assertTrue($e instanceof Zend_Db_Statement_Exception,
                 'Expecting object of type Zend_Db_Statement_Exception, got '.get_class($e));
             $this->fail('Unexpected exception '.get_class($e).' received: '.$e->getMessage());
         }
@@ -200,4 +200,51 @@ class Zend_Db_Adapter_Pdo_SqliteTest extends Zend_Db_Adapter_Pdo_TestCommon
         return 'Pdo_Sqlite';
     }
 
+    public function testAdapterOptionFetchMode()
+    {
+        $params = $this->_util->getParams();
+
+        $params['options'] = array(
+            Zend_Db::FETCH_MODE => 'obj'
+        );
+        $db = Zend_Db::factory($this->getDriver(), $params);
+
+        //two extra lines to make SQLite work
+        $db->query('CREATE TABLE zfproducts (id)');
+        $db->insert('zfproducts', array('id' => 1));
+
+        $select = $db->select()->from('zfproducts');
+        $row = $db->fetchRow($select);
+        $this->assertTrue($row instanceof stdClass);
+    }
+
+    protected function _testAdapterAlternateStatement($stmtClass)
+    {
+        $ip = get_include_path();
+        $dir = dirname(__FILE__) . DIRECTORY_SEPARATOR .  '..' . DIRECTORY_SEPARATOR . '_files';
+        $newIp = $dir . PATH_SEPARATOR . $ip;
+        set_include_path($newIp);
+
+        $params = $this->_util->getParams();
+
+        $params['options'] = array(
+            Zend_Db::AUTO_QUOTE_IDENTIFIERS => false
+        );
+        $db = Zend_Db::factory($this->getDriver(), $params);
+        $db->getConnection();
+        $db->setStatementClass($stmtClass);
+
+        $currentStmtClass = $db->getStatementClass();
+        $this->assertEquals($stmtClass, $currentStmtClass);
+
+        //extra fix for SQLite
+        $db->query('CREATE TABLE zfbugs (id)');
+
+        $bugs = $this->_db->quoteIdentifier('zfbugs');
+
+        $stmt = $db->prepare("SELECT COUNT(*) FROM $bugs");
+
+        $this->assertTrue($stmt instanceof $stmtClass,
+            'Expecting object of type ' . $stmtClass . ', got ' . get_class($stmt));
+    }
 }

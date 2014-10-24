@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id $
  */
@@ -30,7 +30,7 @@ require_once 'Zend/Db/Table/Select/TestCommon.php';
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Db
  * @group      Zend_Db_Table
@@ -61,6 +61,10 @@ class Zend_Db_Table_Select_Pdo_SqliteTest extends Zend_Db_Table_Select_TestCommo
 
     public function testSelectGroupBy()
     {
+        //SQLite doesn't need different test from 5.3
+        if (version_compare(PHP_VERSION, '5.3.0', '>=')) {
+            return parent::testSelectGroupBy();
+        }
         $select = $this->_selectGroupBy();
         $stmt = $this->_db->query($select);
         $result = $stmt->fetchAll();
@@ -78,6 +82,10 @@ class Zend_Db_Table_Select_Pdo_SqliteTest extends Zend_Db_Table_Select_TestCommo
 
     public function testSelectGroupByQualified()
     {
+        //SQLite doesn't need different test from 5.3
+        if (version_compare(PHP_VERSION, '5.3.0', '>=')) {
+            return parent::testSelectGroupByQualified();
+        }
         $select = $this->_selectGroupByQualified();
         $stmt = $this->_db->query($select);
         $result = $stmt->fetchAll();
@@ -95,6 +103,10 @@ class Zend_Db_Table_Select_Pdo_SqliteTest extends Zend_Db_Table_Select_TestCommo
 
     public function testSelectHaving()
     {
+        //SQLite doesn't need different test from 5.3
+        if (version_compare(PHP_VERSION, '5.3.0', '>=')) {
+            return parent::testSelectHaving();
+        }
         $select = $this->_selectHaving();
         $stmt = $this->_db->query($select);
         $result = $stmt->fetchAll();
@@ -108,6 +120,10 @@ class Zend_Db_Table_Select_Pdo_SqliteTest extends Zend_Db_Table_Select_TestCommo
 
     public function testSelectHavingWithParameter()
     {
+        //SQLite doesn't need different test from 5.3
+        if (version_compare(PHP_VERSION, '5.3.0', '>=')) {
+            return parent::testSelectHavingWithParameter();
+        }
         $select = $this->_selectHavingWithParameter();
         $stmt = $this->_db->query($select);
         $result = $stmt->fetchAll();
@@ -121,6 +137,10 @@ class Zend_Db_Table_Select_Pdo_SqliteTest extends Zend_Db_Table_Select_TestCommo
 
     public function testSelectHavingOr()
     {
+        //SQLite doesn't need different test from 5.3
+        if (version_compare(PHP_VERSION, '5.3.0', '>=')) {
+            return parent::testSelectHavingOr();
+        }
         $select = $this->_selectHavingOr();
         $stmt = $this->_db->query($select);
         $result = $stmt->fetchAll();
@@ -136,6 +156,10 @@ class Zend_Db_Table_Select_Pdo_SqliteTest extends Zend_Db_Table_Select_TestCommo
 
     public function testSelectHavingOrWithParameter()
     {
+        //SQLite doesn't need different test from 5.3
+        if (version_compare(PHP_VERSION, '5.3.0', '>=')) {
+            return parent::testSelectHavingOrWithParameter();
+        }
         $select = $this->_selectHavingOrWithParameter();
         $stmt = $this->_db->query($select);
         $result = $stmt->fetchAll();
@@ -152,6 +176,74 @@ class Zend_Db_Table_Select_Pdo_SqliteTest extends Zend_Db_Table_Select_TestCommo
     public function getDriver()
     {
         return 'Pdo_Sqlite';
+    }
+
+    public function testSqlInjectionWithOrder()
+    {
+        $select = $this->_db->select();
+        $select->from(array('p' => 'products'))->order('MD5(1);select');
+        $this->assertEquals('SELECT "p".* FROM "products" AS "p" ORDER BY "MD5(1);select" ASC', $select->assemble());
+
+        $select = $this->_db->select();
+        $select->from(array('p' => 'products'))->order('name;select;MD5(1)');
+        $this->assertEquals('SELECT "p".* FROM "products" AS "p" ORDER BY "name;select;MD5(1)" ASC', $select->assemble());
+    }
+
+    /**
+     * @group ZF-378
+     */
+    public function testOrderOfSingleFieldWithDirection()
+    {
+        $select = $this->_db->select();
+        $select->from(array ('p' => 'product'))
+            ->order('productId DESC');
+
+        $expected = 'SELECT "p".* FROM "product" AS "p" ORDER BY "productId" DESC';
+        $this->assertEquals($expected, $select->assemble(),
+            'Order direction of field failed');
+    }
+
+    /**
+     * @group ZF-378
+     */
+    public function testOrderOfMultiFieldWithDirection()
+    {
+        $select = $this->_db->select();
+        $select->from(array ('p' => 'product'))
+            ->order(array ('productId DESC', 'userId ASC'));
+
+        $expected = 'SELECT "p".* FROM "product" AS "p" ORDER BY "productId" DESC, "userId" ASC';
+        $this->assertEquals($expected, $select->assemble(),
+            'Order direction of field failed');
+    }
+
+    /**
+     * @group ZF-378
+     */
+    public function testOrderOfMultiFieldButOnlyOneWithDirection()
+    {
+        $select = $this->_db->select();
+        $select->from(array ('p' => 'product'))
+            ->order(array ('productId', 'userId DESC'));
+
+        $expected = 'SELECT "p".* FROM "product" AS "p" ORDER BY "productId" ASC, "userId" DESC';
+        $this->assertEquals($expected, $select->assemble(),
+            'Order direction of field failed');
+    }
+
+    /**
+     * @group ZF-378
+     * @group ZF-381
+     */
+    public function testOrderOfConditionalFieldWithDirection()
+    {
+        $select = $this->_db->select();
+        $select->from(array ('p' => 'product'))
+            ->order('IF("productId" > 5,1,0) ASC');
+
+        $expected = 'SELECT "p".* FROM "product" AS "p" ORDER BY IF("productId" > 5,1,0) ASC';
+        $this->assertEquals($expected, $select->assemble(),
+            'Order direction of field failed');
     }
 
 }

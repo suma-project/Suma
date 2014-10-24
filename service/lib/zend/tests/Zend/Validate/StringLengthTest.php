@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: StringLengthTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 /**
@@ -29,7 +29,7 @@ require_once 'Zend/Validate/StringLength.php';
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Validate
  */
@@ -59,7 +59,11 @@ class Zend_Validate_StringLengthTest extends PHPUnit_Framework_TestCase
      */
     public function testBasic()
     {
-        iconv_set_encoding('internal_encoding', 'UTF-8');
+        if (PHP_VERSION_ID < 50600) {
+            iconv_set_encoding('internal_encoding', 'UTF-8');
+        } else {
+            ini_set('default_charset', 'UTF-8');
+        }
         /**
          * The elements of each array are, in order:
          *      - minimum length
@@ -161,7 +165,11 @@ class Zend_Validate_StringLengthTest extends PHPUnit_Framework_TestCase
      */
     public function testDifferentEncodingWithValidator()
     {
-        iconv_set_encoding('internal_encoding', 'UTF-8');
+        if (PHP_VERSION_ID < 50600) {
+            iconv_set_encoding('internal_encoding', 'UTF-8');
+        } else {
+            ini_set('default_charset', 'UTF-8');
+        }
         $validator = new Zend_Validate_StringLength(2, 2, 'UTF-8');
         $this->assertEquals(true, $validator->isValid('ab'));
 

@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Ldap
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: OfflineTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 /**
@@ -33,7 +33,7 @@ require_once 'Zend/Ldap/Node.php';
  * @category   Zend
  * @package    Zend_Ldap
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Ldap
  * @group      Zend_Ldap_Node
@@ -42,7 +42,7 @@ class Zend_Ldap_Node_OfflineTest extends Zend_Ldap_TestCase
 {
     protected function _assertLocalDateTimeString($timestamp, $value)
     {
-        $this->assertEquals(date('YmdHisO', $timestamp), $value);
+        $this->assertEquals(date('YmdHis\Z', $timestamp), $value);
     }
 
     protected function _assertUtcDateTimeString($localTimestamp, $value)
@@ -56,7 +56,7 @@ class Zend_Ldap_Node_OfflineTest extends Zend_Ldap_TestCase
     {
         $data=$this->_createTestArrayData();
         $node=Zend_Ldap_Node::fromArray($data);
-        $this->assertType('Zend_Ldap_Node', $node);
+        $this->assertTrue($node instanceof Zend_Ldap_Node);
         $this->assertFalse($node->isAttached());
         $this->assertFalse($node->willBeDeleted());
         $this->assertFalse($node->willBeMoved());
@@ -68,7 +68,7 @@ class Zend_Ldap_Node_OfflineTest extends Zend_Ldap_TestCase
         $data=$this->_createTestArrayData();
         $data['dn']=Zend_Ldap_Dn::fromString($data['dn']);
         $node=Zend_Ldap_Node::fromArray($data);
-        $this->assertType('Zend_Ldap_Node', $node);
+        $this->assertTrue($node instanceof Zend_Ldap_Node);
         $this->assertFalse($node->isAttached());
     }
 
@@ -107,7 +107,7 @@ class Zend_Ldap_Node_OfflineTest extends Zend_Ldap_TestCase
         $data=$this->_createTestArrayData();
         $data['dn']=Zend_Ldap_Dn::fromString($data['dn']);
         $node=Zend_Ldap_Node::fromArray($data);
-        $this->assertType('Zend_Ldap_Node', $node);
+        $this->assertTrue($node instanceof Zend_Ldap_Node);
         $this->assertFalse($node->isAttached());
         unset($data['dn']);
         $this->assertEquals($data, $node->getData());
@@ -273,6 +273,9 @@ class Zend_Ldap_Node_OfflineTest extends Zend_Ldap_TestCase
 
     public function testGetSetAndDeleteMethods()
     {
+        $timezone = date_default_timezone_get();
+        date_default_timezone_set('GMT');
+
         $node=$this->_createTestNode();
 
         $node->setAttribute('key', 'value1');
@@ -311,6 +314,8 @@ class Zend_Ldap_Node_OfflineTest extends Zend_Ldap_TestCase
         $this->assertEquals(0, count($node->getAttribute('userPassword')));
         $this->assertTrue($node->existsAttribute('userPassword', true));
         $this->assertFalse($node->existsAttribute('userPassword', false));
+
+        date_default_timezone_set($timezone);
     }
 
     public function testOverloading()
@@ -346,7 +351,7 @@ class Zend_Ldap_Node_OfflineTest extends Zend_Ldap_TestCase
     public function testAttributeAccessDnGet()
     {
         $node=$this->_createTestNode();
-        $this->assertType('string', $node->dn);
+        $this->assertTrue(is_string($node->dn));
         $this->assertEquals($node->getDn()->toString(), $node->dn);
     }
 

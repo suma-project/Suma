@@ -15,7 +15,7 @@
  * @category   ZendX
  * @package    ZendX_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -35,15 +35,15 @@ class ZendX_Db_Table_Relationships_FirebirdTest extends Zend_Db_Table_Relationsh
         $select = $table->select()->where('"account_name" = ?', 'goofy');
 
         $childRows = $table->fetchAll("$bug_id = 1");
-        $this->assertType('Zend_Db_Table_Rowset_Abstract', $childRows,
+        $this->assertTrue($childRows instanceof Zend_Db_Table_Rowset_Abstract,
             'Expecting object of type Zend_Db_Table_Rowset_Abstract, got '.get_class($childRows));
 
         $childRow1 = $childRows->current();
-        $this->assertType('Zend_Db_Table_Row_Abstract', $childRow1,
+        $this->assertTrue($childRow1 instanceof Zend_Db_Table_Row_Abstract,
             'Expecting object of type Zend_Db_Table_Row_Abstract, got '.get_class($childRow1));
 
         $parentRow = $childRow1->findParentRow('Zend_Db_Table_TableAccounts', null, $select);
-        $this->assertType('Zend_Db_Table_Row_Abstract', $parentRow,
+        $this->assertTrue($parentRow instanceof Zend_Db_Table_Row_Abstract,
             'Expecting object of type Zend_Db_Table_Row_Abstract, got '.get_class($parentRow));
 
         $this->assertEquals('goofy', $parentRow->$account_name);
@@ -58,15 +58,15 @@ class ZendX_Db_Table_Relationships_FirebirdTest extends Zend_Db_Table_Relationsh
         $select = $table->select()->where('"account_name" = ?', 'goofy');
 
         $childRows = $table->fetchAll("$bug_id = 1");
-        $this->assertType('Zend_Db_Table_Rowset_Abstract', $childRows,
+        $this->assertTrue($childRows instanceof Zend_Db_Table_Rowset_Abstract,
             'Expecting object of type Zend_Db_Table_Rowset_Abstract, got '.get_class($childRows));
 
         $childRow1 = $childRows->current();
-        $this->assertType('Zend_Db_Table_Row_Abstract', $childRow1,
+        $this->assertTrue($childRow1 instanceof Zend_Db_Table_Row_Abstract,
             'Expecting object of type Zend_Db_Table_Row_Abstract, got '.get_class($childRow1));
 
         $parentRow = $childRow1->findParentZend_Db_Table_TableAccounts($select);
-        $this->assertType('Zend_Db_Table_Row_Abstract', $parentRow,
+        $this->assertTrue($parentRow instanceof Zend_Db_Table_Row_Abstract,
             'Expecting object of type Zend_Db_Table_Row_Abstract, got '.get_class($parentRow));
 
         $this->assertEquals('goofy', $parentRow->$account_name);
@@ -87,7 +87,7 @@ class ZendX_Db_Table_Relationships_FirebirdTest extends Zend_Db_Table_Relationsh
 
         $destRows = $originRow1->findManyToManyRowset('Zend_Db_Table_TableProducts', 'Zend_Db_Table_TableBugsProducts', 
                                                       null, null, $select);
-        $this->assertType('Zend_Db_Table_Rowset_Abstract', $destRows,
+        $this->assertTrue($destRows instanceof Zend_Db_Table_Rowset_Abstract,
             'Expecting object of type Zend_Db_Table_Rowset_Abstract, got '.get_class($destRows));
 
         $this->assertEquals(2, $destRows->count());
@@ -110,7 +110,7 @@ class ZendX_Db_Table_Relationships_FirebirdTest extends Zend_Db_Table_Relationsh
         $originRow1 = $originRows->current();
 
         $destRows = $originRow1->findZend_Db_Table_TableProductsViaZend_Db_Table_TableBugsProducts($select);
-        $this->assertType('Zend_Db_Table_Rowset_Abstract', $destRows,
+        $this->assertTrue($destRows instanceof Zend_Db_Table_Rowset_Abstract,
             'Expecting object of type Zend_Db_Table_Rowset_Abstract, got '.get_class($destRows));
 
         $this->assertEquals(2, $destRows->count());

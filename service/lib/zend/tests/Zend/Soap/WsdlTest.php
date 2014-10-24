@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Soap
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: WsdlTest.php 24602 2012-01-12 22:10:13Z ralph $
+ * @version    $Id$
  */
 
 /** Zend_Soap_Wsdl */
@@ -35,7 +35,7 @@ require_once 'Zend/Soap/Wsdl/Strategy/ArrayOfTypeSequence.php';
  * @category   Zend
  * @package    Zend_Soap
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Soap
  * @group      Zend_Soap_Wsdl

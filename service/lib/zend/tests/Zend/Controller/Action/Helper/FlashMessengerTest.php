@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Controller
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: FlashMessengerTest.php 24784 2012-05-09 15:39:22Z adamlundrigan $
+ * @version    $Id$
  */
 
 // Call Zend_Controller_Action_Helper_FlashMessengerTest::main() if this source file is executed directly.
@@ -38,7 +38,7 @@ require_once dirname(dirname(dirname(__FILE__))) . '/_files/HelperFlashMessenger
  * @category   Zend
  * @package    Zend_Controller
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Controller
  * @group      Zend_Controller_Action
@@ -154,9 +154,12 @@ class Zend_Controller_Action_Helper_FlashMessengerTest extends PHPUnit_Framework
     {
         $this->helper->addMessage('testmessage', 'foobar');
         $this->assertTrue($this->helper->hasCurrentMessages('foobar'));
+
+        $this->helper->addMessage('testmessage2', 'foobar');
+        $this->assertTrue($this->helper->hasCurrentMessages('foobar'));
+
         $foobarMessages = $this->helper->getCurrentMessages('foobar');
-        $this->assertEquals(1, count($foobarMessages));
-        $this->assertEquals('testmessage', array_pop($foobarMessages));
+        $this->assertEquals(array('testmessage', 'testmessage2'), $foobarMessages);
 
         // Ensure it didnt' bleed over into default namespace
         $defaultMessages = $this->helper->getCurrentMessages();

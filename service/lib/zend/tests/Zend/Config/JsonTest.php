@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Config
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -29,7 +29,7 @@ require_once 'Zend/Config/Json.php';
  * @category   Zend
  * @package    Zend_Config
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Config_JsonTest extends PHPUnit_Framework_TestCase
@@ -81,7 +81,7 @@ class Zend_Config_JsonTest extends PHPUnit_Framework_TestCase
     {
         $config = new Zend_Config_Json($this->_iniFileConfig, 'debug');
 
-        $this->assertType('string', $config->special->no);
+        $this->assertTrue(is_string($config->special->no));
         $this->assertEquals('no', $config->special->no);
         $this->assertNull($config->special->null);
         $this->assertFalse($config->special->false);
@@ -188,11 +188,7 @@ class Zend_Config_JsonTest extends PHPUnit_Framework_TestCase
 
     public function testRaisesExceptionOnInvalidJsonMarkup()
     {
-        if (version_compare(PHP_VERSION, '5.3.0', '<')) {
-            $this->setExpectedException('Zend_Config_Exception', 'Error parsing JSON data');
-        } else {
-            $this->setExpectedException('Zend_Json_Exception', 'Syntax');
-        }
+        $this->setExpectedException('Zend_Config_Exception', 'Error parsing JSON data');
         $config = new Zend_Config_Json($this->_iniFileInvalid);
     }
 
@@ -279,11 +275,7 @@ EOJ;
         }
         $json = '{"env":"ZEND_CONFIG_JSON_ENV","path":"ZEND_CONFIG_JSON_ENV_PATH/tests","int":ZEND_CONFIG_JSON_ENV_INT}';
 
-        if (version_compare(PHP_VERSION, '5.3.0', '<')) {
-            $this->setExpectedException('Zend_Config_Exception', 'Error parsing JSON data');
-        } else {
-            $this->setExpectedException('Zend_Json_Exception', 'Syntax');
-        }
+        $this->setExpectedException('Zend_Config_Exception', 'Error parsing JSON data');
         $config = new Zend_Config_Json($json, null, array('ignore_constants' => true));
     }
 }

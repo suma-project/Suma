@@ -17,7 +17,6 @@ dojo.declare("dojox.grid.Selection", null, {
 	selected: null,
 	updating: 0,
 	selectedIndex: -1,
-	rangeStartIndex: -1,
 
 	setMode: function(mode){
 		if(this.selected.length){
@@ -234,14 +233,12 @@ dojo.declare("dojox.grid.Selection", null, {
 		if(this.mode != 'extended'){
 			this.select(inIndex);
 		}else{
-			if(!inShiftKey || this.rangeStartIndex < 0){
-				this.rangeStartIndex = inIndex;
-			}
+			var lastSelected = this.selectedIndex;
 			if(!inCtrlKey){
 				this.deselectAll(inIndex);
 			}
 			if(inShiftKey){
-				this.selectRange(this.rangeStartIndex, inIndex);
+				this.selectRange(lastSelected, inIndex);
 			}else if(inCtrlKey){
 				this.toggleSelect(inIndex);
 			}else{

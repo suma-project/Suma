@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Service_Technorati
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: CosmosResultTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 
@@ -36,7 +36,7 @@ require_once 'Zend/Service/Technorati/CosmosResult.php';
  * @category   Zend
  * @package    Zend_Service_Technorati
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Service
  * @group      Zend_Service_Technorati
@@ -68,19 +68,19 @@ class Zend_Service_Technorati_CosmosResultTest extends Zend_Service_Technorati_T
         $domElements = self::getTestFileElementsAsDom('TestCosmosResultSetSiteLink.xml');
         $object = new Zend_Service_Technorati_CosmosResult($domElements->item(0));
 
-        $this->assertType('Zend_Service_Technorati_Weblog', $object->getWeblog());
+        $this->assertTrue($object->getWeblog() instanceof Zend_Service_Technorati_Weblog);
         $this->assertContains('Gioxx', $object->getWeblog()->getName());
 
-        $this->assertType('Zend_Uri_Http', $object->getNearestPermalink());
+        $this->assertTrue($object->getNearestPermalink() instanceof Zend_Uri_Http);
         $this->assertEquals(Zend_Uri::factory('http://gioxx.org/2007/11/05/il-passaggio-a-mac-le-11-risposte/'), $object->getNearestPermalink());
 
-        $this->assertType('string', $object->getExcerpt());
+        $this->assertTrue(is_string($object->getExcerpt()));
         $this->assertContains('Ho intenzione di prendere il modello bianco', $object->getExcerpt());
 
-        $this->assertType('Zend_Date', $object->getLinkCreated());
+        $this->assertTrue($object->getLinkCreated() instanceof Zend_Date);
         $this->assertEquals(new Zend_Date('2007-11-11 20:07:11 GMT'), $object->getLinkCreated());
 
-        $this->assertType('Zend_Uri_Http', $object->getLinkUrl());
+        $this->assertTrue($object->getLinkUrl() instanceof Zend_Uri_Http);
         $this->assertEquals(Zend_Uri::factory('http://www.simonecarletti.com/blog/2007/04/parallels-desktop-overview.php'), $object->getLinkUrl());
 
         // test an other element to prevent cached values
@@ -105,10 +105,10 @@ class Zend_Service_Technorati_CosmosResultTest extends Zend_Service_Technorati_T
         $domElements = self::getTestFileElementsAsDom('TestCosmosResultSetSiteWeblog.xml');
         $object = new Zend_Service_Technorati_CosmosResult($domElements->item(0));
 
-        $this->assertType('Zend_Service_Technorati_Weblog', $object->getWeblog());
+        $this->assertTrue($object->getWeblog() instanceof Zend_Service_Technorati_Weblog);
         $this->assertContains('Simone Carletti', $object->getWeblog()->getName());
 
-        $this->assertType('Zend_Uri_Http', $object->getLinkUrl());
+        $this->assertTrue($object->getLinkUrl() instanceof Zend_Uri_Http);
         $this->assertEquals(Zend_Uri::factory('http://www.simonecarletti.com'), $object->getLinkUrl());
 
         // test an other element to prevent cached values

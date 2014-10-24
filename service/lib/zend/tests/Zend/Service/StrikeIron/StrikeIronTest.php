@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Service_StrikeIron
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: StrikeIronTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 /**
@@ -29,7 +29,7 @@ require_once 'Zend/Service/StrikeIron.php';
  * @category   Zend
  * @package    Zend_Service_StrikeIron
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Service
  * @group      Zend_Service_StrikeIron
@@ -58,7 +58,7 @@ class Zend_Service_StrikeIron_StrikeIronTest extends PHPUnit_Framework_TestCase
     public function testFactoryReturnsServiceByStrikeIronClass()
     {
         $base = $this->strikeIron->getService(array('class' => 'Base'));
-        $this->assertType('Zend_Service_StrikeIron_Base', $base);
+        $this->assertTrue($base instanceof Zend_Service_StrikeIron_Base);
         $this->assertSame(null, $base->getWsdl());
         $this->assertSame($this->soapClient, $base->getSoapClient());
     }
@@ -67,7 +67,7 @@ class Zend_Service_StrikeIron_StrikeIronTest extends PHPUnit_Framework_TestCase
     {
         $class = 'Zend_Service_StrikeIron_StrikeIronTest_StubbedBase';
         $stub = $this->strikeIron->getService(array('class' => $class));
-        $this->assertType($class, $stub);
+        $this->assertTrue($stub instanceof $class);
     }
 
     public function testFactoryReturnsServiceByWsdl()
@@ -104,7 +104,7 @@ class Zend_Service_StrikeIron_StrikeIronTest extends PHPUnit_Framework_TestCase
  * @category   Zend
  * @package    Zend_Service_StrikeIron
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_StrikeIron_StrikeIronTest_StubbedBase

@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Oauth
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: OauthTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 require_once 'Zend/Oauth.php';
@@ -28,7 +28,7 @@ class Test_Http_Client_19485876 extends Zend_Http_Client {}
  * @category   Zend
  * @package    Zend_Oauth
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Oauth
  */
@@ -43,7 +43,7 @@ class Zend_OauthTest extends PHPUnit_Framework_TestCase
     public function testCanSetCustomHttpClient()
     {
         Zend_Oauth::setHttpClient(new Test_Http_Client_19485876());
-        $this->assertType('Test_Http_Client_19485876', Zend_Oauth::getHttpClient());
+        $this->assertTrue(Zend_Oauth::getHttpClient() instanceof Test_Http_Client_19485876);
     }
 
     public function testGetHttpClientResetsParameters()

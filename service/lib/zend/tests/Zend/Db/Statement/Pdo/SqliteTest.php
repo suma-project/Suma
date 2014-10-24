@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id $
  */
@@ -27,7 +27,7 @@ require_once 'Zend/Db/Statement/Pdo/TestCommon.php';
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Db
  * @group      Zend_Db_Statement
@@ -55,7 +55,7 @@ class Zend_Db_Statement_Pdo_SqliteTest extends Zend_Db_Statement_Pdo_TestCommon
     public function testStatementCanReturnDriverStatement()
     {
         $statement = parent::testStatementCanReturnDriverStatement();
-        $this->assertType('PDOStatement', $statement->getDriverStatement());
+        $this->assertTrue($statement->getDriverStatement() instanceof PDOStatement);
     }
 
     public function getDriver()

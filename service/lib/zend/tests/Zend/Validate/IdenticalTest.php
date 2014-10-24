@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: IdenticalTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 // Call Zend_Validate_IdenticalTest::main() if this source file is executed directly.
@@ -35,12 +35,17 @@ require_once 'Zend/Validate/Identical.php';
  * @package    Zend
  * @subpackage UnitTests
  * @uses       Zend_Validate_Identical
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Validate
  */
 class Zend_Validate_IdenticalTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @var Zend_Validate_Identical
+     */
+    private $validator;
+
     public static function main()
     {
         $suite  = new PHPUnit_Framework_TestSuite('Zend_Validate_IdenticalTest');

@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Service_Amazon
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: KeypairTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 require_once 'Zend/Http/Client.php';
@@ -30,7 +30,7 @@ require_once 'Zend/Service/Amazon/Ec2/Keypair.php';
  * @category   Zend
  * @package    Zend_Service_Amazon
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Service
  * @group      Zend_Service_Amazon
@@ -130,7 +130,7 @@ class Zend_Service_Amazon_Ec2_KeypairTest extends PHPUnit_Framework_TestCase
 
         $response = $this->Zend_Service_Amazon_Ec2_Keypair->create('example-key-name');
 
-        $this->assertType('array', $response);
+        $this->assertTrue(is_array($response));
 
         $this->assertEquals('example-key-name', $response['keyName']);
         $this->assertEquals('1f:51:ae:28:bf:89:e9:d8:1f:25:5d:37:2d:7d:b8:ca:9f:f5:f1:6f', $response['keyFingerprint']);
@@ -233,7 +233,7 @@ class Zend_Service_Amazon_Ec2_KeypairTest extends PHPUnit_Framework_TestCase
         $this->adapter->setResponse($rawHttpResponse);
 
         $response = $this->Zend_Service_Amazon_Ec2_Keypair->delete('myfakekeyname');
-        $this->assertType('boolean', $response);
+        $this->assertTrue(is_bool($response));
         $this->assertFalse($response);
     }
 
@@ -255,7 +255,7 @@ class Zend_Service_Amazon_Ec2_KeypairTest extends PHPUnit_Framework_TestCase
         $this->adapter->setResponse($rawHttpResponse);
 
         $response = $this->Zend_Service_Amazon_Ec2_Keypair->delete('example-key-name');
-        $this->assertType('boolean', $response);
+        $this->assertTrue(is_bool($response));
         $this->assertTrue($response);
     }
 }

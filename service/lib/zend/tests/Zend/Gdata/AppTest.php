@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Gdata
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id $
  */
@@ -28,7 +28,7 @@ require_once 'Zend/Gdata/TestUtility/MockHttpClient.php';
  * @category   Zend
  * @package    Zend_Gdata_App
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Gdata
  * @group      Zend_Gdata_App
@@ -601,7 +601,7 @@ class Zend_Gdata_AppTest extends PHPUnit_Framework_TestCase
         try { 
             $eq = $this->service->newEventQuery();
             restore_error_handler();
-            $this->assertType('Zend_Gdata_Calendar_EventQuery', $eq);
+            $this->assertTrue($eq instanceof Zend_Gdata_Calendar_EventQuery);
         } catch ( Zend_Gdata_App_Exception $ex ) {
             // If we catch this exception, it means the ErrorException resulting
             // from the include_once E_NOTICE was caught in the right place,

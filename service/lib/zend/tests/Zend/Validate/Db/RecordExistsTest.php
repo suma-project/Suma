@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: RecordExistsTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 
@@ -60,7 +60,7 @@ require_once dirname(__FILE__) . '/_files/Db/MockHasResult.php';
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Validate
  */
@@ -190,8 +190,8 @@ class Zend_Validate_Db_RecordExistsTest extends PHPUnit_Framework_TestCase
     {
         Zend_Db_Table_Abstract::setDefaultAdapter($this->_adapterHasResult);
         $validator = new Zend_Validate_Db_RecordExists(array('table' => 'users',
-                                                               'schema' => 'my'),
-                                                         'field1');
+                                                             'schema' => 'my',
+                                                             'field' => 'field1'));
         $this->assertTrue($validator->isValid('value1'));
     }
 
@@ -204,8 +204,8 @@ class Zend_Validate_Db_RecordExistsTest extends PHPUnit_Framework_TestCase
     {
         Zend_Db_Table_Abstract::setDefaultAdapter($this->_adapterNoResult);
         $validator = new Zend_Validate_Db_RecordExists(array('table' => 'users',
-                                                               'schema' => 'my'),
-                                                         'field1');
+                                                             'schema' => 'my',
+                                                             'field' => 'field1'));
         $this->assertFalse($validator->isValid('value1'));
     }
 

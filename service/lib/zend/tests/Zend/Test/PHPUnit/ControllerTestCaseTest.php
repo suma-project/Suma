@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Test
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: ControllerTestCaseTest.php 25205 2013-01-10 11:23:25Z frosch $
+ * @version    $Id$
  */
 
 // Call Zend_Test_PHPUnit_ControllerTestCaseTest::main() if this source file is executed directly.
@@ -43,7 +43,7 @@ require_once 'Zend/Controller/Action.php';
  * @category   Zend
  * @package    Zend_Test
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Test
  * @group      Zend_Test_PHPUnit

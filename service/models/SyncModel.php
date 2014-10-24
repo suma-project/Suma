@@ -77,7 +77,7 @@ class SyncModel
                 $logLabel = '';
                 if (isset($session['deleted']))
                 {
-                    $data['deleted'] = true;
+                    $data['deleted'] = 1;
                     $logLabel = 'DELETED ';
                 }
 

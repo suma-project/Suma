@@ -1,0 +1,218 @@
+<html>
+    <head>
+        <script
+            type="text/javascript"
+            src="../../../../js/jquery-1.4.2.min.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../../syntax_highlighter/scripts/shCore.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../../syntax_highlighter/scripts/shBrushJScript.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../../syntax_highlighter/scripts/shBrushPhp.js">
+        </script>
+        <script
+            type="text/javascript"
+            src="../../../../syntax_highlighter/scripts/shBrushXml.js">
+        </script>
+        <link
+            href="../../../../syntax_highlighter/styles/shCore.css" rel="stylesheet"
+            type="text/css"
+        />
+        <link
+            href="../../../../syntax_highlighter/styles/shCoreEclipse.css"
+            rel="stylesheet" type="text/css"
+        />
+        <link
+            href="../../../../syntax_highlighter/styles/shThemeWordpress.css"
+            rel="stylesheet" type="text/css"
+        />
+    </head>
+    <body>
+        <pre class="brush: php">&lt;?php
+/**
+ * Zend Framework
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://framework.zend.com/license/new-bsd
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@zend.com so we can send you a copy immediately.
+ *
+ * @category    ZendX
+ * @package     ZendX_JQuery
+ * @subpackage  View
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license     http://framework.zend.com/license/new-bsd     New BSD License
+ * @version     $Id$
+ */
+
+/**
+ * @see ZendX_JQuery_View_Helper_UiWidget
+ */
+require_once &quot;ZendX/JQuery/View/Helper/UiWidget.php&quot;;
+
+/**
+ * jQuery Accordion View Helper
+ *
+ * @uses 	   Zend_Json
+ * @package    ZendX_JQuery
+ * @subpackage View
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license    http://framework.zend.com/license/new-bsd     New BSD License
+  */
+class ZendX_JQuery_View_Helper_AccordionContainer extends ZendX_JQuery_View_Helper_UiWidget
+{
+    /**
+     * @var array
+     */
+    protected $_panes = array();
+
+    /**
+     * @var string
+     */
+    protected $_elementHtmlTemplate = null;
+
+    /**
+     * Add Accordion Pane for the Accordion-Id
+     *
+     * @param  string $id
+     * @param  string $name
+     * @param  string $content
+     * @param  array  $options
+     * @return ZendX_JQuery_View_Helper_AccordionContainer
+     */
+    public function addPane($id, $name, $content, array $options=array())
+    {
+        if(!isset($this-&gt;_panes[$id])) {
+            $this-&gt;_panes[$id] = array();
+        }
+        if(strlen($name) == 0 &amp;&amp; isset($options['title'])) {
+            $name = $options['title'];
+        }
+        $this-&gt;_panes[$id][] = array('name' =&gt; $name, 'content' =&gt; $content, 'options' =&gt; $options);
+        return $this;
+    }
+
+    /**
+     * Render Accordion with the currently registered elements.
+     *
+     * If no arguments are given, the accordion object is returned so that
+     * chaining the {@link addPane()} function allows to register new elements
+     * for an accordion.
+     *
+     * @link   http://docs.jquery.com/UI/Accordion
+     * @param  string $id
+     * @param  array  $params
+     * @param  array  $attribs
+     * @return string|ZendX_JQuery_View_Helper_AccordionContainer
+     */
+    public function accordionContainer($id=null, array $params=array(), array $attribs=array())
+    {
+        if(0 === func_num_args()) {
+            return $this;
+        }
+
+        if(!isset($attribs['id'])) {
+            $attribs['id'] = $id;
+        }
+
+        $html = &quot;&quot;;
+        if(isset($this-&gt;_panes[$id])) {
+            foreach($this-&gt;_panes[$id] AS $element) {
+                $html .= sprintf($this-&gt;getElementHtmlTemplate(), $element['name'], $element['content']).PHP_EOL;
+            }
+
+            if(count($params) &gt; 0) {
+                $params = ZendX_JQuery::encodeJson($params);
+            } else {
+                $params = &quot;{}&quot;;
+            }
+
+            $js = sprintf('%s(&quot;#%s&quot;).accordion(%s);',
+                ZendX_JQuery_View_Helper_JQuery::getJQueryHandler(),
+                $attribs['id'],
+                $params
+            );
+            $this-&gt;jquery-&gt;addOnLoad($js);
+
+            $html = $this-&gt;getAccordionTemplate($attribs, $html);
+        }
+        return $html;
+    }
+
+    /**
+     * @param  array $attribs
+     * @param  string $html
+     * @return string
+     */
+    protected function getAccordionTemplate($attribs, $html)
+    {
+        if(version_compare($this-&gt;jquery-&gt;getUiVersion(), &quot;1.7.0&quot;) &gt;= 0) {
+            $html = '&lt;div'
+                  . $this-&gt;_htmlAttribs($attribs)
+                  . '&gt;'.PHP_EOL
+                  . $html
+                  . '&lt;/div&gt;'.PHP_EOL;
+        } else {
+            $html = '&lt;ul'
+                  . $this-&gt;_htmlAttribs($attribs)
+                  . '&gt;'.PHP_EOL
+                  . $html
+                  . '&lt;/ul&gt;'.PHP_EOL;
+        }
+        return $html;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getElementHtmlTemplate()
+    {
+        if($this-&gt;_elementHtmlTemplate == null) {
+            if(version_compare($this-&gt;jquery-&gt;getUiVersion(), &quot;1.7.0&quot;) &gt;= 0) {
+                $this-&gt;_elementHtmlTemplate = '&lt;h3&gt;&lt;a href=&quot;#&quot;&gt;%s&lt;/a&gt;&lt;/h3&gt;&lt;div&gt;%s&lt;/div&gt;';
+            } else {
+                $this-&gt;_elementHtmlTemplate = '&lt;li class=&quot;ui-accordion-group&quot;&gt;&lt;a href=&quot;#&quot; class=&quot;ui-accordion-header&quot;&gt;%s&lt;/a&gt;&lt;div class=&quot;ui-accordion-content&quot;&gt;%s&lt;/div&gt;&lt;/li&gt;';
+            }
+        }
+        return $this-&gt;_elementHtmlTemplate;
+    }
+
+    /**
+     * Set the accordion element template
+     *
+     * @param  string $htmlTemplate
+     * @throws ZendX_JQuery_View_Exception
+     * @return ZendX_JQuery_View_Helper_AccordionContainer
+     */
+    public function setElementHtmlTemplate($htmlTemplate)
+    {
+        if(substr_count($htmlTemplate, '%s') != 2) {
+            require_once &quot;ZendX/JQuery/View/Exception.php&quot;;
+            throw new ZendX_JQuery_View_Exception(
+                &quot;Accordion Container HTML Template requires two sprintf() string replace markers '%s'.&quot;
+            );
+        }
+        $this-&gt;_elementHtmlTemplate = $htmlTemplate;
+        return $this;
+    }
+}
+</pre>
+        <script type="text/javascript">
+             SyntaxHighlighter.all();
+             jQuery('.gutter div').each(function(key, data){
+                jQuery(data).prepend('<a name="L'+jQuery(data).text()+'"/>');
+             });
+        </script>
+    </body>
+</html>

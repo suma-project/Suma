@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: IbmTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 
@@ -37,7 +37,7 @@ require_once 'Zend/Db/Adapter/Pdo/Ibm.php';
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Db
  * @group      Zend_Db_Adapter
@@ -85,7 +85,7 @@ class Zend_Db_Adapter_Pdo_IbmTest extends Zend_Db_Adapter_Db2Test
             $sql = $this->_db->limit("SELECT * FROM $products", 1, -1);
             $this->fail('Expected to catch Zend_Db_Adapter_Exception');
         } catch (Zend_Exception $e) {
-            $this->assertType('Zend_Db_Adapter_Exception', $e,
+            $this->assertTrue($e instanceof Zend_Db_Adapter_Exception,
                 'Expecting object of type Zend_Db_Adapter_Exception, got '.get_class($e));
         }
     }

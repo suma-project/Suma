@@ -15,9 +15,9 @@
  * @category    ZendX
  * @package     ZendX_JQuery
  * @subpackage  View
- * @copyright   Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright   Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license     http://framework.zend.com/license/new-bsd     New BSD License
- * @version     $Id: Container.php 25219 2013-01-11 18:16:56Z frosch $
+ * @version     $Id$
  */
 
 /**
@@ -31,7 +31,7 @@ require_once 'ZendX/JQuery.php';
  * @uses       ZendX_JQuery_View_Helper_JQuery_Container
  * @package    ZendX_JQuery
  * @subpackage View
- * @copyright  Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class ZendX_JQuery_View_Helper_JQuery_Container

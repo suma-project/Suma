@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Gdata_Calendar
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id $
  */
@@ -29,7 +29,7 @@ require_once 'Zend/Http/Client.php';
  * @category   Zend
  * @package    Zend_Gdata_Calendar
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Gdata
  * @group      Zend_Gdata_Calendar
@@ -71,7 +71,7 @@ class Zend_Gdata_CalendarOnlineTest extends PHPUnit_Framework_TestCase
                 !== false);
         $eventCount = 0;
         foreach ( $eventFeed as $event ) {
-            $this->assertType('Zend_Gdata_Calendar_EventEntry', $event);
+            $this->assertTrue($event instanceof Zend_Gdata_Calendar_EventEntry);
             $eventCount++;
         }
         $this->assertTrue($eventCount > 0 );

@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: MssqlTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 /**
@@ -35,7 +35,7 @@ require_once 'Zend/Db/Adapter/Pdo/Mysql.php';
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Db
  * @group      Zend_Db_Adapter
@@ -313,7 +313,7 @@ class Zend_Db_Adapter_Pdo_MssqlTest extends Zend_Db_Adapter_Pdo_TestCommon
         $rowsAffected = $this->_db->insert('zfbugs', $row);
         $this->assertEquals(1, $rowsAffected);
         $lastInsertId = $this->_db->lastInsertId();
-        $this->assertType('integer', $lastInsertId);
+        $this->assertTrue(is_int($lastInsertId));
         $this->assertEquals('5', (string) $lastInsertId,
             'Expected new id to be 5');
     }

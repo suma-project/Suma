@@ -15,15 +15,15 @@
  *
  * @category   Zend
  * @package    Zend_Ldap
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Ldap.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 /**
  * @category   Zend
  * @package    Zend_Ldap
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Ldap
@@ -813,6 +813,10 @@ class Zend_Ldap
     public function bind($username = null, $password = null)
     {
         $moreCreds = true;
+
+        // Security check: remove null bytes in password
+        // @see https://net.educause.edu/ir/library/pdf/csd4875.pdf
+        $password = str_replace("\0", '', $password);
 
         if ($username === null) {
             $username = $this->_getUsername();

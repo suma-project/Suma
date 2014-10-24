@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Ldap
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: SchemaTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 /**
@@ -29,7 +29,7 @@ require_once dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'OnlineTestCase.
  * @category   Zend
  * @package    Zend_Ldap
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Ldap
  * @group      Zend_Ldap_Node
@@ -62,8 +62,8 @@ class Zend_Ldap_Node_SchemaTest extends Zend_Ldap_OnlineTestCase
 
     public function testGetters()
     {
-        $this->assertType('array', $this->_schema->getAttributeTypes());
-        $this->assertType('array', $this->_schema->getObjectClasses());
+        $this->assertTrue(is_array($this->_schema->getAttributeTypes()));
+        $this->assertTrue(is_array($this->_schema->getObjectClasses()));
 
         switch ($this->_getLdap()->getRootDse()->getServerType()) {
             case Zend_Ldap_Node_RootDse::SERVER_TYPE_ACTIVEDIRECTORY:
@@ -71,9 +71,9 @@ class Zend_Ldap_Node_SchemaTest extends Zend_Ldap_OnlineTestCase
             case Zend_Ldap_Node_RootDse::SERVER_TYPE_EDIRECTORY:
                 break;
             case Zend_Ldap_Node_RootDse::SERVER_TYPE_OPENLDAP:
-                $this->assertType('array', $this->_schema->getLdapSyntaxes());
-                $this->assertType('array', $this->_schema->getMatchingRules());
-                $this->assertType('array', $this->_schema->getMatchingRuleUse());
+                $this->assertTrue(is_array($this->_schema->getLdapSyntaxes()));
+                $this->assertTrue(is_array($this->_schema->getMatchingRules()));
+                $this->assertTrue(is_array($this->_schema->getMatchingRuleUse()));
                 break;
         }
     }
@@ -122,7 +122,7 @@ class Zend_Ldap_Node_SchemaTest extends Zend_Ldap_OnlineTestCase
 
         $this->assertArrayHasKey('organizationalUnit', $objectClasses);
         $ou=$objectClasses['organizationalUnit'];
-        $this->assertType('Zend_Ldap_Node_Schema_ObjectClass_OpenLdap', $ou);
+        $this->assertTrue($ou instanceof Zend_Ldap_Node_Schema_ObjectClass_OpenLdap);
         $this->assertEquals('organizationalUnit', $ou->getName());
         $this->assertEquals('2.5.6.5', $ou->getOid());
         $this->assertEquals(array('objectClass', 'ou'), $ou->getMustContain());
@@ -163,7 +163,7 @@ class Zend_Ldap_Node_SchemaTest extends Zend_Ldap_OnlineTestCase
 
         $this->assertArrayHasKey('ou', $attributeTypes);
         $ou=$attributeTypes['ou'];
-        $this->assertType('Zend_Ldap_Node_Schema_AttributeType_OpenLdap', $ou);
+        $this->assertTrue($ou instanceof Zend_Ldap_Node_Schema_AttributeType_OpenLdap);
         $this->assertEquals('ou', $ou->getName());
         $this->assertEquals('2.5.4.11', $ou->getOid());
         $this->assertEquals('1.3.6.1.4.1.1466.115.121.1.15', $ou->getSyntax());

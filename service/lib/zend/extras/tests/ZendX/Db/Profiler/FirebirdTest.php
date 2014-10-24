@@ -16,7 +16,7 @@
  * @category   ZendX
  * @package    ZendX_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: StaticTest.php 4700 2007-05-04 04:25:11Z bkarwin $
  */
@@ -35,7 +35,7 @@ PHPUnit_Util_Filter::addFileToFilter(__FILE__);
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class ZendX_Db_Profiler_FirebirdTest extends Zend_Db_Profiler_TestCommon
@@ -59,7 +59,7 @@ class ZendX_Db_Profiler_FirebirdTest extends Zend_Db_Profiler_TestCommon
         $this->_db->query("UPDATE $bugs SET $bug_status = ?", array('FIXED'));
 
         $qps = $prof->getQueryProfiles();
-        $this->assertType('array', $qps, 'Expecting some query profiles, got none');
+        $this->assertTrue(is_array($qps), 'Expecting some query profiles, got none');
         foreach ($qps as $qp) {
             $qtype = $qp->getQueryType();
             $this->assertEquals($queryType, $qtype,

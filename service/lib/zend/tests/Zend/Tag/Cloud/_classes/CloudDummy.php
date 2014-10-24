@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Tag
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: CloudDummy.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 require_once 'Zend/Tag/Cloud/Decorator/HtmlCloud.php';
@@ -26,7 +26,7 @@ require_once 'Zend/Tag/Cloud/Decorator/HtmlCloud.php';
  * @category   Zend
  * @package    Zend_Tag
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Tag_Cloud_Decorator_Dummy_CloudDummy extends Zend_Tag_Cloud_Decorator_HtmlCloud

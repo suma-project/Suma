@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Navigation
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: PageTest.php 24879 2012-06-06 13:09:21Z adamlundrigan $
+ * @version    $Id$
  */
 
 require_once 'Zend/Navigation/Page.php';
@@ -30,7 +30,7 @@ require_once 'Zend/Config.php';
  * @category   Zend
  * @package    Zend_Navigation
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Navigation
  */
@@ -1276,11 +1276,43 @@ class Zend_Navigation_PageTest extends PHPUnit_Framework_TestCase
             'pages'    => array(
                 array(
                     'label' => 'foo.bar',
-                    'uri'   => 'http://www.example.com/foo.html'
+                    'uri'   => 'http://www.example.com/foo.html',
+                    'fragment' => null,
+                    'id' => null,
+                    'class' => null,
+                    'title' => null,
+                    'target' => null,
+                    'accesskey' => null,
+                    'rel' => array(),
+                    'rev' => array(),
+                    'customHtmlAttribs' => array(),
+                    'order' => null,
+                    'resource' => null,
+                    'privilege' => null,
+                    'active' => false,
+                    'visible' => true,
+                    'type' => 'Zend_Navigation_Page_Uri',
+                    'pages' => array (),
                 ),
                 array(
                     'label' => 'foo.baz',
-                    'uri'   => 'http://www.example.com/foo.html'
+                    'uri'   => 'http://www.example.com/foo.html',
+                    'fragment' => null,
+                    'id' => null,
+                    'class' => null,
+                    'title' => null,
+                    'target' => null,
+                    'accesskey' => null,
+                    'rel' => array(),
+                    'rev' => array(),
+                    'customHtmlAttribs' => array (),
+                    'order' => null,
+                    'resource' => null,
+                    'privilege' => null,
+                    'active' => false,
+                    'visible' => true,
+                    'type' => 'Zend_Navigation_Page_Uri',
+                    'pages' => array (),
                 )
             ),
 
@@ -1296,11 +1328,8 @@ class Zend_Navigation_PageTest extends PHPUnit_Framework_TestCase
         // tweak options to what we expect toArray() to contain
         $options['type'] = 'Zend_Navigation_Page_Uri';
 
-        // calculate diff between toArray() and $options
-        $diff = array_diff_assoc($options, $toArray);
-
-        // should be no diff
-        $this->assertEquals(array(), $diff);
+        // should be same
+        $this->assertEquals($options, $toArray);
 
         // $toArray should have 2 sub pages
         $this->assertEquals(2, count($toArray['pages']));
@@ -1317,19 +1346,19 @@ class Zend_Navigation_PageTest extends PHPUnit_Framework_TestCase
         $options['resource'] = null;
         $options['active'] = false;
         $options['visible'] = true;
+        $options['customHtmlAttribs'] = array();
+        $options['pages'] = array();
         unset($options['foo']);
         unset($options['meaning']);
 
         // assert that there is no diff from what we expect
-        $subPageOneDiff = array_diff_assoc($toArray['pages'][0], $options);
-        $this->assertEquals(array(), $subPageOneDiff);
+        $this->assertEquals($options, $toArray['pages'][0]);
 
         // tweak options to what we expect sub page 2 to be
         $options['label'] = 'foo.baz';
 
         // assert that there is no diff from what we expect
-        $subPageTwoDiff = array_diff_assoc($toArray['pages'][1], $options);
-        $this->assertEquals(array(), $subPageTwoDiff);
+        $this->assertEquals($options, $toArray['pages'][1]);
     }
     
     /**

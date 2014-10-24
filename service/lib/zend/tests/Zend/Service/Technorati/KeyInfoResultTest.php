@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Service_Technorati
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: KeyInfoResultTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 
@@ -36,7 +36,7 @@ require_once 'Zend/Service/Technorati/KeyInfoResult.php';
  * @category   Zend
  * @package    Zend_Service_Technorati
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Service
  * @group      Zend_Service_Technorati
@@ -64,11 +64,11 @@ class Zend_Service_Technorati_KeyInfoResultTest extends Zend_Service_Technorati_
     {
         $object = new Zend_Service_Technorati_KeyInfoResult($this->dom, self::TEST_API_KEY);
 
-        $this->assertType('string', $object->getApiKey());
+        $this->assertTrue(is_string($object->getApiKey()));
         $this->assertEquals(self::TEST_API_KEY, $object->getApiKey());
-        $this->assertType('integer', $object->getApiQueries());
+        $this->assertTrue(is_int($object->getApiQueries()));
         $this->assertEquals(27, $object->getApiQueries());
-        $this->assertType('integer', $object->getMaxQueries());
+        $this->assertTrue(is_int($object->getMaxQueries()));
         $this->assertEquals(1500, $object->getMaxQueries());
     }
 
@@ -84,7 +84,7 @@ class Zend_Service_Technorati_KeyInfoResultTest extends Zend_Service_Technorati_
 
         $set = 'anewapikey';
         $get = $object->setApiKey($set)->getApiKey();
-        $this->assertType('string', $get);
+        $this->assertTrue(is_string($get));
         $this->assertEquals($set, $get);
     }
 }

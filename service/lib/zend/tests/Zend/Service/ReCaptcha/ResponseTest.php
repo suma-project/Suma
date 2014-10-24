@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Service_ReCaptcha
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: ResponseTest.php 25152 2012-11-28 11:55:44Z cogo $
+ * @version    $Id$
  */
 
 /** @see Zend_Service_ReCaptcha_Response */
@@ -27,7 +27,7 @@ require_once 'Zend/Service/ReCaptcha/Response.php';
  * @category   Zend
  * @package    Zend_Service_ReCaptcha
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Service
  * @group      Zend_Service_ReCaptcha

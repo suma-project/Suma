@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    ZendX_Console
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: UnixTest.php 20165 2010-01-09 18:57:56Z bkarwin $
+ * @version    $Id$
  */
 
 // Call Zend_ProgressBar_Adapter_ConsoleTest::main() if this source file is executed directly.
@@ -39,7 +39,7 @@ require_once 'ZendX/Console/Process/Unix.php';
  * @category   Zend
  * @package    ZendX_Console
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class ZendX_Console_Process_UnixTest extends PHPUnit_Framework_TestCase
@@ -69,7 +69,14 @@ class ZendX_Console_Process_UnixTest extends PHPUnit_Framework_TestCase
             $this->markTestSkipped('posix_* functions are required');
         }
     }
-    
+
+    protected function tearDown()
+    {
+        if (ob_get_length() == 0 ) {
+            ob_start();
+        }
+    }
+
     public function testStop()
     {
         $startTime = microtime(true);
@@ -97,9 +104,11 @@ class ZendX_Console_Process_UnixTest extends PHPUnit_Framework_TestCase
             $diffTime = round(microtime(true) - $startTime);
         } while ($process->isRunning() && $diffTime < 2);
         
-        $process->stop();
-        
-        $this->assertEquals(1, $diffTime);
+        $result = $process->stop();
+
+        $this->assertFalse($process->isRunning());
+        $this->assertTrue($result);
+        $this->assertEquals(2, $diffTime);
     }
     
     public function testParallel()
@@ -120,7 +129,7 @@ class ZendX_Console_Process_UnixTest extends PHPUnit_Framework_TestCase
         $process1->stop();
         $process2->stop();
         
-        $this->assertEquals(2, $diffTime);
+        $this->assertEquals(3, $diffTime);
     }
     
     public function testVariables()

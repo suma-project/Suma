@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Service_Amazon
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: OfflineTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 
@@ -51,7 +51,7 @@ require_once 'Zend/Http/Client/Adapter/Test.php';
  * @category   Zend
  * @package    Zend_Service_Amazon
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Service
  * @group      Zend_Service_Amazon
@@ -344,7 +344,7 @@ class Zend_Service_Amazon_OfflineTest extends PHPUnit_Framework_TestCase
     	} catch (Zend_Service_Amazon_Exception $e) {
     		$this->fail('Unexpected exception was triggered');
     	}
-    	$this->assertType('Zend_Service_Amazon_Item', $currentItem);
+    	$this->assertTrue($currentItem instanceof Zend_Service_Amazon_Item);
     	$this->assertEquals('0754512673', $currentItem->ASIN);
     }
 

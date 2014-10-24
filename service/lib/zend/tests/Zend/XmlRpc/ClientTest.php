@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_XmlRpc
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version $Id: ClientTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version $Id$
  */
 
 require_once 'Zend/XmlRpc/Client.php';
@@ -28,13 +28,17 @@ require_once 'Zend/Http/Client/Adapter/Test.php';
 
 require_once 'Zend/XmlRpc/Value/DateTime.php';
 
+require_once 'Zend/XmlRpc/Client/ServerIntrospection.php';
+
+require_once 'Zend/Http/Client.php';
+
 /**
  * Test case for Zend_XmlRpc_Value
  *
  * @category   Zend
  * @package    Zend_XmlRpc
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_XmlRpc
  */
@@ -71,7 +75,7 @@ class Zend_XmlRpc_ClientTest extends PHPUnit_Framework_TestCase
     {
         $xmlrpcClient = new Zend_XmlRpc_Client('http://foo');
         $httpClient = $xmlrpcClient->getHttpClient();
-        $this->assertType('Zend_Http_Client', $httpClient);
+        $this->assertTrue($httpClient instanceof Zend_Http_Client);
         $this->assertSame($httpClient, $xmlrpcClient->getHttpClient());
     }
 
@@ -105,8 +109,8 @@ class Zend_XmlRpc_ClientTest extends PHPUnit_Framework_TestCase
         $this->setServerResponseTo(true);
         $this->xmlrpcClient->call('foo');
 
-        $this->assertType('Zend_XmlRpc_Request', $this->xmlrpcClient->getLastRequest());
-        $this->assertType('Zend_XmlRpc_Response', $this->xmlrpcClient->getLastResponse());
+        $this->assertTrue($this->xmlrpcClient->getLastRequest() instanceof Zend_XmlRpc_Request);
+        $this->assertTrue($this->xmlrpcClient->getLastResponse() instanceof Zend_XmlRpc_Response);
     }
 
     public function testSuccessfulRpcMethodCallWithNoParameters()
@@ -317,7 +321,7 @@ class Zend_XmlRpc_ClientTest extends PHPUnit_Framework_TestCase
             $this->xmlrpcClient->call('foo');
             $this->fail();
         } catch (Exception $e) {
-            $this->assertType('Zend_XmlRpc_Client_HttpException', $e);
+            $this->assertTrue($e instanceof Zend_XmlRpc_Client_HttpException);
             $this->assertEquals($message, $e->getMessage());
             $this->assertEquals($status, $e->getCode());
         }
@@ -338,7 +342,7 @@ class Zend_XmlRpc_ClientTest extends PHPUnit_Framework_TestCase
             $this->xmlrpcClient->call('foo');
             $this->fail();
         } catch (Exception $e) {
-            $this->assertType('Zend_XmlRpc_Client_FaultException', $e);
+            $this->assertTrue($e instanceof Zend_XmlRpc_Client_FaultException);
             $this->assertEquals($message, $e->getMessage());
             $this->assertEquals($code, $e->getCode());
         }
@@ -349,7 +353,7 @@ class Zend_XmlRpc_ClientTest extends PHPUnit_Framework_TestCase
     public function testGetProxyReturnsServerProxy()
     {
         $class = 'Zend_XmlRpc_Client_ServerProxy';
-        $this->assertType($class, $this->xmlrpcClient->getProxy());
+        $this->assertTrue($this->xmlrpcClient->getProxy() instanceof $class);
     }
 
     public function testRpcMethodCallsThroughServerProxy()
@@ -402,7 +406,7 @@ class Zend_XmlRpc_ClientTest extends PHPUnit_Framework_TestCase
     {
         $xmlrpcClient = new Zend_XmlRpc_Client('http://foo');
         $introspector = $xmlrpcClient->getIntrospector();
-        $this->assertType('Zend_XmlRpc_Client_ServerIntrospection', $introspector);
+        $this->assertTrue($introspector instanceof Zend_XmlRpc_Client_ServerIntrospection);
         $this->assertSame($introspector, $xmlrpcClient->getIntrospector());
     }
 

@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Dojo
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: QueryTest.php 25033 2012-08-17 19:50:08Z matthew $
+ * @version    $Id$
  */
 
 // Call Zend_Dom_QueryTest::main() if this source file is executed directly.
@@ -34,7 +34,7 @@ require_once 'Zend/Dom/Query.php';
  * @category   Zend
  * @package    Zend_Dom
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Dom
  */
@@ -304,9 +304,9 @@ EOF;
     {
         $this->query->setDocument($this->getHtml(), 'utf-8');
         $test = $this->query->query('.foo');
-        $this->assertType('Zend_Dom_Query_Result', $test);
+        $this->assertTrue($test instanceof Zend_Dom_Query_Result);
         $doc  = $test->getDocument();
-        $this->assertType('DOMDocument', $doc);
+        $this->assertTrue($doc instanceof DOMDocument);
         $this->assertEquals('utf-8', $doc->encoding);
     }
     

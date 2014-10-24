@@ -15,27 +15,24 @@
  * @category   Zend
  * @package    Zend
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: TestHelper.php 23645 2011-01-21 17:32:53Z mikaelkael $
+ * @version    $Id$
  */
 
 /**
  * Include PHPUnit dependencies
  */
-require_once 'PHPUnit/Runner/Version.php';
+if (version_compare(PHPUnit_Runner_Version::id(), '4.0.0', '<')) {
+    require_once 'PHPUnit/Runner/Version.php';
 
-$phpunitVersion = PHPUnit_Runner_Version::id();
-if ($phpunitVersion == '@package_version@' || version_compare($phpunitVersion, '3.5.5', '>=')) {
-    if (version_compare($phpunitVersion, '3.6.0', '>=')) {
-        echo 'This verison of PHPUnit is not supported in Zend Framework 1.x unit tests.';
-        exit(1);
+    $phpunitVersion = PHPUnit_Runner_Version::id();
+    if ($phpunitVersion == '@package_version@' || version_compare($phpunitVersion, '3.5.5', '>=')) {
+        require_once 'PHPUnit/Autoload.php'; // >= PHPUnit 3.5.5
+    } else {
+        require_once 'PHPUnit/Framework.php'; // < PHPUnit 3.5.5
     }
-    require_once 'PHPUnit/Autoload.php'; // >= PHPUnit 3.5.5
-} else {
-    require_once 'PHPUnit/Framework.php'; // < PHPUnit 3.5.5
 }
-
 /*
  * Set error reporting to the level to which Zend Framework code must comply.
  */

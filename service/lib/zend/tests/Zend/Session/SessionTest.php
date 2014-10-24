@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Session
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: SessionTest.php 24819 2012-05-28 19:25:03Z rob $
+ * @version    $Id$
  */
 
 /**
@@ -32,7 +32,7 @@ require_once 'Zend/Session.php';
  * @category   Zend
  * @package    Zend_Session
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Session
  */
@@ -1100,6 +1100,8 @@ class Zend_SessionTest extends PHPUnit_Framework_TestCase
         $sid = Zend_Session::getId();
 
         // We don't need the session any more, clean it up
+        //but we don't to want to destroy it completely, while other tests can start
+        Zend_Session::$_unitTestEnabled = true; 
         Zend_Session::destroy();
         foreach ( $sessionCharSet as $subdir ) {
             @rmdir($sessionStore . DIRECTORY_SEPARATOR . $subdir);

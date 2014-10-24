@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Config
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: ConfigTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 /**
@@ -29,7 +29,7 @@ require_once 'Zend/Config.php';
  * @category   Zend
  * @package    Zend_Config
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Config
  */
@@ -356,9 +356,9 @@ class Zend_ConfigTest extends PHPUnit_Framework_TestCase
             );
         $config = new Zend_Config($configData);
         $this->assertEquals($config->toArray(), $configData);
-        $this->assertType('stdClass', $config->a);
-        $this->assertType('stdClass', $config->b->c);
-        $this->assertType('stdClass', $config->b->d);
+        $this->assertTrue($config->a instanceof stdClass);
+        $this->assertTrue($config->b->c instanceof stdClass);
+        $this->assertTrue($config->b->d instanceof stdClass);
     }
 
     /**

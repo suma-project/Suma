@@ -671,7 +671,6 @@ dojo.requireLocalization("dijit", "loading");
 			// save our input values, if any, and use them there when it gets 
 			// called.  This saves us an extra call to _resize(), which can
 			// get kind of heavy.
-
 			this._pendingChangeSize = changeSize;
 			this._pendingResultSize = resultSize;
 			this.sizeChange();
@@ -901,7 +900,7 @@ dojo.requireLocalization("dijit", "loading");
 		// update
 		defaultUpdate: function(){
 			// note: initial update calls render and subsequently this function.
-			if(!this.domNode || this.edit._noUpdate){return;}
+			if(!this.domNode){return;}
 			if(this.updating){
 				this.invalidated.all = true;
 				return;

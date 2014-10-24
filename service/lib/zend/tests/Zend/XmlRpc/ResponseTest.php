@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_XmlRpc
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version $Id: ResponseTest.php 25033 2012-08-17 19:50:08Z matthew $
+ * @version $Id$
  */
 
 require_once 'Zend/XmlRpc/Response.php';
@@ -28,7 +28,7 @@ require_once 'Zend/XmlRpc/Response.php';
  * @category   Zend
  * @package    Zend_XmlRpc
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_XmlRpc
  */
@@ -102,7 +102,7 @@ class Zend_XmlRpc_ResponseTest extends PHPUnit_Framework_TestCase
     {
         $this->assertNull($this->_response->getFault());
         $this->_response->loadXml('foo');
-        $this->assertType('Zend_XmlRpc_Fault', $this->_response->getFault());
+        $this->assertTrue($this->_response->getFault() instanceof Zend_XmlRpc_Fault);
     }
 
     /**

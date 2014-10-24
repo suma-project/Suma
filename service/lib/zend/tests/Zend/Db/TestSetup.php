@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: TestSetup.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 /**
@@ -35,14 +35,14 @@ require_once 'Zend/Db.php';
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Db
  */
 abstract class Zend_Db_TestSetup extends PHPUnit_Framework_TestCase
 {
     /**
-     * @var Zend_Db_TestUtil
+     * @var Zend_Db_TestUtil_Common
      */
     protected $_util = null;
 
@@ -85,7 +85,7 @@ abstract class Zend_Db_TestSetup extends PHPUnit_Framework_TestCase
             $conn = $this->_db->getConnection();
         } catch (Zend_Exception $e) {
             $this->_db = null;
-            $this->assertType('Zend_Db_Adapter_Exception', $e,
+            $this->assertTrue($e instanceof Zend_Db_Adapter_Exception,
                 'Expecting Zend_Db_Adapter_Exception, got ' . get_class($e));
             $this->markTestSkipped($e->getMessage());
         }

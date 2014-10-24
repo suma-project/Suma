@@ -15,7 +15,7 @@
  * @category   ZendX
  * @package    ZendX_Application
  * @subpackage Resource
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Jquery.php 20240 2010-01-13 04:51:56Z matthew $
  */
@@ -51,7 +51,7 @@
  * @category   ZendX
  * @package    ZendX_Application
  * @subpackage Resource
- * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class ZendX_Application_Resource_Jquery

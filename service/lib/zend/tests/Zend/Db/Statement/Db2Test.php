@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id $
  */
@@ -27,7 +27,7 @@ require_once 'Zend/Db/Statement/TestCommon.php';
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Db
  * @group      Zend_Db_Statement
@@ -62,7 +62,7 @@ class Zend_Db_Statement_Db2Test extends Zend_Db_Statement_TestCommon
         $n = $stmt->columnCount();
         $stmt->closeCursor();
 
-        $this->assertType('integer', $n);
+        $this->assertTrue(is_int($n));
         $this->assertEquals(2, $n);
     }
 
@@ -88,7 +88,7 @@ class Zend_Db_Statement_Db2Test extends Zend_Db_Statement_TestCommon
             $this->assertTrue($stmt->bindParam('name', $productNameValue), 'Expected bindParam(\'name\') to return true');
             $this->fail('Expected to catch Zend_Db_Statement_Exception');
         } catch (Zend_Exception $e) {
-            $this->assertType('Zend_Db_Statement_Exception', $e,
+            $this->assertTrue($e instanceof Zend_Db_Statement_Exception,
                 'Expecting object of type Zend_Db_Statement_Exception, got '.get_class($e));
             $this->assertEquals("Invalid bind-variable name ':id'", $e->getMessage());
         }
@@ -116,7 +116,7 @@ class Zend_Db_Statement_Db2Test extends Zend_Db_Statement_TestCommon
             $this->assertTrue($stmt->bindParam('name', $productNameValue), 'Expected bindParam(\'name\') to return true');
             $this->fail('Expected to catch Zend_Db_Statement_Exception');
         } catch (Zend_Exception $e) {
-            $this->assertType('Zend_Db_Statement_Exception', $e,
+            $this->assertTrue($e instanceof Zend_Db_Statement_Exception,
                 'Expecting object of type Zend_Db_Statement_Exception, got '.get_class($e));
             $this->assertEquals("Invalid bind-variable name ':id'", $e->getMessage());
         }

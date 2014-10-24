@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Test
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: ConnectionTest.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 require_once "Zend/Test/DbAdapter.php";
@@ -27,7 +27,7 @@ require_once "Zend/Test/PHPUnit/Db/Connection.php";
  * @category   Zend
  * @package    Zend_Test
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Test
  */
@@ -63,7 +63,7 @@ class Zend_Test_PHPUnit_Db_ConnectionTest extends PHPUnit_Framework_TestCase
         $connection = $this->createConnection();
         $ret = $connection->createQueryTable("foo", "foo");
 
-        $this->assertType('Zend_Test_PHPUnit_Db_DataSet_QueryTable', $ret);
+        $this->assertTrue($ret instanceof Zend_Test_PHPUnit_Db_DataSet_QueryTable);
     }
 
     public function testGetSchema()
@@ -79,7 +79,7 @@ class Zend_Test_PHPUnit_Db_ConnectionTest extends PHPUnit_Framework_TestCase
         $connection = $this->createConnection();
         $metadata = $connection->getMetaData();
 
-        $this->assertType('Zend_Test_PHPUnit_Db_Metadata_Generic', $metadata);
+        $this->assertTrue($metadata instanceof Zend_Test_PHPUnit_Db_Metadata_Generic);
     }
 
     public function testGetTruncateCommand()

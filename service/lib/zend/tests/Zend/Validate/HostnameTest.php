@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: HostnameTest.php 25061 2012-11-02 21:24:09Z rob $
+ * @version    $Id$
  */
 
 /**
@@ -30,7 +30,7 @@ require_once 'Zend/Validate/Hostname.php';
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Validate
  */
@@ -50,7 +50,9 @@ class Zend_Validate_HostnameTest extends PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->_origEncoding = iconv_get_encoding('internal_encoding');
+        $this->_origEncoding = PHP_VERSION_ID < 50600
+                    ? iconv_get_encoding('internal_encoding')
+                    : ini_get('default_charset');
         $this->_validator = new Zend_Validate_Hostname();
     }
 
@@ -59,7 +61,11 @@ class Zend_Validate_HostnameTest extends PHPUnit_Framework_TestCase
      */
     public function tearDown()
     {
-        iconv_set_encoding('internal_encoding', $this->_origEncoding);
+        if (PHP_VERSION_ID < 50600) {
+            iconv_set_encoding('internal_encoding', $this->_origEncoding);
+        } else {
+            ini_set('default_charset', $this->_origEncoding);
+        }
     }
 
     /**
@@ -228,7 +234,7 @@ class Zend_Validate_HostnameTest extends PHPUnit_Framework_TestCase
 
         // Check TLD matching
         $valuesExpected = array(
-            array(true, array('domain.co.uk', 'domain.uk.com', 'domain.tl', 'domain.zw')),
+            array(true, array('domain.co.uk', 'domain.uk.com', 'domain.tl', 'domain.zw', 'domain.menu', 'domain.versicherung')),
             array(false, array('domain.xx', 'domain.zz', 'domain.madeup'))
             );
         foreach ($valuesExpected as $element) {
@@ -328,7 +334,7 @@ class Zend_Validate_HostnameTest extends PHPUnit_Framework_TestCase
 
         // Check TLD matching
         $valuesExpected = array(
-            array(true, array('xn--brger-kva.com')),
+            array(true, array('xn--brger-kva.com', 'xn--eckwd4c7cu47r2wf.jp')),
             array(false, array('xn--brger-x45d2va.com', 'xn--bürger.com', 'xn--'))
             );
         foreach ($valuesExpected as $element) {
@@ -361,7 +367,11 @@ class Zend_Validate_HostnameTest extends PHPUnit_Framework_TestCase
      */
     public function testDifferentIconvEncoding()
     {
-        iconv_set_encoding('internal_encoding', 'ISO8859-1');
+        if (PHP_VERSION_ID < 50600) {
+            iconv_set_encoding('internal_encoding', 'ISO8859-1');
+        } else {
+            ini_set('default_charset', 'ISO8859-1');
+        }
         $validator = new Zend_Validate_Hostname();
 
         $valuesExpected = array(
@@ -423,7 +433,7 @@ class Zend_Validate_HostnameTest extends PHPUnit_Framework_TestCase
             }
         }
     }
-    
+
     /**
      * @group ZF-11334
      * @see http://www.ietf.org/rfc/rfc2732.txt
@@ -431,7 +441,7 @@ class Zend_Validate_HostnameTest extends PHPUnit_Framework_TestCase
     public function testSupportsIpv6AddressesWhichContainHexDigitF()
     {
         $validator = new Zend_Validate_Hostname(Zend_Validate_Hostname::ALLOW_ALL);
-        
+
         $this->assertTrue($validator->isValid('FEDC:BA98:7654:3210:FEDC:BA98:7654:3210'));
         $this->assertTrue($validator->isValid('1080:0:0:0:8:800:200C:417A'));
         $this->assertTrue($validator->isValid('3ffe:2a00:100:7031::1'));
@@ -440,14 +450,14 @@ class Zend_Validate_HostnameTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($validator->isValid('::FFFF:129.144.52.38'));
         $this->assertTrue($validator->isValid('2010:836B:4179::836B:4179'));
     }
-    
+
     /**
      * @group ZF-11796
      */
     public function testIDNSI()
     {
         $validator = new Zend_Validate_Hostname(Zend_Validate_Hostname::ALLOW_ALL);
-        
+
         $this->assertTrue($validator->isValid('Test123.si'));
         $this->assertTrue($validator->isValid('țest123.si'));
         $this->assertTrue($validator->isValid('tĕst123.si'));
@@ -462,4 +472,40 @@ class Zend_Validate_HostnameTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($this->_validator->isValid('testæøå.dk'));
     }
 
+    /**
+     * test for IDN CA
+     */
+    public function testIDNCA()
+    {
+        $validator = new Zend_Validate_Hostname(Zend_Validate_Hostname::ALLOW_ALL);
+
+        $this->assertTrue($validator->isValid('Test123.ca'));
+        $this->assertTrue($validator->isValid('tàr.ca'));
+        $this->assertFalse($validator->isValid('țest123.ca'));
+        $this->assertFalse($validator->isValid('tĕst123.ca'));
+        $this->assertFalse($validator->isValid('رات.ca'));
+    }
+
+    /**
+     * @group ZF-12413
+     */
+    public function testIDNUA()
+    {
+        $validator = new Zend_Validate_Hostname(Zend_Validate_Hostname::ALLOW_ALL);
+
+        $this->assertTrue($validator->isValid('самобраноч.com.ua'));
+        $this->assertTrue($validator->isValid('hostmaster.ua'));
+    }
+
+    /**
+     * Test for IDN serbia .rs
+     *
+     * @group GH-115
+     */
+    public function testIDNRS()
+    {
+        $validator = new Zend_Validate_Hostname(Zend_Validate_Hostname::ALLOW_ALL);
+
+        $this->assertTrue($validator->isValid('test.rs'));
+    }
 }
