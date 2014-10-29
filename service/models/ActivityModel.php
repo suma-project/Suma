@@ -70,7 +70,7 @@ class ActivityModel
     public function update($data)
     {
         $hash = array('title'             =>  isset($data['title']) ? $data['title'] : $this->getMetadata('title'),
-                      'enabled'           =>  (isset($data['enabled']) && is_bool($data['enabled'])) ? (int)$data['enabled'] : $this->getMetadata('enabled'),
+                      'enabled'           =>  (isset($data['enabled'])) ? (int)$data['enabled'] : $this->getMetadata('enabled'),
                       'fk_activity_group' =>  isset($data['group']) ? $data['group'] : $this->getMetadata('fk_activity_group'),
                       'description'       =>  isset($data['desc']) ? $data['desc'] : $this->getMetadata('desc'),
                       'rank'              =>  isset($data['rank']) ? $data['rank'] : $this->getMetadata('rank'));
@@ -157,8 +157,8 @@ class ActivityModel
             foreach($activities as $actGroupKey => $activityGroup) {
 
                 if ((isset($activityGroup['title']) && strlen($activityGroup['title']) > 0) && isset($activityGroup['id'])
-                    && isset($activityGroup['desc'])  && (isset($activityGroup['required']) && is_bool($activityGroup['required']))
-                    && (isset($activityGroup['allowMulti']) && is_bool($activityGroup['allowMulti'])))
+                    && isset($activityGroup['desc'])  && (isset($activityGroup['required']))
+                    && (isset($activityGroup['allowMulti'])))
                 {
                     $actGroupData = Array(
                         'title'    => $activityGroup['title'],
@@ -193,7 +193,7 @@ class ActivityModel
                     foreach($activityGroup['activities'] as $actKey => $activity)
                     {
                         if ((isset($activity['title']) && strlen($activity['title']) > 0) && isset($activity['id'])
-                            && isset($activity['desc']) && (isset($activity['enabled']) && is_bool($activity['enabled'])))
+                            && isset($activity['desc']) && (isset($activity['enabled'])))
                         {
                             $actData = Array(
                                 'title'   => $activity['title'],
