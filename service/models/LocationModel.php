@@ -244,7 +244,7 @@ class LocationModel
         {
             if ((isset($locTree['title']) && strlen($locTree['title']) > 0)
                 && isset($locTree['description'])
-                && (isset($locTree['enabled']) && is_bool($locTree['enabled'])))
+                && (isset($locTree['enabled'])))
             {
                 $retValue = true;
 

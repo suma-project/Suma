@@ -284,8 +284,8 @@ class InitiativeModel
             $activityGroupMetadata[] = array('id'       => (int)$group->getMetadata('id'),
                              'title'    => $group->getMetadata('title'),
                              'rank'     => (int)$group->getMetadata('rank'),
-                             'required' => ($group->getMetadata('required')) ? 1 : 0,
-                             'allowMulti' => ($group->getMetadata('allowMulti')) ? 1 : 0,
+                             'required' => ($group->getMetadata('required')) ? true : false,
+                             'allowMulti' => ($group->getMetadata('allowMulti')) ? true : false,
                              );
         }
 
