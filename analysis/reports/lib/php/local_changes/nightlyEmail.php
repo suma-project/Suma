@@ -24,7 +24,7 @@ $ERROR_SUBJECT = 'ERROR: Suma Nightly Report: ' . $DAY_DISPLAY;
 
 // Run Script
 //$data = `php nightly.php`; 
-$data = `php quickFix.php | grep -v 'n/a'`; //ken's addition -- skip hours w no entries
+$data = `php nightly.php | grep -v 'n/a'`; //ken's addition -- skip hours w no entries
 $errorCheck = explode(" ", $data);
 
 if ($errorCheck[0] === "Error:")
@@ -34,9 +34,6 @@ if ($errorCheck[0] === "Error:")
 }
 else
 {
-  $headers = "From: Suma Server <kirwin@wittenberg.edu>\r\n";
-  $headers .= "MIME-Version: 1.0\r\n";
-  $headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
     $message = $GREETING . "\n" . $data;
-    mail($RECIPIENTS, $SUBJECT, $message, $headers);
+    mail($RECIPIENTS, $SUBJECT, $message);
 }
