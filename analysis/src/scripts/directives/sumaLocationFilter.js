@@ -17,9 +17,6 @@ angular.module('sumaAnalysis')
         $scope.selectNone = function () {
           _.each($scope.locs, function (loc) {
             loc.filter = false;
-            if (loc.ancestors.length > 0) {
-              loc.enabled = false;
-            }
           });
         };
 
@@ -39,11 +36,18 @@ angular.module('sumaAnalysis')
           });
         };
 
+        $scope.selectAncestors = function (ancestors) {
+          _.each($scope.locs, function (loc) {
+            if (_.contains(ancestors, loc.id)) {
+              loc.filter = true;
+            }
+          });
+        };
+
         $scope.disableChildren = function (parentId) {
           _.each($scope.locs, function (loc) {
             if ($scope.isDescendant(loc, parentId)) {
               loc.filter = false;
-              loc.enabled = false;
             }
           });
         };
@@ -51,6 +55,7 @@ angular.module('sumaAnalysis')
         $scope.updateCollection = function () {
           if (this.loc.filter) {
             $scope.selectChildren(this.loc.id);
+            $scope.selectAncestors(this.loc.ancestors);
           } else {
             $scope.disableChildren(this.loc.id);
           }
