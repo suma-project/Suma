@@ -447,7 +447,7 @@ class QueryModel
         $db = Globals::getDBConn();
         $select = $db->select()
             ->from(array('i' => 'initiative'),
-                   array('title', 'id', 'description', 'rootLocation' => 'fk_root_location'))
+                   array('title', 'id', 'description', 'enabled', 'rootLocation' => 'fk_root_location'))
             ->join(array('s' => 'session'),
                          'i.id = s.fk_initiative', array())
             ->where('s.deleted = 0')
@@ -462,7 +462,7 @@ class QueryModel
             $array = array();
             foreach ($init as $key => $val)
             {
-                $array[$key] = ($key == 'id') ? (int)$val : $val;
+                $array[$key] = ($key == 'id' || $key == 'enabled') ? (int)$val : $val;
             }
 
             $qModel = new QueryModel($array['id']);
