@@ -16,11 +16,14 @@ $DAY_DISPLAY = date($config['nightly']['displayFormat'], strtotime('yesterday'))
 $RECIPIENTS  = $config['nightly']['recipients'];
 $GREETING    = "Below are the hourly Suma counts for " . $DAY_DISPLAY . ". " . "Please note that missing counts may have been performed but not yet uploaded to the Suma server.";
 $SUBJECT     = "Suma Nightly Report: " . $DAY_DISPLAY;
+$SENDER = $config['nightly']['fromEmail'];
 
 // Info for error report recipients
 $ERROR_RECIPIENTS = $config['nightly']['errorRecipients'];
 $ERROR_GREETING = 'The nightly Suma report encountered an error.';
 $ERROR_SUBJECT = 'ERROR: Suma Nightly Report: ' . $DAY_DISPLAY;
+
+$emailHeader = 'From: '. $SENDER . "\r\n";
 
 // Run Script
 $data = `php nightly.php`;
@@ -29,10 +32,10 @@ $errorCheck = explode(" ", $data);
 if ($errorCheck[0] === "Error:")
 {
     $message = $ERROR_GREETING . "\n" . $data;
-    mail($ERROR_RECIPIENTS, $ERROR_SUBJECT, $message);
+    mail($ERROR_RECIPIENTS, $ERROR_SUBJECT, $message, $emailHeader);
 }
 else
 {
     $message = $GREETING . "\n" . $data;
-    mail($RECIPIENTS, $SUBJECT, $message);
+    mail($RECIPIENTS, $SUBJECT, $message, $emailHeader);
 }
