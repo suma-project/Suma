@@ -162,7 +162,7 @@ class Data
         {
             foreach($locDict as $loc)
             {
-                $this->locHash[$loc['id']] = $loc['title'];
+                $this->locHash[$loc['id']] = $loc['title'] . "(" . $loc['id'] . ")";
             }
         }
 
@@ -170,7 +170,7 @@ class Data
         {
             foreach($actDict as $act)
             {
-                $name = $this->actGrpHash[$act['activityGroup']] . ": " . $act['title'];
+                $name = $this->actGrpHash[$act['activityGroup']] . ": " . $act['title'] . "(" . $act['id'] . ")";
                 $scaffoldArray['activities'][$name] = NULL;
             }
         }
@@ -178,7 +178,8 @@ class Data
         {
             foreach($this->actListIds as $act)
             {
-                $name = $this->actGrpHash[$act['activityGroup']] . ": " . $act['title'];
+                ChromePhp::log('two');
+                $name = $this->actGrpHash[$act['activityGroup']] . ": " . $act['title'] . "(" . $act['id'] . ")";
                 $scaffoldArray['activities'][$name] = NULL;
             }
         }
@@ -186,7 +187,8 @@ class Data
         foreach($locDict as $loc)
         {
             if (!in_array($loc['id'], $this->excludeLocs)) {
-                $scaffoldArray['locations'][$loc['title']] = NULL;
+                $name = $this->locHash[$loc['id']];
+                $scaffoldArray['locations'][$name] = NULL;
             }
         }
 
