@@ -4,8 +4,9 @@ td,th { border: 1px solid black; text-align: center;}
 </style>
 <?
 $init = 1; // 1= the student manager head count
-$db = mysql_pconnect ("localhost", "suma_user", "L6ut74BGAmnV659S");
-mysql_select_db ("suma_live");
+include_once ("localSql.php");
+$db = mysql_pconnect ("$db_host", "$db_user", "$db_pass");
+mysql_select_db ("$db_name");
 
 
 $day = $DAY_PROCESS = date('Y-m-d', strtotime('yesterday'));
