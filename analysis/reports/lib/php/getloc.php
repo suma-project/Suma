@@ -5,7 +5,8 @@ td,th { border: 1px solid black; text-align: center;}
 <?
 error_reporting(E_ALL);
 ini_set("display_errors", true);
-$init = 1; // 1= the student manager head count
+//$init = 1; // 1= the student manager head count
+
 require_once 'vendor/autoload.php';
 require_once 'ServerIO.php';
 $config = Spyc::YAMLLoad(realpath(dirname(__FILE__)) . '/../../../config/config.yaml');
@@ -15,15 +16,13 @@ $sdate = $DAY_PROCESS = date('Ymd0000', strtotime('yesterday'));
 $edate = $DAY_PROCESS = date('Ymd0000', strtotime('today'));
 $baseurl = $config['serverIO']['baseUrl'];
 
-$counts_info = GetCountsByHourandLocation($init, $day, $sdate, $edate, $baseurl);
+$active_inits = json_decode(file_get_contents(preg_replace ("/query/", "clientinit", $baseurl)));
 
-print (TableCountsByLocation($counts_info['counts'], $counts_info['locations'], $day));
-
-/*
-print "<pre>";
-print_r ($data);
-print "</pre>\n";
-*/
+foreach ($active_inits as $init) {
+  $counts_info = GetCountsByHourandLocation($init->initiativeId, $day, $sdate, $edate, $baseurl);
+  print '<h1>' . $init->initiativeTitle . '</h1>';
+  print (TableCountsByLocation($counts_info['counts'], $counts_info['locations'], $day));
+} //end foreach active initiative
 
 function GetCountsByHourandLocation($init, $day, $sdate, $edate, $baseurl) {
 $counts_url = "http://www6.wittenberg.edu/lib/sumaserver/query/counts?sdate=$sdate&edate=$edate&format=lc&id=$init";
@@ -56,7 +55,7 @@ foreach ($data->initiative->locations as $loc) {
     $counts[$hour]['count'] += $count->number; 
   }
 }
-$return = array ("counts" => $counts, "locations" => $locations);
+$return = array ("counts" => $counts, "locations" => $locations, "init_title" => $data->initiative->title);
 return $return;
 } //end function GetCountsByHourandLocation
 
