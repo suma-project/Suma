@@ -23,8 +23,8 @@ $ERROR_GREETING = 'The nightly Suma report encountered an error.';
 $ERROR_SUBJECT = 'ERROR: Suma Nightly Report: ' . $DAY_DISPLAY;
 
 // Run Script
-//$data = `php nightly.php`; 
-$data = `php quickFix.php | grep -v 'n/a'`; //ken's addition -- skip hours w no entries
+//$data = `php nightly.php`; //original Suma code, no locations
+$data = `php nightlyByLocation.php`; // location-based reporting as appropriate
 $errorCheck = explode(" ", $data);
 
 if ($errorCheck[0] === "Error:")
