@@ -82,14 +82,14 @@ function TableCountsByLocation ($count, $locations, $day) {
   
   $tbody .="<tbody>\n";
   if (isset($count)) {
-    foreach ($count as $hour => $locs ) {
+    foreach ($count as $hour => $loc_counts ) {
       $hour = date("h A", strtotime("$day $hour:00:00"));
       $row = "<tr><th>$hour</th>\n";
       foreach ($locations as $key=> $loc) {
-	if ($locs[$loc] == "") { $locs[$loc] = 0; }
-	if ($num_locs > 1) { $row .= " <td>$locs[$loc]</td>\n"; } //only if multiple locations
+	if ($loc_counts[$loc] == "") { $loc_counts[$loc] = 0; }
+	if ($num_locs > 1) { $row .= " <td>$loc_counts[$loc]</td>\n"; } //only if multiple locations
       }
-      $row .= "<td>".$locs['count']."</td>";
+      $row .= "<td>".$loc_counts['count']."</td>";
       $tbody .= $row . "</td><tr>\n"; 
       
     } //end foreach count
