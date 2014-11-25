@@ -35,7 +35,7 @@ $ bower install angular-promise-tracker
   <script src="promise-tracker.js"></script>
 
   <!-- optional for $http sugar -->
-  <script src="promise-tracker-http-intercetpor.js"></script>
+  <script src="promise-tracker-http-interceptor.js"></script>
 </body>
 ```
 ```js
@@ -93,11 +93,11 @@ Example: `var myTracker = promiseTracker({ activationDelay: 500, minDuration: 75
 
 * **`boolean` tracker.active()**
 
-  Returns whether this tracker is currently active. That is, whether any of the promises added to/created by this tracker are still pending, or the `activationDelay` has not been met yet.
+  Returns whether this tracker is currently active. That is, whether any of the promises added to/created by this tracker are still pending. Note: if the `activationDelay` has not elapsed yet, this will return false.
 
 * **`boolean` tracker.tracking()**
 
-  Returns whether this tracker is currently tracking a request. That is, whether any of the promises added to/created by this tracker are still pending, even if the `activationDelay` has not been met yet.
+  Returns whether this tracker is currently tracking a request. That is, whether any of the promises added to/created by this tracker are still pending.  This method has no regard for `activationDelay`.
 
 * **`void` tracker.addPromise(promise)**
 
@@ -123,10 +123,9 @@ Example: `var myTracker = promiseTracker({ activationDelay: 500, minDuration: 75
 
   ```js
   var deferred = myTracker.createPromise()
-  console.log(myTracker.active()) // => true
+  console.log(myTracker.active()); // => true
   deferred.resolve();
-  console.log(myTracker.active()) // => false
-  }
+  console.log(myTracker.active()); // => false
   ```
 
 * **`void` tracker.cancel()**
@@ -147,6 +146,24 @@ Example: `var myTracker = promiseTracker({ activationDelay: 500, minDuration: 75
   //Add $http promise to both 'tracker1' and 'tracker2'
   $http.post('/elephant', {some: 'data'}, { tracker: [myFirstTracker, mySecondTracker] })
   ```
+  
+## More Examples
+
+* Do something whenever the tracker's active state changes
+
+```js
+angular.module('app', ['ajoslin.promise-tracker'])
+
+.factory('myTracker', function (promiseTracker) {
+  return promiseTracker();
+})
+
+.controller('AppCtrl', function ($rootScope, myTracker) {
+  $rootScope.$watch(myTracker.active, function (isActive) {
+    //doSomething()
+  });
+});
+```
 
 ## Development
 
