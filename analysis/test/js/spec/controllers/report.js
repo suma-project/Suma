@@ -267,11 +267,11 @@ describe('Controller: ReportCtrl', function () {
       $scope: scope
     });
 
-    ReportCtrl.scrollTo(12345);
+    ReportCtrl.scrollTo('12345');
     scope.$digest();
 
     // Assertions
-    expect(location.hash(12345).$$hash).to.deep.equal(12345);
+    expect(location.hash('12345').$$hash).to.deep.equal('12345');
 
     // Restore stubs
     initiativesStub.restore();
