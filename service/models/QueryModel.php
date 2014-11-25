@@ -136,7 +136,8 @@ class QueryModel
                 ->from(array('ag' => 'activity_group'),
                        array('id', 'title', 'rank', 'description', 'required', 'allowMulti'))
                 ->join(array('a' => 'activity'),
-                             'a.fk_activity_group = ag.id', array())
+                       'a.fk_activity_group = ag.id',
+                        array())
                 ->where('ag.fk_initiative = ' . $this->_initId);
             $groups = $select->query()->fetchAll();
 
@@ -462,7 +463,13 @@ class QueryModel
             $array = array();
             foreach ($init as $key => $val)
             {
-                $array[$key] = ($key == 'id' || $key == 'enabled') ? (int)$val : $val;
+                if ($key === 'id' || $key === 'rootLocation') {
+                    $array[$key] = (int)$val;
+                } elseif ($key === 'enabled') {
+                    $array[$key] = (bool)$val;
+                } else {
+                    $array[$key] = $val;
+                }
             }
 
             $qModel = new QueryModel($array['id']);
@@ -474,5 +481,4 @@ class QueryModel
 
         return $parentArray;
     }
-
 }
