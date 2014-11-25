@@ -19,3 +19,4 @@ nightly:
     displayFormat: m-d-Y
     recipients: you@example.com, your_friend@example.com
     errorRecipients: you@example.com
+    emailFrom: you@example.com    
