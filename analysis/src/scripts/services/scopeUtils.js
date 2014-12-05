@@ -60,9 +60,6 @@ angular.module('sumaAnalysis')
         return _.map(locs, function (loc) {
           if (_.contains(excludeLocsAry, String(loc.id))) {
             loc.filter = false;
-            if (loc.ancestors.length > 0) {
-              loc.enabled = false;
-            }
           }
           return loc;
         });

@@ -1,5 +1,5 @@
 /*
- * promise-tracker - v2.0.0 - 2014-04-11
+ * promise-tracker - v2.1.0 - 2014-11-15
  * http://github.com/ajoslin/angular-promise-tracker
  * Created by Andy Joslin; Licensed under Public Domain
  */
@@ -109,16 +109,15 @@ angular.module('ajoslin.promise-tracker', [])
       };
 
       self.addPromise = function(promise) {
-        var then = promise && (promise.then || promise.$then ||
-                               (promise.$promise && promise.$promise.then));
-        if (!then) {
+        promise = promise && (promise.$promise || promise) || {};
+        if (!promise.then) {
           throw new Error("promiseTracker#addPromise expects a promise object!");
         }
         var deferred = self.createPromise();
 
         //When given promise is done, resolve our created promise
         //Allow $then for angular-resource objects
-        then(function success(value) {
+        promise.then(function success(value) {
           deferred.resolve(value);
           return value;
         }, function error(value) {

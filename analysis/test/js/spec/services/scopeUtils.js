@@ -336,7 +336,7 @@ describe('Service: ScopeUtils', function () {
     });
   });
 
-  it('ScopeUtils:mapLocs should set filter to false if loc is in exclude array and enabled to false if ancestors exist', function () {
+  it('ScopeUtils:mapLocs should set filter to false if loc is in exclude array', function () {
     var locs,
         excludeLocs,
         expectedLocs;
@@ -350,7 +350,7 @@ describe('Service: ScopeUtils', function () {
     excludeLocs = ['1', '2'];
 
     expectedLocs = [
-      {id: 1, filter: false, enabled: false, ancestors: [1, 2, 3]},
+      {id: 1, filter: false, enabled: true, ancestors: [1, 2, 3]},
       {id: 2, filter: false, enabled: true, ancestors: []},
       {id: 3, filter: true, enabled: true}
     ];
