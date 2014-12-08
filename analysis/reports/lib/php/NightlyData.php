@@ -121,7 +121,7 @@ class NightlyData
      * @param string $day YYYYMMDD string for date
      * @access private
      */
-    private function processData($day)
+    private function processData($day, $locationBreakdown = false)
     {
         // QueryServer config
         $queryType = "counts";
@@ -129,15 +129,15 @@ class NightlyData
         // Create new ServerIO instance
         $io = new ServerIO();
 
-        // Retrieve all initiatives
-        $initiatives = $io->getInitiatives();
+        // Retrieve all active initiatives
+	$initiatives = $this->activeInitiatives();
 
-        // Build array of param arrays
+        // Build array of param arrays for active inits
         $inits = array();
-        foreach ($initiatives as $key => $init)
+        foreach ($initiatives as $id => $title)
         {
             $params = array(
-                'id'     => $init['id'],
+                'id'     => $id,
                 'format' => "lc",
                 'sdate'  => $day,
                 'edate'  => $day
@@ -171,10 +171,9 @@ class NightlyData
      * @return array
      * @access  public
      */
-    public function getData($day)
+    public function getData($day, $locationBreakdown = false)
     {
-        $this->processData($day);
-
-        return $this->countHash;
+      $this->processData($day, $locationBreakdown);
+      return $this->countHash;
     }
 }

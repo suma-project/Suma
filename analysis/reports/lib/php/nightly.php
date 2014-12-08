@@ -1,5 +1,6 @@
 <?php
-
+$locationBreakdown = true;
+if ($locationBreakdown) { header("Content-type: text/plain"); }
 require_once 'vendor/autoload.php';
 require_once 'NightlyData.php';
 
@@ -25,10 +26,16 @@ if (isset($config['nightly']))
         foreach ($nightlyData as $key => $init)
         {
             print "\n" . $key . "\n";
-            foreach ($init as $key => $count)
-            {
-                print " " . $data->hourDisplay[$key] . ': ' . $count . "\n";
-            }
+	    if ($locationBreakdown) { 
+	      // print table based on nightlyData[key]
+	      print_r ($nightlyData[$key]);
+	    }
+	    else {
+	      foreach ($init as $key => $count)
+		{
+		  print " " . $data->hourDisplay[$key] . ': ' . $count . "\n";
+		}
+	    }
         }
     }
     catch (Exception $e)
