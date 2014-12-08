@@ -82,6 +82,7 @@ function TableCountsByLocation ($count, $locations, $day) {
   
   $tbody .="<tbody>\n";
   if (isset($count)) {
+    ksort($count);
     foreach ($count as $hour => $loc_counts ) {
       $hour = date("h A", strtotime("$day $hour:00:00"));
       $row = "<tr><th>$hour</th>\n";
