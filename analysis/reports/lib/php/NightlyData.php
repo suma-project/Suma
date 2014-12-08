@@ -17,11 +17,23 @@ class NightlyData
      */
     private $countHash = array();
     /**
+     * Boolean: break down hourly stats by location? Default = false
+     * @var bool
+     * @access  private
+     */
+    private $locationBreakdown = false;
+    /**
      * Placeholder for returned data.
      * @var array
      * @access  private
      */
     public $locations = array();
+    /**
+     * ID of initiative currently being processed
+     * @var string
+     * @access  private
+     */
+    private $currentInit = "";
     /**
      * Hash for human-readable display of hours
      * @var array
@@ -86,11 +98,22 @@ class NightlyData
     private function buildHoursScaffold() {
         $hours = array();
 
-        for ($i = 0; $i <= 23; $i++)
-        {
-            $hours[$i] = "n/a";
-        }
+	// if need location breakdown, build a 2-D scaffold
+	if ($this->locationBreakdown) {
+	  foreach ($this->locations[$this->currentInit] as $locID => $locTitle) {
+	    for ($i = 0; $i <= 23; $i++) {
+	      $hours[$this->currentInit][$i][$locID] = "n/a";
+	    }
+	  }
+	}
 
+	// otherwise, build a 1-D scaffold
+	else {
+	  for ($i = 0; $i <= 23; $i++)
+	    {
+	      $hours[$i] = "n/a";
+	    }
+	}
         return $hours;
     }
     /**
@@ -101,6 +124,9 @@ class NightlyData
     private function populateHash($response) {
         // Get init title
         $title = $response['initiative']['title'];
+
+	// Remember Initiative ID
+	$this->currentInit = $response['initiative']['id'];
 
         // Add init to COUNTHASH
         if (!isset($this->countHash[$title]))
@@ -134,7 +160,7 @@ class NightlyData
      * @param string $day YYYYMMDD string for date
      * @access private
      */
-    private function processData($day, $locationBreakdown = false)
+    private function processData($day)
     {
         // QueryServer config
         $queryType = "counts";
@@ -186,7 +212,8 @@ class NightlyData
      */
     public function getData($day, $locationBreakdown = false)
     {
-      $this->processData($day, $locationBreakdown);
+      $this->locationBreakdown = $locationBreakdown;
+      $this->processData($day);
       return $this->countHash;
     }
 }
