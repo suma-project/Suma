@@ -15,7 +15,7 @@ class NightlyData
      * @var array
      * @access  private
      */
-    private $countHash = array();
+    public $countHash = array();
     /**
      * Boolean: break down hourly stats by location? Default = false
      * @var bool
@@ -33,7 +33,13 @@ class NightlyData
      * @var string
      * @access  private
      */
-    private $currentInit = "";
+    private $currentInitID = "";
+    /**
+     * Title of initiative currently being processed
+     * @var string
+     * @access  private
+     */
+    private $currentInitTitle = "";
     /**
      * Hash for human-readable display of hours
      * @var array
@@ -97,12 +103,13 @@ class NightlyData
      */
     private function buildHoursScaffold() {
         $hours = array();
-
 	// if need location breakdown, build a 2-D scaffold
 	if ($this->locationBreakdown) {
-	  foreach ($this->locations[$this->currentInit] as $locID => $locTitle) {
+	  $initID = $this->currentInitID;
+	  foreach ($this->locations[$this->currentInitID] as $locID => $locTitle) {
+
 	    for ($i = 0; $i <= 23; $i++) {
-	      $hours[$this->currentInit][$i][$locID] = "n/a";
+	      $hours[$i][$locID] = "n/a";
 	    }
 	  }
 	}
@@ -124,9 +131,10 @@ class NightlyData
     private function populateHash($response) {
         // Get init title
         $title = $response['initiative']['title'];
-
-	// Remember Initiative ID
-	$this->currentInit = $response['initiative']['id'];
+	
+	// Remember Initiative ID & Title
+	$this->currentInitID = $response['initiative']['id'];
+	$this->currentInitTitle = $response['initiative']['title'];
 
         // Add init to COUNTHASH
         if (!isset($this->countHash[$title]))
@@ -140,17 +148,32 @@ class NightlyData
             $locations = $response['initiative']['locations'];
             foreach ($locations as $loc)
             {
+	      $locID = $loc['id'];
                 foreach ($loc['counts'] as $count)
                 {
                     $hour = date('G', strtotime($count['time']));
-                    if (!is_int($this->countHash[$title][$hour]))
-                    {
-                        $this->countHash[$title][$hour] = $count['number'];
-                    }
-                    else
-                    {
-                        $this->countHash[$title][$hour] += $count['number'];
-                    }
+
+		    // get a count each location separately if needed
+		    if ($this->locationBreakdown) {
+		      if (!is_int($this->countHash[$title][$hour][$locID])) {
+			  $this->countHash[$title][$hour][$locID] = $count['number'];
+			}
+			else {
+			  $this->countHash[$title][$hour][$locID] += $count['number'];
+			}
+		    } 
+
+		      // if not breaking down by location, keep it simple
+		    else { 
+		      if (!is_int($this->countHash[$title][$hour]['total']))
+			{
+			  $this->countHash[$title][$hour]['total'] = $count['number'];
+			}
+		      else
+			{
+			  $this->countHash[$title][$hour]['total'] += $count['number'];
+			}
+		    }
                 }
             }
         }
