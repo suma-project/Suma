@@ -17,6 +17,12 @@ class NightlyData
      */
     private $countHash = array();
     /**
+     * Placeholder for returned data.
+     * @var array
+     * @access  private
+     */
+    public $locations = array();
+    /**
      * Hash for human-readable display of hours
      * @var array
      * @access  public
@@ -48,7 +54,7 @@ class NightlyData
         "23" => "11:00 PM",
     );
     /** 
-     * Get list of active initiatives
+     * Get list of active initiatives and populate $locations array
      * @return array
      * @access private
      */
@@ -61,10 +67,17 @@ class NightlyData
 	  $id = $init['id'];
 	  $title = $init['title'];
 	  $active[$id] = $title;
+	  foreach ($init['dictionary']['locations'] as $key => $locData) {
+	    $locID = $locData['id'];
+	    $locTitle = $locData['title'];
+	    $this->locations[$id][$locID] = $locTitle;
+	  }
 	}
       }
       return $active;
     }
+    /** 
+     * Gets array of initiatives for a location
     /**
      * Builds 24 hour scaffold array for counts
      * @return array
