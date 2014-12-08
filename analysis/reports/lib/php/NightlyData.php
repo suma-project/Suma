@@ -47,6 +47,24 @@ class NightlyData
         "22" => "10:00 PM",
         "23" => "11:00 PM",
     );
+    /** 
+     * Get list of active initiatives
+     * @return array
+     * @access private
+     */
+    public function activeInitiatives() {
+      $active = array();
+      $io = new ServerIO();
+      $inits = $io->getInitiatives();
+      foreach ($inits as $key => $init) {
+	if ($init['enabled'] == 1) {
+	  $id = $init['id'];
+	  $title = $init['title'];
+	  $active[$id] = $title;
+	}
+      }
+      return $active;
+    }
     /**
      * Builds 24 hour scaffold array for counts
      * @return array
