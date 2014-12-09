@@ -19,9 +19,9 @@ class NightlyData
     /**
      * Boolean: break down hourly stats by location? Default = false
      * @var bool
-     * @access  private
+     * @access  public
      */
-    private $locationBreakdown = false;
+    public $locationBreakdown = false;
     /**
      * Placeholder for returned data.
      * @var array
@@ -265,9 +265,8 @@ class NightlyData
      * @return array
      * @access  public
      */
-    public function getData($day, $locationBreakdown = false)
+    public function getData($day)
     {
-      $this->locationBreakdown = $locationBreakdown;
       $this->processData($day);
       return $this->countHash;
     }
