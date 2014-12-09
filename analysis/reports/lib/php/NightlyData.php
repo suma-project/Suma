@@ -109,7 +109,7 @@ class NightlyData
 	  foreach ($this->locations[$this->currentInitID] as $locID => $locTitle) {
 
 	    for ($i = 0; $i <= 23; $i++) {
-	      $hours[$i][$locID] = "n/a";
+	      $hours[$i][$locID] = 0;
 	    }
 	  }
 	}
@@ -225,6 +225,45 @@ class NightlyData
             }
         }
 
+    }
+    /**
+     * Build table of hourly stats by location
+     * @return string $table
+     * @access public
+     */
+    public function buildLocationStatsTable ($statsArray, $initTitle) 
+    {
+      $tableHeader = '<tr><th>Hour</th>'; 
+      $tableRows = '';
+      $initID = array_search ($initTitle, $this->activeInitiatives());
+      $multipleLocs = (sizeof($this->locations[$initID]) > 1 ? true : false);
+
+      //build table header from locations if multiple locations
+      if ($multipleLocs) {
+	foreach ($this->locations[$initID] as $key => $locTitle) {
+	  $tableHeader .= '<th>'.$locTitle.'</th>';
+	}
+      }
+      $tableHeader .= '<th>Total</th></tr>';
+
+      // build table rows -- only show locations if more than one
+      foreach ($statsArray as $hour => $stats) {
+	$formattedHour = date ("h A", strtotime("$hour:00:00"));
+	$rowTotal = 0;
+	$rowCells = '<tr><th>'.$formattedHour.'</th>';
+	foreach ($stats as $locID => $count) {
+	  if (is_numeric($count)) { 
+	    $rowTotal += $count;
+	  }
+	  if ($multipleLocs) {
+	    $rowCells .= '<td>'.$count.'</td>';
+	  }
+	}
+	$rowCells .= '<td>'.$rowTotal.'</td></tr>';
+	$tableRows .= $rowCells;
+      }
+      $table = '<table class="stats-by-location">' . $tableHeader . $tableRows . '</table>';
+      return $table;
     }
     /**
      * Get data from server
