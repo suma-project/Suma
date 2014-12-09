@@ -15,7 +15,7 @@ class NightlyData
      * @var array
      * @access  private
      */
-    private $countHash = array();
+    public $countHash = array();
     /**
      * Boolean: break down hourly stats by location? Default = false
      * @var bool
@@ -34,12 +34,6 @@ class NightlyData
      * @access  private
      */
     private $currentInitID = "";
-    /**
-     * Title of initiative currently being processed
-     * @var string
-     * @access  private
-     */
-    private $currentInitTitle = "";
     /**
      * Hash for human-readable display of hours
      * @var array
@@ -134,7 +128,6 @@ class NightlyData
 	
 	// Remember Initiative ID & Title
 	$this->currentInitID = $response['initiative']['id'];
-	$this->currentInitTitle = $response['initiative']['title'];
 
         // Add init to COUNTHASH
         if (!isset($this->countHash[$title]))
@@ -165,13 +158,13 @@ class NightlyData
 
 		      // if not breaking down by location, keep it simple
 		    else { 
-		      if (!is_int($this->countHash[$title][$hour]['total']))
+		      if (!is_int($this->countHash[$title][$hour]))
 			{
-			  $this->countHash[$title][$hour]['total'] = $count['number'];
+			  $this->countHash[$title][$hour] = $count['number'];
 			}
 		      else
 			{
-			  $this->countHash[$title][$hour]['total'] += $count['number'];
+			  $this->countHash[$title][$hour] += $count['number'];
 			}
 		    }
                 }
