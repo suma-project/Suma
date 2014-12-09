@@ -15,7 +15,7 @@ class NightlyData
      * @var array
      * @access  private
      */
-    public $countHash = array();
+    private $countHash = array();
     /**
      * Boolean: break down hourly stats by location? Default = false
      * @var bool
@@ -27,7 +27,7 @@ class NightlyData
      * @var array
      * @access  private
      */
-    public $locations = array();
+    private $locations = array();
     /**
      * ID of initiative currently being processed
      * @var string
@@ -76,7 +76,7 @@ class NightlyData
      * @return array
      * @access private
      */
-    public function activeInitiatives() {
+    private function activeInitiatives() {
       $active = array();
       $io = new ServerIO();
       $inits = $io->getInitiatives();
