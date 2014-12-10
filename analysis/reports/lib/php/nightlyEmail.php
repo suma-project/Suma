@@ -1,11 +1,12 @@
 <?php
+
 require_once 'vendor/autoload.php';
 
 // Configuration
 $config = Spyc::YAMLLoad(realpath(dirname(__FILE__)) . '/../../../config/config.yaml');
 
 /* 
- * If the php call is followed by the argument "lcoations",
+ * If the php call is followed by the argument "locations",
  * then use the NightlyData.php support for multiple locations
  */
 
@@ -50,8 +51,4 @@ else
 
     $message = $GREETING . "\n" . $data;
     mail($RECIPIENTS, $SUBJECT, $message, $headers);
-    $fp = fopen ("temp.html", "w");
-    fwrite ($fp, $message);
-    fclose ($fp);
-
 }
