@@ -20,7 +20,6 @@ service/config/config.yaml
 service/web/config/config.yaml
 web/config/spaceassessConfig.js
 analysis/config/config.yaml
-analysis/reports/lib/php/localSql.php
 
 #cron job
 analysis/reports/lib/php/nightly.sh
