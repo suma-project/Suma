@@ -237,7 +237,7 @@ class NightlyData
 	  $tableHeader .= '<th>'.$locTitle.'</th>';
 	}
       }
-      $tableHeader .= '<th>Total</th></tr>';
+      $tableHeader .= '<th>Total</th></tr>' . PHP_EOL;
 
       // build table rows -- only show locations if more than one
       foreach ($statsArray as $hour => $stats) {
@@ -252,10 +252,10 @@ class NightlyData
 	    $rowCells .= '<td>'.$count.'</td>';
 	  }
 	}
-	$rowCells .= '<td>'.$rowTotal.'</td></tr>';
+	$rowCells .= '<td>'.$rowTotal.'</td></tr>' . PHP_EOL;
 	$tableRows .= $rowCells;
       }
-      $table = '<table class="stats-by-location">' . $tableHeader . $tableRows . '</table>';
+      $table = '<table class="stats-by-location">' . PHP_EOL . $tableHeader . $tableRows . '</table>' . PHP_EOL;
       return $table;
     }
     /**
