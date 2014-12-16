@@ -15,13 +15,7 @@ class NightlyData
      * @var array
      * @access  private
      */
-    public $countHash = array();
-    /**
-     * Boolean: break down hourly stats by location? Default = false
-     * @var bool
-     * @access  public
-     */
-    public $locationBreakdown = false;
+    private $countHash = array();
     /**
      * Placeholder for returned data.
      * @var array
@@ -97,24 +91,14 @@ class NightlyData
      */
     private function buildHoursScaffold() {
         $hours = array();
-	// if need location breakdown, build a 2-D scaffold
-	if ($this->locationBreakdown) {
-	  $initID = $this->currentInitID;
-	  foreach ($this->locations[$this->currentInitID] as $locID => $locTitle) {
-
-	    for ($i = 0; $i <= 23; $i++) {
-	      $hours[$i][$locID] = 0;
-	    }
+	$initID = $this->currentInitID;
+	foreach ($this->locations[$this->currentInitID] as $locID => $locTitle) {
+	  
+	  for ($i = 0; $i <= 23; $i++) {
+	    $hours[$i][$locID] = 0;
 	  }
 	}
-
-	// otherwise, build a 1-D scaffold
-	else {
-	  for ($i = 0; $i <= 23; $i++)
-	    {
-	      $hours[$i] = "n/a";
-	    }
-	}
+	
         return $hours;
     }
     /**
@@ -146,27 +130,14 @@ class NightlyData
                 {
                     $hour = date('G', strtotime($count['time']));
 
-		    // get a count each location separately if needed
-		    if ($this->locationBreakdown) {
+		    // get a count of each location separately 
 		      if (!is_int($this->countHash[$title][$hour][$locID])) {
 			  $this->countHash[$title][$hour][$locID] = $count['number'];
 			}
 			else {
 			  $this->countHash[$title][$hour][$locID] += $count['number'];
 			}
-		    } 
 
-		      // if not breaking down by location, keep it simple
-		    else { 
-		      if (!is_int($this->countHash[$title][$hour]))
-			{
-			  $this->countHash[$title][$hour] = $count['number'];
-			}
-		      else
-			{
-			  $this->countHash[$title][$hour] += $count['number'];
-			}
-		    }
                 }
             }
         }
@@ -227,7 +198,7 @@ class NightlyData
     public function buildLocationStatsTable ($statsArray, $initTitle) 
     {
       $tableHeader = '<tr><th>Hour</th>'; 
-      $tableRows = '';
+      $tableRows = array();
       $initID = array_search ($initTitle, $this->activeInitiatives());
       $multipleLocs = (sizeof($this->locations[$initID]) > 1 ? true : false);
 
