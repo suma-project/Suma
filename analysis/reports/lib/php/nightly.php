@@ -33,7 +33,7 @@ if (isset($config['nightly']))
         // Print Output
 
 	// Add stylesheet if multiple locations
-	if ($locationBreakdown) {
+	if ($outputHtml) {
 	  print '<style>';
 	  print 'table { border-collapse: collapse;}';
 	  print 'td,th { border: 1px solid black; text-align: center;}';
