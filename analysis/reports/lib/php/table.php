@@ -21,12 +21,23 @@ PrintTable($rows, $displayFormat);
 PrintTable(Sideways($rows), $displayFormat);
 
 function PrintTable ($rows, $printFormat="text") {
+  //get column widths
+  $columnWidth = array();
+  foreach($rows as $row) {
+    foreach ($row as $num=>$val) {
+      if (isset($columnWidth[$num])) { 
+	$columnWidth[$num] = (strlen($val) > $columnWidth[$num] ? strlen($val) : $columnWidth[$num] );
+      }
+      else { $columnWidth[$num] = strlen($val); }
+    }
+  }
+  print_r($columnWidth);
+
   $output = "";
   foreach ($rows as $row) {
-    $format = "%-15s";
-    for ($i=0; $i<sizeof($row)-1; $i++) {
-      if (! isset($row[$i])) { $row[$i] = " ";  }
-      $format.= "  %3s";
+    $format = '%-'.$columnWidth[0].'s';
+    for ($i=1; $i<sizeof($row); $i++) {
+      $format.= '  %'.$columnWidth[$i].'s';
     }
     if ($printFormat == "html") {
       $output .= "<tr><td>" . join("</td>\n<td>", $row) . "</td></tr>". PHP_EOL;
