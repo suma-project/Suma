@@ -197,7 +197,7 @@ class NightlyData
      */
     public function buildLocationStatsTable ($statsArray, $initTitle) 
     {
-      $tableHeader = '<tr><th>Hour</th>'; 
+      $tableHeader = array('Hour');
       $tableRows = array();
       $initID = array_search ($initTitle, $this->activeInitiatives());
       $multipleLocs = (sizeof($this->locations[$initID]) > 1 ? true : false);
@@ -205,30 +205,85 @@ class NightlyData
       //build table header from locations if multiple locations
       if ($multipleLocs) {
 	foreach ($this->locations[$initID] as $key => $locTitle) {
-	  $tableHeader .= '<th>'.$locTitle.'</th>';
+	  array_push($tableHeader,$locTitle);
 	}
       }
-      $tableHeader .= '<th>Total</th></tr>' . PHP_EOL;
+      array_push($tableHeader,'Total');
+      array_push($tableRows,$tableHeader);
 
       // build table rows -- only show locations if more than one
       foreach ($statsArray as $hour => $stats) {
 	$formattedHour = date ("h A", strtotime("$hour:00:00"));
 	$rowTotal = 0;
-	$rowCells = '<tr><th>'.$formattedHour.'</th>';
+	$rowCells = array($formattedHour);
 	foreach ($stats as $locID => $count) {
 	  if (is_numeric($count)) { 
 	    $rowTotal += $count;
 	  }
 	  if ($multipleLocs) {
-	    $rowCells .= '<td>'.$count.'</td>';
+	    array_push($rowCells,$count);
 	  }
 	}
-	$rowCells .= '<td>'.$rowTotal.'</td></tr>' . PHP_EOL;
-	$tableRows .= $rowCells;
+	array_push($rowCells,$rowTotal);
+	array_push($tableRows,$rowCells);
       }
-      $table = '<table class="stats-by-location">' . PHP_EOL . $tableHeader . $tableRows . '</table>' . PHP_EOL;
-      return $table;
+      return $tableRows;
     }
+    /**
+     * Format table output as text or html
+     *
+     * @param array of table rows, string printFormat
+     * @return outptu
+     * @access  public
+     */
+public function formatTable ($rows, $printFormat="text") {
+  //get column widths
+  $columnWidth = array();
+  foreach($rows as $row) {
+    foreach ($row as $num=>$val) {
+      if (isset($columnWidth[$num])) { 
+	$columnWidth[$num] = (strlen($val) > $columnWidth[$num] ? strlen($val) : $columnWidth[$num] );
+      }
+      else { $columnWidth[$num] = strlen($val); }
+    }
+  }
+
+  $output = "";
+  foreach ($rows as $row) {
+    $format = '%-'.$columnWidth[0].'s';
+    for ($i=1; $i<sizeof($row); $i++) {
+      $format.= '  %'.$columnWidth[$i].'s';
+    }
+    if ($printFormat == "html") {
+      $output .= "<tr><td>" . join("</td>\n<td>", $row) . "</td></tr>". PHP_EOL;
+    }
+    else {
+      $output .= vsprintf($format,$row)."\n";
+    }
+  }
+  if ($printFormat == "html") { 
+    $output = "<table>$output</table>\n";
+  }
+  return $output;
+}
+    /**
+     * Turn array data sideways (rows <-> columns)
+     *
+     * @param  array $rows
+     * @return array
+     * @access  public
+     */
+public function sideways ($rows) {
+  $sideways = array();
+  $i = 0;
+  foreach ($rows as $array) {
+    foreach ($array as $k=>$v) {
+      $sideways[$k][$i] = $v;
+    }
+    $i++;
+  }
+  return $sideways;
+}
     /**
      * Get data from server
      *

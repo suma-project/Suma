@@ -35,17 +35,13 @@ if (isset($config['nightly']))
         // Print Output
         foreach ($nightlyData as $key => $init)
         {
-	    if ($locationBreakdown) { 
 	      print "<h2>" . $key . "</h2>\n";
-	      print ($data->buildLocationStatsTable($nightlyData[$key], $key));
-	    }
-	    else {
-	      print "\n" . $key . "\n";
-	      foreach ($init as $key => $count)
-		{
-		  print " " . $data->hourDisplay[$key] . ': ' . $count . "\n";
-		}
-	    }
+	      //	      print_r ($nightlyData[$key]);
+	      $table = ($data->buildLocationStatsTable($nightlyData[$key], $key));
+	      //	      $table = $data->sideways($table);
+	      print "<pre>";
+	      print ($data->formatTable($table,"text"));
+	      print "</pre>\n";
         }
     }
     catch (Exception $e)
