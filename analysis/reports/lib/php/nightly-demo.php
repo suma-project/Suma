@@ -38,6 +38,7 @@ if (isset($config['nightly']))
 	      print "<h2>" . $key . "</h2>\n";
 	      //	      print_r ($nightlyData[$key]);
 	      $table = ($data->buildLocationStatsTable($nightlyData[$key], $key));
+	      $table = $data->eliminateLocations($table);
 	      //	      $table = $data->sideways($table);
 	      print "<pre>";
 	      print ($data->formatTable($table,"text"));

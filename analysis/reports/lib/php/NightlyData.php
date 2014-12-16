@@ -230,10 +230,25 @@ class NightlyData
       return $tableRows;
     }
     /**
+     * Reduce table to just hours and totals
+     *
+     * @param array of table rows
+     * @return array newTable
+     * @access  public
+     */
+    public function eliminateLocations($table) {
+      $newTable = array();
+      foreach ($table as $rows) {
+	$newRow = array($rows[0], $rows[sizeof($rows)-1]);
+	array_push($newTable, $newRow);
+      }
+      return $newTable;
+    }
+    /**
      * Format table output as text or html
      *
      * @param array of table rows, string printFormat
-     * @return outptu
+     * @return string output
      * @access  public
      */
 public function formatTable ($rows, $printFormat="text") {
