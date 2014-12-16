@@ -2,8 +2,15 @@
 require_once 'vendor/autoload.php';
 require_once 'NightlyData.php';
 
-// get command-line variable 'locations' if present
-$locationBreakdown = (array_search("locations",$argv) ? (array_search("locations",$argv) > 0 ? "locations" : "") : "");
+// get command-line variables if present
+$possibleArgs = array ("locationBreakdown" => "locations",
+		       "hoursAcross" => "hours-across",
+		       "outputHtml" => "html");
+
+foreach ($possibleArgs as $config => $arg) 
+  {
+    $$config = (array_search($arg, $argv) ? (array_search($arg,$argv) > 0 ? true : "") : false);
+  }
 
 // Configuration
 $config = Spyc::YAMLLoad(realpath(dirname(__FILE__)) . '/../../../config/config.yaml');
@@ -21,7 +28,6 @@ if (isset($config['nightly']))
     try
     {
         $data = new NightlyData();
-	$data->locationBreakdown = $locationBreakdown;
         $nightlyData = $data->getData($DAY_PROCESS);
 
         // Print Output
@@ -31,21 +37,32 @@ if (isset($config['nightly']))
 	  print '<style>';
 	  print 'table { border-collapse: collapse;}';
 	  print 'td,th { border: 1px solid black; text-align: center;}';
+	  print 'tr:first-child { font-weight: bold }';
+	  print 'td:first-child { font-weight: bold }';
 	  print '</style>';
 	}
 
         foreach ($nightlyData as $key => $init)
         {
-	    if ($locationBreakdown) { 
-	      print "<h2>" . $key . "</h2>\n";
-	      print ($data->buildLocationStatsTable($nightlyData[$key], $key));
+	  $table = ($data->buildLocationStatsTable($nightlyData[$key], $key));
+
+	  if (! $locationBreakdown) 
+	    {
+	      $table = $data->eliminateLocations($table);
 	    }
-	    else {
+	  if ($hoursAcross)
+	    {
+	      $table = $data->sideways($table);
+	    }
+	  if ($outputHtml)
+	    {
+	      print "<h2>" . $key . "</h2>\n";
+	      print($data->formatTable($table, "html"));
+	    }
+	  else 
+	    {
 	      print "\n" . $key . "\n";
-	      foreach ($init as $key => $count)
-		{
-		  print " " . $data->hourDisplay[$key] . ': ' . $count . "\n";
-		}
+	      print($data->formatTable($table));
 	    }
         }
     }
