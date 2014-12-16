@@ -5,13 +5,16 @@ require_once 'vendor/autoload.php';
 // Configuration
 $config = Spyc::YAMLLoad(realpath(dirname(__FILE__)) . '/../../../config/config.yaml');
 
-/* 
- * If the php call is followed by the argument "locations",
- * then use the NightlyData.php support for multiple locations
- */
-
-$locationBreakdown = (array_search("locations",$argv) ? (array_search("locations",$argv) > 0 ? "locations" : "") : "");
-
+// get arguments to pass on to nightly.phpa
+if (isset($argv) & sizeof($argv) > 1) 
+  { 
+    $args = join (" ", array_slice($argv, 1));
+    $outputHtml = (array_search("html",$argv) ? true : false);
+  }
+else 
+  {
+    $args = "";
+  }
 // Default Timezone. See: http://us3.php.net/manual/en/timezones.php
 $DEFAULT_TIMEZONE = $config['nightly']['timezone'];
 date_default_timezone_set($DEFAULT_TIMEZONE);
@@ -30,7 +33,7 @@ $ERROR_GREETING = 'The nightly Suma report encountered an error.';
 $ERROR_SUBJECT = 'ERROR: Suma Nightly Report: ' . $DAY_DISPLAY;
 
 // Run Script
-$data = `php nightly.php $locationBreakdown`; 
+$data = `php nightly.php $args`; 
 
 $errorCheck = explode(" ", $data);
 
@@ -44,7 +47,7 @@ else
   $headers = "From: Suma Server <kirwin@wittenberg.edu>\r\n";
 
   // additional headers if reporting by location, to support HTML in email
-  if ($locationBreakdown) {
+  if ($outputHtml) {
     $headers .= "MIME-Version: 1.0\r\n";
     $headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
   }
