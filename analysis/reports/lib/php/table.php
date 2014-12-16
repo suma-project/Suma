@@ -5,6 +5,8 @@ else {
 ?>
 <style>
    table, tr, th, td { border: 1px solid black; border-collapse: collapse; }
+table tr:first-child td {font-weight: bold }
+  table tr td:first-child {font-weight: bold } 
 </style>
 <?
     } //end else if html
@@ -31,7 +33,6 @@ function PrintTable ($rows, $printFormat="text") {
       else { $columnWidth[$num] = strlen($val); }
     }
   }
-  print_r($columnWidth);
 
   $output = "";
   foreach ($rows as $row) {
