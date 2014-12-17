@@ -193,13 +193,14 @@ class NightlyData
 	public function eliminateLocations($table)
 	{
 		$newTable = array();
-		foreach ($table as $rows) {
-			$newRow = array(
-							$rows[0],
-							$rows[sizeof($rows) - 1]
-							);
-			array_push($newTable, $newRow);
-		}
+		foreach ($table as $rows) 
+			{
+				$newRow = array(
+								$rows[0],
+								$rows[sizeof($rows) - 1]
+								);
+				array_push($newTable, $newRow);
+			}
 		return $newTable;
 	}
 	/**
