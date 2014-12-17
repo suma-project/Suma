@@ -5,15 +5,16 @@ require_once 'vendor/autoload.php';
 // Configuration
 $config = Spyc::YAMLLoad(realpath(dirname(__FILE__)) . '/../../../config/config.yaml');
 
-// get arguments to pass on to nightly.phpa
+// get arguments to pass on to nightly.php
 if (isset($argv) & sizeof($argv) > 1) 
   { 
     $args = join (" ", array_slice($argv, 1));
-    $outputHtml = (array_search("html",$argv) ? true : false);
+    $outputHtml = (array_search("html",$argv) > 0 ? true : false);
   }
 else 
   {
     $args = "";
+    $outputHtml = false;
   }
 // Default Timezone. See: http://us3.php.net/manual/en/timezones.php
 $DEFAULT_TIMEZONE = $config['nightly']['timezone'];
