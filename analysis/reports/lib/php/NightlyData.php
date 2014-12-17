@@ -203,6 +203,26 @@ class NightlyData
 			}
 		return $newTable;
 	}
+	/** 
+	 * Hide from report hours with no activity
+	 * @param array of table rows
+	 * @return array
+	 * @access public
+	 */
+	public function hideZeroHours ($table) {
+		$newTable = array();
+		$i = 0;
+		foreach ($table as $rows) 
+			{
+				$lastIndex = sizeof($rows)-1; 
+				if ($rows[$lastIndex] != 0 || $i==0) 
+					{
+						array_push($newTable, $rows);
+					}
+				$i++;
+			}
+		return $newTable;
+	}
 	/**
 	 * Format table output as text or html
 	 *

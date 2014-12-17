@@ -5,7 +5,9 @@ require_once 'NightlyData.php';
 // get command-line variables if present
 $possibleArgs = array ("locationBreakdown" => "locations",
 					   "hoursAcross" => "hours-across",
-					   "outputHtml" => "html");
+					   "outputHtml" => "html",
+					   "hideZeroHours" => "hide-zeros"
+					   );
 
 foreach ($possibleArgs as $config => $arg) 
 	{
@@ -50,6 +52,10 @@ if (isset($config['nightly']))
 						if (! $locationBreakdown) 
 							{
 								$table = $data->eliminateLocations($table);
+							}
+						if ($hideZeroHours) 
+							{
+								$table = $data->hideZeroHours($table);
 							}
 						if ($hoursAcross)
 							{
