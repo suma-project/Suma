@@ -51,11 +51,12 @@ else
   $emailHeaders = (isset($SENDER) ? 'From: ' . $SENDER . PHP_EOL : ""); 
 
   // additional headers if reporting by location, to support HTML in email
-  if ($outputHtml) {
-    $emailHeaders .= 'MIME-Version: 1.0' . PHP_EOL;
-    $emailHeaders .= 'Content-type: text/html; charset=iso-8859-1' . PHP_EOL;
-  }
-
+  if ($outputHtml) 
+    {
+      $emailHeaders .= 'MIME-Version: 1.0' . PHP_EOL;
+      $emailHeaders .= 'Content-type: text/html; charset=iso-8859-1' . PHP_EOL;
+    }
+  
     $message = $GREETING . "\n" . $data;
     mail($RECIPIENTS, $SUBJECT, $message, $emailHeaders);
 }

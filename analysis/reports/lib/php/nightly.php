@@ -33,14 +33,15 @@ if (isset($config['nightly']))
         // Print Output
 
 	// Add stylesheet if multiple locations
-	if ($outputHtml) {
-	  print '<style>';
-	  print 'table { border-collapse: collapse;}';
-	  print 'td,th { border: 1px solid black; text-align: center;}';
-	  print 'tr:first-child { font-weight: bold }';
-	  print 'td:first-child { font-weight: bold }';
-	  print '</style>';
-	}
+	if ($outputHtml) 
+	  {
+	    print '<style>';
+	    print 'table { border-collapse: collapse;}';
+	    print 'td,th { border: 1px solid black; text-align: center;}';
+	    print 'tr:first-child { font-weight: bold }';
+	    print 'td:first-child { font-weight: bold }';
+	    print '</style>';
+	  }
 
         foreach ($nightlyData as $key => $init)
         {
