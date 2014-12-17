@@ -63,9 +63,10 @@ class NightlyData
 		$initID = $this->currentInitID;
 		foreach ($this->locations[$this->currentInitID] as $locID => $locTitle)
 			{
-				for ($i = 0; $i <= 23; $i++) {
-					$hours[$i][$locID] = 0;
-				}
+				for ($i = 0; $i <= 23; $i++) 
+					{
+						$hours[$i][$locID] = 0;
+					}
 			}
 		return $hours;
 	}
@@ -148,9 +149,7 @@ class NightlyData
 	 */
 	public function buildLocationStatsTable($statsArray, $initTitle)
 	{
-		$tableHeader  = array(
-							  'Hour'
-							  );
+		$tableHeader  = array('Hour');
 		$tableRows    = array();
 		$initID       = array_search($initTitle, $this->activeInitiatives());
 		$multipleLocs = (sizeof($this->locations[$initID]) > 1 ? true : false);
