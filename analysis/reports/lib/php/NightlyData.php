@@ -244,24 +244,25 @@ class NightlyData
 					}
 			}
 		}
-    $output = "";
-    foreach ($rows as $row) {
-		$format = '%-' . $columnWidth[0] . 's';
-		for ($i = 1; $i < sizeof($row); $i++) {
-			$format .= ' %' . $columnWidth[$i] . 's';
-		}
-		if ($printFormat == "html") {
-			$output .= "<tr><td>" . join("</td>\n<td>", $row) . "</td></tr>" . PHP_EOL;
-		} 
-		else 
-			{
-				$output .= vsprintf($format, $row) . "\n";
+		$output = "";
+		foreach ($rows as $row) {
+			$format = '%-' . $columnWidth[0] . 's';
+			for ($i = 1; $i < sizeof($row); $i++) {
+				$format .= ' %' . $columnWidth[$i] . 's';
 			}
-    }
-    if ($printFormat == "html") {
-		$output = "<table>$output</table>\n";
-    }
-    return $output;
+			if ($printFormat == "html") {
+				$output .= "<tr><td>" . join("</td>\n<td>", $row) . "</td></tr>" . PHP_EOL;
+			} 
+			else 
+				{
+					$output .= vsprintf($format, $row) . "\n";
+				}
+		}
+		if ($printFormat == "html") 
+			{
+				$output = "<table>$output</table>\n";
+			}
+		return $output;
 	}
 	/**
 	 * Turn array data sideways (rows <-> columns)
