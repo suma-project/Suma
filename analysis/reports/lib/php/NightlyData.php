@@ -52,7 +52,6 @@ class NightlyData
 	}
 	/**
 	 * Gets array of initiatives for a location
-	 /**
 	 * Builds 24 hour scaffold array for counts
 	 * @return array
 	 * @access private
