@@ -25,7 +25,10 @@ $DAY_DISPLAY = date($config['nightly']['displayFormat'], strtotime('yesterday'))
 // Info for regular report recipients
 $RECIPIENTS  = $config['nightly']['recipients'];
 $GREETING    = "Below are the hourly Suma counts for " . $DAY_DISPLAY . ". " . "Please note that missing counts may have been performed but not yet uploaded to the Suma server.";
-$SUBJECT     = "Student Manager Head Counts: " . $DAY_DISPLAY;
+$SENDER      = (isset($config['nightly']['emailFrom']) ? $config['nightly']['emailFrom'] : null);
+$defaultSubj = "Suma Nightly Report: ";
+$subjectLeadIn = (isset($config['nightly']['emailSubj']) ? $config['nightly']['emailSubj'] : $defaultSubj);
+$SUBJECT     = $subjectLeadIn . $DAY_DISPLAY;
 
 // Info for error report recipients
 $ERROR_RECIPIENTS = $config['nightly']['errorRecipients'];
@@ -44,14 +47,14 @@ if ($errorCheck[0] === "Error:")
 }
 else
 {
-  $headers = "From: Suma Server <kirwin@wittenberg.edu>\r\n";
+  $emailHeaders = (isset($SENDER) ? 'From: ' . $SENDER . PHP_EOL : ""); 
 
   // additional headers if reporting by location, to support HTML in email
   if ($outputHtml) {
-    $headers .= "MIME-Version: 1.0\r\n";
-    $headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
+    $emailHeaders .= 'MIME-Version: 1.0' . PHP_EOL;
+    $emailHeaders .= 'Content-type: text/html; charset=iso-8859-1' . PHP_EOL;
   }
 
     $message = $GREETING . "\n" . $data;
-    mail($RECIPIENTS, $SUBJECT, $message, $headers);
+    mail($RECIPIENTS, $SUBJECT, $message, $emailHeaders);
 }
