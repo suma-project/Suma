@@ -202,7 +202,7 @@ Examples of nightlyEmail.php configuration include:
 
 `YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightlyEmail.php hours-across hide-zeros html`
 
-    Alternatively, `YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightly.php` may be run from the command line for quick reporting through stdout.
+Alternatively, `YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightly.php` may be run from the command line for quick reporting through stdout.
 
 Other Things You Can Configure
 -------------------------------
