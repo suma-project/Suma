@@ -187,12 +187,12 @@ Suma Analysis Tools Configuration
 
     Using cron, or some other scheduler, schedule a task to run the `YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightlyEmail.php` script as desired. This command-line script takes several optional arguments to configure the report:
 
- * hide-zeros: do not display data for hours with no activity
- * hours-across: display hours from left-to-right instead of the default top-to-bottom in the report
- * html: formats the report as in HTML rather than plain text (strongly recommended for use when using the 'hours-across' and/or 'locations' options
- * locations: display hourly reports broken down by location, plus a total
+ * **hide-zeros**: do not display data for hours with no activity
+ * **hours-across**: display hours from left-to-right instead of the default top-to-bottom in the report
+ * **locations**: display hourly reports broken down by location, plus a total
+ * **html**: formats the report as in HTML rather than plain text (strongly recommended for use when using the 'hours-across' and/or 'locations' options
 
-    Examples of nightlyEmail.php configuration include:
+Examples of nightlyEmail.php configuration include:
 
 `YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightlyEmail.php`
 
