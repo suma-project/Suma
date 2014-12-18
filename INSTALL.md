@@ -193,9 +193,13 @@ Suma Analysis Tools Configuration
  * locations: display hourly reports broken down by location, plus a total
 
     Examples of nightlyEmail.php configuration include:
+
 `YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightlyEmail.php`
+
 `YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightlyEmail.php html locations`
+
 `YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightlyEmail.php hide-zeros`
+
 `YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightlyEmail.php hours-across hide-zeros html`
 
     Alternatively, `YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightly.php` may be run from the command line for quick reporting through stdout.
