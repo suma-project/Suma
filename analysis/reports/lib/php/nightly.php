@@ -2,18 +2,16 @@
 require_once 'vendor/autoload.php';
 require_once 'NightlyData.php';
 
-// get command-line variables if present 
-$possibleArgs = array(
-                      "locationBreakdown" => "locations",
-                      "hoursAcross" => "--hours-across",
-                      "outputHtml" => "--html",
-                      "hideZeroHours" => "--hide-zeros"
-                      );
-
-foreach ($possibleArgs as $config => $arg)
-    {
-        $$config = (array_search($arg, $argv) ? (array_search($arg, $argv) > 0 ? true : "") : false);
-    }
+/* get command-line arguments if present. allowed values:
+   locations
+   --hours-across
+   --html
+   --hide-zeros
+*/
+$locationBreakdown = (array_search("locations", $argv) ? (array_search("locations", $argv) > 0 ? true : "") : false);
+$hoursAcross = (array_search("--hours-across", $argv) ? (array_search("--hours-across", $argv) > 0 ? true : "") : false);
+$outputHtml = (array_search("--html", $argv) ? (array_search("--html", $argv) > 0 ? true : "") : false);
+$hideZeroHours = (array_search("--hide-zeros", $argv) ? (array_search("--hide-zeros", $argv) > 0 ? true : "") : false);
 
 // Configuration
 $config = Spyc::YAMLLoad(realpath(dirname(__FILE__)) . '/../../../config/config.yaml');
