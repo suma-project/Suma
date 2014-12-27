@@ -54,7 +54,7 @@ else
         if ($outputHtml)
             {
                 $emailHeaders .= 'MIME-Version: 1.0' . PHP_EOL;
-                $emailHeaders .= 'Content-type: text/html; charset=iso-8859-1' . PHP_EOL;
+                $emailHeaders .= 'Content-type: text/html; charset=utf-8' . PHP_EOL;
             }
 
         $message = $GREETING . "\n" . $data;
