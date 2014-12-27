@@ -9,7 +9,7 @@ $config = Spyc::YAMLLoad(realpath(dirname(__FILE__)) . '/../../../config/config.
 if (isset($argv) & sizeof($argv) > 1)
     {
         $args       = join(" ", array_slice($argv, 1));
-        $outputHtml = (array_search("html", $argv) > 0 ? true : false);
+        $outputHtml = (array_search("--html", $argv) > 0 ? true : false);
     }
 else
     {

@@ -5,9 +5,9 @@ require_once 'NightlyData.php';
 // get command-line variables if present 
 $possibleArgs = array(
                       "locationBreakdown" => "locations",
-                      "hoursAcross" => "hours-across",
-                      "outputHtml" => "html",
-                      "hideZeroHours" => "hide-zeros"
+                      "hoursAcross" => "--hours-across",
+                      "outputHtml" => "--html",
+                      "hideZeroHours" => "--hide-zeros"
                       );
 
 foreach ($possibleArgs as $config => $arg)
