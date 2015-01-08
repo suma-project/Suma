@@ -71,6 +71,8 @@ If your Apache configuration has the `FollowSymLinks` directive enabled, there i
         /var/www/htdocs/sumaserver/      =>  /var/www/app/suma/service/web/
         /var/www/htdocs/suma/client/        =>  /var/www/app/suma/web/
         /var/www/htdocs/suma/analysis/   =>  /var/www/app/suma/analysis/
+        /var/www/htdocs/sumaserver/.htaccess => /var/www/app/suma/.htaccess
+        /var/www/htdocs/suma/.htaccess => /var/www/app/suma/.htaccess
 
 
 Now all of your code is in one place, allowing you to update Suma by running `git pull --rebase origin master`. There is a chance this could result in merge conflicts with your local changes, so please allow for time to resolve these before updating.
@@ -91,6 +93,9 @@ If using Apache's rewrite module add these lines in your web server (likely http
     RewriteCond %{REQUEST_FILENAME} -d
     RewriteRule ^.*$ - [NC,L]
     RewriteRule ^.*$ index.php [NC,L]
+
+    # Allows .htaccess file to be used
+    AllowOverride All
     </Directory>
 
 **Don't forget to change `YOUR_WEB_DIR` to the directory in your web space that contains the `service/web/` content**
@@ -162,6 +167,10 @@ Suma Server Software Configuration
                     name: sumaserver.log
 
     * Be sure that the log directory specified in `sumaserver:log:path` both exists and is **writable by the web server**.
+
+* web/.htaccess
+
+    In the `/SUMA_SERVER_INSTALL_DIR/web/.htaccess` file change `SUMA_BASE_URL` to the path for the Suma Server. 
 
 
 Suma Client Configuration
