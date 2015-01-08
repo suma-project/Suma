@@ -71,9 +71,6 @@ If your Apache configuration has the `FollowSymLinks` directive enabled, there i
         /var/www/htdocs/sumaserver/      =>  /var/www/app/suma/service/web/
         /var/www/htdocs/suma/client/        =>  /var/www/app/suma/web/
         /var/www/htdocs/suma/analysis/   =>  /var/www/app/suma/analysis/
-        /var/www/htdocs/sumaserver/.htaccess => /var/www/app/suma/.htaccess
-        /var/www/htdocs/suma/.htaccess => /var/www/app/suma/.htaccess
-
 
 Now all of your code is in one place, allowing you to update Suma by running `git pull --rebase origin master`. There is a chance this could result in merge conflicts with your local changes, so please allow for time to resolve these before updating.
 
@@ -112,6 +109,17 @@ If using a .htaccess place the file in the `/YOUR_WEB_DIR/sumaserver` directory 
     RewriteRule ^.*$ index.php [NC,L]
 
 An example .htaccess file named can be found at `/YOUR_WEB_DIR/sumaserver/htaccess_example`. To use, copy the contents of this file to a new file named `/YOUR_WEB_DIR/sumaserver/.htaccess`.
+
+403 and 404 Error Handling
+---------------------------
+
+Example .htaccess files with 403 and 404 error handling are available at:
+
+* `/YOUR_WEB_DIR/sumaserver/htaccess_example`
+* `/YOUR_WEB_DIR/analysis/htaccess_example`
+* `/YOUR_WEB_DIR/web/htaccess_example`
+
+Renaming these files to .htaccess will enable custom error handling and give users a 404 error instead of a 403 error when trying to access a forbidden resource.
 
 Database Setup
 ---------------

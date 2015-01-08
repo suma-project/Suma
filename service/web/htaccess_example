@@ -4,3 +4,6 @@ RewriteCond %{REQUEST_FILENAME} -l [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^.*$ - [NC,L]
 RewriteRule ^.*$ index.php [NC,L]
+
+ErrorDocument 403 SUMA_BASE_URL/client/errors/404.php
+ErrorDocument 404 SUMA_BASE_URL/client/errors/404.php

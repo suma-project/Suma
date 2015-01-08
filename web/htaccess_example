@@ -1,0 +1,2 @@
+ErrorDocument 403 SUMA_BASE_URL/client/errors/404.php
+ErrorDocument 404 SUMA_BASE_URL/client/errors/404.php
