@@ -163,6 +163,9 @@ Suma Server Software Configuration
 
     * Be sure that the log directory specified in `sumaserver:log:path` both exists and is **writable by the web server**.
 
+* services/config/session.ini
+
+    `SUMA_BASE_URL` must be set to the URL path for the Suma server. For example, if the URL is `http://YOUR_HOST/sumaserver`, set this to `/sumaserver`.
 
 Suma Client Configuration
 --------------------------
