@@ -32,6 +32,8 @@ production:
         admin:
             user: admin
             pass: admin
+            lockout_count: 5
+            lockout_time: 300
     queryserver:
         db:
             limit: 10000

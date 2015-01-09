@@ -24,7 +24,7 @@ class AdminController extends BaseController
       $user = Zend_Filter::filterStatic($this->getRequest()->getParam('username'), 'StripTags');
       $pass = Zend_Filter::filterStatic($this->getRequest()->getParam('password'), 'StripTags');
 
-      if ($this->checkAuthCount($user) >= 5) {
+      if ($this->checkAuthCount($user) >= Globals::getConfig()->sumaserver->admin->lockout_count) {
         $this->lockedOut();
       }
       else {
@@ -436,12 +436,14 @@ class AdminController extends BaseController
 
     private function checkAuthCount($user) {
 
+        $lockoutTime  = Globals::getConfig()->sumaserver->admin->lockout_time;
+
         // Check to see if this user 'locked out'
         // There isn't a true user model, so we are just performing the logic here
         $_db    = Globals::getDBConn();
         $select = $_db->select()
                     ->from('userLock')
-                    ->where(sprintf("`username`='%s' AND`time`>='%s'",$user,(time() - 300)));
+                    ->where(sprintf("`username`='%s' AND`time`>='%s'",$user,(time() - $lockoutTime)));
 
         $query = $select->query();
         $count = 0;
