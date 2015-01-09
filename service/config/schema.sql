@@ -102,6 +102,13 @@ CREATE TABLE IF NOT EXISTS `note` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB ;
 
+CREATE TABLE IF NOT EXISTS `userLock` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT,
+    `time` INT UNSIGNED NOT NULL,
+    `username` VARCHAR(50) NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB ;
+
 CREATE INDEX transStart ON transaction(start);
 CREATE INDEX transEnd ON transaction(end);
 CREATE INDEX sessionStart ON session(start);

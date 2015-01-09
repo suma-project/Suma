@@ -24,12 +24,20 @@ class AdminController extends BaseController
       $user = Zend_Filter::filterStatic($this->getRequest()->getParam('username'), 'StripTags');
       $pass = Zend_Filter::filterStatic($this->getRequest()->getParam('password'), 'StripTags');
 
-      $auth = Zend_Auth::getInstance();
-      $result = $auth->authenticate(new My_Auth_Adapter($user, $pass));
+      if ($this->checkAuthCount($user) >= 5) {
+        $this->lockedOut();
+      }
+      else {
+          $auth   = Zend_Auth::getInstance();
+          $result = $auth->authenticate(new My_Auth_Adapter($user, $pass));
+      }
 
       switch($result->getCode())
       {
         case Zend_Auth_Result::FAILURE:
+
+          $this->failedLoginAttempt($user);
+
           $this->_forward("login");
           Globals::getLog()->warn('FAILED ADMIN LOGIN');
           break;
@@ -424,6 +432,45 @@ class AdminController extends BaseController
       {
         //echo $auth->getIdentity();
       }
+    }
+
+    private function checkAuthCount($user) {
+
+        // Check to see if this user 'locked out'
+        // There isn't a true user model, so we are just performing the logic here
+        $_db    = Globals::getDBConn();
+        $select = $_db->select()
+                    ->from('userLock')
+                    ->where(sprintf("`username`='%s' AND`time`>='%s'",$user,(time() - 300)));
+
+        $query = $select->query();
+        $count = 0;
+        while ($row = $query->fetch()) {
+            $count++;
+        }
+
+        return $count;
+
+    }
+
+    private function failedLoginAttempt($user) {
+
+          // increase the lockout count
+          $_db  = Globals::getDBConn();
+          $hash = array(
+            'username' => $user,
+            'time'     => time()
+            );
+          $_db->insert('userLock',$hash);
+
+          return true;
+
+    }
+
+    private function lockedOut() {
+        print "<p>Account is locked out. Please wait 5 minutes before trying again.<p>";
+        Globals::getLog()->warn('FAILED ADMIN LOGIN -- Locked out!');
+        exit;
     }
 
 }
