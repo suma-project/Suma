@@ -26,6 +26,12 @@ class NightlyData
      */
     private $currentInitID = "";
     /**
+     * Total counts for current initiative
+     * @var int
+     * @access public
+     */
+    public $currentInitTotal = 0;
+    /**
      * Get list of active initiatives and populate $locations array
      * @return array
      * @access private
@@ -160,6 +166,7 @@ class NightlyData
      */
     public function buildLocationStatsTable($statsArray, $initTitle)
     {
+        $this->currentInitTotal = 0;
         $tableHeader  = array(
             'Hour'
                               );
@@ -197,6 +204,7 @@ class NightlyData
                     }
                 array_push($rowCells, $rowTotal);
                 array_push($tableRows, $rowCells);
+                $this->currentInitTotal+=$rowTotal;
             }
         return $tableRows;
     }
@@ -299,6 +307,17 @@ class NightlyData
      */
     public function formatTable($rows, $printFormat = "text")
     {
+        if ($this->currentInitTotal == 0) 
+            {
+                $output = "No data to show for this initiative".PHP_EOL;
+                if ($printFormat == "html") 
+                    {
+                        $output = "<p>$output</p>"; 
+                    }
+                return $output;
+            }
+            
+
         //get column widths
         $columnWidth = array();
         foreach ($rows as $row)
