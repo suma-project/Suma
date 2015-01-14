@@ -49,9 +49,25 @@ require_once "config/Globals.php";
 
 Zend_Loader::loadClass('Zend_Controller_Front');
 
-$sessionConfig = new Zend_Config_Ini('config/session.ini', 'production');
+$sessionFileBase = "../config/session";
+if (is_readable($sessionFileBase.'.yaml'))
+{
+    $sessionConfig = new Zend_Config_Yaml($sessionFileBase.'.yaml', 'production');
+}
+elseif (is_readable($sessionFileBase.'.ini'))
+{
+    $sessionConfig = new Zend_Config_Ini($sessionFileBase.'.ini', 'production');
+}
+else
+{
+    $sessionConfig = null;
+}
 
-Zend_Session::setOptions($sessionConfig->toArray());
+// If session config has been loaded properly, set it. 
+// App shouldn't die if session options are not set
+if ($sessionConfig) {
+    Zend_Session::setOptions($sessionConfig->toArray());
+}
 
 // Get front controller instance
 // Configure for Zone
