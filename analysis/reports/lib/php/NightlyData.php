@@ -220,6 +220,20 @@ class NightlyData
             }
         return $newTable;
     }
+    /** Delete a column from a multidimensional array
+     * @param table (passed by reference), offset of row to delete
+     * @return array (passed by reference, so inherently returned
+     * @access private
+     * @url from: http://stackoverflow.com/questions/16564650/best-way-to-delete-column-from-multidimensional-array
+     */
+    private function deleteColumn (&$array, $offset) 
+    {
+        return array_walk($array, function (&$v) use ($offset) 
+                          {
+                              array_splice($v, $offset, 1);
+                          }
+                          );
+    }
     /** 
      * Hide from report hours with no activity
      * @param array of table rows
@@ -240,6 +254,41 @@ class NightlyData
                 $i++;
             }
         return $newTable;
+    }
+    /** 
+     * Hide from report columns with no activity
+     * @param array of table rows
+     * @return array
+     * @access public
+     */
+    public function hideZeroColumns($table)
+    {
+        $columnCounts = array();
+        foreach ($table as $rows)
+            {
+                foreach ($rows as $key => $value) {
+                    if (is_numeric($value))
+                        {
+                            if (is_null($columnCounts[$key])) 
+                                {
+                                    $columnCounts[$key] = $value;
+                                }
+                            else 
+                                {
+                                    $columnCounts[$key] += $value;
+                                }
+                        }
+                }
+            }
+        foreach ($columnCounts as $i => $total) {
+            
+            if ($total == 0) 
+                {
+                    $this->deleteColumn($table, $i);
+                }
+            
+        }
+        return $table;
     }
     /**
      * Format table output as text or html

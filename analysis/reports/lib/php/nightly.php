@@ -55,6 +55,7 @@ if (isset($config['nightly']))
                     if ($hideZeroHours)
                         {
                             $table = $data->hideZeroHours($table);
+                            $table = $data->hideZeroColumns($table);
                         }
                     if ($hoursAcross)
                         {
