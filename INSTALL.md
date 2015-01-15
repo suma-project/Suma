@@ -185,11 +185,11 @@ Suma Analysis Tools Configuration
 
     In the `YOUR_WEB_DIR/suma/analysis/config/config.yaml` file, edit the timezone, displayFormat, recipients, errorRecipients, emailFrom, emailSubj as needed. See http://php.net/manual/en/timezones.php for information on timezone formats.
 
-    Using cron, or some other scheduler, schedule a task to run the `YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightlyEmail.php` script as desired. This command-line script takes several optional arguments and flagsto configure the report:
+    Using cron, or some other scheduler, schedule a task to run the `YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightlyEmail.php` script as desired. This command-line script takes several optional arguments and flags to configure the report:
  
  * **locations**: display hourly reports broken down by location, plus a total
 
- * **--hide-zeros**: do not display data for hours with no activity
+ * **--hide-zeros**: do not display data for hours or locations with no activity
  * **--hours-across**: display hours from left-to-right instead of the default top-to-bottom in the report
  * **--html**: formats the report as in HTML rather than plain text (strongly recommended for use when using the 'hours-across' and/or 'locations' options
 
