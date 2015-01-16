@@ -39,22 +39,29 @@ class NightlyData
     private function activeInitiatives()
     {
         $active = array();
-        $io     = new ServerIO();
-        $inits  = $io->getInitiatives();
-        foreach ($inits as $key => $init)
+        try
             {
-                if ($init['enabled'] == 1)
+                $io     = new ServerIO();
+                $inits  = $io->getInitiatives();
+                foreach ($inits as $key => $init)
                     {
-                        $id          = $init['id'];
-                        $title       = $init['title'];
-                        $active[$id] = $title;
-                        foreach ($init['dictionary']['locations'] as $key => $locData)
+                        if ($init['enabled'] == 1)
                             {
-                                $locID                        = $locData['id'];
-                                $locTitle                     = $locData['title'];
-                                $this->locations[$id][$locID] = $locTitle;
+                                $id          = $init['id'];
+                                $title       = $init['title'];
+                                $active[$id] = $title;
+                                foreach ($init['dictionary']['locations'] as $key => $locData)
+                                    {
+                                        $locID                        = $locData['id'];
+                                        $locTitle                     = $locData['title'];
+                                        $this->locations[$id][$locID] = $locTitle;
+                                    }
                             }
                     }
+            }
+        catch (Exception $e)
+            {
+                throw $e;
             }
         return $active;
     }
@@ -125,8 +132,6 @@ class NightlyData
     {
         // QueryServer config
         $queryType   = "counts";
-        // Create new ServerIO instance
-        $io          = new ServerIO();
         // Retrieve all active initiatives
         $initiatives = $this->activeInitiatives();
         // Build array of param arrays for active inits
