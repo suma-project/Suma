@@ -7,15 +7,15 @@ $config = Spyc::YAMLLoad(realpath(dirname(__FILE__)) . '/../../../config/config.
 
 // get arguments to pass on to nightly.php
 if (isset($argv) & sizeof($argv) > 1)
-    {
-        $args       = join(" ", array_slice($argv, 1));
-        $outputHtml = (array_search("--html", $argv) > 0 ? true : false);
-    }
+{
+    $args       = join(" ", array_slice($argv, 1));
+    $outputHtml = (array_search("--html", $argv) > 0 ? true : false);
+}
 else
-    {
-        $args       = "";
-        $outputHtml = false;
-    }
+{
+    $args       = "";
+    $outputHtml = false;
+}
 // Default Timezone. See: http://us3.php.net/manual/en/timezones.php
 $DEFAULT_TIMEZONE = $config['nightly']['timezone'];
 date_default_timezone_set($DEFAULT_TIMEZONE);
@@ -42,21 +42,21 @@ $data = `php nightly.php $args`;
 $errorCheck = explode(" ", $data);
 
 if ($errorCheck[0] === "Error:")
-    {
-        $message = $ERROR_GREETING . "\n" . $data;
-        mail($ERROR_RECIPIENTS, $ERROR_SUBJECT, $message);
-    }
+{
+    $message = $ERROR_GREETING . "\n" . $data;
+    mail($ERROR_RECIPIENTS, $ERROR_SUBJECT, $message);
+}
 else
+{
+    $emailHeaders = (isset($SENDER) ? 'From: ' . $SENDER . PHP_EOL : "");
+
+    // additional headers if reporting by location, to support HTML in email
+    if ($outputHtml)
     {
-        $emailHeaders = (isset($SENDER) ? 'From: ' . $SENDER . PHP_EOL : "");
-
-        // additional headers if reporting by location, to support HTML in email
-        if ($outputHtml)
-            {
-                $emailHeaders .= 'MIME-Version: 1.0' . PHP_EOL;
-                $emailHeaders .= 'Content-type: text/html; charset=utf-8' . PHP_EOL;
-            }
-
-        $message = $GREETING . "\n" . $data;
-        mail($RECIPIENTS, $SUBJECT, $message, $emailHeaders);
+        $emailHeaders .= 'MIME-Version: 1.0' . PHP_EOL;
+        $emailHeaders .= 'Content-type: text/html; charset=utf-8' . PHP_EOL;
     }
+
+    $message = $GREETING . "\n" . $data;
+    mail($RECIPIENTS, $SUBJECT, $message, $emailHeaders);
+}

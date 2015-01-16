@@ -40,29 +40,29 @@ class NightlyData
     {
         $active = array();
         try
+        {
+            $io     = new ServerIO();
+            $inits  = $io->getInitiatives();
+            foreach ($inits as $key => $init)
             {
-                $io     = new ServerIO();
-                $inits  = $io->getInitiatives();
-                foreach ($inits as $key => $init)
+                if ($init['enabled'] == 1)
+                {
+                    $id          = $init['id'];
+                    $title       = $init['title'];
+                    $active[$id] = $title;
+                    foreach ($init['dictionary']['locations'] as $key => $locData)
                     {
-                        if ($init['enabled'] == 1)
-                            {
-                                $id          = $init['id'];
-                                $title       = $init['title'];
-                                $active[$id] = $title;
-                                foreach ($init['dictionary']['locations'] as $key => $locData)
-                                    {
-                                        $locID                        = $locData['id'];
-                                        $locTitle                     = $locData['title'];
-                                        $this->locations[$id][$locID] = $locTitle;
-                                    }
-                            }
+                        $locID                        = $locData['id'];
+                        $locTitle                     = $locData['title'];
+                        $this->locations[$id][$locID] = $locTitle;
                     }
+                }
             }
+        }
         catch (Exception $e)
-            {
-                throw $e;
-            }
+        {
+            throw $e;
+        }
         return $active;
     }
     /**
@@ -76,12 +76,12 @@ class NightlyData
         $hours  = array();
         $initID = $this->currentInitID;
         foreach ($this->locations[$this->currentInitID] as $locID => $locTitle)
+        {
+            for ($i = 0; $i <= 23; $i++)
             {
-                for ($i = 0; $i <= 23; $i++)
-                    {
-                        $hours[$i][$locID] = 0;
-                    }
+                $hours[$i][$locID] = 0;
             }
+        }
         return $hours;
     }
     /**
@@ -97,31 +97,31 @@ class NightlyData
         $this->currentInitID = $response['initiative']['id'];
         // Add init to COUNTHASH
         if (!isset($this->countHash[$title]))
-            {
-                $this->countHash[$title] = $this->buildHoursScaffold();
-            }
+        {
+            $this->countHash[$title] = $this->buildHoursScaffold();
+        }
         // Process counts
         if (isset($response['initiative']['locations']))
+        {
+            $locations = $response['initiative']['locations'];
+            foreach ($locations as $loc)
             {
-                $locations = $response['initiative']['locations'];
-                foreach ($locations as $loc)
+                $locID = $loc['id'];
+                foreach ($loc['counts'] as $count)
+                {
+                    $hour = date('G', strtotime($count['time']));
+                    // get a count of each location separately
+                    if (!is_int($this->countHash[$title][$hour][$locID]))
                     {
-                        $locID = $loc['id'];
-                        foreach ($loc['counts'] as $count)
-                            {
-                                $hour = date('G', strtotime($count['time']));
-                                // get a count of each location separately
-                                if (!is_int($this->countHash[$title][$hour][$locID]))
-                                    {
-                                        $this->countHash[$title][$hour][$locID] = $count['number'];
-                                    }
-                                                    else
-                                                        {
-                                                            $this->countHash[$title][$hour][$locID] += $count['number'];
-                                                        }
-                            }
+                        $this->countHash[$title][$hour][$locID] = $count['number'];
                     }
+                    else
+                    {
+                        $this->countHash[$title][$hour][$locID] += $count['number'];
+                    }
+                }
             }
+        }
     }
     /**
      * Method for processing nightly data
@@ -137,32 +137,32 @@ class NightlyData
         // Build array of param arrays for active inits
         $inits       = array();
         foreach ($initiatives as $id => $title)
-            {
-                $params = array(
-                                'id' => $id,
-                                'format' => "lc",
-                                'sdate' => $day,
+        {
+            $params = array(
+                'id' => $id,
+                'format' => "lc",
+                'sdate' => $day,
                 'edate' => $day
-                                );
-                array_push($inits, $params);
-            }
+            );
+            array_push($inits, $params);
+        }
         // Retrieve data for each initiative
         foreach ($inits as $params)
-            {
+        {
             try
+            {
+                $io = new ServerIO();
+                $this->populateHash($io->getData($params, $queryType));
+                while ($io->hasMore())
                 {
-                    $io = new ServerIO();
-                    $this->populateHash($io->getData($params, $queryType));
-                    while ($io->hasMore())
-                        {
-                            $this->populateHash($io->next());
-                        }
-                }
-            catch (Exception $e)
-                {
-                    throw $e;
+                    $this->populateHash($io->next());
                 }
             }
+            catch (Exception $e)
+            {
+                throw $e;
+            }
+        }
     }
     /**
      * Build table of hourly stats by location
@@ -180,37 +180,37 @@ class NightlyData
         $multipleLocs = (sizeof($this->locations[$initID]) > 1 ? true : false);
         //build table header from locations if multiple locations
         if ($multipleLocs)
+        {
+            foreach ($this->locations[$initID] as $key => $locTitle)
             {
-                foreach ($this->locations[$initID] as $key => $locTitle)
-                    {
-                        array_push($tableHeader, $locTitle);
-                    }
+                array_push($tableHeader, $locTitle);
             }
+        }
         array_push($tableHeader, 'Total');
         array_push($tableRows, $tableHeader);
         // build table rows -- only show locations if more than one
         foreach ($statsArray as $hour => $stats)
-            {
-                $formattedHour = date("h A", strtotime("$hour:00:00"));
-                $rowTotal      = 0;
-                $rowCells      = array(
+        {
+            $formattedHour = date("h A", strtotime("$hour:00:00"));
+            $rowTotal      = 0;
+            $rowCells      = array(
                 $formattedHour
-                                       );
-                foreach ($stats as $locID => $count)
-                    {
-                        if (is_numeric($count))
-                            {
-                                $rowTotal += $count;
-                            }
-                        if ($multipleLocs)
-                            {
-                                array_push($rowCells, $count);
-                            }
-                    }
-                array_push($rowCells, $rowTotal);
-                array_push($tableRows, $rowCells);
-                $this->currentInitTotal+=$rowTotal;
+            );
+            foreach ($stats as $locID => $count)
+            {
+                if (is_numeric($count))
+                {
+                    $rowTotal += $count;
+                }
+                if ($multipleLocs)
+                {
+                    array_push($rowCells, $count);
+                }
             }
+            array_push($rowCells, $rowTotal);
+            array_push($tableRows, $rowCells);
+            $this->currentInitTotal+=$rowTotal;
+        }
         return $tableRows;
     }
     /**
@@ -224,13 +224,13 @@ class NightlyData
     {
         $newTable = array();
         foreach ($table as $rows)
-            {
-                $newRow = array(
-                                $rows[0],
-                                $rows[sizeof($rows) - 1]
-                                );
-                array_push($newTable, $newRow);
-            }
+        {
+            $newRow = array(
+                $rows[0],
+                $rows[sizeof($rows) - 1]
+            );
+            array_push($newTable, $newRow);
+        }
         return $newTable;
     }
     /** Delete a column from a multidimensional array
@@ -239,15 +239,15 @@ class NightlyData
      * @access private
      * @url from: http://stackoverflow.com/questions/16564650/best-way-to-delete-column-from-multidimensional-array
      */
-    private function deleteColumn (&$array, $offset) 
+    private function deleteColumn (&$array, $offset)
     {
-        return array_walk($array, function (&$v) use ($offset) 
+        return array_walk($array, function (&$v) use ($offset)
                           {
                               array_splice($v, $offset, 1);
                           }
-                          );
+        );
     }
-    /** 
+    /**
      * Hide from report hours with no activity
      * @param array of table rows
      * @return array
@@ -258,17 +258,17 @@ class NightlyData
         $newTable = array();
         $i        = 0;
         foreach ($table as $rows)
+        {
+            $lastIndex = sizeof($rows) - 1;
+            if ($rows[$lastIndex] != 0 || $i == 0)
             {
-                $lastIndex = sizeof($rows) - 1;
-                if ($rows[$lastIndex] != 0 || $i == 0)
-                    {
-                        array_push($newTable, $rows);
-                    }
-                $i++;
+                array_push($newTable, $rows);
             }
+            $i++;
+        }
         return $newTable;
     }
-    /** 
+    /**
      * Hide from report columns with no activity
      * @param array of table rows
      * @return array
@@ -278,28 +278,28 @@ class NightlyData
     {
         $columnCounts = array();
         foreach ($table as $rows)
-            {
-                foreach ($rows as $key => $value) {
-                    if (is_numeric($value))
-                        {
-                            if (is_null($columnCounts[$key])) 
-                                {
-                                    $columnCounts[$key] = $value;
-                                }
-                            else 
-                                {
-                                    $columnCounts[$key] += $value;
-                                }
-                        }
+        {
+            foreach ($rows as $key => $value) {
+                if (is_numeric($value))
+                {
+                    if (is_null($columnCounts[$key]))
+                    {
+                        $columnCounts[$key] = $value;
+                    }
+                    else
+                    {
+                        $columnCounts[$key] += $value;
+                    }
                 }
             }
+        }
         foreach ($columnCounts as $i => $total) {
-            
-            if ($total == 0) 
-                {
-                    $this->deleteColumn($table, $i);
-                }
-            
+
+            if ($total == 0)
+            {
+                $this->deleteColumn($table, $i);
+            }
+
         }
         return $table;
     }
@@ -312,54 +312,54 @@ class NightlyData
      */
     public function formatTable($rows, $printFormat = "text")
     {
-        if ($this->currentInitTotal == 0) 
+        if ($this->currentInitTotal == 0)
+        {
+            $output = "No data to show for this initiative".PHP_EOL;
+            if ($printFormat == "html")
             {
-                $output = "No data to show for this initiative".PHP_EOL;
-                if ($printFormat == "html") 
-                    {
-                        $output = "<p>$output</p>"; 
-                    }
-                return $output;
+                $output = "<p>$output</p>";
             }
-            
+            return $output;
+        }
+
 
         //get column widths
         $columnWidth = array();
         foreach ($rows as $row)
+        {
+            foreach ($row as $num => $val)
             {
-                foreach ($row as $num => $val)
-                    {
-                        if (isset($columnWidth[$num]))
-                            {
-                                $columnWidth[$num] = (strlen($val) > $columnWidth[$num] ? strlen($val) : $columnWidth[$num]);
-                            }
+                if (isset($columnWidth[$num]))
+                {
+                    $columnWidth[$num] = (strlen($val) > $columnWidth[$num] ? strlen($val) : $columnWidth[$num]);
+                }
                 else
-                    {
-                        $columnWidth[$num] = strlen($val);
-                    }
-                    }
+                {
+                    $columnWidth[$num] = strlen($val);
+                }
             }
+        }
         $output = "";
         foreach ($rows as $row)
             {
                 $format = '%-' . $columnWidth[0] . 's';
                 for ($i = 1; $i < sizeof($row); $i++)
-                    {
-                        $format .= ' %' . $columnWidth[$i] . 's';
-                    }
+                {
+                    $format .= ' %' . $columnWidth[$i] . 's';
+                }
                 if ($printFormat == "html")
-                    {
-                        $output .= "<tr><td>" . join("</td>\n<td>", $row) . "</td></tr>" . PHP_EOL;
+                {
+                    $output .= "<tr><td>" . join("</td>\n<td>", $row) . "</td></tr>" . PHP_EOL;
                     }
-            else
+                else
                 {
                     $output .= vsprintf($format, $row) . "\n";
                 }
             }
         if ($printFormat == "html")
-            {
-                $output = "<table>$output</table>\n";
-            }
+        {
+            $output = "<table>$output</table>\n";
+        }
         return $output;
     }
     /**
@@ -374,13 +374,13 @@ class NightlyData
         $sideways = array();
         $i        = 0;
         foreach ($rows as $array)
+        {
+            foreach ($array as $k => $v)
             {
-                foreach ($array as $k => $v)
-                    {
-                        $sideways[$k][$i] = $v;
-                    }
-                $i++;
+                $sideways[$k][$i] = $v;
             }
+            $i++;
+        }
         return $sideways;
     }
     /**
