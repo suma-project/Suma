@@ -1,7 +1,7 @@
 {
   "name": "ang-test",
   "version": "0.0.0",
-  "description": "packages for building the analysis directory of the Suma space assessment toolkit"
+  "description": "Packages for building the analysis directory of the Suma space assessment toolkit"
   "readme" : "Suma is an open-source mobile web-based assessment toolkit for collecting and analyzing observational data about the usage of physical spaces and services."
   "repository" : 
   { "type" : "git"
