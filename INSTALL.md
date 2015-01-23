@@ -165,7 +165,9 @@ Suma Server Software Configuration
 
 * services/config/session.yaml
 
-    `SUMA_BASE_URL` must be set to the URL path for the Suma server. For example, if the URL is `http://YOUR_HOST/sumaserver`, set this to `/sumaserver`.
+> This is an optional file to increase session security and allow the specification of custom session properties.
+
+In the `/SUMA_SERVER_INSTALL_DIR/services/config/` directory, copy `session_example.yaml` to a new file `session.yaml`. `SUMA_BASE_URL` must be set to the URL path for the Suma server. For example, if the URL is `http://YOUR_HOST/sumaserver`, set this to `/sumaserver`.
 
 Suma Client Configuration
 --------------------------
