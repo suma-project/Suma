@@ -14,8 +14,12 @@ serverIO:
 # Date display format. See: http://php.net/manual/en/function.date.php
 # Recipient e-mail addresses separated by commas
 # Error recipient e-mail addresses separated by commas
+# emailFrom (optional). Single address
+# emailSubj (optional). Customize text for email subject
 nightly:
     timezone: America/New_York
     displayFormat: m-d-Y
     recipients: you@example.com, your_friend@example.com
     errorRecipients: you@example.com
+    emailFrom: "Suma Reports <you@example.edu>"
+    emailSubj: "Suma Nightly Report:"

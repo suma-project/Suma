@@ -183,11 +183,27 @@ Suma Analysis Tools Configuration
 
 * To configure the nightly summary report:
 
-    In the `YOUR_WEB_DIR/suma/analysis/config/config.yaml` file, edit the timezone, displayFormat, recipients, and errorRecipients as needed. See http://php.net/manual/en/timezones.php for information on timezone formats.
+    In the `YOUR_WEB_DIR/suma/analysis/config/config.yaml` file, edit the timezone, displayFormat, recipients, errorRecipients, emailFrom, emailSubj as needed. See http://php.net/manual/en/timezones.php for information on timezone formats.
 
-    Using cron, or some other scheduler, schedule a task to run the `YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightlyEmail.php` script as desired.
+    Using cron, or some other scheduler, schedule a task to run the `YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightlyEmail.php` script as desired. This command-line script takes several optional arguments and flags to configure the report:
+ 
+ * **locations**: display hourly reports broken down by location, plus a total
 
-    Alternatively, `YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightly.php` may be run from the command line for quick reporting through stdout.
+ * **--hide-zeros**: do not display data for hours or locations with no activity
+ * **--hours-across**: display hours from left-to-right instead of the default top-to-bottom in the report
+ * **--html**: formats the report as in HTML rather than plain text (strongly recommended for use when using the 'hours-across' and/or 'locations' options
+
+Examples of nightlyEmail.php configuration include:
+
+`YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightlyEmail.php`
+
+`YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightlyEmail.php locations --html`
+
+`YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightlyEmail.php --hide-zeros`
+
+`YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightlyEmail.php --hours-across --hide-zeros --html`
+
+Alternatively, `YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightly.php` may be run from the command line for quick reporting through stdout.
 
 Other Things You Can Configure
 -------------------------------
