@@ -5,5 +5,8 @@ RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^.*$ - [NC,L]
 RewriteRule ^.*$ index.php [NC,L]
 
-ErrorDocument 403 SUMA_BASE_URL/client/errors/404.php
+# For additional security, change 403.php to 404.php
+# This will send a 404 not found error whenever a 403 forbidden error would 
+# have occured.
+ErrorDocument 403 SUMA_BASE_URL/client/errors/403.php
 ErrorDocument 404 SUMA_BASE_URL/client/errors/404.php
