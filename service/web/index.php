@@ -43,10 +43,31 @@ ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR . $SUMA_SERVER_
 
 // Zend Framework CLass Loader
 require_once "Zend/Loader.php";
+require_once "Zend/Session.php";
 
 require_once "config/Globals.php";
 
 Zend_Loader::loadClass('Zend_Controller_Front');
+
+$sessionFileBase = "../config/session";
+if (is_readable($sessionFileBase.'.yaml'))
+{
+    $sessionConfig = new Zend_Config_Yaml($sessionFileBase.'.yaml', 'production');
+}
+elseif (is_readable($sessionFileBase.'.ini'))
+{
+    $sessionConfig = new Zend_Config_Ini($sessionFileBase.'.ini', 'production');
+}
+else
+{
+    $sessionConfig = null;
+}
+
+// If session config has been loaded properly, set it. 
+// App shouldn't die if session options are not set
+if ($sessionConfig) {
+    Zend_Session::setOptions($sessionConfig->toArray());
+}
 
 // Get front controller instance
 // Configure for Zone

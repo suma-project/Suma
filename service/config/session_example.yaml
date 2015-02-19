@@ -1,0 +1,4 @@
+production:
+    cookie_path: /SUMA_BASE_URL/
+    cookie_secure: true
+    cookie_httpOnly: true
