@@ -415,7 +415,7 @@ function readyToCollect() {
     if ((currentLoc) && (initSelectObj.val() !== '')) {
         return true;
     } else {
-        $("div.sidebar").stop(true,true).effect("pulsate", {times:3}, 500);
+        // $("div.sidebar").stop(true,true).effect("pulsate", {times:3}, 500);
         return false;
     }
 }
@@ -831,6 +831,10 @@ $(function() {
 
     $("body").on(buttonEventType, "input#goesup", function() {
         var hasRequiredActivities = true;
+
+        if (!(currentLoc) && (initSelectObj.val() !== '')) {
+            $("div.sidebar").stop(true,true).effect("pulsate", {times:3}, 500);
+        }
 
         $(".activityGroup.requiredGroup").each(function() {
             if ($(this).find("input.activityButton:checked").length < 1) {
