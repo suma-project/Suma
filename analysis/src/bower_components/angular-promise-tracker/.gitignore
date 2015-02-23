@@ -1,7 +1,0 @@
-*.swp
-npm-debug.log
-.DS_Store
-demo
-bower_components
-node_modules
-dist
