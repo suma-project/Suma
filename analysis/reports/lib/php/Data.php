@@ -689,7 +689,14 @@ class Data
             foreach($count['activities'] as $countAct)
             {
                 // CSV
-                $this->countHash['csv'][$day]['activities'][$this->actHash[$countAct]] += $count['number'];
+                if (!isset($this->countHash['csv'][$day]['activities'][$this->actHash[$countAct]]))
+                {
+                    $this->countHash['csv'][$day]['activities'][$this->actHash[$countAct]] = $count['number'];
+                }
+                else
+                {
+                    $this->countHash['csv'][$day]['activities'][$this->actHash[$countAct]] += $count['number'];
+                }
 
                 // activitiesSum
                 if (!isset($this->countHash['activitiesSum'][$countAct]))
