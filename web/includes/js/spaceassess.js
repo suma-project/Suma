@@ -532,7 +532,7 @@ function updateTimer() {
 
 function undoCount() {
     isSessionWiped(function() {
-        if (readyToCollect() && startCollecting()) {
+        if (currentlyCollecting && currentSession) {
             persistence.transaction(function(dbTransaction) {
                 var currentPeople, lastTimestamp;
                 currentPeople = Person.all().filter('session', '=', currentSession).filter('location', '=', currentLoc).order('timestamp', false);
@@ -549,6 +549,8 @@ function undoCount() {
                     persistence.flush(dbTransaction);
                 });
             });
+        } else {
+            alert("Failed to undo count");
         }
     });
     return;
