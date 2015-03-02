@@ -456,7 +456,12 @@ function isSessionWiped(callback) {
     if (null !== currentSession) {
         Session.findBy('startTime', currentSession.startTime, function(sess) {
             if ((null === sess) || (null !== sess.stopTime)) {
-                alert("There is a problem with the session metadata. This can happen when two instances of Suma are running at the same time. If this is the case, no data was lost.\n\nIf you don't understand why this may have occurred, please contact an administrator.\n\nPlease reload the page and try again.");
+                alert("There is a problem with the session metadata. This can " +
+                      "happen when two instances of Suma are running at the same time. " +
+                      "If this is the case, the most recent count may not have been " +
+                      "recorded, but no other data was lost.\n\nIf you don't understand " +
+                      "why this may have occurred, please contact an administrator.\n\n" +
+                      "Please reload the page and try again.");
             } else {
                 callback();
             }
@@ -464,7 +469,12 @@ function isSessionWiped(callback) {
     } else {
         Initiative.findBy('serverId', sessionInit.serverId, function(init) {
             if (sessionInit.id !== init.id) {
-                alert("There is a problem with the initiative metadata. This can happen when two instances of Suma are running at the same time. If this is the case, no data was lost.\n\nIf you don't understand why this may have occurred, please contact an administrator.\n\nPlease reload the page and try again.");
+                alert("There is a problem with the session metadata. This can " +
+                      "happen when two instances of Suma are running at the same time. " +
+                      "If this is the case, the most recent count may not have been " +
+                      "recorded, but no other data was lost.\n\nIf you don't understand " +
+                      "why this may have occurred, please contact an administrator.\n\n" +
+                      "Please reload the page and try again.");
             } else {
                 callback();
             }
@@ -547,28 +557,28 @@ function undoCount() {
 function countPeople(doubleTap) {
     var date = new Date();
 
-    isSessionWiped(function() {
-        if (!(readyToCollect() && startCollecting())) {
-            return false;
+    if (!(readyToCollect() && startCollecting())) {
+        return false;
+    }
+
+    // If we want to re-enable non-incremental counts
+    //countInput = $("input#count_input");
+    //var newCount = parseInt(countInput.val(), 10);
+    var newCount = 1;
+    if (!isNaN(newCount)) {
+
+        if ((newCount === 1) && doubleTap) {
+            newCount++;
         }
 
-        // If we want to re-enable non-incremental counts
-        //countInput = $("input#count_input");
-        //var newCount = parseInt(countInput.val(), 10);
-        var newCount = 1;
-        if (!isNaN(newCount)) {
-
-            if ((newCount === 1) && doubleTap) {
-                newCount++;
-            }
-
-            var countObj = new Person({timestamp:date.getTime()});
-            $("input.check:checked", countForm).each(function() {
-                countObj.activities.add(currentActivities[$(this).val()]);
-            }).prop("checked", false).button("refresh");
-            countObj.location = currentLoc;
-            countObj.session = currentSession;
-            countObj.count = newCount;
+        var countObj = new Person({timestamp:date.getTime()});
+        $("input.check:checked", countForm).each(function() {
+            countObj.activities.add(currentActivities[$(this).val()]);
+        }).prop("checked", false).button("refresh");
+        countObj.location = currentLoc;
+        countObj.session = currentSession;
+        countObj.count = newCount;
+        isSessionWiped(function() {
             persistence.add(countObj);
 
             if (!parseInt(countIndicator.val(), 10)) {
@@ -578,11 +588,11 @@ function countPeople(doubleTap) {
             }
             currentLocCount.text('(' + countIndicator.val() + ')');
             persistence.flush();
-        } else {
-            alert("error--Not a Number");
-            return false;
-        }
-    });
+        });
+    } else {
+        alert("error--Not a Number");
+        return false;
+    }
 }
 
 function initAfterDB() {
