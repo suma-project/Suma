@@ -412,12 +412,21 @@ function syncSessions() {
 }
 
 function readyToCollect() {
-    if ((currentLoc) && (initSelectObj.val() !== '')) {
-        return true;
-    } else {
-        // $("div.sidebar").stop(true,true).effect("pulsate", {times:3}, 500);
-        return false;
+    var ready = true;
+
+    if (!(currentLoc && (initSelectObj.val() !== ''))) {
+        $("div.sidebar").stop(true,true).effect("pulsate", {times:3}, 500);
+        ready = false;
     }
+
+    $(".activityGroup.requiredGroup").each(function() {
+        if ($(this).find("input.activityButton:checked").length < 1) {
+            $(this).add("input#goesup").stop(true,true).effect("pulsate", {times:3}, 500);
+            ready = false;
+        }
+    });
+
+    return ready;
 }
 
 function abandonCollection() {
@@ -830,23 +839,7 @@ $(function() {
     });
 
     $("body").on(buttonEventType, "input#goesup", function() {
-        var hasRequiredActivities = true;
-
-        if (!(currentLoc) && (initSelectObj.val() !== '')) {
-            $("div.sidebar").stop(true,true).effect("pulsate", {times:3}, 500);
-        }
-
-        $(".activityGroup.requiredGroup").each(function() {
-            if ($(this).find("input.activityButton:checked").length < 1) {
-                $(this).add("input#goesup").stop(true,true).effect("pulsate", {times:3}, 500);
-                hasRequiredActivities = false;
-            }
-        });
-
-        if (hasRequiredActivities) {
-            countPeople(false);
-        }
-
+        countPeople(false);
         return false;
     });
 
