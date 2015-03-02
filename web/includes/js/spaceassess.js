@@ -488,7 +488,7 @@ function isSessionWiped(callback) {
 
 function startCollecting(){
     if (!currentlyCollecting) {
-        if (!readyToCollect()) {
+        if (!readyToCollect(false)) {
             return false;
         }
 
@@ -563,7 +563,7 @@ function undoCount() {
 function countPeople(doubleTap) {
     var date = new Date();
 
-    if (!(readyToCollect() && startCollecting())) {
+    if (!(readyToCollect(true) && startCollecting())) {
         return false;
     }
 
