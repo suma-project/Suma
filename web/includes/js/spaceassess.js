@@ -411,17 +411,21 @@ function syncSessions() {
     }
 }
 
-function readyToCollect() {
+function readyToCollect(warn) {
     var ready = true;
 
     if (!(currentLoc && (initSelectObj.val() !== ''))) {
-        $("div.sidebar").stop(true,true).effect("pulsate", {times:3}, 500);
+        if (warn) {
+            $("div.sidebar").stop(true,true).effect("pulsate", {times:3}, 500);
+        }
         ready = false;
     }
 
     $(".activityGroup.requiredGroup").each(function() {
         if ($(this).find("input.activityButton:checked").length < 1) {
-            $(this).add("input#goesup").stop(true,true).effect("pulsate", {times:3}, 500);
+            if (warn) {
+                $(this).add("input#goesup").stop(true,true).effect("pulsate", {times:3}, 500);
+            }
             ready = false;
         }
     });
