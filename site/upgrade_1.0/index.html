@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Upgrade 1.0 - Suma - Suma</title>
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../css/highlight.css">
+  <link href="../css/gh-fork-ribbon.css" rel="stylesheet">
+  <link href="../css/gh-fork-ribbon.ie.css" rel="stylesheet">
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+  <script type="text/javascript" src="../js/highlight.pack.js"></script>
+  <script src="../js/theme.js"></script>
+
+  <style>
+    body {font-size: 90%;}
+    pre, code {font-size: 100%;}
+    h3, h4, h5, h6 {color: #2980b9; font-weight: 300}
+  </style> 
+
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> Suma</a>
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+      <ul class="current">
+    
+        
+            <li class="toctree-l1 ">
+                <a class="" href="../quickstart">Quickstart</a>
+            </li>
+        
+
+    
+        
+            <li class="toctree-l1 ">
+                <a class="" href="../installation">Installation</a>
+            </li>
+        
+
+    
+        
+            <li class="toctree-l1 ">
+                <a class="" href="../logs">Logs</a>
+            </li>
+        
+
+    
+        
+            <li class="toctree-l1 ">
+                <a class="" href="../queryserver">Queryserver</a>
+            </li>
+        
+
+    
+        
+            <li class="toctree-l1 ">
+                <a class="" href="../developer">Developer</a>
+            </li>
+        
+
+    
+        
+            <li class="toctree-l1 current">
+                <a class="current" href=".">Upgrade 1.0</a>
+            </li>
+        
+
+    
+        
+            <li class="toctree-l1 ">
+                <a class="" href="../upgrade_2.0">Upgrade 2.0</a>
+            </li>
+        
+
+    
+</ul>
+
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">Suma</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    <li>Upgrade 1.0</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="" class="icon icon-github"> Download Suma</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              <h1 id="suma-10-upgrade-instructions">Suma 1.0 Upgrade Instructions</h1>
+<h2 id="overview">Overview</h2>
+<p>This document outlines how to upgrade Suma to version 1.0. Upgrading is only necessary if you have previously installed a Suma version less than v1.0. The general Suma installation instructions have been updated to reflect v1.0 and should be referenced as needed.</p>
+<p>The most significant structural change in v1.0 is where the various configuration settings are stored. We also moved to YAML for most of our configuration files in order to reduce the likelihood of introducing errors when updating Suma.</p>
+<h2 id="notes-on-yaml">Notes on YAML</h2>
+<p>Here are some general notes on using the YAML config files:</p>
+<ul>
+<li>Quotes are not necessary for paths</li>
+<li>Do not insert comments inside of the YAML tree.</li>
+</ul>
+<h2 id="backup">Backup</h2>
+<p>You will need to reference the settings in your current installation. Backup these five files from your existing installation:</p>
+<ul>
+<li>service/config/config.ini</li>
+<li>service/web/index.php</li>
+<li>analysis/lib/php/ServerIO.php</li>
+<li>analysis/reports/nightly/nightly_config.php</li>
+<li>web/spaceassess.js</li>
+</ul>
+<h2 id="upgrade">Upgrade</h2>
+<p>Depending upon your installation method, either copy the updated Suma files into place or pull the changes from Github (preferred).</p>
+<h2 id="configuration-options-to-update">Configuration Options to Update</h2>
+<p>The various configuration settings are listed below as <code>PREVIOUS_FILE</code> =&gt; <code>NEW_CONFIG_FILE</code>. Please refer to your current installation paths and the install docs to retrieve paths like <code>SUMA_SERVER_INSTALL_DIR</code>.</p>
+<ul>
+<li>
+<p>service/config/config.ini =&gt; service/config/config.yaml</p>
+<p>Most of the old settings will need to be moved into <code>config.yaml</code>. <strong>Please note the new format.</strong>
+Refer to the instructions below for creating <code>config.yaml</code>. Alternatively, you can also copy the config.ini back to the service/config directory, but the config.ini format is deprecated in Suma and support for it may be removed in the future.</p>
+<p>From the installation docs:</p>
+<p>In the <code>SUMA_SERVER_INSTALL_DIR/config/</code> directory, copy <code>config_example.yaml</code> to a new file <code>config.yaml</code>. You must modify the following:</p>
+<pre><code>production:
+    sumaserver:
+        db:
+            host:   host location of your mysql database
+            dbname: suma mysql database name
+            user:   suma mysql **application** account name
+            pword:  suma mysql **application** account password
+            port:   mysql port number
+        log:
+            path: path to log directory
+            name: sumaserver.log
+</code></pre>
+</li>
+<li>
+<p>service/web/index.php =&gt; service/web/config.yaml</p>
+<p>Copy the <code>SUMA_SERVER_PATH</code>, <code>SUMA_CONTROLLER_PATH</code>, <code>SUMA_BASE_URL</code>, and <code>SUMA_DEBUG</code> configuration settings into the appropriate fields of service/web/config.yaml. Refer to the instructions below for creating <code>config.yaml</code>.</p>
+<p>From the installation docs:</p>
+<p>In the <code>/SUMA_SERVER_INSTALL_DIR/web/config/</code> directory, copy <code>config_example.yaml</code> to a new file <code>config.yaml</code>. You must set some path variables in the <code>config.yaml</code> file for the Suma server to function correctly.</p>
+<p><code>SUMA_SERVER_PATH</code> must be set to the <code>SUMA_SERVER_INSTALL_DIR</code> where the Suma server was installed earlier in these instructions (e.g. <code>/var/www/app/sumaserver</code>).</p>
+<p><code>SUMA_CONTROLLER_PATH</code> must be set to <code>SUMA_SERVER_INSTALL_DIR/controllers</code> (e.g. <code>/var/www/app/sumaserver/controllers</code>).</p>
+<p><code>SUMA_BASE_URL</code> must be set to the URL path for the Suma server. For example, if the URL is <code>http://YOUR_HOST/sumaserver</code>, set this to <code>/sumaserver</code>.</p>
+<p><code>SUMA_DEBUG</code> can be set to <code>true</code> if you would like to see more verbose error messages. This should generally be set to <code>false</code>.</p>
+</li>
+<li>
+<p>analysis/lib/php/ServerIO.php =&gt; analysis/config/config.yaml</p>
+<p>Copy the <code>private $_baseUrl</code> configuration settings into the the <code>baseUrl</code> field of <code>analysis/config/config.yaml</code>. Refer to the instructions below for creating <code>config.yaml</code>.</p>
+<p>From the installation docs:</p>
+<p>In the <code>YOUR_WEB_DIR/suma/analysis/config/</code> directory, copy <code>config_example.yaml</code> to a new file <code>config.yaml</code>. Change <code>baseUrl</code> to the URL for your Suma Query Server. If you used a directory other than <code>sumaserver</code> in the "Suma Software Installation" section above, that should be reflected in this URL.</p>
+</li>
+<li>
+<p>analysis/reports/nightly/nightly_config.php =&gt; analysis/config/config.yaml</p>
+<p>In the same <code>config.yaml</code> file created in the previous step, copy your settings from <code>nightly_config.php</code> as such:</p>
+<ul>
+<li>Copy <code>DEFAULT_TIMEZONE</code> to <code>timezone</code></li>
+<li>Copy <code>DAY_DISPLAY</code> to <code>displayFormat</code></li>
+<li>Copy <code>ERROR_RECIPIENTS</code> to <code>errorRecipients</code></li>
+<li>Copy <code>RECIPIENTS</code> to <code>recipients</code></li>
+</ul>
+<p>From the installation docs:</p>
+<ul>
+<li>
+<p>To configure the nightly summary report:</p>
+<p>In the <code>YOUR_WEB_DIR/suma/analysis/config/config.yaml</code> file, edit the timezone, displayFormat, recipients, and errorRecipients as needed. See http://php.net/manual/en/timezones.php for information on timezone formats.</p>
+<p>Using cron, or some other scheduler, schedule a task to run the <code>YOUR_WEB_DIR/suma/analysis/reports/nightly/nightlyEmail.php</code> script as desired.</p>
+<p>Alternatively, <code>YOUR_WEB_DIR/suma/analysis/reports/nightly/nightly.php</code> may be run from the command line for quick reporting through stdout.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>web/spaceassess.js =&gt; web/config/spaceassessConfig.js</p>
+<p>Copy the paths <code>baseInitUrl</code>, <code>initiativeUrl</code>, and <code>syncUrl</code> from spaceassess.js to the appropriate paths in <code>web/config/spaceassessConfig.js</code>. Refer to the instructions below for creating <code>spaceassessConfig.js</code>.</p>
+<p>From the installation docs:</p>
+<p>In the <code>YOUR_WEB_DIR/suma/web/config/</code> directory, copy <code>spaceassessConfig_example.js</code> to a new file <code>spaceassessConfig.js</code>. If the Suma server URL is anything other than <code>http://YOUR_HOST/sumaserver</code>, you will need to change the paths at the top of <code>YOUR_WEB_DIR/suma/web/config/spaceassessConfig.js</code>.</p>
+</li>
+</ul>
+
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../upgrade_2.0" class="btn btn-neutral float-right" title="Upgrade 2.0"/>Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../developer" class="btn btn-neutral" title="Developer"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    <!-- Copyright etc -->
+    </p>
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+	  
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+<div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+        
+        <a href="https://github.com/cazzerson/Suma" class="icon icon-github" style="float: left; color: #fcfcfc"> GitHub</a>
+        
+      <span><a href="../developer" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      <span style="margin-left: 15px"><a href="../upgrade_2.0" style="color: #fcfcfc">Next &raquo;</a></span>
+    </span>
+</div>
+</body>
+</html>

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Installation - Suma - Suma</title>
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../css/highlight.css">
+  <link href="../css/gh-fork-ribbon.css" rel="stylesheet">
+  <link href="../css/gh-fork-ribbon.ie.css" rel="stylesheet">
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+  <script type="text/javascript" src="../js/highlight.pack.js"></script>
+  <script src="../js/theme.js"></script>
+
+  <style>
+    body {font-size: 90%;}
+    pre, code {font-size: 100%;}
+    h3, h4, h5, h6 {color: #2980b9; font-weight: 300}
+  </style> 
+
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> Suma</a>
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+      <ul class="current">
+    
+        
+            <li class="toctree-l1 ">
+                <a class="" href="../quickstart">Quickstart</a>
+            </li>
+        
+
+    
+        
+            <li class="toctree-l1 current">
+                <a class="current" href=".">Installation</a>
+            </li>
+        
+
+    
+        
+            <li class="toctree-l1 ">
+                <a class="" href="../logs">Logs</a>
+            </li>
+        
+
+    
+        
+            <li class="toctree-l1 ">
+                <a class="" href="../queryserver">Queryserver</a>
+            </li>
+        
+
+    
+        
+            <li class="toctree-l1 ">
+                <a class="" href="../developer">Developer</a>
+            </li>
+        
+
+    
+        
+            <li class="toctree-l1 ">
+                <a class="" href="../upgrade_1.0">Upgrade 1.0</a>
+            </li>
+        
+
+    
+        
+            <li class="toctree-l1 ">
+                <a class="" href="../upgrade_2.0">Upgrade 2.0</a>
+            </li>
+        
+
+    
+</ul>
+
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">Suma</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    <li>Installation</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="" class="icon icon-github"> Download Suma</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              <h1 id="suma-install-instructions">Suma Install Instructions</h1>
+<h2 id="requirements">Requirements</h2>
+<p>These requirements are based on our local testing. Earlier versions may also work:</p>
+<ul>
+<li>MySQL recommended version 5.1</li>
+<li>Apache recommended version 2.2</li>
+<li>PHP required version of at least 5.3.3 (including cURL)</li>
+<li>Zend Framework 1.12 - required for Suma server, included with Suma code</li>
+<li>Various Javascript Libraries - all included with Suma code</li>
+</ul>
+<p>Additional Client Requirements:</p>
+<ul>
+<li>Device or computer with WebKit browser (e.g. iOS and Android browsers, Google Chrome, Safari on Mac OS) needed to use Suma client. <strong>NOTE: Suma does not work in Safari for Windows.</strong></li>
+</ul>
+<h2 id="download-suma">Download Suma</h2>
+<p>You can find the <a href="http://github.com/cazzerson/Suma/releases">latest Suma version</a> on GitHub.</p>
+<p>Note path to suma download directory.  We will refer to this as SUMA_DOWNLOAD_DIR</p>
+<h2 id="suma-software-installation-symbolic-links-recommended">Suma Software Installation (symbolic links, <strong>RECOMMENDED</strong>)</h2>
+<p>If your Apache configuration has the <code>FollowSymLinks</code> directive enabled, there is a simpler way to deploy Suma that also improves the update process.</p>
+<ul>
+<li>Clone the GitHub repository to a directory outside of your web space (e.g. <code>/var/www/app/suma</code>)</li>
+<li>Create the following symbolic links from your web space to the local suma repository (these instructions make several assumptions about paths and directory names--please change as needed, noting the configuration directions later in this document):<pre><code>/var/www/htdocs/sumaserver/      =&gt;  /var/www/app/suma/service/web/
+/var/www/htdocs/suma/client/        =&gt;  /var/www/app/suma/web/
+/var/www/htdocs/suma/analysis/   =&gt;  /var/www/app/suma/analysis/
+</code></pre>
+</li>
+</ul>
+<p>Now all of your code is in one place, allowing you to update Suma by running <code>git pull --rebase origin master</code>. There is a chance this could result in merge conflicts with your local changes, so please allow for time to resolve these before updating.</p>
+<h2 id="suma-software-installation-file-copying">Suma Software Installation (file copying)</h2>
+<p>For Suma Client Installation:</p>
+<ul>
+<li>
+<p>Copy contents of <code>/SUMA_DOWNLOAD_DIR/web</code> to <code>/YOUR_WEB_DIR/suma/web</code></p>
+</li>
+<li>
+<p>Copy contents of <code>/SUMA_DOWNLOAD_DIR/analysis</code> to <code>/YOUR_WEB_DIR/suma/analysis</code></p>
+</li>
+</ul>
+<p>For Suma Server Installation:</p>
+<ul>
+<li>
+<p>Copy contents of <code>/SUMA_DOWNLOAD_DIR/service</code> to a location outside your web directory. For example, if your web directory is <code>/var/www/htdocs</code> you could copy the contents of the <code>/SUMA_DOWNLOAD_DIR/service</code> to <code>/var/www/app/sumaserver</code>.</p>
+<p>Note this location, we will refer to it later as <code>SUMA_SERVER_INSTALL_DIR</code></p>
+</li>
+<li>
+<p>Copy contents of <code>/SUMA_DOWNLOAD_DIR/service/web</code> to <code>/YOUR_WEB_DIR/sumaserver</code></p>
+</li>
+</ul>
+<h2 id="apache-configuration">Apache Configuration</h2>
+<p>You can configure your apache web server two ways using apache's configuration rewrite engine or using a .htaccess file</p>
+<p>Apache rewrite
+If using Apache's rewrite module add these lines in your web server (likely httpd.conf) configuration file</p>
+<pre><code>&lt;Directory "/YOUR_WEB_DIR/sumaserver"&gt;
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} -s [OR]
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^.*$ - [NC,L]
+RewriteRule ^.*$ index.php [NC,L]
+&lt;/Directory&gt;
+</code></pre>
+<p><strong>Don't forget to change <code>YOUR_WEB_DIR</code> to the directory in your web space that contains the <code>service/web/</code> content</strong>
+Restart apache after adding these lines for configuration to apply.</p>
+<p>.htaccess
+If using a .htaccess place the file in the <code>/YOUR_WEB_DIR/sumaserver</code> directory and add these lines</p>
+<pre><code>RewriteEngine on
+RewriteCond %{REQUEST_FILENAME} -s [OR]
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^.*$ - [NC,L]
+RewriteRule ^.*$ index.php [NC,L]
+</code></pre>
+<p>An example .htaccess file named can be found at <code>/YOUR_WEB_DIR/sumaserver/htaccess_example</code>. To use, copy the contents of this file to a new file named <code>/YOUR_WEB_DIR/sumaserver/.htaccess</code>.</p>
+<h2 id="database-setup">Database Setup</h2>
+<p>It is recommended you create two databases for Suma. One for production and one for testing. The database instructions are the same for both except for changing the database name.</p>
+<p>Create database in MySQL using whatever tool you have available.</p>
+<p>Create two Suma accounts:</p>
+<ol>
+<li>One administrative account with <code>SELECT</code>, <code>INSERT</code>, <code>CREATE</code>, <code>DROP</code>, <code>DELETE</code>, <code>UPDATE</code>, <code>INDEX</code>, and <code>ALTER</code> permissions. <strong>This account is for initializing and modifying the database. Do not include this account in your Suma configuration.</strong></li>
+<li>One application account with <code>SELECT</code>, <code>INSERT</code>, <code>UPDATE</code>, and <code>INDEX</code> permissions.</li>
+</ol>
+<p>Now you have to run a database initialization script included in the suma download.</p>
+<ol>
+<li>Find the file schema.sql in <code>/SUMA_DOWNLOAD_LOCATION/service/config</code>.</li>
+<li>
+<p>Run that script to initialize database, create suma tables, and establish foreign key constraints.</p>
+<p>To run it you can use the command line MySQL tools, phpmyadmin, or any other database management tool you like. <strong>This should be imported using the Suma administration MySQL account.</strong></p>
+</li>
+</ol>
+<blockquote>
+<p><em>Optional, but recommended:</em> If you wish to initialize the database with preloaded sample data so you can play around with Suma more quickly, then run the <code>schema_w_sample.sql</code> script instead of <code>schema.sql</code>.</p>
+</blockquote>
+<h2 id="suma-server-software-configuration">Suma Server Software Configuration</h2>
+<ul>
+<li>
+<p>service/web/config/config.yaml</p>
+<p>In the <code>/SUMA_SERVER_INSTALL_DIR/web/config/</code> directory, copy <code>config_example.yaml</code> to a new file <code>config.yaml</code>. You must set some path variables in the <code>config.yaml</code> file for the Suma server to function correctly.</p>
+<p><code>SUMA_SERVER_PATH</code> must be set to the <code>SUMA_SERVER_INSTALL_DIR</code> where the Suma server was installed earlier in these instructions (e.g. <code>/var/www/app/sumaserver</code>).</p>
+<p><code>SUMA_CONTROLLER_PATH</code> must be set to <code>SUMA_SERVER_INSTALL_DIR/controllers</code> (e.g. <code>/var/www/app/sumaserver/controllers</code>).</p>
+<p><code>SUMA_BASE_URL</code> must be set to the URL path for the Suma server. For example, if the URL is <code>http://YOUR_HOST/sumaserver</code>, set this to <code>/sumaserver</code>.</p>
+<p><code>SUMA_DEBUG</code> can be set to <code>true</code> if you would like to see more verbose error messages. This should generally be set to <code>false</code>.</p>
+</li>
+<li>
+<p>service/config/config.yaml</p>
+<p>In the <code>SUMA_SERVER_INSTALL_DIR/config/</code> directory, copy <code>config_example.yaml</code> to a new file <code>config.yaml</code>. You must modify the following:</p>
+<pre><code>production:
+    sumaserver:
+        db:
+            host:   host location of your mysql database
+            dbname: suma mysql database name
+            user:   suma mysql **application** account name
+            pword:  suma mysql **application** account password
+            port:   mysql port number
+        log:
+            path: path to log directory
+            name: sumaserver.log
+</code></pre>
+<ul>
+<li>Be sure that the log directory specified in <code>sumaserver:log:path</code> both exists and is <strong>writable by the web server</strong>.</li>
+</ul>
+</li>
+<li>
+<p>services/config/session.yaml</p>
+</li>
+</ul>
+<blockquote>
+<p>This is an optional file to increase session security and allow the specification of custom session properties.</p>
+</blockquote>
+<p>In the <code>/SUMA_SERVER_INSTALL_DIR/services/config/</code> directory, copy <code>session_example.yaml</code> to a new file <code>session.yaml</code>. <code>SUMA_BASE_URL</code> must be set to the URL path for the Suma server. For example, if the URL is <code>http://YOUR_HOST/sumaserver</code>, set this to <code>/sumaserver</code>.</p>
+<h2 id="suma-client-configuration">Suma Client Configuration</h2>
+<ul>
+<li>
+<p>web/config/spaceassessConfig.js</p>
+<p>In the <code>YOUR_WEB_DIR/suma/web/config/</code> directory, copy <code>spaceassessConfig_example.js</code> to a new file <code>spaceassessConfig.js</code>. If the Suma server URL is anything other than <code>http://YOUR_HOST/sumaserver</code>, you will need to change the paths at the top of <code>YOUR_WEB_DIR/suma/web/config/spaceassessConfig.js</code>.</p>
+</li>
+</ul>
+<h2 id="suma-analysis-tools-configuration">Suma Analysis Tools Configuration</h2>
+<ul>
+<li>
+<p>analysis/config/config.yaml</p>
+<p>In the <code>YOUR_WEB_DIR/suma/analysis/config/</code> directory, copy <code>config_example.yaml</code> to a new file <code>config.yaml</code>. Change <code>baseUrl</code> to the URL for your Suma Query Server. If you used a directory other than <code>sumaserver</code> in the "Suma Software Installation" section above, that should be reflected in this URL.</p>
+</li>
+<li>
+<p>You can view the Suma analysis tools by visting <code>http://YOUR_SERVER/suma/analysis/reports</code>.</p>
+</li>
+<li>
+<p>To configure the nightly summary report:</p>
+<p>In the <code>YOUR_WEB_DIR/suma/analysis/config/config.yaml</code> file, edit the timezone, displayFormat, recipients, errorRecipients, emailFrom, emailSubj as needed. See http://php.net/manual/en/timezones.php for information on timezone formats.</p>
+<p>Using cron, or some other scheduler, schedule a task to run the <code>YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightlyEmail.php</code> script as desired. This command-line script takes several optional arguments and flags to configure the report:</p>
+</li>
+<li>
+<p><strong>locations</strong>: display hourly reports broken down by location, plus a total</p>
+</li>
+<li>
+<p><strong>--hide-zeros</strong>: do not display data for hours or locations with no activity</p>
+</li>
+<li><strong>--hours-across</strong>: display hours from left-to-right instead of the default top-to-bottom in the report</li>
+<li><strong>--html</strong>: formats the report as in HTML rather than plain text (strongly recommended for use when using the 'hours-across' and/or 'locations' options</li>
+</ul>
+<p>Examples of nightlyEmail.php configuration include:</p>
+<p><code>YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightlyEmail.php</code></p>
+<p><code>YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightlyEmail.php locations --html</code></p>
+<p><code>YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightlyEmail.php --hide-zeros</code></p>
+<p><code>YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightlyEmail.php --hours-across --hide-zeros --html</code></p>
+<p>Alternatively, <code>YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightly.php</code> may be run from the command line for quick reporting through stdout.</p>
+<h2 id="other-things-you-can-configure">Other Things You Can Configure</h2>
+<ul>
+<li>The configuration protocol allows for development/testing settings that can override the production settings.  To switch from using production settings to dev/testing settings, on the line in <code>/SUMA_SERVER_INSTALL_DIR/config/Globals.php</code></li>
+</ul>
+<p>self::$_config = new Zend_Config_Yaml($yamlFile, 'production');</p>
+<p>you must change 'production' to 'development'.</p>
+<ul>
+<li>
+<p>If you're getting generic error messages from the suma server you can change the <code>SUMA_DEBUG</code> setting in  <code>/YOUR_WEB_DIR/sumaserver/config/config.yaml</code> to <code>true</code> to generate more descriptive error messages.</p>
+<p><strong>Be sure to change this setting back before you use Suma in production</strong></p>
+</li>
+</ul>
+<h2 id="how-to-create-your-first-initiative">How to create your first initiative</h2>
+<ol>
+<li>Log in to the administrative console (see below)</li>
+<li>Create and populate a location tree by clicking on the "Edit locations" link</li>
+<li>Create and populate an initiative by clicking on the "Edit initiatives" link (don't forget also to enable the initiative using this tool)</li>
+<li>Collect some data using the Suma client (<code>http://YOUR_SERVER/suma/web</code>) with a WebKit-based browser (e.g. Chrome, Safari, or iOS and Android browsers)</li>
+<li>View your session log in the "Sessions list" page linked from the administrative console</li>
+<li>Analyze your data using the analysis tools (<code>http://YOUR_SERVER/suma/analysis/reports</code>)</li>
+</ol>
+<h2 id="overview-of-administrative-tools">Overview of administrative tools</h2>
+<p>To view the admin tools, visit the page at <code>http://YOUR_SERVER/sumaserver/admin/</code>. The username and password for these tools is set in config.yaml.</p>
+<ul>
+<li>
+<p>Location editor</p>
+<p>The location editor allows you to create location trees, create and arrange the location hierarchy and update titles and descriptions.</p>
+</li>
+<li>
+<p>Initiative editor</p>
+<p>The initiative editor allows you to create initiatives and activities, change titles and descriptions, and modify the order in which activities are displayed.</p>
+</li>
+<li>
+<p>Sessions list</p>
+<p>The sessions list is a human-readable session log.</p>
+</li>
+<li>
+<p>Direct JSON import</p>
+<p>This direct JSON import tool will allow you to paste JSON data into a web form and import it into Suma. Useful for recovery from log data.</p>
+</li>
+</ul>
+
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../logs" class="btn btn-neutral float-right" title="Logs"/>Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../quickstart" class="btn btn-neutral" title="Quickstart"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    <!-- Copyright etc -->
+    </p>
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+	  
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+<div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+        
+        <a href="https://github.com/cazzerson/Suma" class="icon icon-github" style="float: left; color: #fcfcfc"> GitHub</a>
+        
+      <span><a href="../quickstart" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      <span style="margin-left: 15px"><a href="../logs" style="color: #fcfcfc">Next &raquo;</a></span>
+    </span>
+</div>
+</body>
+</html>

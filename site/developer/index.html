@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Developer - Suma - Suma</title>
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../css/highlight.css">
+  <link href="../css/gh-fork-ribbon.css" rel="stylesheet">
+  <link href="../css/gh-fork-ribbon.ie.css" rel="stylesheet">
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+  <script type="text/javascript" src="../js/highlight.pack.js"></script>
+  <script src="../js/theme.js"></script>
+
+  <style>
+    body {font-size: 90%;}
+    pre, code {font-size: 100%;}
+    h3, h4, h5, h6 {color: #2980b9; font-weight: 300}
+  </style> 
+
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> Suma</a>
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+      <ul class="current">
+    
+        
+            <li class="toctree-l1 ">
+                <a class="" href="../quickstart">Quickstart</a>
+            </li>
+        
+
+    
+        
+            <li class="toctree-l1 ">
+                <a class="" href="../installation">Installation</a>
+            </li>
+        
+
+    
+        
+            <li class="toctree-l1 ">
+                <a class="" href="../logs">Logs</a>
+            </li>
+        
+
+    
+        
+            <li class="toctree-l1 ">
+                <a class="" href="../queryserver">Queryserver</a>
+            </li>
+        
+
+    
+        
+            <li class="toctree-l1 current">
+                <a class="current" href=".">Developer</a>
+            </li>
+        
+
+    
+        
+            <li class="toctree-l1 ">
+                <a class="" href="../upgrade_1.0">Upgrade 1.0</a>
+            </li>
+        
+
+    
+        
+            <li class="toctree-l1 ">
+                <a class="" href="../upgrade_2.0">Upgrade 2.0</a>
+            </li>
+        
+
+    
+</ul>
+
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">Suma</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    <li>Developer</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="" class="icon icon-github"> Download Suma</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              <h1 id="suma-developer-docs">Suma Developer Docs</h1>
+<h2 id="developing-new-reports">Developing New Reports</h2>
+<p>New suma reports may be developed within the AngularJS framework or as standalone reports. Reports developed within AngularJS should follow the model of the included reports and use a PHP file to retrieve data from the Suma query server as well as AngularJS based controllers, services, directives, views, etc. These reports will also need to be integrated into the various build processes that are facilitated by the tools and libraries listed below and should include appropriate test coverage. However, if you are unfamiliar with these tools, particularly AngularJS, and you need to generate custom reports, it is possible to do so using whatever visualization and data processing tools you prefer. You will likely still want to use the <code>ServerIO</code> class discussed in the API and Data Retrieval documentation below.</p>
+<h2 id="apache-configuration-note">Apache Configuration Note</h2>
+<p>If you plan on developing reports for inclusion in the Suma repository and will be making use of the Grunt build tools, you will need to add a virtual host in order to link to the .tmp directory that contains compiled style assets. For example, if you are using MAMP Pro as your development server, create a virtualhost alias for localhost as something like <code>Alias /suma/analysis/src/styles "/Applications/MAMP/htdocs/suma/analysis/.tmp/styles/"</code>. <strong>Please Note:</strong> the paths in the alias will depend on your development environment. See http://darrenhall.info/development/yeoman-and-mamp for more information.</p>
+<h2 id="reports-dependenciestools">Reports Dependencies/Tools</h2>
+<ul>
+<li><a href="http://angularjs.org">AngularJS</a></li>
+<li><a href="http://nodejs.org/">Node.js</a></li>
+<li><a href="http://bundler.io/">Bundler</a></li>
+<li><a href="http://bower.io">Bower</a></li>
+<li><a href="http://gruntjs.com">Grunt</a></li>
+<li><a href="http://visionmedia.github.io/mocha">Mocha</a></li>
+<li><a href="http://sinonjs.org">SinonJS</a></li>
+<li><a href="http://chaijs.com">ChaiJS</a></li>
+<li><a href="http://phpunit.de">PHPUnit</a></li>
+</ul>
+<h2 id="installing-reports-dependencies">Installing Reports Dependencies</h2>
+<p>From the <code>analysis</code> directory:</p>
+<ol>
+<li>Install Node.js, PHP, PHPUnit, Ruby, and Bundler</li>
+<li><code>bundle install</code></li>
+<li><code>npm install</code></li>
+<li><code>npm install -g grunt-cli</code></li>
+</ol>
+<p>You can now run <code>grunt</code> to build and test the analysis tools.</p>
+<h2 id="new-report-configuration-settings">New Report Configuration Settings</h2>
+<p>Any new report that has external configuration settings should utilize the <code>config.yaml</code> file at <code>analysis/config/config.yaml</code>. Be sure to add your config settings to <code>config_example.yaml</code> as well. Each report should be namespaced as follows:</p>
+<pre><code>nightly:
+    timezone: America/New_York
+    displayFormat: m-d-Y
+    recipients: bddavids@ncsu.edu
+    errorRecipients: bddavids@ncsu.edu
+</code></pre>
+<p>See the nightly report or view the docs on the <a href="https://github.com/tekimaki/spyc">spyc library</a> for importing YAML configs into PHP.</p>
+<h2 id="api-and-data-retrieval">API and Data Retrieval</h2>
+<ul>
+<li>
+<p>Most reports will utilize the <code>ServerIO</code> class to extract data from the Suma Query Server. In order to utilize this class, include the <code>ServerIO.php</code> file in your data processing code. Reports that will be added to the Suma repository should place their data processing code in the <code>analysis/src/lib/php</code> directory, which can then be accessed from within a new AngularJS service via HTTP. Custom reports that will be used outside of the Suma repository can still use the <code>ServerIO</code> class to extract data from Suma.</p>
+</li>
+<li>
+<p>The following methods are provided by ServerIO:</p>
+</li>
+<li><code>ServerIO::getData($params, $queryType)</code><ul>
+<li>$params is an associative array of Suma Query Server parameters</li>
+<li>$queryType specifies the type of query to perform, either 'sessions' or 'counts'</li>
+<li>Returns a PHP array representation of the data returned from the <a href="../queryserver">Suma Query Server</a></li>
+</ul>
+</li>
+<li><code>ServerIO::getInitiatives()</code><ul>
+<li>Returns array representation of all initiatives that can be queried</li>
+<li>Keys include: 'id', 'title', 'description'</li>
+</ul>
+</li>
+</ul>
+
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../upgrade_1.0" class="btn btn-neutral float-right" title="Upgrade 1.0"/>Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../queryserver" class="btn btn-neutral" title="Queryserver"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    <!-- Copyright etc -->
+    </p>
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+	  
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+<div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+        
+        <a href="https://github.com/cazzerson/Suma" class="icon icon-github" style="float: left; color: #fcfcfc"> GitHub</a>
+        
+      <span><a href="../queryserver" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      <span style="margin-left: 15px"><a href="../upgrade_1.0" style="color: #fcfcfc">Next &raquo;</a></span>
+    </span>
+</div>
+</body>
+</html>
