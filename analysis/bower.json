@@ -14,7 +14,7 @@
     "json3": "3.3.2",
     "lodash": "3.3.0",
     "moment": "2.9.0",
-    "canvg-gabelerner": "https://github.com/gabelerner/canvg.git"
+    "canvg": "https://github.com/gabelerner/canvg.git#9577f1fc12fbaabb6c51cd4adabbe4c2ccc7d7b8"
   },
   "devDependencies": {
     "angular-mocks": "1.2.27",
