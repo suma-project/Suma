@@ -1,0 +1,25 @@
+{
+  "name": "canvg",
+  "main": "canvg.js",
+  "keywords": [
+    "javascript",
+    "client",
+    "browser",
+    "svg",
+    "canvas"
+  ],
+  "ignore": [
+    "examples",
+    "svgs"
+  ],
+  "homepage": "https://github.com/gabelerner/canvg",
+  "_release": "9577f1fc12",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "9577f1fc12fbaabb6c51cd4adabbe4c2ccc7d7b8"
+  },
+  "_source": "https://github.com/gabelerner/canvg.git",
+  "_target": "*",
+  "_originalSource": "https://github.com/gabelerner/canvg.git"
+}

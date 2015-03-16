@@ -24,7 +24,7 @@ module.exports = function(config) {
       'src/bower_components/lodash/lodash.js',
       'src/lib/js/lodash_mixins.js',
       'src/bower_components/d3/d3.js',
-      'src/bower_components/canvg/canvg.js',
+      'src/bower_components/canvg-gabelerner/canvg.js',
       'test/js/mocks/**/*.js',
       'src/scripts/*.js',
       'src/scripts/**/*.js',
