@@ -327,6 +327,15 @@ module.exports = function (grunt) {
     'clean:validate'
   ]);
 
+  grunt.registerTask('prepareDevEnv', [
+    'copy:cssScss',
+    'copy:styles',
+    'compass:server',
+    'copy:minCss',
+    'copy:devFonts',
+    'autoprefixer:development'
+  ]);
+
   grunt.registerTask('lint', [
     'jshint'
   ]);
