@@ -569,4 +569,4 @@ END //
 DELIMITER ;
 
 CALL insert_data();
-DROP PROCEDURE IF EXISTS `insert_data` //
+DROP PROCEDURE IF EXISTS `insert_data`
