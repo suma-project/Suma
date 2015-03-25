@@ -12,7 +12,7 @@
     "font-awesome": "4.3.0",
     "jquery": "2.1.3",
     "json3": "3.3.2",
-    "lodash": "3.5.0",
+    "lodash": "3.6.0",
     "moment": "2.9.0",
     "canvg": "https://github.com/gabelerner/canvg.git#9577f1fc12fbaabb6c51cd4adabbe4c2ccc7d7b8"
   },

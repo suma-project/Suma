@@ -7,13 +7,6 @@ angular.module('sumaAnalysis')
       oldHeight,
       height;
 
-      function myTrunc(string, n, useWordBoundary){
-        var tooLong = string.length > n,
-        s_ = tooLong ? string.substr(0, n - 1) : string;
-        s_ = useWordBoundary && tooLong ? s_.substr(0,s_.lastIndexOf(' ')) : s_;
-        return  tooLong ? s_ + '...' : s_;
-      }
-
       function chart(selection) {
         selection.each(function (data) {
           var ann,
@@ -193,7 +186,7 @@ angular.module('sumaAnalysis')
                 text = d.name;
               }
 
-              return _.unescape(myTrunc(text, 22, true));
+              return _.unescape(_.trunc(text, {length: 22, separator: ' '}));
             })
             .style('opacity', 1);
 

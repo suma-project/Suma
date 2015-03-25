@@ -9,16 +9,22 @@ describe('Filter: truncate', function () {
   var truncate,
       strings,
       expectedNoBoundary,
-      expectedBoundary;
+      expectedBoundary,
+      expectedOmission;
 
   expectedNoBoundary = [
-    'The mouse...',
-    'The cat i...'
+    'The mou...',
+    'The cat...'
   ];
 
   expectedBoundary = [
     'The...',
     'The cat...'
+  ];
+
+  expectedOmission = [
+    'The mouse5',
+    'The cat i5'
   ];
 
   strings = [
@@ -30,6 +36,12 @@ describe('Filter: truncate', function () {
     truncate = $filter('truncate');
   }));
 
+  it('should truncate strings to default of 30 if no length', function () {
+    _.each(strings, function (string, i) {
+      expect(truncate(string)).to.equal(strings[i]);
+    });
+  });
+
   it('should truncate strings and ignore boundary', function () {
     _.each(strings, function (string, i) {
       expect(truncate(string, 10)).to.equal(expectedNoBoundary[i]);
@@ -38,7 +50,13 @@ describe('Filter: truncate', function () {
 
   it('should truncate strings and honor boundary', function () {
     _.each(strings, function (string, i) {
-      expect(truncate(string, 10, true)).to.equal(expectedBoundary[i]);
+      expect(truncate(string, 10, ' ')).to.equal(expectedBoundary[i]);
+    });
+  });
+
+  it('should truncate strings and add expected omission characters', function () {
+    _.each(strings, function (string, i) {
+      expect(truncate(string, 10, '', 5)).to.equal(expectedOmission[i]);
     });
   });
 

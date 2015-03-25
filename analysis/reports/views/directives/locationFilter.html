@@ -10,7 +10,7 @@
 
 <table class="table table-hover">
   <tr data-ng-repeat="loc in locs">
-    <td>{{loc | depth | truncate:25:true}}</td>
+    <td>{{loc | depth | truncate:25:' '}}</td>
     <td>
       <input type="checkbox" data-ng-model="loc.filter" data-ng-disabled="!loc.enabled" data-ng-change="updateCollection()">
     </td>

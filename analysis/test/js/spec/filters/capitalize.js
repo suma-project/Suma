@@ -16,16 +16,6 @@ describe('Filter: capitalize', function () {
     Strings = strings;
   }));
 
-  it('should do nothing with null value', function () {
-    var input = null;
-    expect(capitalize(input)).to.equal('');
-  });
-
-  it('should do nothing with undefined value', function () {
-    var input;
-    expect(capitalize(input)).to.equal('');
-  });
-
   it('should capitalize strings', function () {
     for (var str in Strings) {
       expect(capitalize(str)).to.equal(Strings[str]);

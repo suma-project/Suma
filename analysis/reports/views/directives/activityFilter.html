@@ -6,7 +6,7 @@
 
 <table class="table table-hover">
   <tr data-ng-repeat="act in acts" data-ng-class="{success: act.type === 'activityGroup'}">
-    <td>{{act | depth | truncate:25:true}}</td>
+    <td>{{act | depth | truncate:25:' '}}</td>
     <td>
       <label class="radio-inline" data-ng-disabled="!act.enabled"><input type="radio" data-ng-model="act.filter" data-ng-disabled="!act.enabled" data-ng-change="setStatus()" value="allow"> Allow</label>
       <label class="radio-inline" data-ng-disabled="!act.enabled"><input type="radio" data-ng-model="act.filter" data-ng-disabled="!act.enabled" data-ng-change="setStatus()" value="require"> Require</label>
