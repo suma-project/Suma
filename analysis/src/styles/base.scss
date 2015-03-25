@@ -30,3 +30,8 @@ body {
 .filter-row {
   min-height: 260px;
 }
+
+// Fix for bootsrap datepicker height
+.bootstrap-datetimepicker-widget.dropdown-menu {
+  height: 250px !important;
+}

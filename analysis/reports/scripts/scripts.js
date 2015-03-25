@@ -32394,11 +32394,11 @@ angular.module('ajoslin.promise-tracker', [])
 
 }());
 /* ========================================================================
- * Bootstrap: tooltip.js v3.3.1
+ * Bootstrap: tooltip.js v3.3.4
  * http://getbootstrap.com/javascript/#tooltip
  * Inspired by the original jQuery.tipsy by Jason Frame
  * ========================================================================
- * Copyright 2011-2014 Twitter, Inc.
+ * Copyright 2011-2015 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * ======================================================================== */
 
@@ -32410,17 +32410,17 @@ angular.module('ajoslin.promise-tracker', [])
   // ===============================
 
   var Tooltip = function (element, options) {
-    this.type       =
-    this.options    =
-    this.enabled    =
-    this.timeout    =
-    this.hoverState =
+    this.type       = null
+    this.options    = null
+    this.enabled    = null
+    this.timeout    = null
+    this.hoverState = null
     this.$element   = null
 
     this.init('tooltip', element, options)
   }
 
-  Tooltip.VERSION  = '3.3.1'
+  Tooltip.VERSION  = '3.3.4'
 
   Tooltip.TRANSITION_DURATION = 150
 
@@ -32446,6 +32446,10 @@ angular.module('ajoslin.promise-tracker', [])
     this.$element  = $(element)
     this.options   = this.getOptions(options)
     this.$viewport = this.options.viewport && $(this.options.viewport.selector || this.options.viewport)
+
+    if (this.$element[0] instanceof document.constructor && !this.options.selector) {
+      throw new Error('`selector` option must be specified when initializing ' + this.type + ' on the window.document object!')
+    }
 
     var triggers = this.options.trigger.split(' ')
 
@@ -32667,10 +32671,10 @@ angular.module('ajoslin.promise-tracker', [])
     this.replaceArrow(arrowDelta, $tip[0][arrowOffsetPosition], isVertical)
   }
 
-  Tooltip.prototype.replaceArrow = function (delta, dimension, isHorizontal) {
+  Tooltip.prototype.replaceArrow = function (delta, dimension, isVertical) {
     this.arrow()
-      .css(isHorizontal ? 'left' : 'top', 50 * (1 - delta / dimension) + '%')
-      .css(isHorizontal ? 'top' : 'left', '')
+      .css(isVertical ? 'left' : 'top', 50 * (1 - delta / dimension) + '%')
+      .css(isVertical ? 'top' : 'left', '')
   }
 
   Tooltip.prototype.setContent = function () {
@@ -32683,7 +32687,7 @@ angular.module('ajoslin.promise-tracker', [])
 
   Tooltip.prototype.hide = function (callback) {
     var that = this
-    var $tip = this.tip()
+    var $tip = $(this.$tip)
     var e    = $.Event('hide.bs.' + this.type)
 
     function complete() {
@@ -32700,7 +32704,7 @@ angular.module('ajoslin.promise-tracker', [])
 
     $tip.removeClass('in')
 
-    $.support.transition && this.$tip.hasClass('fade') ?
+    $.support.transition && $tip.hasClass('fade') ?
       $tip
         .one('bsTransitionEnd', complete)
         .emulateTransitionEnd(Tooltip.TRANSITION_DURATION) :
@@ -32741,10 +32745,10 @@ angular.module('ajoslin.promise-tracker', [])
   }
 
   Tooltip.prototype.getCalculatedOffset = function (placement, pos, actualWidth, actualHeight) {
-    return placement == 'bottom' ? { top: pos.top + pos.height,   left: pos.left + pos.width / 2 - actualWidth / 2  } :
-           placement == 'top'    ? { top: pos.top - actualHeight, left: pos.left + pos.width / 2 - actualWidth / 2  } :
+    return placement == 'bottom' ? { top: pos.top + pos.height,   left: pos.left + pos.width / 2 - actualWidth / 2 } :
+           placement == 'top'    ? { top: pos.top - actualHeight, left: pos.left + pos.width / 2 - actualWidth / 2 } :
            placement == 'left'   ? { top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left - actualWidth } :
-        /* placement == 'right' */ { top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left + pos.width   }
+        /* placement == 'right' */ { top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left + pos.width }
 
   }
 
@@ -32840,18 +32844,12 @@ angular.module('ajoslin.promise-tracker', [])
 
   function Plugin(option) {
     return this.each(function () {
-      var $this    = $(this)
-      var data     = $this.data('bs.tooltip')
-      var options  = typeof option == 'object' && option
-      var selector = options && options.selector
+      var $this   = $(this)
+      var data    = $this.data('bs.tooltip')
+      var options = typeof option == 'object' && option
 
-      if (!data && option == 'destroy') return
-      if (selector) {
-        if (!data) $this.data('bs.tooltip', (data = {}))
-        if (!data[selector]) data[selector] = new Tooltip(this, options)
-      } else {
-        if (!data) $this.data('bs.tooltip', (data = new Tooltip(this, options)))
-      }
+      if (!data && /destroy|hide/.test(option)) return
+      if (!data) $this.data('bs.tooltip', (data = new Tooltip(this, options)))
       if (typeof option == 'string') data[option]()
     })
   }
@@ -32873,10 +32871,10 @@ angular.module('ajoslin.promise-tracker', [])
 }(jQuery);
 
 /* ========================================================================
- * Bootstrap: modal.js v3.3.1
+ * Bootstrap: modal.js v3.3.4
  * http://getbootstrap.com/javascript/#modals
  * ========================================================================
- * Copyright 2011-2014 Twitter, Inc.
+ * Copyright 2011-2015 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * ======================================================================== */
 
@@ -32888,12 +32886,15 @@ angular.module('ajoslin.promise-tracker', [])
   // ======================
 
   var Modal = function (element, options) {
-    this.options        = options
-    this.$body          = $(document.body)
-    this.$element       = $(element)
-    this.$backdrop      =
-    this.isShown        = null
-    this.scrollbarWidth = 0
+    this.options             = options
+    this.$body               = $(document.body)
+    this.$element            = $(element)
+    this.$dialog             = this.$element.find('.modal-dialog')
+    this.$backdrop           = null
+    this.isShown             = null
+    this.originalBodyPad     = null
+    this.scrollbarWidth      = 0
+    this.ignoreBackdropClick = false
 
     if (this.options.remote) {
       this.$element
@@ -32904,7 +32905,7 @@ angular.module('ajoslin.promise-tracker', [])
     }
   }
 
-  Modal.VERSION  = '3.3.1'
+  Modal.VERSION  = '3.3.4'
 
   Modal.TRANSITION_DURATION = 300
   Modal.BACKDROP_TRANSITION_DURATION = 150
@@ -32938,6 +32939,12 @@ angular.module('ajoslin.promise-tracker', [])
 
     this.$element.on('click.dismiss.bs.modal', '[data-dismiss="modal"]', $.proxy(this.hide, this))
 
+    this.$dialog.on('mousedown.dismiss.bs.modal', function () {
+      that.$element.one('mouseup.dismiss.bs.modal', function (e) {
+        if ($(e.target).is(that.$element)) that.ignoreBackdropClick = true
+      })
+    })
+
     this.backdrop(function () {
       var transition = $.support.transition && that.$element.hasClass('fade')
 
@@ -32949,7 +32956,6 @@ angular.module('ajoslin.promise-tracker', [])
         .show()
         .scrollTop(0)
 
-      if (that.options.backdrop) that.adjustBackdrop()
       that.adjustDialog()
 
       if (transition) {
@@ -32965,7 +32971,7 @@ angular.module('ajoslin.promise-tracker', [])
       var e = $.Event('shown.bs.modal', { relatedTarget: _relatedTarget })
 
       transition ?
-        that.$element.find('.modal-dialog') // wait for modal to slide in
+        that.$dialog // wait for modal to slide in
           .one('bsTransitionEnd', function () {
             that.$element.trigger('focus').trigger(e)
           })
@@ -32994,6 +33000,9 @@ angular.module('ajoslin.promise-tracker', [])
       .removeClass('in')
       .attr('aria-hidden', true)
       .off('click.dismiss.bs.modal')
+      .off('mouseup.dismiss.bs.modal')
+
+    this.$dialog.off('mousedown.dismiss.bs.modal')
 
     $.support.transition && this.$element.hasClass('fade') ?
       this.$element
@@ -33054,13 +33063,18 @@ angular.module('ajoslin.promise-tracker', [])
       var doAnimate = $.support.transition && animate
 
       this.$backdrop = $('<div class="modal-backdrop ' + animate + '" />')
-        .prependTo(this.$element)
-        .on('click.dismiss.bs.modal', $.proxy(function (e) {
-          if (e.target !== e.currentTarget) return
-          this.options.backdrop == 'static'
-            ? this.$element[0].focus.call(this.$element[0])
-            : this.hide.call(this)
-        }, this))
+        .appendTo(this.$body)
+
+      this.$element.on('click.dismiss.bs.modal', $.proxy(function (e) {
+        if (this.ignoreBackdropClick) {
+          this.ignoreBackdropClick = false
+          return
+        }
+        if (e.target !== e.currentTarget) return
+        this.options.backdrop == 'static'
+          ? this.$element[0].focus()
+          : this.hide()
+      }, this))
 
       if (doAnimate) this.$backdrop[0].offsetWidth // force reflow
 
@@ -33095,14 +33109,7 @@ angular.module('ajoslin.promise-tracker', [])
   // these following methods are used to handle overflowing modals
 
   Modal.prototype.handleUpdate = function () {
-    if (this.options.backdrop) this.adjustBackdrop()
     this.adjustDialog()
-  }
-
-  Modal.prototype.adjustBackdrop = function () {
-    this.$backdrop
-      .css('height', 0)
-      .css('height', this.$element[0].scrollHeight)
   }
 
   Modal.prototype.adjustDialog = function () {
@@ -33122,17 +33129,23 @@ angular.module('ajoslin.promise-tracker', [])
   }
 
   Modal.prototype.checkScrollbar = function () {
-    this.bodyIsOverflowing = document.body.scrollHeight > document.documentElement.clientHeight
+    var fullWindowWidth = window.innerWidth
+    if (!fullWindowWidth) { // workaround for missing window.innerWidth in IE8
+      var documentElementRect = document.documentElement.getBoundingClientRect()
+      fullWindowWidth = documentElementRect.right - Math.abs(documentElementRect.left)
+    }
+    this.bodyIsOverflowing = document.body.clientWidth < fullWindowWidth
     this.scrollbarWidth = this.measureScrollbar()
   }
 
   Modal.prototype.setScrollbar = function () {
     var bodyPad = parseInt((this.$body.css('padding-right') || 0), 10)
+    this.originalBodyPad = document.body.style.paddingRight || ''
     if (this.bodyIsOverflowing) this.$body.css('padding-right', bodyPad + this.scrollbarWidth)
   }
 
   Modal.prototype.resetScrollbar = function () {
-    this.$body.css('padding-right', '')
+    this.$body.css('padding-right', this.originalBodyPad)
   }
 
   Modal.prototype.measureScrollbar = function () { // thx walsh
@@ -33198,10 +33211,10 @@ angular.module('ajoslin.promise-tracker', [])
 }(jQuery);
 
 /* ========================================================================
- * Bootstrap: popover.js v3.3.1
+ * Bootstrap: popover.js v3.3.4
  * http://getbootstrap.com/javascript/#popovers
  * ========================================================================
- * Copyright 2011-2014 Twitter, Inc.
+ * Copyright 2011-2015 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * ======================================================================== */
 
@@ -33218,7 +33231,7 @@ angular.module('ajoslin.promise-tracker', [])
 
   if (!$.fn.tooltip) throw new Error('Popover requires tooltip.js')
 
-  Popover.VERSION  = '3.3.1'
+  Popover.VERSION  = '3.3.4'
 
   Popover.DEFAULTS = $.extend({}, $.fn.tooltip.Constructor.DEFAULTS, {
     placement: 'right',
@@ -33274,29 +33287,18 @@ angular.module('ajoslin.promise-tracker', [])
     return (this.$arrow = this.$arrow || this.tip().find('.arrow'))
   }
 
-  Popover.prototype.tip = function () {
-    if (!this.$tip) this.$tip = $(this.options.template)
-    return this.$tip
-  }
-
 
   // POPOVER PLUGIN DEFINITION
   // =========================
 
   function Plugin(option) {
     return this.each(function () {
-      var $this    = $(this)
-      var data     = $this.data('bs.popover')
-      var options  = typeof option == 'object' && option
-      var selector = options && options.selector
+      var $this   = $(this)
+      var data    = $this.data('bs.popover')
+      var options = typeof option == 'object' && option
 
-      if (!data && option == 'destroy') return
-      if (selector) {
-        if (!data) $this.data('bs.popover', (data = {}))
-        if (!data[selector]) data[selector] = new Popover(this, options)
-      } else {
-        if (!data) $this.data('bs.popover', (data = new Popover(this, options)))
-      }
+      if (!data && /destroy|hide/.test(option)) return
+      if (!data) $this.data('bs.popover', (data = new Popover(this, options)))
       if (typeof option == 'string') data[option]()
     })
   }
@@ -33319,10 +33321,10 @@ angular.module('ajoslin.promise-tracker', [])
 
 /**
  * @license
- * lodash 3.3.0 (Custom Build) <https://lodash.com/>
+ * lodash 3.5.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern -o ./lodash.js`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
  * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
  * Available under MIT license <https://lodash.com/license>
  */
@@ -33332,7 +33334,7 @@ angular.module('ajoslin.promise-tracker', [])
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '3.3.0';
+  var VERSION = '3.5.0';
 
   /** Used to compose bitmasks for wrapper metadata. */
   var BIND_FLAG = 1,
@@ -33354,9 +33356,9 @@ angular.module('ajoslin.promise-tracker', [])
       HOT_SPAN = 16;
 
   /** Used to indicate the type of lazy iteratees. */
-  var LAZY_FILTER_FLAG = 0,
-      LAZY_MAP_FLAG = 1,
-      LAZY_WHILE_FLAG = 2;
+  var LAZY_DROP_WHILE_FLAG = 0,
+      LAZY_FILTER_FLAG = 1,
+      LAZY_MAP_FLAG = 2;
 
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
@@ -33450,7 +33452,7 @@ angular.module('ajoslin.promise-tracker', [])
     var upper = '[A-Z\\xc0-\\xd6\\xd8-\\xde]',
         lower = '[a-z\\xdf-\\xf6\\xf8-\\xff]+';
 
-    return RegExp(upper + '{2,}(?=' + upper + lower + ')|' + upper + '?' + lower + '|' + upper + '+|[0-9]+', 'g');
+    return RegExp(upper + '+(?=' + upper + lower + ')|' + upper + '?' + lower + '|' + upper + '+|[0-9]+', 'g');
   }());
 
   /** Used to detect and test for whitespace. */
@@ -33572,28 +33574,28 @@ angular.module('ajoslin.promise-tracker', [])
     '\u2029': 'u2029'
   };
 
-  /**
-   * Used as a reference to the global object.
-   *
-   * The `this` value is used if it is the global object to avoid Greasemonkey's
-   * restricted `window` object, otherwise the `window` object is used.
-   */
-  var root = (objectTypes[typeof window] && window !== (this && this.window)) ? window : this;
-
   /** Detect free variable `exports`. */
   var freeExports = objectTypes[typeof exports] && exports && !exports.nodeType && exports;
 
   /** Detect free variable `module`. */
   var freeModule = objectTypes[typeof module] && module && !module.nodeType && module;
 
-  /** Detect free variable `global` from Node.js or Browserified code and use it as `root`. */
+  /** Detect free variable `global` from Node.js. */
   var freeGlobal = freeExports && freeModule && typeof global == 'object' && global;
-  if (freeGlobal && (freeGlobal.global === freeGlobal || freeGlobal.window === freeGlobal || freeGlobal.self === freeGlobal)) {
-    root = freeGlobal;
-  }
+
+  /** Detect free variable `window`. */
+  var freeWindow = objectTypes[typeof window] && window;
 
   /** Detect the popular CommonJS extension `module.exports`. */
   var moduleExports = freeModule && freeModule.exports === freeExports && freeExports;
+
+  /**
+   * Used as a reference to the global object.
+   *
+   * The `this` value is used if it is the global object to avoid Greasemonkey's
+   * restricted `window` object, otherwise the `window` object is used.
+   */
+  var root = freeGlobal || ((freeWindow !== (this && this.window)) && freeWindow) || this;
 
   /*--------------------------------------------------------------------------*/
 
@@ -33627,14 +33629,14 @@ angular.module('ajoslin.promise-tracker', [])
    * @private
    * @param {Array} array The array to search.
    * @param {*} value The value to search for.
-   * @param {number} [fromIndex=0] The index to search from.
+   * @param {number} fromIndex The index to search from.
    * @returns {number} Returns the index of the matched value, else `-1`.
    */
   function baseIndexOf(array, value, fromIndex) {
     if (value !== value) {
       return indexOfNaN(array, fromIndex);
     }
-    var index = (fromIndex || 0) - 1,
+    var index = fromIndex - 1,
         length = array.length;
 
     while (++index < length) {
@@ -33657,26 +33659,6 @@ angular.module('ajoslin.promise-tracker', [])
     // Avoid a Chakra JIT bug in compatibility modes of IE 11.
     // See https://github.com/jashkenas/underscore/issues/1621 for more details.
     return typeof value == 'function' || false;
-  }
-
-  /**
-   * The base implementation of `_.sortBy` and `_.sortByAll` which uses `comparer`
-   * to define the sort order of `array` and replaces criteria objects with their
-   * corresponding values.
-   *
-   * @private
-   * @param {Array} array The array to sort.
-   * @param {Function} comparer The function to define sort order.
-   * @returns {Array} Returns `array`.
-   */
-  function baseSortBy(array, comparer) {
-    var length = array.length;
-
-    array.sort(comparer);
-    while (length--) {
-      array[length] = array[length].value;
-    }
-    return array;
   }
 
   /**
@@ -33752,24 +33734,33 @@ angular.module('ajoslin.promise-tracker', [])
   }
 
   /**
-   * Used by `_.sortByAll` to compare multiple properties of each element
-   * in a collection and stable sort them in ascending order.
+   * Used by `_.sortByOrder` to compare multiple properties of each element
+   * in a collection and stable sort them in the following order:
+   *
+   * If orders is unspecified, sort in ascending order for all properties.
+   * Otherwise, for each property, sort in ascending order if its corresponding value in
+   * orders is true, and descending order if false.
    *
    * @private
    * @param {Object} object The object to compare to `other`.
    * @param {Object} other The object to compare to `object`.
+   * @param {boolean[]} orders The order to sort by for each property.
    * @returns {number} Returns the sort order indicator for `object`.
    */
-  function compareMultipleAscending(object, other) {
+  function compareMultiple(object, other, orders) {
     var index = -1,
         objCriteria = object.criteria,
         othCriteria = other.criteria,
-        length = objCriteria.length;
+        length = objCriteria.length,
+        ordersLength = orders.length;
 
     while (++index < length) {
       var result = baseCompareAscending(objCriteria[index], othCriteria[index]);
       if (result) {
-        return result;
+        if (index >= ordersLength) {
+          return result;
+        }
+        return result * (orders[index] ? 1 : -1);
       }
     }
     // Fixes an `Array#sort` bug in the JS engine embedded in Adobe applications
@@ -33822,13 +33813,13 @@ angular.module('ajoslin.promise-tracker', [])
    *
    * @private
    * @param {Array} array The array to search.
-   * @param {number} [fromIndex] The index to search from.
+   * @param {number} fromIndex The index to search from.
    * @param {boolean} [fromRight] Specify iterating from right to left.
    * @returns {number} Returns the index of the matched `NaN`, else `-1`.
    */
   function indexOfNaN(array, fromIndex, fromRight) {
     var length = array.length,
-        index = fromRight ? (fromIndex || length) : ((fromIndex || 0) - 1);
+        index = fromIndex + (fromRight ? 0 : -1);
 
     while ((fromRight ? index-- : ++index < length)) {
       var other = array[index];
@@ -34015,7 +34006,8 @@ angular.module('ajoslin.promise-tracker', [])
 
     /** Used for native method references. */
     var arrayProto = Array.prototype,
-        objectProto = Object.prototype;
+        objectProto = Object.prototype,
+        stringProto = String.prototype;
 
     /** Used to detect DOM support. */
     var document = (document = context.window) && document.document;
@@ -34127,9 +34119,14 @@ angular.module('ajoslin.promise-tracker', [])
      * Chaining is supported in custom builds as long as the `_#value` method is
      * directly or indirectly included in the build.
      *
-     * In addition to lodash methods, wrappers also have the following `Array` methods:
-     * `concat`, `join`, `pop`, `push`, `reverse`, `shift`, `slice`, `sort`, `splice`,
-     * and `unshift`
+     * In addition to lodash methods, wrappers have `Array` and `String` methods.
+     *
+     * The wrapper `Array` methods are:
+     * `concat`, `join`, `pop`, `push`, `reverse`, `shift`, `slice`, `sort`,
+     * `splice`, and `unshift`
+     *
+     * The wrapper `String` methods are:
+     * `replace` and `split`
      *
      * The wrapper methods that support shortcut fusion are:
      * `compact`, `drop`, `dropRight`, `dropRightWhile`, `dropWhile`, `filter`,
@@ -34149,26 +34146,26 @@ angular.module('ajoslin.promise-tracker', [])
      * `mixin`, `negate`, `noop`, `omit`, `once`, `pairs`, `partial`, `partialRight`,
      * `partition`, `pick`, `plant`, `pluck`, `property`, `propertyOf`, `pull`,
      * `pullAt`, `push`, `range`, `rearg`, `reject`, `remove`, `rest`, `reverse`,
-     * `shuffle`, `slice`, `sort`, `sortBy`, `sortByAll`, `splice`, `spread`,
-     * `take`, `takeRight`, `takeRightWhile`, `takeWhile`, `tap`, `throttle`,
-     * `thru`, `times`, `toArray`, `toPlainObject`, `transform`, `union`, `uniq`,
-     * `unshift`, `unzip`, `values`, `valuesIn`, `where`, `without`, `wrap`, `xor`,
-     * `zip`, and `zipObject`
+     * `shuffle`, `slice`, `sort`, `sortBy`, `sortByAll`, `sortByOrder`, `splice`,
+     * `spread`, `take`, `takeRight`, `takeRightWhile`, `takeWhile`, `tap`,
+     * `throttle`, `thru`, `times`, `toArray`, `toPlainObject`, `transform`,
+     * `union`, `uniq`, `unshift`, `unzip`, `values`, `valuesIn`, `where`,
+     * `without`, `wrap`, `xor`, `zip`, and `zipObject`
      *
      * The wrapper methods that are **not** chainable by default are:
-     * `attempt`, `camelCase`, `capitalize`, `clone`, `cloneDeep`, `deburr`,
+     * `add`, `attempt`, `camelCase`, `capitalize`, `clone`, `cloneDeep`, `deburr`,
      * `endsWith`, `escape`, `escapeRegExp`, `every`, `find`, `findIndex`, `findKey`,
      * `findLast`, `findLastIndex`, `findLastKey`, `findWhere`, `first`, `has`,
-     * `identity`, `includes`, `indexOf`, `isArguments`, `isArray`, `isBoolean`,
-     * `isDate`, `isElement`, `isEmpty`, `isEqual`, `isError`, `isFinite`,
-     * `isFunction`, `isMatch`, `isNative`, `isNaN`, `isNull`, `isNumber`,
+     * `identity`, `includes`, `indexOf`, `inRange`, `isArguments`, `isArray`,
+     * `isBoolean`, `isDate`, `isElement`, `isEmpty`, `isEqual`, `isError`,
+     * `isFinite`,`isFunction`, `isMatch`, `isNative`, `isNaN`, `isNull`, `isNumber`,
      * `isObject`, `isPlainObject`, `isRegExp`, `isString`, `isUndefined`,
      * `isTypedArray`, `join`, `kebabCase`, `last`, `lastIndexOf`, `max`, `min`,
      * `noConflict`, `now`, `pad`, `padLeft`, `padRight`, `parseInt`, `pop`,
      * `random`, `reduce`, `reduceRight`, `repeat`, `result`, `runInContext`,
      * `shift`, `size`, `snakeCase`, `some`, `sortedIndex`, `sortedLastIndex`,
-     * `startCase`, `startsWith`, `template`, `trim`, `trimLeft`, `trimRight`,
-     * `trunc`, `unescape`, `uniqueId`, `value`, and `words`
+     * `startCase`, `startsWith`, `sum`, `template`, `trim`, `trimLeft`,
+     * `trimRight`, `trunc`, `unescape`, `uniqueId`, `value`, and `words`
      *
      * The wrapper method `sample` will return a wrapped value when `n` is provided,
      * otherwise an unwrapped value is returned.
@@ -34390,7 +34387,6 @@ angular.module('ajoslin.promise-tracker', [])
 
       result.__actions__ = actions ? arrayCopy(actions) : null;
       result.__dir__ = this.__dir__;
-      result.__dropCount__ = this.__dropCount__;
       result.__filtered__ = this.__filtered__;
       result.__iteratees__ = iteratees ? arrayCopy(iteratees) : null;
       result.__takeCount__ = this.__takeCount__;
@@ -34437,9 +34433,8 @@ angular.module('ajoslin.promise-tracker', [])
           start = view.start,
           end = view.end,
           length = end - start,
-          dropCount = this.__dropCount__,
+          index = isRight ? end : (start - 1),
           takeCount = nativeMin(length, this.__takeCount__),
-          index = isRight ? end : start - 1,
           iteratees = this.__iteratees__,
           iterLength = iteratees ? iteratees.length : 0,
           resIndex = 0,
@@ -34455,24 +34450,34 @@ angular.module('ajoslin.promise-tracker', [])
         while (++iterIndex < iterLength) {
           var data = iteratees[iterIndex],
               iteratee = data.iteratee,
-              computed = iteratee(value, index, array),
               type = data.type;
 
-          if (type == LAZY_MAP_FLAG) {
-            value = computed;
-          } else if (!computed) {
-            if (type == LAZY_FILTER_FLAG) {
-              continue outer;
-            } else {
-              break outer;
+          if (type == LAZY_DROP_WHILE_FLAG) {
+            if (data.done && (isRight ? (index > data.index) : (index < data.index))) {
+              data.count = 0;
+              data.done = false;
+            }
+            data.index = index;
+            if (!data.done) {
+              var limit = data.limit;
+              if (!(data.done = limit > -1 ? (data.count++ >= limit) : !iteratee(value))) {
+                continue outer;
+              }
+            }
+          } else {
+            var computed = iteratee(value);
+            if (type == LAZY_MAP_FLAG) {
+              value = computed;
+            } else if (!computed) {
+              if (type == LAZY_FILTER_FLAG) {
+                continue outer;
+              } else {
+                break outer;
+              }
             }
           }
         }
-        if (dropCount) {
-          dropCount--;
-        } else {
-          result[resIndex++] = value;
-        }
+        result[resIndex++] = value;
       }
       return result;
     }
@@ -34892,7 +34897,7 @@ angular.module('ajoslin.promise-tracker', [])
             value = object[key],
             result = customizer(value, source[key], key, object, source);
 
-        if ((result === result ? result !== value : value === value) ||
+        if ((result === result ? (result !== value) : (value === value)) ||
             (typeof value == 'undefined' && !(key in object))) {
           object[key] = result;
         }
@@ -35123,7 +35128,7 @@ angular.module('ajoslin.promise-tracker', [])
       var index = -1,
           indexOf = getIndexOf(),
           isCommon = indexOf == baseIndexOf,
-          cache = isCommon && values.length >= 200 && createCache(values),
+          cache = (isCommon && values.length >= 200) ? createCache(values) : null,
           valuesLength = values.length;
 
       if (cache) {
@@ -35144,7 +35149,7 @@ angular.module('ajoslin.promise-tracker', [])
           }
           result.push(value);
         }
-        else if (indexOf(values, value) < 0) {
+        else if (indexOf(values, value, 0) < 0) {
           result.push(value);
         }
       }
@@ -35239,7 +35244,7 @@ angular.module('ajoslin.promise-tracker', [])
       if (end < 0) {
         end += length;
       }
-      length = start > end ? 0 : end >>> 0;
+      length = start > end ? 0 : (end >>> 0);
       start >>>= 0;
 
       while (start < length) {
@@ -35297,13 +35302,13 @@ angular.module('ajoslin.promise-tracker', [])
      *
      * @private
      * @param {Array} array The array to flatten.
-     * @param {boolean} [isDeep] Specify a deep flatten.
-     * @param {boolean} [isStrict] Restrict flattening to arrays and `arguments` objects.
-     * @param {number} [fromIndex=0] The index to start from.
+     * @param {boolean} isDeep Specify a deep flatten.
+     * @param {boolean} isStrict Restrict flattening to arrays and `arguments` objects.
+     * @param {number} fromIndex The index to start from.
      * @returns {Array} Returns the new flattened array.
      */
     function baseFlatten(array, isDeep, isStrict, fromIndex) {
-      var index = (fromIndex || 0) - 1,
+      var index = fromIndex - 1,
           length = array.length,
           resIndex = -1,
           result = [];
@@ -35314,7 +35319,7 @@ angular.module('ajoslin.promise-tracker', [])
         if (isObjectLike(value) && isLength(value.length) && (isArray(value) || isArguments(value))) {
           if (isDeep) {
             // Recursively flatten arrays (susceptible to call stack limits).
-            value = baseFlatten(value, isDeep, isStrict);
+            value = baseFlatten(value, isDeep, isStrict, 0);
           }
           var valIndex = -1,
               valLength = value.length;
@@ -35726,7 +35731,7 @@ angular.module('ajoslin.promise-tracker', [])
           result = srcValue;
         }
         if ((isSrcArr || typeof result != 'undefined') &&
-            (isCommon || (result === result ? result !== value : value === value))) {
+            (isCommon || (result === result ? (result !== value) : (value === value)))) {
           object[key] = result;
         }
       });
@@ -35786,7 +35791,7 @@ angular.module('ajoslin.promise-tracker', [])
       if (isCommon) {
         // Recursively merge objects and arrays (susceptible to call stack limits).
         object[key] = mergeFunc(result, srcValue, customizer, stackA, stackB);
-      } else if (result === result ? result !== value : value === value) {
+      } else if (result === result ? (result !== value) : (value === value)) {
         object[key] = result;
       }
     }
@@ -35898,7 +35903,7 @@ angular.module('ajoslin.promise-tracker', [])
       if (end < 0) {
         end += length;
       }
-      length = start > end ? 0 : (end - start) >>> 0;
+      length = start > end ? 0 : ((end - start) >>> 0);
       start >>>= 0;
 
       var result = Array(length);
@@ -35929,6 +35934,55 @@ angular.module('ajoslin.promise-tracker', [])
     }
 
     /**
+     * The base implementation of `_.sortBy` which uses `comparer` to define
+     * the sort order of `array` and replaces criteria objects with their
+     * corresponding values.
+     *
+     * @private
+     * @param {Array} array The array to sort.
+     * @param {Function} comparer The function to define sort order.
+     * @returns {Array} Returns `array`.
+     */
+    function baseSortBy(array, comparer) {
+      var length = array.length;
+
+      array.sort(comparer);
+      while (length--) {
+        array[length] = array[length].value;
+      }
+      return array;
+    }
+
+    /**
+     * The base implementation of `_.sortByOrder` without param guards.
+     *
+     * @private
+     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {string[]} props The property names to sort by.
+     * @param {boolean[]} orders The sort orders of `props`.
+     * @returns {Array} Returns the new sorted array.
+     */
+    function baseSortByOrder(collection, props, orders) {
+      var index = -1,
+          length = collection.length,
+          result = isLength(length) ? Array(length) : [];
+
+      baseEach(collection, function(value) {
+        var length = props.length,
+            criteria = Array(length);
+
+        while (length--) {
+          criteria[length] = value == null ? undefined : value[props[length]];
+        }
+        result[++index] = { 'criteria': criteria, 'index': index, 'value': value };
+      });
+
+      return baseSortBy(result, function(object, other) {
+        return compareMultiple(object, other, orders);
+      });
+    }
+
+    /**
      * The base implementation of `_.uniq` without support for callback shorthands
      * and `this` binding.
      *
@@ -35943,7 +35997,7 @@ angular.module('ajoslin.promise-tracker', [])
           length = array.length,
           isCommon = indexOf == baseIndexOf,
           isLarge = isCommon && length >= 200,
-          seen = isLarge && createCache(),
+          seen = isLarge ? createCache() : null,
           result = [];
 
       if (seen) {
@@ -35970,7 +36024,7 @@ angular.module('ajoslin.promise-tracker', [])
           }
           result.push(value);
         }
-        else if (indexOf(seen, computed) < 0) {
+        else if (indexOf(seen, computed, 0) < 0) {
           if (iteratee || isLarge) {
             seen.push(computed);
           }
@@ -36274,24 +36328,31 @@ angular.module('ajoslin.promise-tracker', [])
      */
     function createAssigner(assigner) {
       return function() {
-        var length = arguments.length,
-            object = arguments[0];
+        var args = arguments,
+            length = args.length,
+            object = args[0];
 
         if (length < 2 || object == null) {
           return object;
         }
-        if (length > 3 && isIterateeCall(arguments[1], arguments[2], arguments[3])) {
-          length = 2;
+        var customizer = args[length - 2],
+            thisArg = args[length - 1],
+            guard = args[3];
+
+        if (length > 3 && typeof customizer == 'function') {
+          customizer = bindCallback(customizer, thisArg, 5);
+          length -= 2;
+        } else {
+          customizer = (length > 2 && typeof thisArg == 'function') ? thisArg : null;
+          length -= (customizer ? 1 : 0);
         }
-        // Juggle arguments.
-        if (length > 3 && typeof arguments[length - 2] == 'function') {
-          var customizer = bindCallback(arguments[--length - 1], arguments[length--], 5);
-        } else if (length > 2 && typeof arguments[length - 1] == 'function') {
-          customizer = arguments[--length];
+        if (guard && isIterateeCall(args[1], args[2], guard)) {
+          customizer = length == 3 ? null : customizer;
+          length = 2;
         }
         var index = 0;
         while (++index < length) {
-          var source = arguments[index];
+          var source = args[index];
           if (source) {
             assigner(object, source, customizer);
           }
@@ -36313,7 +36374,8 @@ angular.module('ajoslin.promise-tracker', [])
       var Ctor = createCtorWrapper(func);
 
       function wrapper() {
-        return (this instanceof wrapper ? Ctor : func).apply(thisArg, arguments);
+        var fn = (this && this !== root && this instanceof wrapper) ? Ctor : func;
+        return fn.apply(thisArg, arguments);
       }
       return wrapper;
     }
@@ -36328,6 +36390,41 @@ angular.module('ajoslin.promise-tracker', [])
     var createCache = !(nativeCreate && Set) ? constant(null) : function(values) {
       return new SetCache(values);
     };
+
+    /**
+     * Creates a function to compose other functions into a single function.
+     *
+     * @private
+     * @param {boolean} [fromRight] Specify iterating from right to left.
+     * @returns {Function} Returns the new composer function.
+     */
+    function createComposer(fromRight) {
+      return function() {
+        var length = arguments.length,
+            index = length,
+            fromIndex = fromRight ? (length - 1) : 0;
+
+        if (!length) {
+          return function() { return arguments[0]; };
+        }
+        var funcs = Array(length);
+        while (index--) {
+          funcs[index] = arguments[index];
+          if (typeof funcs[index] != 'function') {
+            throw new TypeError(FUNC_ERROR_TEXT);
+          }
+        }
+        return function() {
+          var index = fromIndex,
+              result = funcs[index].apply(this, arguments);
+
+          while ((fromRight ? index-- : ++index < length)) {
+            result = funcs[index].call(this, result);
+          }
+          return result;
+        };
+      };
+    }
 
     /**
      * Creates a function that produces compound words out of the words in a
@@ -36481,7 +36578,8 @@ angular.module('ajoslin.promise-tracker', [])
         if (isAry && ary < args.length) {
           args.length = ary;
         }
-        return (this instanceof wrapper ? (Ctor || createCtorWrapper(func)) : func).apply(thisBinding, args);
+        var fn = (this && this !== root && this instanceof wrapper) ? (Ctor || createCtorWrapper(func)) : func;
+        return fn.apply(thisBinding, args);
       }
       return wrapper;
     }
@@ -36540,7 +36638,8 @@ angular.module('ajoslin.promise-tracker', [])
         while (argsLength--) {
           args[leftIndex++] = arguments[++argsIndex];
         }
-        return (this instanceof wrapper ? Ctor : func).apply(isBind ? thisArg : this, args);
+        var fn = (this && this !== root && this instanceof wrapper) ? Ctor : func;
+        return fn.apply(isBind ? thisArg : this, args);
       }
       return wrapper;
     }
@@ -36758,8 +36857,10 @@ angular.module('ajoslin.promise-tracker', [])
             othCtor = other.constructor;
 
         // Non `Object` object instances with different constructors are not equal.
-        if (objCtor != othCtor && ('constructor' in object && 'constructor' in other) &&
-            !(typeof objCtor == 'function' && objCtor instanceof objCtor && typeof othCtor == 'function' && othCtor instanceof othCtor)) {
+        if (objCtor != othCtor &&
+            ('constructor' in object && 'constructor' in other) &&
+            !(typeof objCtor == 'function' && objCtor instanceof objCtor &&
+              typeof othCtor == 'function' && othCtor instanceof othCtor)) {
           return false;
         }
       }
@@ -36785,7 +36886,8 @@ angular.module('ajoslin.promise-tracker', [])
 
       baseEach(collection, function(value, index, collection) {
         var current = iteratee(value, index, collection);
-        if ((isMin ? current < computed : current > computed) || (current === exValue && current === result)) {
+        if ((isMin ? (current < computed) : (current > computed)) ||
+            (current === exValue && current === result)) {
           computed = current;
           result = value;
         }
@@ -36995,8 +37097,11 @@ angular.module('ajoslin.promise-tracker', [])
       } else {
         prereq = type == 'string' && index in object;
       }
-      var other = object[index];
-      return prereq && (value === value ? value === other : other !== other);
+      if (prereq) {
+        var other = object[index];
+        return value === value ? (value === other) : (other !== other);
+      }
+      return false;
     }
 
     /**
@@ -37395,16 +37500,17 @@ angular.module('ajoslin.promise-tracker', [])
      * // => [1, 3]
      */
     function difference() {
-      var index = -1,
-          length = arguments.length;
+      var args = arguments,
+          index = -1,
+          length = args.length;
 
       while (++index < length) {
-        var value = arguments[index];
+        var value = args[index];
         if (isArray(value) || isArguments(value)) {
           break;
         }
       }
-      return baseDifference(value, baseFlatten(arguments, false, true, ++index));
+      return baseDifference(value, baseFlatten(args, false, true, ++index));
     }
 
     /**
@@ -37516,7 +37622,7 @@ angular.module('ajoslin.promise-tracker', [])
      * ];
      *
      * // using the `_.matches` callback shorthand
-     * _.pluck(_.dropRightWhile(users, { 'user': pebbles, 'active': false }), 'user');
+     * _.pluck(_.dropRightWhile(users, { 'user': 'pebbles', 'active': false }), 'user');
      * // => ['barney', 'fred']
      *
      * // using the `_.matchesProperty` callback shorthand
@@ -37722,12 +37828,12 @@ angular.module('ajoslin.promise-tracker', [])
      * // => 2
      *
      * // using the `_.matches` callback shorthand
-     * _.findLastIndex(users, { user': 'barney', 'active': true });
+     * _.findLastIndex(users, { 'user': 'barney', 'active': true });
      * // => 0
      *
      * // using the `_.matchesProperty` callback shorthand
      * _.findLastIndex(users, 'active', false);
-     * // => 1
+     * // => 2
      *
      * // using the `_.property` callback shorthand
      * _.findLastIndex(users, 'active');
@@ -37790,7 +37896,7 @@ angular.module('ajoslin.promise-tracker', [])
       if (guard && isIterateeCall(array, isDeep, guard)) {
         isDeep = false;
       }
-      return length ? baseFlatten(array, isDeep) : [];
+      return length ? baseFlatten(array, isDeep, false, 0) : [];
     }
 
     /**
@@ -37808,7 +37914,7 @@ angular.module('ajoslin.promise-tracker', [])
      */
     function flattenDeep(array) {
       var length = array ? array.length : 0;
-      return length ? baseFlatten(array, true) : [];
+      return length ? baseFlatten(array, true, false, 0) : [];
     }
 
     /**
@@ -37833,7 +37939,7 @@ angular.module('ajoslin.promise-tracker', [])
      * @example
      *
      * _.indexOf([1, 2, 1, 2], 2);
-     * // => 2
+     * // => 1
      *
      * // using `fromIndex`
      * _.indexOf([1, 2, 1, 2], 2, 2);
@@ -37849,14 +37955,17 @@ angular.module('ajoslin.promise-tracker', [])
         return -1;
       }
       if (typeof fromIndex == 'number') {
-        fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : (fromIndex || 0);
+        fromIndex = fromIndex < 0 ? nativeMax(length + fromIndex, 0) : fromIndex;
       } else if (fromIndex) {
         var index = binaryIndex(array, value),
             other = array[index];
 
-        return (value === value ? value === other : other !== other) ? index : -1;
+        if (value === value ? (value === other) : (other !== other)) {
+          return index;
+        }
+        return -1;
       }
-      return baseIndexOf(array, value, fromIndex);
+      return baseIndexOf(array, value, fromIndex || 0);
     }
 
     /**
@@ -37906,7 +38015,7 @@ angular.module('ajoslin.promise-tracker', [])
         var value = arguments[argsIndex];
         if (isArray(value) || isArguments(value)) {
           args.push(value);
-          caches.push(isCommon && value.length >= 120 && createCache(argsIndex && value));
+          caches.push((isCommon && value.length >= 120) ? createCache(argsIndex && value) : null);
         }
       }
       argsLength = args.length;
@@ -37919,11 +38028,11 @@ angular.module('ajoslin.promise-tracker', [])
       outer:
       while (++index < length) {
         value = array[index];
-        if ((seen ? cacheIndexOf(seen, value) : indexOf(result, value)) < 0) {
+        if ((seen ? cacheIndexOf(seen, value) : indexOf(result, value, 0)) < 0) {
           argsIndex = argsLength;
           while (--argsIndex) {
             var cache = caches[argsIndex];
-            if ((cache ? cacheIndexOf(cache, value) : indexOf(args[argsIndex], value)) < 0) {
+            if ((cache ? cacheIndexOf(cache, value) : indexOf(args[argsIndex], value, 0)) < 0) {
               continue outer;
             }
           }
@@ -37990,7 +38099,10 @@ angular.module('ajoslin.promise-tracker', [])
       } else if (fromIndex) {
         index = binaryIndex(array, value, true) - 1;
         var other = array[index];
-        return (value === value ? value === other : other !== other) ? index : -1;
+        if (value === value ? (value === other) : (other !== other)) {
+          return index;
+        }
+        return -1;
       }
       if (value !== value) {
         return indexOfNaN(array, index, true);
@@ -38028,17 +38140,19 @@ angular.module('ajoslin.promise-tracker', [])
      * // => [1, 1]
      */
     function pull() {
-      var array = arguments[0];
+      var args = arguments,
+          array = args[0];
+
       if (!(array && array.length)) {
         return array;
       }
       var index = 0,
           indexOf = getIndexOf(),
-          length = arguments.length;
+          length = args.length;
 
       while (++index < length) {
         var fromIndex = 0,
-            value = arguments[index];
+            value = args[index];
 
         while ((fromIndex = indexOf(array, value, fromIndex)) > -1) {
           splice.call(array, fromIndex, 1);
@@ -38468,7 +38582,7 @@ angular.module('ajoslin.promise-tracker', [])
      * // => [1, 2, 4]
      */
     function union() {
-      return baseUniq(baseFlatten(arguments, false, true));
+      return baseUniq(baseFlatten(arguments, false, true, 0));
     }
 
     /**
@@ -39540,104 +39654,6 @@ angular.module('ajoslin.promise-tracker', [])
     }
 
     /**
-     * Gets the maximum value of `collection`. If `collection` is empty or falsey
-     * `-Infinity` is returned. If an iteratee function is provided it is invoked
-     * for each value in `collection` to generate the criterion by which the value
-     * is ranked. The `iteratee` is bound to `thisArg` and invoked with three
-     * arguments; (value, index, collection).
-     *
-     * If a property name is provided for `predicate` the created `_.property`
-     * style callback returns the property value of the given element.
-     *
-     * If a value is also provided for `thisArg` the created `_.matchesProperty`
-     * style callback returns `true` for elements that have a matching property
-     * value, else `false`.
-     *
-     * If an object is provided for `predicate` the created `_.matches` style
-     * callback returns `true` for elements that have the properties of the given
-     * object, else `false`.
-     *
-     * @static
-     * @memberOf _
-     * @category Collection
-     * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function|Object|string} [iteratee] The function invoked per iteration.
-     * @param {*} [thisArg] The `this` binding of `iteratee`.
-     * @returns {*} Returns the maximum value.
-     * @example
-     *
-     * _.max([4, 2, 8, 6]);
-     * // => 8
-     *
-     * _.max([]);
-     * // => -Infinity
-     *
-     * var users = [
-     *   { 'user': 'barney', 'age': 36 },
-     *   { 'user': 'fred',   'age': 40 }
-     * ];
-     *
-     * _.max(users, function(chr) {
-     *   return chr.age;
-     * });
-     * // => { 'user': 'fred', 'age': 40 };
-     *
-     * // using the `_.property` callback shorthand
-     * _.max(users, 'age');
-     * // => { 'user': 'fred', 'age': 40 };
-     */
-    var max = createExtremum(arrayMax);
-
-    /**
-     * Gets the minimum value of `collection`. If `collection` is empty or falsey
-     * `Infinity` is returned. If an iteratee function is provided it is invoked
-     * for each value in `collection` to generate the criterion by which the value
-     * is ranked. The `iteratee` is bound to `thisArg` and invoked with three
-     * arguments; (value, index, collection).
-     *
-     * If a property name is provided for `predicate` the created `_.property`
-     * style callback returns the property value of the given element.
-     *
-     * If a value is also provided for `thisArg` the created `_.matchesProperty`
-     * style callback returns `true` for elements that have a matching property
-     * value, else `false`.
-     *
-     * If an object is provided for `predicate` the created `_.matches` style
-     * callback returns `true` for elements that have the properties of the given
-     * object, else `false`.
-     *
-     * @static
-     * @memberOf _
-     * @category Collection
-     * @param {Array|Object|string} collection The collection to iterate over.
-     * @param {Function|Object|string} [iteratee] The function invoked per iteration.
-     * @param {*} [thisArg] The `this` binding of `iteratee`.
-     * @returns {*} Returns the minimum value.
-     * @example
-     *
-     * _.min([4, 2, 8, 6]);
-     * // => 2
-     *
-     * _.min([]);
-     * // => Infinity
-     *
-     * var users = [
-     *   { 'user': 'barney', 'age': 36 },
-     *   { 'user': 'fred',   'age': 40 }
-     * ];
-     *
-     * _.min(users, function(chr) {
-     *   return chr.age;
-     * });
-     * // => { 'user': 'barney', 'age': 36 };
-     *
-     * // using the `_.property` callback shorthand
-     * _.min(users, 'age');
-     * // => { 'user': 'barney', 'age': 36 };
-     */
-    var min = createExtremum(arrayMin, true);
-
-    /**
      * Creates an array of elements split into two groups, the first of which
      * contains elements `predicate` returns truthy for, while the second of which
      * contains elements `predicate` returns falsey for. The predicate is bound
@@ -39672,7 +39688,7 @@ angular.module('ajoslin.promise-tracker', [])
      * _.partition([1.2, 2.3, 3.4], function(n) {
      *   return this.floor(n) % 2;
      * }, Math);
-     * // => [[1, 3], [2]]
+     * // => [[1.2, 3.4], [2.3]]
      *
      * var users = [
      *   { 'user': 'barney',  'age': 36, 'active': false },
@@ -39912,8 +39928,8 @@ angular.module('ajoslin.promise-tracker', [])
     }
 
     /**
-     * Gets the size of `collection` by returning `collection.length` for
-     * array-like values or the number of own enumerable properties for objects.
+     * Gets the size of `collection` by returning its length for array-like
+     * values or the number of own enumerable properties for objects.
      *
      * @static
      * @memberOf _
@@ -39974,7 +39990,7 @@ angular.module('ajoslin.promise-tracker', [])
      * ];
      *
      * // using the `_.matches` callback shorthand
-     * _.some(users, { user': 'barney', 'active': false });
+     * _.some(users, { 'user': 'barney', 'active': false });
      * // => false
      *
      * // using the `_.matchesProperty` callback shorthand
@@ -40043,8 +40059,11 @@ angular.module('ajoslin.promise-tracker', [])
      * // => ['barney', 'fred', 'pebbles']
      */
     function sortBy(collection, iteratee, thisArg) {
+      if (collection == null) {
+        return [];
+      }
       var index = -1,
-          length = collection ? collection.length : 0,
+          length = collection.length,
           result = isLength(length) ? Array(length) : [];
 
       if (thisArg && isIterateeCall(collection, iteratee, thisArg)) {
@@ -40081,25 +40100,59 @@ angular.module('ajoslin.promise-tracker', [])
      * // => [['barney', 26], ['barney', 36], ['fred', 30], ['fred', 40]]
      */
     function sortByAll(collection) {
-      var args = arguments;
-      if (args.length > 3 && isIterateeCall(args[1], args[2], args[3])) {
+      if (collection == null) {
+        return [];
+      }
+      var args = arguments,
+          guard = args[3];
+
+      if (guard && isIterateeCall(args[1], args[2], guard)) {
         args = [collection, args[1]];
       }
-      var index = -1,
-          length = collection ? collection.length : 0,
-          props = baseFlatten(args, false, false, 1),
-          result = isLength(length) ? Array(length) : [];
+      return baseSortByOrder(collection, baseFlatten(args, false, false, 1), []);
+    }
 
-      baseEach(collection, function(value) {
-        var length = props.length,
-            criteria = Array(length);
-
-        while (length--) {
-          criteria[length] = value == null ? undefined : value[props[length]];
-        }
-        result[++index] = { 'criteria': criteria, 'index': index, 'value': value };
-      });
-      return baseSortBy(result, compareMultipleAscending);
+    /**
+     * This method is like `_.sortByAll` except that it allows specifying the
+     * sort orders of the property names to sort by. A truthy value in `orders`
+     * will sort the corresponding property name in ascending order while a
+     * falsey value will sort it in descending order.
+     *
+     * @static
+     * @memberOf _
+     * @category Collection
+     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {string[]} props The property names to sort by.
+     * @param {boolean[]} orders The sort orders of `props`.
+     * @param- {Object} [guard] Enables use as a callback for functions like `_.reduce`.
+     * @returns {Array} Returns the new sorted array.
+     * @example
+     *
+     * var users = [
+     *   { 'user': 'barney', 'age': 26 },
+     *   { 'user': 'fred',   'age': 40 },
+     *   { 'user': 'barney', 'age': 36 },
+     *   { 'user': 'fred',   'age': 30 }
+     * ];
+     *
+     * // sort by `user` in ascending order and by `age` in descending order
+     * _.map(_.sortByOrder(users, ['user', 'age'], [true, false]), _.values);
+     * // => [['barney', 36], ['barney', 26], ['fred', 40], ['fred', 30]]
+     */
+    function sortByOrder(collection, props, orders, guard) {
+      if (collection == null) {
+        return [];
+      }
+      if (guard && isIterateeCall(props, orders, guard)) {
+        orders = null;
+      }
+      if (!isArray(props)) {
+        props = props == null ? [] : [props];
+      }
+      if (!isArray(orders)) {
+        orders = orders == null ? [] : [orders];
+      }
+      return baseSortByOrder(collection, props, orders);
     }
 
     /**
@@ -40510,7 +40563,7 @@ angular.module('ajoslin.promise-tracker', [])
      * @memberOf _
      * @category Function
      * @param {Function} func The function to debounce.
-     * @param {number} wait The number of milliseconds to delay.
+     * @param {number} [wait=0] The number of milliseconds to delay.
      * @param {Object} [options] The options object.
      * @param {boolean} [options.leading=false] Specify invoking on the leading
      *  edge of the timeout.
@@ -40568,7 +40621,7 @@ angular.module('ajoslin.promise-tracker', [])
       if (typeof func != 'function') {
         throw new TypeError(FUNC_ERROR_TEXT);
       }
-      wait = wait < 0 ? 0 : wait;
+      wait = wait < 0 ? 0 : (+wait || 0);
       if (options === true) {
         var leading = true;
         trailing = false;
@@ -40722,38 +40775,15 @@ angular.module('ajoslin.promise-tracker', [])
      * @returns {Function} Returns the new function.
      * @example
      *
-     * function add(x, y) {
-     *   return x + y;
-     * }
-     *
      * function square(n) {
      *   return n * n;
      * }
      *
-     * var addSquare = _.flow(add, square);
+     * var addSquare = _.flow(_.add, square);
      * addSquare(1, 2);
      * // => 9
      */
-    function flow() {
-      var funcs = arguments,
-          length = funcs.length;
-
-      if (!length) {
-        return function() { return arguments[0]; };
-      }
-      if (!arrayEvery(funcs, baseIsFunction)) {
-        throw new TypeError(FUNC_ERROR_TEXT);
-      }
-      return function() {
-        var index = 0,
-            result = funcs[index].apply(this, arguments);
-
-        while (++index < length) {
-          result = funcs[index].call(this, result);
-        }
-        return result;
-      };
-    }
+    var flow = createComposer();
 
     /**
      * This method is like `_.flow` except that it creates a function that
@@ -40767,38 +40797,15 @@ angular.module('ajoslin.promise-tracker', [])
      * @returns {Function} Returns the new function.
      * @example
      *
-     * function add(x, y) {
-     *   return x + y;
-     * }
-     *
      * function square(n) {
      *   return n * n;
      * }
      *
-     * var addSquare = _.flowRight(square, add);
+     * var addSquare = _.flowRight(square, _.add);
      * addSquare(1, 2);
      * // => 9
      */
-    function flowRight() {
-      var funcs = arguments,
-          fromIndex = funcs.length - 1;
-
-      if (fromIndex < 0) {
-        return function() { return arguments[0]; };
-      }
-      if (!arrayEvery(funcs, baseIsFunction)) {
-        throw new TypeError(FUNC_ERROR_TEXT);
-      }
-      return function() {
-        var index = fromIndex,
-            result = funcs[index].apply(this, arguments);
-
-        while (index--) {
-          result = funcs[index].call(this, result);
-        }
-        return result;
-      };
-    }
+    var flowRight = createComposer(true);
 
     /**
      * Creates a function that memoizes the result of `func`. If `resolver` is
@@ -40858,13 +40865,14 @@ angular.module('ajoslin.promise-tracker', [])
         throw new TypeError(FUNC_ERROR_TEXT);
       }
       var memoized = function() {
-        var cache = memoized.cache,
-            key = resolver ? resolver.apply(this, arguments) : arguments[0];
+        var args = arguments,
+            cache = memoized.cache,
+            key = resolver ? resolver.apply(this, args) : args[0];
 
         if (cache.has(key)) {
           return cache.get(key);
         }
-        var result = func.apply(this, arguments);
+        var result = func.apply(this, args);
         cache.set(key, result);
         return result;
       };
@@ -41089,7 +41097,7 @@ angular.module('ajoslin.promise-tracker', [])
      * @memberOf _
      * @category Function
      * @param {Function} func The function to throttle.
-     * @param {number} wait The number of milliseconds to throttle invocations to.
+     * @param {number} [wait=0] The number of milliseconds to throttle invocations to.
      * @param {Object} [options] The options object.
      * @param {boolean} [options.leading=true] Specify invoking on the leading
      *  edge of the timeout.
@@ -41369,7 +41377,7 @@ angular.module('ajoslin.promise-tracker', [])
      */
     function isElement(value) {
       return (value && value.nodeType === 1 && isObjectLike(value) &&
-        objToString.call(value).indexOf('Element') > -1) || false;
+        (objToString.call(value).indexOf('Element') > -1)) || false;
     }
     // Fallback for environments without DOM support.
     if (!support.dom) {
@@ -41379,7 +41387,7 @@ angular.module('ajoslin.promise-tracker', [])
     }
 
     /**
-     * Checks if a value is empty. A value is considered empty unless it is an
+     * Checks if `value` is empty. A value is considered empty unless it is an
      * `arguments` object, array, string, or jQuery-like collection with a length
      * greater than `0` or an object with own enumerable properties.
      *
@@ -41994,7 +42002,7 @@ angular.module('ajoslin.promise-tracker', [])
     /**
      * Assigns own enumerable properties of source object(s) to the destination
      * object for all destination properties that resolve to `undefined`. Once a
-     * property is set, additional defaults of the same property are ignored.
+     * property is set, additional values of the same property are ignored.
      *
      * @static
      * @memberOf _
@@ -42373,7 +42381,7 @@ angular.module('ajoslin.promise-tracker', [])
             length = object.length;
       }
       if ((typeof Ctor == 'function' && Ctor.prototype === object) ||
-         (typeof object != 'function' && (length && isLength(length)))) {
+          (typeof object != 'function' && (length && isLength(length)))) {
         return shimKeys(object);
       }
       return isObject(object) ? nativeKeys(object) : [];
@@ -42784,7 +42792,7 @@ angular.module('ajoslin.promise-tracker', [])
 
     /**
      * Checks if `n` is between `start` and up to but not including, `end`. If
-     * `end` is not specified it defaults to `start` with `start` becoming `0`.
+     * `end` is not specified it is set to `start` with `start` then set to `0`.
      *
      * @static
      * @memberOf _
@@ -42977,12 +42985,16 @@ angular.module('ajoslin.promise-tracker', [])
       target = (target + '');
 
       var length = string.length;
-      position = (typeof position == 'undefined' ? length : nativeMin(position < 0 ? 0 : (+position || 0), length)) - target.length;
+      position = typeof position == 'undefined'
+        ? length
+        : nativeMin(position < 0 ? 0 : (+position || 0), length);
+
+      position -= target.length;
       return position >= 0 && string.indexOf(target, position) == position;
     }
 
     /**
-     * Converts the characters "&", "<", ">", '"', "'", and '`', in `string` to
+     * Converts the characters "&", "<", ">", '"', "'", and "\`", in `string` to
      * their corresponding HTML entities.
      *
      * **Note:** No other characters are escaped. To escape additional characters
@@ -43319,7 +43331,10 @@ angular.module('ajoslin.promise-tracker', [])
      */
     function startsWith(string, target, position) {
       string = baseToString(string);
-      position = position == null ? 0 : nativeMin(position < 0 ? 0 : (+position || 0), string.length);
+      position = position == null
+        ? 0
+        : nativeMin(position < 0 ? 0 : (+position || 0), string.length);
+
       return string.lastIndexOf(target, position) == position;
     }
 
@@ -43406,10 +43421,10 @@ angular.module('ajoslin.promise-tracker', [])
      * var compiled = _.template('hi <%= data.user %>!', { 'variable': 'data' });
      * compiled.source;
      * // => function(data) {
-     *   var __t, __p = '';
-     *   __p += 'hi ' + ((__t = ( data.user )) == null ? '' : __t) + '!';
-     *   return __p;
-     * }
+     * //   var __t, __p = '';
+     * //   __p += 'hi ' + ((__t = ( data.user )) == null ? '' : __t) + '!';
+     * //   return __p;
+     * // }
      *
      * // using the `source` property to inline compiled templates for meaningful
      * // line numbers in error messages and a stack trace
@@ -43669,7 +43684,7 @@ angular.module('ajoslin.promise-tracker', [])
       if (options != null) {
         if (isObject(options)) {
           var separator = 'separator' in options ? options.separator : separator;
-          length = 'length' in options ? +options.length || 0 : length;
+          length = 'length' in options ? (+options.length || 0) : length;
           omission = 'omission' in options ? baseToString(options.omission) : omission;
         } else {
           length = +options || 0;
@@ -43785,14 +43800,14 @@ angular.module('ajoslin.promise-tracker', [])
      * }
      */
     function attempt() {
-      var length = arguments.length,
-          func = arguments[0];
+      var func = arguments[0],
+          length = arguments.length,
+          args = Array(length ? (length - 1) : 0);
 
+      while (--length > 0) {
+        args[length - 1] = arguments[length];
+      }
       try {
-        var args = Array(length ? length - 1 : 0);
-        while (--length > 0) {
-          args[length - 1] = arguments[length];
-        }
         return func.apply(undefined, args);
       } catch(e) {
         return isError(e) ? e : new Error(e);
@@ -44018,7 +44033,11 @@ angular.module('ajoslin.promise-tracker', [])
               var chainAll = this.__chain__;
               if (chain || chainAll) {
                 var result = object(this.__wrapped__);
-                (result.__actions__ = arrayCopy(this.__actions__)).push({ 'func': func, 'args': arguments, 'thisArg': object });
+                (result.__actions__ = arrayCopy(this.__actions__)).push({
+                  'func': func,
+                  'args': arguments,
+                  'thisArg': object
+                });
                 result.__chain__ = chainAll;
                 return result;
               }
@@ -44121,9 +44140,9 @@ angular.module('ajoslin.promise-tracker', [])
 
     /**
      * Creates an array of numbers (positive and/or negative) progressing from
-     * `start` up to, but not including, `end`. If `end` is not specified it
-     * defaults to `start` with `start` becoming `0`. If `start` is less than
-     * `end` a zero-length range is created unless a negative `step` is specified.
+     * `start` up to, but not including, `end`. If `end` is not specified it is
+     * set to `start` with `start` then set to `0`. If `start` is less than `end`
+     * a zero-length range is created unless a negative `step` is specified.
      *
      * @static
      * @memberOf _
@@ -44250,6 +44269,153 @@ angular.module('ajoslin.promise-tracker', [])
 
     /*------------------------------------------------------------------------*/
 
+    /**
+     * Adds two numbers.
+     *
+     * @static
+     * @memberOf _
+     * @category Math
+     * @param {number} augend The first number to add.
+     * @param {number} addend The second number to add.
+     * @returns {number} Returns the sum.
+     * @example
+     *
+     * _.add(6, 4);
+     * // => 10
+     */
+    function add(augend, addend) {
+      return augend + addend;
+    }
+
+    /**
+     * Gets the maximum value of `collection`. If `collection` is empty or falsey
+     * `-Infinity` is returned. If an iteratee function is provided it is invoked
+     * for each value in `collection` to generate the criterion by which the value
+     * is ranked. The `iteratee` is bound to `thisArg` and invoked with three
+     * arguments; (value, index, collection).
+     *
+     * If a property name is provided for `predicate` the created `_.property`
+     * style callback returns the property value of the given element.
+     *
+     * If a value is also provided for `thisArg` the created `_.matchesProperty`
+     * style callback returns `true` for elements that have a matching property
+     * value, else `false`.
+     *
+     * If an object is provided for `predicate` the created `_.matches` style
+     * callback returns `true` for elements that have the properties of the given
+     * object, else `false`.
+     *
+     * @static
+     * @memberOf _
+     * @category Math
+     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Function|Object|string} [iteratee] The function invoked per iteration.
+     * @param {*} [thisArg] The `this` binding of `iteratee`.
+     * @returns {*} Returns the maximum value.
+     * @example
+     *
+     * _.max([4, 2, 8, 6]);
+     * // => 8
+     *
+     * _.max([]);
+     * // => -Infinity
+     *
+     * var users = [
+     *   { 'user': 'barney', 'age': 36 },
+     *   { 'user': 'fred',   'age': 40 }
+     * ];
+     *
+     * _.max(users, function(chr) {
+     *   return chr.age;
+     * });
+     * // => { 'user': 'fred', 'age': 40 };
+     *
+     * // using the `_.property` callback shorthand
+     * _.max(users, 'age');
+     * // => { 'user': 'fred', 'age': 40 };
+     */
+    var max = createExtremum(arrayMax);
+
+    /**
+     * Gets the minimum value of `collection`. If `collection` is empty or falsey
+     * `Infinity` is returned. If an iteratee function is provided it is invoked
+     * for each value in `collection` to generate the criterion by which the value
+     * is ranked. The `iteratee` is bound to `thisArg` and invoked with three
+     * arguments; (value, index, collection).
+     *
+     * If a property name is provided for `predicate` the created `_.property`
+     * style callback returns the property value of the given element.
+     *
+     * If a value is also provided for `thisArg` the created `_.matchesProperty`
+     * style callback returns `true` for elements that have a matching property
+     * value, else `false`.
+     *
+     * If an object is provided for `predicate` the created `_.matches` style
+     * callback returns `true` for elements that have the properties of the given
+     * object, else `false`.
+     *
+     * @static
+     * @memberOf _
+     * @category Math
+     * @param {Array|Object|string} collection The collection to iterate over.
+     * @param {Function|Object|string} [iteratee] The function invoked per iteration.
+     * @param {*} [thisArg] The `this` binding of `iteratee`.
+     * @returns {*} Returns the minimum value.
+     * @example
+     *
+     * _.min([4, 2, 8, 6]);
+     * // => 2
+     *
+     * _.min([]);
+     * // => Infinity
+     *
+     * var users = [
+     *   { 'user': 'barney', 'age': 36 },
+     *   { 'user': 'fred',   'age': 40 }
+     * ];
+     *
+     * _.min(users, function(chr) {
+     *   return chr.age;
+     * });
+     * // => { 'user': 'barney', 'age': 36 };
+     *
+     * // using the `_.property` callback shorthand
+     * _.min(users, 'age');
+     * // => { 'user': 'barney', 'age': 36 };
+     */
+    var min = createExtremum(arrayMin, true);
+
+    /**
+     * Gets the sum of the values in `collection`.
+     *
+     * @static
+     * @memberOf _
+     * @category Math
+     * @param {Array|Object|string} collection The collection to iterate over.
+     * @returns {number} Returns the sum.
+     * @example
+     *
+     * _.sum([4, 6, 2]);
+     * // => 12
+     *
+     * _.sum({ 'a': 4, 'b': 6, 'c': 2 });
+     * // => 12
+     */
+    function sum(collection) {
+      if (!isArray(collection)) {
+        collection = toIterable(collection);
+      }
+      var length = collection.length,
+          result = 0;
+
+      while (length--) {
+        result += +collection[length] || 0;
+      }
+      return result;
+    }
+
+    /*------------------------------------------------------------------------*/
+
     // Ensure wrappers are instances of `baseLodash`.
     lodash.prototype = baseLodash.prototype;
 
@@ -44348,6 +44514,7 @@ angular.module('ajoslin.promise-tracker', [])
     lodash.slice = slice;
     lodash.sortBy = sortBy;
     lodash.sortByAll = sortByAll;
+    lodash.sortByOrder = sortByOrder;
     lodash.spread = spread;
     lodash.take = take;
     lodash.takeRight = takeRight;
@@ -44392,6 +44559,7 @@ angular.module('ajoslin.promise-tracker', [])
     /*------------------------------------------------------------------------*/
 
     // Add functions that return unwrapped values when chaining.
+    lodash.add = add;
     lodash.attempt = attempt;
     lodash.camelCase = camelCase;
     lodash.capitalize = capitalize;
@@ -44461,6 +44629,7 @@ angular.module('ajoslin.promise-tracker', [])
     lodash.sortedLastIndex = sortedLastIndex;
     lodash.startCase = startCase;
     lodash.startsWith = startsWith;
+    lodash.sum = sum;
     lodash.template = template;
     lodash.trim = trim;
     lodash.trimLeft = trimLeft;
@@ -44522,33 +44691,44 @@ angular.module('ajoslin.promise-tracker', [])
     });
 
     // Add `LazyWrapper` methods that accept an `iteratee` value.
-    arrayEach(['filter', 'map', 'takeWhile'], function(methodName, index) {
-      var isFilter = index == LAZY_FILTER_FLAG,
-          isWhile = index == LAZY_WHILE_FLAG;
+    arrayEach(['dropWhile', 'filter', 'map', 'takeWhile'], function(methodName, type) {
+      var isFilter = type != LAZY_MAP_FLAG,
+          isDropWhile = type == LAZY_DROP_WHILE_FLAG;
 
       LazyWrapper.prototype[methodName] = function(iteratee, thisArg) {
-        var result = this.clone(),
-            filtered = result.__filtered__,
+        var filtered = this.__filtered__,
+            result = (filtered && isDropWhile) ? new LazyWrapper(this) : this.clone(),
             iteratees = result.__iteratees__ || (result.__iteratees__ = []);
 
-        result.__filtered__ = filtered || isFilter || (isWhile && result.__dir__ < 0);
-        iteratees.push({ 'iteratee': getCallback(iteratee, thisArg, 3), 'type': index });
+        iteratees.push({
+          'done': false,
+          'count': 0,
+          'index': 0,
+          'iteratee': getCallback(iteratee, thisArg, 1),
+          'limit': -1,
+          'type': type
+        });
+
+        result.__filtered__ = filtered || isFilter;
         return result;
       };
     });
 
     // Add `LazyWrapper` methods for `_.drop` and `_.take` variants.
     arrayEach(['drop', 'take'], function(methodName, index) {
-      var countName = '__' + methodName + 'Count__',
-          whileName = methodName + 'While';
+      var whileName = methodName + 'While';
 
       LazyWrapper.prototype[methodName] = function(n) {
-        n = n == null ? 1 : nativeMax(floor(n) || 0, 0);
+        var filtered = this.__filtered__,
+            result = (filtered && !index) ? this.dropWhile() : this.clone();
 
-        var result = this.clone();
-        if (result.__filtered__) {
-          var value = result[countName];
-          result[countName] = index ? nativeMin(value, n) : (value + n);
+        n = n == null ? 1 : nativeMax(floor(n) || 0, 0);
+        if (filtered) {
+          if (index) {
+            result.__takeCount__ = nativeMin(result.__takeCount__, n);
+          } else {
+            last(result.__iteratees__).limit = n;
+          }
         } else {
           var views = result.__views__ || (result.__views__ = []);
           views.push({ 'size': n, 'type': methodName + (result.__dir__ < 0 ? 'Right' : '') });
@@ -44597,18 +44777,10 @@ angular.module('ajoslin.promise-tracker', [])
       return this.filter(identity);
     };
 
-    LazyWrapper.prototype.dropWhile = function(predicate, thisArg) {
-      var done;
-      predicate = getCallback(predicate, thisArg, 3);
-      return this.filter(function(value, index, array) {
-        return done || (done = !predicate(value, index, array));
-      });
-    };
-
     LazyWrapper.prototype.reject = function(predicate, thisArg) {
-      predicate = getCallback(predicate, thisArg, 3);
-      return this.filter(function(value, index, array) {
-        return !predicate(value, index, array);
+      predicate = getCallback(predicate, thisArg, 1);
+      return this.filter(function(value) {
+        return !predicate(value);
       });
     };
 
@@ -44630,16 +44802,24 @@ angular.module('ajoslin.promise-tracker', [])
     // Add `LazyWrapper` methods to `lodash.prototype`.
     baseForOwn(LazyWrapper.prototype, function(func, methodName) {
       var lodashFunc = lodash[methodName],
+          checkIteratee = /^(?:filter|map|reject)|While$/.test(methodName),
           retUnwrapped = /^(?:first|last)$/.test(methodName);
 
       lodash.prototype[methodName] = function() {
-        var value = this.__wrapped__,
-            args = arguments,
+        var args = arguments,
+            length = args.length,
             chainAll = this.__chain__,
+            value = this.__wrapped__,
             isHybrid = !!this.__actions__.length,
             isLazy = value instanceof LazyWrapper,
-            onlyLazy = isLazy && !isHybrid;
+            iteratee = args[0],
+            useLazy = isLazy || isArray(value);
 
+        if (useLazy && checkIteratee && typeof iteratee == 'function' && iteratee.length != 1) {
+          // avoid lazy use if the iteratee has a `length` other than `1`
+          isLazy = useLazy = false;
+        }
+        var onlyLazy = isLazy && !isHybrid;
         if (retUnwrapped && !chainAll) {
           return onlyLazy
             ? func.call(value)
@@ -44650,7 +44830,7 @@ angular.module('ajoslin.promise-tracker', [])
           push.apply(otherArgs, args);
           return lodashFunc.apply(lodash, otherArgs);
         };
-        if (isLazy || isArray(value)) {
+        if (useLazy) {
           var wrapper = onlyLazy ? value : new LazyWrapper(this),
               result = func.apply(wrapper, args);
 
@@ -44664,11 +44844,11 @@ angular.module('ajoslin.promise-tracker', [])
       };
     });
 
-    // Add `Array.prototype` functions to `lodash.prototype`.
-    arrayEach(['concat', 'join', 'pop', 'push', 'shift', 'sort', 'splice', 'unshift'], function(methodName) {
-      var func = arrayProto[methodName],
+    // Add `Array` and `String` methods to `lodash.prototype`.
+    arrayEach(['concat', 'join', 'pop', 'push', 'replace', 'shift', 'sort', 'splice', 'split', 'unshift'], function(methodName) {
+      var func = (/^(?:replace|split)$/.test(methodName) ? stringProto : arrayProto)[methodName],
           chainName = /^(?:push|sort|unshift)$/.test(methodName) ? 'tap' : 'thru',
-          retUnwrapped = /^(?:join|pop|shift)$/.test(methodName);
+          retUnwrapped = /^(?:join|pop|replace|shift)$/.test(methodName);
 
       lodash.prototype[methodName] = function() {
         var args = arguments;
@@ -60314,7 +60494,14 @@ if (typeof(CanvasRenderingContext2D) != 'undefined') {
 	}
 }
 
-!function(a,b){"use strict";if("function"==typeof define&&define.amd)define(["jquery","moment"],b);else if("object"==typeof exports)b(require("jquery"),require("moment"));else{if(!jQuery)throw new Error("bootstrap-datetimepicker requires jQuery to be loaded first");if(!moment)throw new Error("bootstrap-datetimepicker requires moment.js to be loaded first");b(a.jQuery,moment)}}(this,function(a,b){"use strict";if("undefined"==typeof b)throw new Error("momentjs is required");var c=0,d=function(d,e){var f,g=a.fn.datetimepicker.defaults,h={time:"glyphicon glyphicon-time",date:"glyphicon glyphicon-calendar",up:"glyphicon glyphicon-chevron-up",down:"glyphicon glyphicon-chevron-down"},i=this,j=!1,k=function(){var f,j,k=!1;if(i.options=a.extend({},g,e),i.options.icons=a.extend({},h,i.options.icons),i.element=a(d),m(),!i.options.pickTime&&!i.options.pickDate)throw new Error("Must choose at least one picker");if(i.id=c++,b.locale(i.options.language),i.date=b(),i.unset=!1,i.isInput=i.element.is("input"),i.component=!1,i.element.hasClass("input-group")&&(i.component=i.element.find(0===i.element.find(".datepickerbutton").size()?'[class^="input-group-"]':".datepickerbutton")),i.format=i.options.format,f=b().localeData(),i.format||(i.format=i.options.pickDate?f.longDateFormat("L"):"",i.options.pickDate&&i.options.pickTime&&(i.format+=" "),i.format+=i.options.pickTime?f.longDateFormat("LT"):"",i.options.useSeconds&&(-1!==f.longDateFormat("LT").indexOf(" A")?i.format=i.format.split(" A")[0]+":ss A":i.format+=":ss")),i.use24hours=i.format.toLowerCase().indexOf("a")<0&&i.format.indexOf("h")<0,i.component&&(k=i.component.find("span")),i.options.pickTime&&k&&k.addClass(i.options.icons.time),i.options.pickDate&&k&&(k.removeClass(i.options.icons.time),k.addClass(i.options.icons.date)),i.options.widgetParent="string"==typeof i.options.widgetParent&&i.options.widgetParent||i.element.parents().filter(function(){return"scroll"===a(this).css("overflow-y")}).get(0)||"body",i.widget=a(Q()).appendTo(i.options.widgetParent),i.minViewMode=i.options.minViewMode||0,"string"==typeof i.minViewMode)switch(i.minViewMode){case"months":i.minViewMode=1;break;case"years":i.minViewMode=2;break;default:i.minViewMode=0}if(i.viewMode=i.options.viewMode||0,"string"==typeof i.viewMode)switch(i.viewMode){case"months":i.viewMode=1;break;case"years":i.viewMode=2;break;default:i.viewMode=0}i.viewMode=Math.max(i.viewMode,i.minViewMode),i.options.disabledDates=O(i.options.disabledDates),i.options.enabledDates=O(i.options.enabledDates),i.startViewMode=i.viewMode,i.setMinDate(i.options.minDate),i.setMaxDate(i.options.maxDate),r(),s(),u(),v(),w(),q(),E(),l().prop("disabled")||F(),""!==i.options.defaultDate&&""===l().val()&&i.setValue(i.options.defaultDate),1!==i.options.minuteStepping&&(j=i.options.minuteStepping,i.date.minutes(Math.round(i.date.minutes()/j)*j%60).seconds(0))},l=function(){var a;if(i.isInput)return i.element;if(a=i.element.find(".datepickerinput"),0===a.size())a=i.element.find("input");else if(!a.is("input"))throw new Error('CSS class "datepickerinput" cannot be applied to non input element');return a},m=function(){var a;a=i.element.is("input")?i.element.data():i.element.find("input").data(),void 0!==a.dateFormat&&(i.options.format=a.dateFormat),void 0!==a.datePickdate&&(i.options.pickDate=a.datePickdate),void 0!==a.datePicktime&&(i.options.pickTime=a.datePicktime),void 0!==a.dateUseminutes&&(i.options.useMinutes=a.dateUseminutes),void 0!==a.dateUseseconds&&(i.options.useSeconds=a.dateUseseconds),void 0!==a.dateUsecurrent&&(i.options.useCurrent=a.dateUsecurrent),void 0!==a.calendarWeeks&&(i.options.calendarWeeks=a.calendarWeeks),void 0!==a.dateMinutestepping&&(i.options.minuteStepping=a.dateMinutestepping),void 0!==a.dateMindate&&(i.options.minDate=a.dateMindate),void 0!==a.dateMaxdate&&(i.options.maxDate=a.dateMaxdate),void 0!==a.dateShowtoday&&(i.options.showToday=a.dateShowtoday),void 0!==a.dateCollapse&&(i.options.collapse=a.dateCollapse),void 0!==a.dateLanguage&&(i.options.language=a.dateLanguage),void 0!==a.dateDefaultdate&&(i.options.defaultDate=a.dateDefaultdate),void 0!==a.dateDisableddates&&(i.options.disabledDates=a.dateDisableddates),void 0!==a.dateEnableddates&&(i.options.enabledDates=a.dateEnableddates),void 0!==a.dateIcons&&(i.options.icons=a.dateIcons),void 0!==a.dateUsestrict&&(i.options.useStrict=a.dateUsestrict),void 0!==a.dateDirection&&(i.options.direction=a.dateDirection),void 0!==a.dateSidebyside&&(i.options.sideBySide=a.dateSidebyside),void 0!==a.dateDaysofweekdisabled&&(i.options.daysOfWeekDisabled=a.dateDaysofweekdisabled)},n=function(){var b,c="absolute",d=i.component?i.component.offset():i.element.offset(),e=a(window);i.width=i.component?i.component.outerWidth():i.element.outerWidth(),d.top=d.top+i.element.outerHeight(),"up"===i.options.direction?b="top":"bottom"===i.options.direction?b="bottom":"auto"===i.options.direction&&(b=d.top+i.widget.height()>e.height()+e.scrollTop()&&i.widget.height()+i.element.outerHeight()<d.top?"top":"bottom"),"top"===b?(d.bottom=e.height()-d.top+i.element.outerHeight()+3,i.widget.addClass("top").removeClass("bottom")):(d.top+=1,i.widget.addClass("bottom").removeClass("top")),void 0!==i.options.width&&i.widget.width(i.options.width),"left"===i.options.orientation&&(i.widget.addClass("left-oriented"),d.left=d.left-i.widget.width()+20),J()&&(c="fixed",d.top-=e.scrollTop(),d.left-=e.scrollLeft()),e.width()<d.left+i.widget.outerWidth()?(d.right=e.width()-d.left-i.width,d.left="auto",i.widget.addClass("pull-right")):(d.right="auto",i.widget.removeClass("pull-right")),i.widget.css("top"===b?{position:c,bottom:d.bottom,top:"auto",left:d.left,right:d.right}:{position:c,top:d.top,bottom:"auto",left:d.left,right:d.right})},o=function(a,c){(!b(i.date).isSame(b(a))||j)&&(j=!1,i.element.trigger({type:"dp.change",date:b(i.date),oldDate:b(a)}),"change"!==c&&i.element.change())},p=function(a){j=!0,i.element.trigger({type:"dp.error",date:b(a,i.format,i.options.useStrict)})},q=function(a){b.locale(i.options.language);var c=a;c||(c=l().val(),c&&(i.date=b(c,i.format,i.options.useStrict)),i.date||(i.date=b())),i.viewDate=b(i.date).startOf("month"),t(),x()},r=function(){b.locale(i.options.language);var c,d=a("<tr>"),e=b.weekdaysMin();if(i.options.calendarWeeks===!0&&d.append('<th class="cw">#</th>'),0===b().localeData()._week.dow)for(c=0;7>c;c++)d.append('<th class="dow">'+e[c]+"</th>");else for(c=1;8>c;c++)d.append(7===c?'<th class="dow">'+e[0]+"</th>":'<th class="dow">'+e[c]+"</th>");i.widget.find(".datepicker-days thead").append(d)},s=function(){b.locale(i.options.language);var a,c="",d=b.monthsShort();for(a=0;12>a;a++)c+='<span class="month">'+d[a]+"</span>";i.widget.find(".datepicker-months td").append(c)},t=function(){if(i.options.pickDate){b.locale(i.options.language);var c,d,e,f,g,h,j,k,l,m=i.viewDate.year(),n=i.viewDate.month(),o=i.options.minDate.year(),p=i.options.minDate.month(),q=i.options.maxDate.year(),r=i.options.maxDate.month(),s=[],t=b.months();for(i.widget.find(".datepicker-days").find(".disabled").removeClass("disabled"),i.widget.find(".datepicker-months").find(".disabled").removeClass("disabled"),i.widget.find(".datepicker-years").find(".disabled").removeClass("disabled"),i.widget.find(".datepicker-days th:eq(1)").text(t[n]+" "+m),d=b(i.viewDate,i.format,i.options.useStrict).subtract(1,"months"),j=d.daysInMonth(),d.date(j).startOf("week"),(m===o&&p>=n||o>m)&&i.widget.find(".datepicker-days th:eq(0)").addClass("disabled"),(m===q&&n>=r||m>q)&&i.widget.find(".datepicker-days th:eq(2)").addClass("disabled"),e=b(d).add(42,"d");d.isBefore(e);){if(d.weekday()===b().startOf("week").weekday()&&(f=a("<tr>"),s.push(f),i.options.calendarWeeks===!0&&f.append('<td class="cw">'+d.week()+"</td>")),g="",d.year()<m||d.year()===m&&d.month()<n?g+=" old":(d.year()>m||d.year()===m&&d.month()>n)&&(g+=" new"),d.isSame(b({y:i.date.year(),M:i.date.month(),d:i.date.date()}))&&(g+=" active"),(M(d,"day")||!N(d))&&(g+=" disabled"),i.options.showToday===!0&&d.isSame(b(),"day")&&(g+=" today"),i.options.daysOfWeekDisabled)for(h=0;h<i.options.daysOfWeekDisabled.length;h++)if(d.day()===i.options.daysOfWeekDisabled[h]){g+=" disabled";break}f.append('<td class="day'+g+'">'+d.date()+"</td>"),c=d.date(),d.add(1,"d"),c===d.date()&&d.add(1,"d")}for(i.widget.find(".datepicker-days tbody").empty().append(s),l=i.date.year(),t=i.widget.find(".datepicker-months").find("th:eq(1)").text(m).end().find("span").removeClass("active"),l===m&&t.eq(i.date.month()).addClass("active"),o>m-1&&i.widget.find(".datepicker-months th:eq(0)").addClass("disabled"),m+1>q&&i.widget.find(".datepicker-months th:eq(2)").addClass("disabled"),h=0;12>h;h++)m===o&&p>h||o>m?a(t[h]).addClass("disabled"):(m===q&&h>r||m>q)&&a(t[h]).addClass("disabled");for(s="",m=10*parseInt(m/10,10),k=i.widget.find(".datepicker-years").find("th:eq(1)").text(m+"-"+(m+9)).parents("table").find("td"),i.widget.find(".datepicker-years").find("th").removeClass("disabled"),o>m&&i.widget.find(".datepicker-years").find("th:eq(0)").addClass("disabled"),m+9>q&&i.widget.find(".datepicker-years").find("th:eq(2)").addClass("disabled"),m-=1,h=-1;11>h;h++)s+='<span class="year'+(-1===h||10===h?" old":"")+(l===m?" active":"")+(o>m||m>q?" disabled":"")+'">'+m+"</span>",m+=1;k.html(s)}},u=function(){b.locale(i.options.language);var a,c,d,e=i.widget.find(".timepicker .timepicker-hours table"),f="";if(e.parent().hide(),i.use24hours)for(a=0,c=0;6>c;c+=1){for(f+="<tr>",d=0;4>d;d+=1)f+='<td class="hour">'+P(a.toString())+"</td>",a++;f+="</tr>"}else for(a=1,c=0;3>c;c+=1){for(f+="<tr>",d=0;4>d;d+=1)f+='<td class="hour">'+P(a.toString())+"</td>",a++;f+="</tr>"}e.html(f)},v=function(){var a,b,c=i.widget.find(".timepicker .timepicker-minutes table"),d="",e=0,f=i.options.minuteStepping;for(c.parent().hide(),1===f&&(f=5),a=0;a<Math.ceil(60/f/4);a++){for(d+="<tr>",b=0;4>b;b+=1)60>e?(d+='<td class="minute">'+P(e.toString())+"</td>",e+=f):d+="<td></td>";d+="</tr>"}c.html(d)},w=function(){var a,b,c=i.widget.find(".timepicker .timepicker-seconds table"),d="",e=0;for(c.parent().hide(),a=0;3>a;a++){for(d+="<tr>",b=0;4>b;b+=1)d+='<td class="second">'+P(e.toString())+"</td>",e+=5;d+="</tr>"}c.html(d)},x=function(){if(i.date){var a=i.widget.find(".timepicker span[data-time-component]"),b=i.date.hours(),c=i.date.format("A");i.use24hours||(0===b?b=12:12!==b&&(b%=12),i.widget.find(".timepicker [data-action=togglePeriod]").text(c)),a.filter("[data-time-component=hours]").text(P(b)),a.filter("[data-time-component=minutes]").text(P(i.date.minutes())),a.filter("[data-time-component=seconds]").text(P(i.date.second()))}},y=function(c){c.stopPropagation(),c.preventDefault(),i.unset=!1;var d,e,f,g,h=a(c.target).closest("span, td, th"),j=b(i.date);if(1===h.length&&!h.is(".disabled"))switch(h[0].nodeName.toLowerCase()){case"th":switch(h[0].className){case"picker-switch":E(1);break;case"prev":case"next":f=R.modes[i.viewMode].navStep,"prev"===h[0].className&&(f=-1*f),i.viewDate.add(f,R.modes[i.viewMode].navFnc),t()}break;case"span":h.is(".month")?(d=h.parent().find("span").index(h),i.viewDate.month(d)):(e=parseInt(h.text(),10)||0,i.viewDate.year(e)),i.viewMode===i.minViewMode&&(i.date=b({y:i.viewDate.year(),M:i.viewDate.month(),d:i.viewDate.date(),h:i.date.hours(),m:i.date.minutes(),s:i.date.seconds()}),K(),o(j,c.type)),E(-1),t();break;case"td":h.is(".day")&&(g=parseInt(h.text(),10)||1,d=i.viewDate.month(),e=i.viewDate.year(),h.is(".old")?0===d?(d=11,e-=1):d-=1:h.is(".new")&&(11===d?(d=0,e+=1):d+=1),i.date=b({y:e,M:d,d:g,h:i.date.hours(),m:i.date.minutes(),s:i.date.seconds()}),i.viewDate=b({y:e,M:d,d:Math.min(28,g)}),t(),K(),o(j,c.type))}},z={incrementHours:function(){L("add","hours",1)},incrementMinutes:function(){L("add","minutes",i.options.minuteStepping)},incrementSeconds:function(){L("add","seconds",1)},decrementHours:function(){L("subtract","hours",1)},decrementMinutes:function(){L("subtract","minutes",i.options.minuteStepping)},decrementSeconds:function(){L("subtract","seconds",1)},togglePeriod:function(){var a=i.date.hours();a>=12?a-=12:a+=12,i.date.hours(a)},showPicker:function(){i.widget.find(".timepicker > div:not(.timepicker-picker)").hide(),i.widget.find(".timepicker .timepicker-picker").show()},showHours:function(){i.widget.find(".timepicker .timepicker-picker").hide(),i.widget.find(".timepicker .timepicker-hours").show()},showMinutes:function(){i.widget.find(".timepicker .timepicker-picker").hide(),i.widget.find(".timepicker .timepicker-minutes").show()},showSeconds:function(){i.widget.find(".timepicker .timepicker-picker").hide(),i.widget.find(".timepicker .timepicker-seconds").show()},selectHour:function(b){var c=parseInt(a(b.target).text(),10);i.use24hours||(i.date.hours()>=12?12!==c&&(c+=12):12===c&&(c=0)),i.date.hours(c),z.showPicker.call(i)},selectMinute:function(b){i.date.minutes(parseInt(a(b.target).text(),10)),z.showPicker.call(i)},selectSecond:function(b){i.date.seconds(parseInt(a(b.target).text(),10)),z.showPicker.call(i)}},A=function(c){var d=b(i.date),e=a(c.currentTarget).data("action"),f=z[e].apply(i,arguments);return B(c),i.date||(i.date=b({y:1970})),K(),x(),o(d,c.type),f},B=function(a){a.stopPropagation(),a.preventDefault()},C=function(a){27===a.keyCode&&i.hide()},D=function(c){b.locale(i.options.language);var d=a(c.target),e=b(i.date),f=b(d.val(),i.format,i.options.useStrict);f.isValid()&&!M(f)&&N(f)?(q(),i.setValue(f),o(e,c.type),K()):(i.viewDate=e,i.unset=!0,o(e,c.type),p(f))},E=function(a){a&&(i.viewMode=Math.max(i.minViewMode,Math.min(2,i.viewMode+a))),i.widget.find(".datepicker > div").hide().filter(".datepicker-"+R.modes[i.viewMode].clsName).show()},F=function(){var b,c,d,e,f;i.widget.on("click",".datepicker *",a.proxy(y,this)),i.widget.on("click","[data-action]",a.proxy(A,this)),i.widget.on("mousedown",a.proxy(B,this)),i.element.on("keydown",a.proxy(C,this)),i.options.pickDate&&i.options.pickTime&&i.widget.on("click.togglePicker",".accordion-toggle",function(g){if(g.stopPropagation(),b=a(this),c=b.closest("ul"),d=c.find(".in"),e=c.find(".collapse:not(.in)"),d&&d.length){if(f=d.data("collapse"),f&&f.transitioning)return;d.collapse("hide"),e.collapse("show"),b.find("span").toggleClass(i.options.icons.time+" "+i.options.icons.date),i.component&&i.component.find("span").toggleClass(i.options.icons.time+" "+i.options.icons.date)}}),i.isInput?i.element.on({click:a.proxy(i.show,this),focus:a.proxy(i.show,this),change:a.proxy(D,this),blur:a.proxy(i.hide,this)}):(i.element.on({change:a.proxy(D,this)},"input"),i.component?(i.component.on("click",a.proxy(i.show,this)),i.component.on("mousedown",a.proxy(B,this))):i.element.on("click",a.proxy(i.show,this)))},G=function(){a(window).on("resize.datetimepicker"+i.id,a.proxy(n,this)),i.isInput||a(document).on("mousedown.datetimepicker"+i.id,a.proxy(i.hide,this))},H=function(){i.widget.off("click",".datepicker *",i.click),i.widget.off("click","[data-action]"),i.widget.off("mousedown",i.stopEvent),i.options.pickDate&&i.options.pickTime&&i.widget.off("click.togglePicker"),i.isInput?i.element.off({focus:i.show,change:D,click:i.show,blur:i.hide}):(i.element.off({change:D},"input"),i.component?(i.component.off("click",i.show),i.component.off("mousedown",i.stopEvent)):i.element.off("click",i.show))},I=function(){a(window).off("resize.datetimepicker"+i.id),i.isInput||a(document).off("mousedown.datetimepicker"+i.id)},J=function(){if(i.element){var b,c=i.element.parents(),d=!1;for(b=0;b<c.length;b++)if("fixed"===a(c[b]).css("position")){d=!0;break}return d}return!1},K=function(){b.locale(i.options.language);var a="";i.unset||(a=b(i.date).format(i.format)),l().val(a),i.element.data("date",a),i.options.pickTime||i.hide()},L=function(a,c,d){b.locale(i.options.language);var e;return"add"===a?(e=b(i.date),23===e.hours()&&e.add(d,c),e.add(d,c)):e=b(i.date).subtract(d,c),M(b(e.subtract(d,c)))||M(e)?void p(e.format(i.format)):("add"===a?i.date.add(d,c):i.date.subtract(d,c),void(i.unset=!1))},M=function(a,c){b.locale(i.options.language);var d=b(i.options.maxDate,i.format,i.options.useStrict),e=b(i.options.minDate,i.format,i.options.useStrict);return c&&(d=d.endOf(c),e=e.startOf(c)),a.isAfter(d)||a.isBefore(e)?!0:i.options.disabledDates===!1?!1:i.options.disabledDates[a.format("YYYY-MM-DD")]===!0},N=function(a){return b.locale(i.options.language),i.options.enabledDates===!1?!0:i.options.enabledDates[a.format("YYYY-MM-DD")]===!0},O=function(a){var c,d={},e=0;for(c=0;c<a.length;c++)f=b.isMoment(a[c])||a[c]instanceof Date?b(a[c]):b(a[c],i.format,i.options.useStrict),f.isValid()&&(d[f.format("YYYY-MM-DD")]=!0,e++);return e>0?d:!1},P=function(a){return a=a.toString(),a.length>=2?a:"0"+a},Q=function(){var a='<thead><tr><th class="prev">&lsaquo;</th><th colspan="'+(i.options.calendarWeeks?"6":"5")+'" class="picker-switch"></th><th class="next">&rsaquo;</th></tr></thead>',b='<tbody><tr><td colspan="'+(i.options.calendarWeeks?"8":"7")+'"></td></tr></tbody>',c='<div class="datepicker-days"><table class="table-condensed">'+a+'<tbody></tbody></table></div><div class="datepicker-months"><table class="table-condensed">'+a+b+'</table></div><div class="datepicker-years"><table class="table-condensed">'+a+b+"</table></div>",d="";return i.options.pickDate&&i.options.pickTime?(d='<div class="bootstrap-datetimepicker-widget'+(i.options.sideBySide?" timepicker-sbs":"")+(i.use24hours?" usetwentyfour":"")+' dropdown-menu" style="z-index:9999 !important;">',d+=i.options.sideBySide?'<div class="row"><div class="col-sm-6 datepicker">'+c+'</div><div class="col-sm-6 timepicker">'+S.getTemplate()+"</div></div>":'<ul class="list-unstyled"><li'+(i.options.collapse?' class="collapse in"':"")+'><div class="datepicker">'+c+'</div></li><li class="picker-switch accordion-toggle"><a class="btn" style="width:100%"><span class="'+i.options.icons.time+'"></span></a></li><li'+(i.options.collapse?' class="collapse"':"")+'><div class="timepicker">'+S.getTemplate()+"</div></li></ul>",d+="</div>"):i.options.pickTime?'<div class="bootstrap-datetimepicker-widget dropdown-menu"><div class="timepicker">'+S.getTemplate()+"</div></div>":'<div class="bootstrap-datetimepicker-widget dropdown-menu"><div class="datepicker">'+c+"</div></div>"},R={modes:[{clsName:"days",navFnc:"month",navStep:1},{clsName:"months",navFnc:"year",navStep:1},{clsName:"years",navFnc:"year",navStep:10}]},S={hourTemplate:'<span data-action="showHours"   data-time-component="hours"   class="timepicker-hour"></span>',minuteTemplate:'<span data-action="showMinutes" data-time-component="minutes" class="timepicker-minute"></span>',secondTemplate:'<span data-action="showSeconds"  data-time-component="seconds" class="timepicker-second"></span>'};S.getTemplate=function(){return'<div class="timepicker-picker"><table class="table-condensed"><tr><td><a href="#" class="btn" data-action="incrementHours"><span class="'+i.options.icons.up+'"></span></a></td><td class="separator"></td><td>'+(i.options.useMinutes?'<a href="#" class="btn" data-action="incrementMinutes"><span class="'+i.options.icons.up+'"></span></a>':"")+"</td>"+(i.options.useSeconds?'<td class="separator"></td><td><a href="#" class="btn" data-action="incrementSeconds"><span class="'+i.options.icons.up+'"></span></a></td>':"")+(i.use24hours?"":'<td class="separator"></td>')+"</tr><tr><td>"+S.hourTemplate+'</td> <td class="separator">:</td><td>'+(i.options.useMinutes?S.minuteTemplate:'<span class="timepicker-minute">00</span>')+"</td> "+(i.options.useSeconds?'<td class="separator">:</td><td>'+S.secondTemplate+"</td>":"")+(i.use24hours?"":'<td class="separator"></td><td><button type="button" class="btn btn-primary" data-action="togglePeriod"></button></td>')+'</tr><tr><td><a href="#" class="btn" data-action="decrementHours"><span class="'+i.options.icons.down+'"></span></a></td><td class="separator"></td><td>'+(i.options.useMinutes?'<a href="#" class="btn" data-action="decrementMinutes"><span class="'+i.options.icons.down+'"></span></a>':"")+"</td>"+(i.options.useSeconds?'<td class="separator"></td><td><a href="#" class="btn" data-action="decrementSeconds"><span class="'+i.options.icons.down+'"></span></a></td>':"")+(i.use24hours?"":'<td class="separator"></td>')+'</tr></table></div><div class="timepicker-hours" data-action="selectHour"><table class="table-condensed"></table></div><div class="timepicker-minutes" data-action="selectMinute"><table class="table-condensed"></table></div>'+(i.options.useSeconds?'<div class="timepicker-seconds" data-action="selectSecond"><table class="table-condensed"></table></div>':"")},i.destroy=function(){H(),I(),i.widget.remove(),i.element.removeData("DateTimePicker"),i.component&&i.component.removeData("DateTimePicker")},i.show=function(a){if(!l().prop("disabled")){if(i.options.useCurrent&&""===l().val()){if(1!==i.options.minuteStepping){var c=b(),d=i.options.minuteStepping;c.minutes(Math.round(c.minutes()/d)*d%60).seconds(0),i.setValue(c.format(i.format))}else i.setValue(b().format(i.format));o("",a.type)}a&&"click"===a.type&&i.isInput&&i.widget.hasClass("picker-open")||(i.widget.hasClass("picker-open")?(i.widget.hide(),i.widget.removeClass("picker-open")):(i.widget.show(),i.widget.addClass("picker-open")),i.height=i.component?i.component.outerHeight():i.element.outerHeight(),n(),i.element.trigger({type:"dp.show",date:b(i.date)}),G(),a&&B(a))}},i.disable=function(){var a=l();a.prop("disabled")||(a.prop("disabled",!0),H())},i.enable=function(){var a=l();a.prop("disabled")&&(a.prop("disabled",!1),F())},i.hide=function(){var a,c,d=i.widget.find(".collapse");for(a=0;a<d.length;a++)if(c=d.eq(a).data("collapse"),c&&c.transitioning)return;i.widget.hide(),i.widget.removeClass("picker-open"),i.viewMode=i.startViewMode,E(),i.element.trigger({type:"dp.hide",date:b(i.date)}),I()},i.setValue=function(a){b.locale(i.options.language),a?i.unset=!1:(i.unset=!0,K()),a=b.isMoment(a)?a.locale(i.options.language):a instanceof Date?b(a):b(a,i.format,i.options.useStrict),a.isValid()?(i.date=a,K(),i.viewDate=b({y:i.date.year(),M:i.date.month()}),t(),x()):p(a)},i.getDate=function(){return i.unset?null:b(i.date)},i.setDate=function(a){var c=b(i.date);i.setValue(a?a:null),o(c,"function")},i.setDisabledDates=function(a){i.options.disabledDates=O(a),i.viewDate&&q()},i.setEnabledDates=function(a){i.options.enabledDates=O(a),i.viewDate&&q()},i.setMaxDate=function(a){void 0!==a&&(i.options.maxDate=b.isMoment(a)||a instanceof Date?b(a):b(a,i.format,i.options.useStrict),i.viewDate&&q())},i.setMinDate=function(a){void 0!==a&&(i.options.minDate=b.isMoment(a)||a instanceof Date?b(a):b(a,i.format,i.options.useStrict),i.viewDate&&q())},k()};a.fn.datetimepicker=function(b){return this.each(function(){var c=a(this),e=c.data("DateTimePicker");e||c.data("DateTimePicker",new d(this,b))})},a.fn.datetimepicker.defaults={format:!1,pickDate:!0,pickTime:!0,useMinutes:!0,useSeconds:!1,useCurrent:!0,calendarWeeks:!1,minuteStepping:1,minDate:b({y:1900}),maxDate:b().add(100,"y"),showToday:!0,collapse:!0,language:b.locale(),defaultDate:"",disabledDates:!1,enabledDates:!1,icons:{},useStrict:!1,direction:"auto",sideBySide:!1,daysOfWeekDisabled:[],widgetParent:!1}});
+/*! version : 4.7.14
+ =========================================================
+ bootstrap-datetimejs
+ https://github.com/Eonasdan/bootstrap-datetimepicker
+ Copyright (c) 2015 Jonathan Peterson
+ =========================================================
+ */
+!function(a){"use strict";if("function"==typeof define&&define.amd)define(["jquery","moment"],a);else if("object"==typeof exports)a(require("jquery"),require("moment"));else{if("undefined"==typeof jQuery)throw"bootstrap-datetimepicker requires jQuery to be loaded first";if("undefined"==typeof moment)throw"bootstrap-datetimepicker requires Moment.js to be loaded first";a(jQuery,moment)}}(function(a,b){"use strict";if(!b)throw new Error("bootstrap-datetimepicker requires Moment.js to be loaded first");var c=function(c,d){var e,f,g,h,i,j={},k=b().startOf("d"),l=k.clone(),m=!0,n=!1,o=!1,p=0,q=[{clsName:"days",navFnc:"M",navStep:1},{clsName:"months",navFnc:"y",navStep:1},{clsName:"years",navFnc:"y",navStep:10}],r=["days","months","years"],s=["top","bottom","auto"],t=["left","right","auto"],u=["default","top","bottom"],v={up:38,38:"up",down:40,40:"down",left:37,37:"left",right:39,39:"right",tab:9,9:"tab",escape:27,27:"escape",enter:13,13:"enter",pageUp:33,33:"pageUp",pageDown:34,34:"pageDown",shift:16,16:"shift",control:17,17:"control",space:32,32:"space",t:84,84:"t","delete":46,46:"delete"},w={},x=function(a){if("string"!=typeof a||a.length>1)throw new TypeError("isEnabled expects a single character string parameter");switch(a){case"y":return-1!==g.indexOf("Y");case"M":return-1!==g.indexOf("M");case"d":return-1!==g.toLowerCase().indexOf("d");case"h":case"H":return-1!==g.toLowerCase().indexOf("h");case"m":return-1!==g.indexOf("m");case"s":return-1!==g.indexOf("s");default:return!1}},y=function(){return x("h")||x("m")||x("s")},z=function(){return x("y")||x("M")||x("d")},A=function(){var b=a("<thead>").append(a("<tr>").append(a("<th>").addClass("prev").attr("data-action","previous").append(a("<span>").addClass(d.icons.previous))).append(a("<th>").addClass("picker-switch").attr("data-action","pickerSwitch").attr("colspan",d.calendarWeeks?"6":"5")).append(a("<th>").addClass("next").attr("data-action","next").append(a("<span>").addClass(d.icons.next)))),c=a("<tbody>").append(a("<tr>").append(a("<td>").attr("colspan",d.calendarWeeks?"8":"7")));return[a("<div>").addClass("datepicker-days").append(a("<table>").addClass("table-condensed").append(b).append(a("<tbody>"))),a("<div>").addClass("datepicker-months").append(a("<table>").addClass("table-condensed").append(b.clone()).append(c.clone())),a("<div>").addClass("datepicker-years").append(a("<table>").addClass("table-condensed").append(b.clone()).append(c.clone()))]},B=function(){var b=a("<tr>"),c=a("<tr>"),e=a("<tr>");return x("h")&&(b.append(a("<td>").append(a("<a>").attr({href:"#",tabindex:"-1"}).addClass("btn").attr("data-action","incrementHours").append(a("<span>").addClass(d.icons.up)))),c.append(a("<td>").append(a("<span>").addClass("timepicker-hour").attr("data-time-component","hours").attr("data-action","showHours"))),e.append(a("<td>").append(a("<a>").attr({href:"#",tabindex:"-1"}).addClass("btn").attr("data-action","decrementHours").append(a("<span>").addClass(d.icons.down))))),x("m")&&(x("h")&&(b.append(a("<td>").addClass("separator")),c.append(a("<td>").addClass("separator").html(":")),e.append(a("<td>").addClass("separator"))),b.append(a("<td>").append(a("<a>").attr({href:"#",tabindex:"-1"}).addClass("btn").attr("data-action","incrementMinutes").append(a("<span>").addClass(d.icons.up)))),c.append(a("<td>").append(a("<span>").addClass("timepicker-minute").attr("data-time-component","minutes").attr("data-action","showMinutes"))),e.append(a("<td>").append(a("<a>").attr({href:"#",tabindex:"-1"}).addClass("btn").attr("data-action","decrementMinutes").append(a("<span>").addClass(d.icons.down))))),x("s")&&(x("m")&&(b.append(a("<td>").addClass("separator")),c.append(a("<td>").addClass("separator").html(":")),e.append(a("<td>").addClass("separator"))),b.append(a("<td>").append(a("<a>").attr({href:"#",tabindex:"-1"}).addClass("btn").attr("data-action","incrementSeconds").append(a("<span>").addClass(d.icons.up)))),c.append(a("<td>").append(a("<span>").addClass("timepicker-second").attr("data-time-component","seconds").attr("data-action","showSeconds"))),e.append(a("<td>").append(a("<a>").attr({href:"#",tabindex:"-1"}).addClass("btn").attr("data-action","decrementSeconds").append(a("<span>").addClass(d.icons.down))))),f||(b.append(a("<td>").addClass("separator")),c.append(a("<td>").append(a("<button>").addClass("btn btn-primary").attr("data-action","togglePeriod"))),e.append(a("<td>").addClass("separator"))),a("<div>").addClass("timepicker-picker").append(a("<table>").addClass("table-condensed").append([b,c,e]))},C=function(){var b=a("<div>").addClass("timepicker-hours").append(a("<table>").addClass("table-condensed")),c=a("<div>").addClass("timepicker-minutes").append(a("<table>").addClass("table-condensed")),d=a("<div>").addClass("timepicker-seconds").append(a("<table>").addClass("table-condensed")),e=[B()];return x("h")&&e.push(b),x("m")&&e.push(c),x("s")&&e.push(d),e},D=function(){var b=[];return d.showTodayButton&&b.push(a("<td>").append(a("<a>").attr("data-action","today").append(a("<span>").addClass(d.icons.today)))),!d.sideBySide&&z()&&y()&&b.push(a("<td>").append(a("<a>").attr("data-action","togglePicker").append(a("<span>").addClass(d.icons.time)))),d.showClear&&b.push(a("<td>").append(a("<a>").attr("data-action","clear").append(a("<span>").addClass(d.icons.clear)))),d.showClose&&b.push(a("<td>").append(a("<a>").attr("data-action","close").append(a("<span>").addClass(d.icons.close)))),a("<table>").addClass("table-condensed").append(a("<tbody>").append(a("<tr>").append(b)))},E=function(){var b=a("<div>").addClass("bootstrap-datetimepicker-widget dropdown-menu"),c=a("<div>").addClass("datepicker").append(A()),e=a("<div>").addClass("timepicker").append(C()),g=a("<ul>").addClass("list-unstyled"),h=a("<li>").addClass("picker-switch"+(d.collapse?" accordion-toggle":"")).append(D());return d.inline&&b.removeClass("dropdown-menu"),f&&b.addClass("usetwentyfour"),d.sideBySide&&z()&&y()?(b.addClass("timepicker-sbs"),b.append(a("<div>").addClass("row").append(c.addClass("col-sm-6")).append(e.addClass("col-sm-6"))),b.append(h),b):("top"===d.toolbarPlacement&&g.append(h),z()&&g.append(a("<li>").addClass(d.collapse&&y()?"collapse in":"").append(c)),"default"===d.toolbarPlacement&&g.append(h),y()&&g.append(a("<li>").addClass(d.collapse&&z()?"collapse":"").append(e)),"bottom"===d.toolbarPlacement&&g.append(h),b.append(g))},F=function(){var b,e={};return b=c.is("input")||d.inline?c.data():c.find("input").data(),b.dateOptions&&b.dateOptions instanceof Object&&(e=a.extend(!0,e,b.dateOptions)),a.each(d,function(a){var c="date"+a.charAt(0).toUpperCase()+a.slice(1);void 0!==b[c]&&(e[a]=b[c])}),e},G=function(){var b,e=(n||c).position(),f=(n||c).offset(),g=d.widgetPositioning.vertical,h=d.widgetPositioning.horizontal;if(d.widgetParent)b=d.widgetParent.append(o);else if(c.is("input"))b=c.parent().append(o);else{if(d.inline)return void(b=c.append(o));b=c,c.children().first().after(o)}if("auto"===g&&(g=f.top+1.5*o.height()>=a(window).height()+a(window).scrollTop()&&o.height()+c.outerHeight()<f.top?"top":"bottom"),"auto"===h&&(h=b.width()<f.left+o.outerWidth()/2&&f.left+o.outerWidth()>a(window).width()?"right":"left"),"top"===g?o.addClass("top").removeClass("bottom"):o.addClass("bottom").removeClass("top"),"right"===h?o.addClass("pull-right"):o.removeClass("pull-right"),"relative"!==b.css("position")&&(b=b.parents().filter(function(){return"relative"===a(this).css("position")}).first()),0===b.length)throw new Error("datetimepicker component should be placed within a relative positioned container");o.css({top:"top"===g?"auto":e.top+c.outerHeight(),bottom:"top"===g?e.top+c.outerHeight():"auto",left:"left"===h?b.css("padding-left"):"auto",right:"left"===h?"auto":b.width()-c.outerWidth()})},H=function(a){"dp.change"===a.type&&(a.date&&a.date.isSame(a.oldDate)||!a.date&&!a.oldDate)||c.trigger(a)},I=function(a){o&&(a&&(i=Math.max(p,Math.min(2,i+a))),o.find(".datepicker > div").hide().filter(".datepicker-"+q[i].clsName).show())},J=function(){var b=a("<tr>"),c=l.clone().startOf("w");for(d.calendarWeeks===!0&&b.append(a("<th>").addClass("cw").text("#"));c.isBefore(l.clone().endOf("w"));)b.append(a("<th>").addClass("dow").text(c.format("dd"))),c.add(1,"d");o.find(".datepicker-days thead").append(b)},K=function(a){return d.disabledDates[a.format("YYYY-MM-DD")]===!0},L=function(a){return d.enabledDates[a.format("YYYY-MM-DD")]===!0},M=function(a,b){return a.isValid()?d.disabledDates&&K(a)&&"M"!==b?!1:d.enabledDates&&!L(a)&&"M"!==b?!1:d.minDate&&a.isBefore(d.minDate,b)?!1:d.maxDate&&a.isAfter(d.maxDate,b)?!1:"d"===b&&-1!==d.daysOfWeekDisabled.indexOf(a.day())?!1:!0:!1},N=function(){for(var b=[],c=l.clone().startOf("y").hour(12);c.isSame(l,"y");)b.push(a("<span>").attr("data-action","selectMonth").addClass("month").text(c.format("MMM"))),c.add(1,"M");o.find(".datepicker-months td").empty().append(b)},O=function(){var b=o.find(".datepicker-months"),c=b.find("th"),d=b.find("tbody").find("span");b.find(".disabled").removeClass("disabled"),M(l.clone().subtract(1,"y"),"y")||c.eq(0).addClass("disabled"),c.eq(1).text(l.year()),M(l.clone().add(1,"y"),"y")||c.eq(2).addClass("disabled"),d.removeClass("active"),k.isSame(l,"y")&&d.eq(k.month()).addClass("active"),d.each(function(b){M(l.clone().month(b),"M")||a(this).addClass("disabled")})},P=function(){var a=o.find(".datepicker-years"),b=a.find("th"),c=l.clone().subtract(5,"y"),e=l.clone().add(6,"y"),f="";for(a.find(".disabled").removeClass("disabled"),d.minDate&&d.minDate.isAfter(c,"y")&&b.eq(0).addClass("disabled"),b.eq(1).text(c.year()+"-"+e.year()),d.maxDate&&d.maxDate.isBefore(e,"y")&&b.eq(2).addClass("disabled");!c.isAfter(e,"y");)f+='<span data-action="selectYear" class="year'+(c.isSame(k,"y")?" active":"")+(M(c,"y")?"":" disabled")+'">'+c.year()+"</span>",c.add(1,"y");a.find("td").html(f)},Q=function(){var c,e,f,g=o.find(".datepicker-days"),h=g.find("th"),i=[];if(z()){for(g.find(".disabled").removeClass("disabled"),h.eq(1).text(l.format(d.dayViewHeaderFormat)),M(l.clone().subtract(1,"M"),"M")||h.eq(0).addClass("disabled"),M(l.clone().add(1,"M"),"M")||h.eq(2).addClass("disabled"),c=l.clone().startOf("M").startOf("week");!l.clone().endOf("M").endOf("w").isBefore(c,"d");)0===c.weekday()&&(e=a("<tr>"),d.calendarWeeks&&e.append('<td class="cw">'+c.week()+"</td>"),i.push(e)),f="",c.isBefore(l,"M")&&(f+=" old"),c.isAfter(l,"M")&&(f+=" new"),c.isSame(k,"d")&&!m&&(f+=" active"),M(c,"d")||(f+=" disabled"),c.isSame(b(),"d")&&(f+=" today"),(0===c.day()||6===c.day())&&(f+=" weekend"),e.append('<td data-action="selectDay" class="day'+f+'">'+c.date()+"</td>"),c.add(1,"d");g.find("tbody").empty().append(i),O(),P()}},R=function(){var b=o.find(".timepicker-hours table"),c=l.clone().startOf("d"),d=[],e=a("<tr>");for(l.hour()>11&&!f&&c.hour(12);c.isSame(l,"d")&&(f||l.hour()<12&&c.hour()<12||l.hour()>11);)c.hour()%4===0&&(e=a("<tr>"),d.push(e)),e.append('<td data-action="selectHour" class="hour'+(M(c,"h")?"":" disabled")+'">'+c.format(f?"HH":"hh")+"</td>"),c.add(1,"h");b.empty().append(d)},S=function(){for(var b=o.find(".timepicker-minutes table"),c=l.clone().startOf("h"),e=[],f=a("<tr>"),g=1===d.stepping?5:d.stepping;l.isSame(c,"h");)c.minute()%(4*g)===0&&(f=a("<tr>"),e.push(f)),f.append('<td data-action="selectMinute" class="minute'+(M(c,"m")?"":" disabled")+'">'+c.format("mm")+"</td>"),c.add(g,"m");b.empty().append(e)},T=function(){for(var b=o.find(".timepicker-seconds table"),c=l.clone().startOf("m"),d=[],e=a("<tr>");l.isSame(c,"m");)c.second()%20===0&&(e=a("<tr>"),d.push(e)),e.append('<td data-action="selectSecond" class="second'+(M(c,"s")?"":" disabled")+'">'+c.format("ss")+"</td>"),c.add(5,"s");b.empty().append(d)},U=function(){var a=o.find(".timepicker span[data-time-component]");f||o.find(".timepicker [data-action=togglePeriod]").text(k.format("A")),a.filter("[data-time-component=hours]").text(k.format(f?"HH":"hh")),a.filter("[data-time-component=minutes]").text(k.format("mm")),a.filter("[data-time-component=seconds]").text(k.format("ss")),R(),S(),T()},V=function(){o&&(Q(),U())},W=function(a){var b=m?null:k;return a?(a=a.clone().locale(d.locale),1!==d.stepping&&a.minutes(Math.round(a.minutes()/d.stepping)*d.stepping%60).seconds(0),void(M(a)?(k=a,l=k.clone(),e.val(k.format(g)),c.data("date",k.format(g)),V(),m=!1,H({type:"dp.change",date:k.clone(),oldDate:b})):(d.keepInvalid||e.val(m?"":k.format(g)),H({type:"dp.error",date:a})))):(m=!0,e.val(""),c.data("date",""),H({type:"dp.change",date:null,oldDate:b}),void V())},X=function(){var b=!1;return o?(o.find(".collapse").each(function(){var c=a(this).data("collapse");return c&&c.transitioning?(b=!0,!1):!0}),b?j:(n&&n.hasClass("btn")&&n.toggleClass("active"),o.hide(),a(window).off("resize",G),o.off("click","[data-action]"),o.off("mousedown",!1),o.remove(),o=!1,H({type:"dp.hide",date:k.clone()}),j)):j},Y=function(){W(null)},Z={next:function(){l.add(q[i].navStep,q[i].navFnc),Q()},previous:function(){l.subtract(q[i].navStep,q[i].navFnc),Q()},pickerSwitch:function(){I(1)},selectMonth:function(b){var c=a(b.target).closest("tbody").find("span").index(a(b.target));l.month(c),i===p?(W(k.clone().year(l.year()).month(l.month())),d.inline||X()):(I(-1),Q())},selectYear:function(b){var c=parseInt(a(b.target).text(),10)||0;l.year(c),i===p?(W(k.clone().year(l.year())),d.inline||X()):(I(-1),Q())},selectDay:function(b){var c=l.clone();a(b.target).is(".old")&&c.subtract(1,"M"),a(b.target).is(".new")&&c.add(1,"M"),W(c.date(parseInt(a(b.target).text(),10))),y()||d.keepOpen||d.inline||X()},incrementHours:function(){W(k.clone().add(1,"h"))},incrementMinutes:function(){W(k.clone().add(d.stepping,"m"))},incrementSeconds:function(){W(k.clone().add(1,"s"))},decrementHours:function(){W(k.clone().subtract(1,"h"))},decrementMinutes:function(){W(k.clone().subtract(d.stepping,"m"))},decrementSeconds:function(){W(k.clone().subtract(1,"s"))},togglePeriod:function(){W(k.clone().add(k.hours()>=12?-12:12,"h"))},togglePicker:function(b){var c,e=a(b.target),f=e.closest("ul"),g=f.find(".in"),h=f.find(".collapse:not(.in)");if(g&&g.length){if(c=g.data("collapse"),c&&c.transitioning)return;g.collapse?(g.collapse("hide"),h.collapse("show")):(g.removeClass("in"),h.addClass("in")),e.is("span")?e.toggleClass(d.icons.time+" "+d.icons.date):e.find("span").toggleClass(d.icons.time+" "+d.icons.date)}},showPicker:function(){o.find(".timepicker > div:not(.timepicker-picker)").hide(),o.find(".timepicker .timepicker-picker").show()},showHours:function(){o.find(".timepicker .timepicker-picker").hide(),o.find(".timepicker .timepicker-hours").show()},showMinutes:function(){o.find(".timepicker .timepicker-picker").hide(),o.find(".timepicker .timepicker-minutes").show()},showSeconds:function(){o.find(".timepicker .timepicker-picker").hide(),o.find(".timepicker .timepicker-seconds").show()},selectHour:function(b){var c=parseInt(a(b.target).text(),10);f||(k.hours()>=12?12!==c&&(c+=12):12===c&&(c=0)),W(k.clone().hours(c)),Z.showPicker.call(j)},selectMinute:function(b){W(k.clone().minutes(parseInt(a(b.target).text(),10))),Z.showPicker.call(j)},selectSecond:function(b){W(k.clone().seconds(parseInt(a(b.target).text(),10))),Z.showPicker.call(j)},clear:Y,today:function(){W(b())},close:X},$=function(b){return a(b.currentTarget).is(".disabled")?!1:(Z[a(b.currentTarget).data("action")].apply(j,arguments),!1)},_=function(){var c,f={year:function(a){return a.month(0).date(1).hours(0).seconds(0).minutes(0)},month:function(a){return a.date(1).hours(0).seconds(0).minutes(0)},day:function(a){return a.hours(0).seconds(0).minutes(0)},hour:function(a){return a.seconds(0).minutes(0)},minute:function(a){return a.seconds(0)}};return e.prop("disabled")||!d.ignoreReadonly&&e.prop("readonly")||o?j:(d.useCurrent&&m&&(e.is("input")&&0===e.val().trim().length||d.inline)&&(c=b(),"string"==typeof d.useCurrent&&(c=f[d.useCurrent](c)),W(c)),o=E(),J(),N(),o.find(".timepicker-hours").hide(),o.find(".timepicker-minutes").hide(),o.find(".timepicker-seconds").hide(),V(),I(),a(window).on("resize",G),o.on("click","[data-action]",$),o.on("mousedown",!1),n&&n.hasClass("btn")&&n.toggleClass("active"),o.show(),G(),e.is(":focus")||e.focus(),H({type:"dp.show"}),j)},ab=function(){return o?X():_()},bb=function(a){return a=b.isMoment(a)||a instanceof Date?b(a):b(a,h,d.useStrict),a.locale(d.locale),a},cb=function(a){var b,c,e,f,g=null,h=[],i={},k=a.which,l="p";w[k]=l;for(b in w)w.hasOwnProperty(b)&&w[b]===l&&(h.push(b),parseInt(b,10)!==k&&(i[b]=!0));for(b in d.keyBinds)if(d.keyBinds.hasOwnProperty(b)&&"function"==typeof d.keyBinds[b]&&(e=b.split(" "),e.length===h.length&&v[k]===e[e.length-1])){for(f=!0,c=e.length-2;c>=0;c--)if(!(v[e[c]]in i)){f=!1;break}if(f){g=d.keyBinds[b];break}}g&&(g.call(j,o),a.stopPropagation(),a.preventDefault())},db=function(a){w[a.which]="r",a.stopPropagation(),a.preventDefault()},eb=function(b){var c=a(b.target).val().trim(),d=c?bb(c):null;return W(d),b.stopImmediatePropagation(),!1},fb=function(){e.on({change:eb,blur:d.debug?"":X,keydown:cb,keyup:db}),c.is("input")?e.on({focus:_}):n&&(n.on("click",ab),n.on("mousedown",!1))},gb=function(){e.off({change:eb,blur:X,keydown:cb,keyup:db}),c.is("input")?e.off({focus:_}):n&&(n.off("click",ab),n.off("mousedown",!1))},hb=function(b){var c={};return a.each(b,function(){var a=bb(this);a.isValid()&&(c[a.format("YYYY-MM-DD")]=!0)}),Object.keys(c).length?c:!1},ib=function(){var a=d.format||"L LT";g=a.replace(/(\[[^\[]*\])|(\\)?(LTS|LT|LL?L?L?|l{1,4})/g,function(a){var b=k.localeData().longDateFormat(a)||a;return b.replace(/(\[[^\[]*\])|(\\)?(LTS|LT|LL?L?L?|l{1,4})/g,function(a){return k.localeData().longDateFormat(a)||a})}),h=d.extraFormats?d.extraFormats.slice():[],h.indexOf(a)<0&&h.indexOf(g)<0&&h.push(g),f=g.toLowerCase().indexOf("a")<1&&g.indexOf("h")<1,x("y")&&(p=2),x("M")&&(p=1),x("d")&&(p=0),i=Math.max(p,i),m||W(k)};if(j.destroy=function(){X(),gb(),c.removeData("DateTimePicker"),c.removeData("date")},j.toggle=ab,j.show=_,j.hide=X,j.disable=function(){return X(),n&&n.hasClass("btn")&&n.addClass("disabled"),e.prop("disabled",!0),j},j.enable=function(){return n&&n.hasClass("btn")&&n.removeClass("disabled"),e.prop("disabled",!1),j},j.ignoreReadonly=function(a){if(0===arguments.length)return d.ignoreReadonly;if("boolean"!=typeof a)throw new TypeError("ignoreReadonly () expects a boolean parameter");return d.ignoreReadonly=a,j},j.options=function(b){if(0===arguments.length)return a.extend(!0,{},d);if(!(b instanceof Object))throw new TypeError("options() options parameter should be an object");return a.extend(!0,d,b),a.each(d,function(a,b){if(void 0===j[a])throw new TypeError("option "+a+" is not recognized!");j[a](b)}),j},j.date=function(a){if(0===arguments.length)return m?null:k.clone();if(!(null===a||"string"==typeof a||b.isMoment(a)||a instanceof Date))throw new TypeError("date() parameter must be one of [null, string, moment or Date]");return W(null===a?null:bb(a)),j},j.format=function(a){if(0===arguments.length)return d.format;if("string"!=typeof a&&("boolean"!=typeof a||a!==!1))throw new TypeError("format() expects a sting or boolean:false parameter "+a);return d.format=a,g&&ib(),j},j.dayViewHeaderFormat=function(a){if(0===arguments.length)return d.dayViewHeaderFormat;if("string"!=typeof a)throw new TypeError("dayViewHeaderFormat() expects a string parameter");return d.dayViewHeaderFormat=a,j},j.extraFormats=function(a){if(0===arguments.length)return d.extraFormats;if(a!==!1&&!(a instanceof Array))throw new TypeError("extraFormats() expects an array or false parameter");return d.extraFormats=a,h&&ib(),j},j.disabledDates=function(b){if(0===arguments.length)return d.disabledDates?a.extend({},d.disabledDates):d.disabledDates;if(!b)return d.disabledDates=!1,V(),j;if(!(b instanceof Array))throw new TypeError("disabledDates() expects an array parameter");return d.disabledDates=hb(b),d.enabledDates=!1,V(),j},j.enabledDates=function(b){if(0===arguments.length)return d.enabledDates?a.extend({},d.enabledDates):d.enabledDates;if(!b)return d.enabledDates=!1,V(),j;if(!(b instanceof Array))throw new TypeError("enabledDates() expects an array parameter");return d.enabledDates=hb(b),d.disabledDates=!1,V(),j},j.daysOfWeekDisabled=function(a){if(0===arguments.length)return d.daysOfWeekDisabled.splice(0);if(!(a instanceof Array))throw new TypeError("daysOfWeekDisabled() expects an array parameter");return d.daysOfWeekDisabled=a.reduce(function(a,b){return b=parseInt(b,10),b>6||0>b||isNaN(b)?a:(-1===a.indexOf(b)&&a.push(b),a)},[]).sort(),V(),j},j.maxDate=function(a){if(0===arguments.length)return d.maxDate?d.maxDate.clone():d.maxDate;if("boolean"==typeof a&&a===!1)return d.maxDate=!1,V(),j;"string"==typeof a&&("now"===a||"moment"===a)&&(a=b());var c=bb(a);if(!c.isValid())throw new TypeError("maxDate() Could not parse date parameter: "+a);if(d.minDate&&c.isBefore(d.minDate))throw new TypeError("maxDate() date parameter is before options.minDate: "+c.format(g));return d.maxDate=c,d.maxDate.isBefore(a)&&W(d.maxDate),l.isAfter(c)&&(l=c.clone()),V(),j},j.minDate=function(a){if(0===arguments.length)return d.minDate?d.minDate.clone():d.minDate;if("boolean"==typeof a&&a===!1)return d.minDate=!1,V(),j;"string"==typeof a&&("now"===a||"moment"===a)&&(a=b());var c=bb(a);if(!c.isValid())throw new TypeError("minDate() Could not parse date parameter: "+a);if(d.maxDate&&c.isAfter(d.maxDate))throw new TypeError("minDate() date parameter is after options.maxDate: "+c.format(g));return d.minDate=c,d.minDate.isAfter(a)&&W(d.minDate),l.isBefore(c)&&(l=c.clone()),V(),j},j.defaultDate=function(a){if(0===arguments.length)return d.defaultDate?d.defaultDate.clone():d.defaultDate;if(!a)return d.defaultDate=!1,j;"string"==typeof a&&("now"===a||"moment"===a)&&(a=b());var c=bb(a);if(!c.isValid())throw new TypeError("defaultDate() Could not parse date parameter: "+a);if(!M(c))throw new TypeError("defaultDate() date passed is invalid according to component setup validations");return d.defaultDate=c,d.defaultDate&&""===e.val().trim()&&void 0===e.attr("placeholder")&&W(d.defaultDate),j},j.locale=function(a){if(0===arguments.length)return d.locale;if(!b.localeData(a))throw new TypeError("locale() locale "+a+" is not loaded from moment locales!");return d.locale=a,k.locale(d.locale),l.locale(d.locale),g&&ib(),o&&(X(),_()),j},j.stepping=function(a){return 0===arguments.length?d.stepping:(a=parseInt(a,10),(isNaN(a)||1>a)&&(a=1),d.stepping=a,j)},j.useCurrent=function(a){var b=["year","month","day","hour","minute"];if(0===arguments.length)return d.useCurrent;if("boolean"!=typeof a&&"string"!=typeof a)throw new TypeError("useCurrent() expects a boolean or string parameter");if("string"==typeof a&&-1===b.indexOf(a.toLowerCase()))throw new TypeError("useCurrent() expects a string parameter of "+b.join(", "));return d.useCurrent=a,j},j.collapse=function(a){if(0===arguments.length)return d.collapse;if("boolean"!=typeof a)throw new TypeError("collapse() expects a boolean parameter");return d.collapse===a?j:(d.collapse=a,o&&(X(),_()),j)},j.icons=function(b){if(0===arguments.length)return a.extend({},d.icons);if(!(b instanceof Object))throw new TypeError("icons() expects parameter to be an Object");return a.extend(d.icons,b),o&&(X(),_()),j},j.useStrict=function(a){if(0===arguments.length)return d.useStrict;if("boolean"!=typeof a)throw new TypeError("useStrict() expects a boolean parameter");return d.useStrict=a,j},j.sideBySide=function(a){if(0===arguments.length)return d.sideBySide;if("boolean"!=typeof a)throw new TypeError("sideBySide() expects a boolean parameter");return d.sideBySide=a,o&&(X(),_()),j},j.viewMode=function(a){if(0===arguments.length)return d.viewMode;if("string"!=typeof a)throw new TypeError("viewMode() expects a string parameter");if(-1===r.indexOf(a))throw new TypeError("viewMode() parameter must be one of ("+r.join(", ")+") value");return d.viewMode=a,i=Math.max(r.indexOf(a),p),I(),j},j.toolbarPlacement=function(a){if(0===arguments.length)return d.toolbarPlacement;if("string"!=typeof a)throw new TypeError("toolbarPlacement() expects a string parameter");if(-1===u.indexOf(a))throw new TypeError("toolbarPlacement() parameter must be one of ("+u.join(", ")+") value");return d.toolbarPlacement=a,o&&(X(),_()),j},j.widgetPositioning=function(b){if(0===arguments.length)return a.extend({},d.widgetPositioning);if("[object Object]"!=={}.toString.call(b))throw new TypeError("widgetPositioning() expects an object variable");if(b.horizontal){if("string"!=typeof b.horizontal)throw new TypeError("widgetPositioning() horizontal variable must be a string");if(b.horizontal=b.horizontal.toLowerCase(),-1===t.indexOf(b.horizontal))throw new TypeError("widgetPositioning() expects horizontal parameter to be one of ("+t.join(", ")+")");d.widgetPositioning.horizontal=b.horizontal}if(b.vertical){if("string"!=typeof b.vertical)throw new TypeError("widgetPositioning() vertical variable must be a string");if(b.vertical=b.vertical.toLowerCase(),-1===s.indexOf(b.vertical))throw new TypeError("widgetPositioning() expects vertical parameter to be one of ("+s.join(", ")+")");d.widgetPositioning.vertical=b.vertical}return V(),j},j.calendarWeeks=function(a){if(0===arguments.length)return d.calendarWeeks;if("boolean"!=typeof a)throw new TypeError("calendarWeeks() expects parameter to be a boolean value");return d.calendarWeeks=a,V(),j},j.showTodayButton=function(a){if(0===arguments.length)return d.showTodayButton;if("boolean"!=typeof a)throw new TypeError("showTodayButton() expects a boolean parameter");return d.showTodayButton=a,o&&(X(),_()),j},j.showClear=function(a){if(0===arguments.length)return d.showClear;if("boolean"!=typeof a)throw new TypeError("showClear() expects a boolean parameter");return d.showClear=a,o&&(X(),_()),j},j.widgetParent=function(b){if(0===arguments.length)return d.widgetParent;if("string"==typeof b&&(b=a(b)),null!==b&&"string"!=typeof b&&!(b instanceof a))throw new TypeError("widgetParent() expects a string or a jQuery object parameter");return d.widgetParent=b,o&&(X(),_()),j},j.keepOpen=function(a){if(0===arguments.length)return d.keepOpen;if("boolean"!=typeof a)throw new TypeError("keepOpen() expects a boolean parameter");return d.keepOpen=a,j},j.inline=function(a){if(0===arguments.length)return d.inline;if("boolean"!=typeof a)throw new TypeError("inline() expects a boolean parameter");return d.inline=a,j},j.clear=function(){return Y(),j},j.keyBinds=function(a){return d.keyBinds=a,j},j.debug=function(a){if("boolean"!=typeof a)throw new TypeError("debug() expects a boolean parameter");return d.debug=a,j},j.showClose=function(a){if(0===arguments.length)return d.showClose;if("boolean"!=typeof a)throw new TypeError("showClose() expects a boolean parameter");return d.showClose=a,j},j.keepInvalid=function(a){if(0===arguments.length)return d.keepInvalid;if("boolean"!=typeof a)throw new TypeError("keepInvalid() expects a boolean parameter");return d.keepInvalid=a,j},j.datepickerInput=function(a){if(0===arguments.length)return d.datepickerInput;if("string"!=typeof a)throw new TypeError("datepickerInput() expects a string parameter");return d.datepickerInput=a,j},c.is("input"))e=c;else if(e=c.find(d.datepickerInput),0===e.size())e=c.find("input");else if(!e.is("input"))throw new Error('CSS class "'+d.datepickerInput+'" cannot be applied to non input element');if(c.hasClass("input-group")&&(n=c.find(0===c.find(".datepickerbutton").size()?'[class^="input-group-"]':".datepickerbutton")),!d.inline&&!e.is("input"))throw new Error("Could not initialize DateTimePicker without an input element");return a.extend(!0,d,F()),j.options(d),ib(),fb(),e.prop("disabled")&&j.disable(),e.is("input")&&0!==e.val().trim().length?W(bb(e.val().trim())):d.defaultDate&&void 0===e.attr("placeholder")&&W(d.defaultDate),d.inline&&_(),j};a.fn.datetimepicker=function(b){return this.each(function(){var d=a(this);d.data("DateTimePicker")||(b=a.extend(!0,{},a.fn.datetimepicker.defaults,b),d.data("DateTimePicker",c(d,b)))})},a.fn.datetimepicker.defaults={format:!1,dayViewHeaderFormat:"MMMM YYYY",extraFormats:!1,stepping:1,minDate:!1,maxDate:!1,useCurrent:!0,collapse:!0,locale:b.locale(),defaultDate:!1,disabledDates:!1,enabledDates:!1,icons:{time:"glyphicon glyphicon-time",date:"glyphicon glyphicon-calendar",up:"glyphicon glyphicon-chevron-up",down:"glyphicon glyphicon-chevron-down",previous:"glyphicon glyphicon-chevron-left",next:"glyphicon glyphicon-chevron-right",today:"glyphicon glyphicon-screenshot",clear:"glyphicon glyphicon-trash",close:"glyphicon glyphicon-remove"},useStrict:!1,sideBySide:!1,daysOfWeekDisabled:[],calendarWeeks:!1,viewMode:"days",toolbarPlacement:"default",showTodayButton:!1,showClear:!1,showClose:!1,widgetPositioning:{horizontal:"auto",vertical:"auto"},widgetParent:null,ignoreReadonly:!1,keepOpen:!1,inline:!1,keepInvalid:!1,datepickerInput:".datepickerinput",keyBinds:{up:function(a){if(a){var c=this.date()||b();this.date(a.find(".datepicker").is(":visible")?c.clone().subtract(7,"d"):c.clone().add(1,"m"))}},down:function(a){if(!a)return void this.show();var c=this.date()||b();this.date(a.find(".datepicker").is(":visible")?c.clone().add(7,"d"):c.clone().subtract(1,"m"))},"control up":function(a){if(a){var c=this.date()||b();this.date(a.find(".datepicker").is(":visible")?c.clone().subtract(1,"y"):c.clone().add(1,"h"))}},"control down":function(a){if(a){var c=this.date()||b();this.date(a.find(".datepicker").is(":visible")?c.clone().add(1,"y"):c.clone().subtract(1,"h"))}},left:function(a){if(a){var c=this.date()||b();a.find(".datepicker").is(":visible")&&this.date(c.clone().subtract(1,"d"))}},right:function(a){if(a){var c=this.date()||b();a.find(".datepicker").is(":visible")&&this.date(c.clone().add(1,"d"))}},pageUp:function(a){if(a){var c=this.date()||b();a.find(".datepicker").is(":visible")&&this.date(c.clone().subtract(1,"M"))}},pageDown:function(a){if(a){var c=this.date()||b();a.find(".datepicker").is(":visible")&&this.date(c.clone().add(1,"M"))}},enter:function(){this.hide()},escape:function(){this.hide()},"control space":function(a){a.find(".timepicker").is(":visible")&&a.find('.btn[data-action="togglePeriod"]').click()},t:function(){this.date(b())},"delete":function(){this.clear()}},debug:!1}});
 'use strict';
 
 angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
@@ -62478,10 +62665,11 @@ angular.module('sumaAnalysis')
         // Initialize
         inputGroup.datetimepicker({
           defaultDate: scope.model,
-          showToday: false,
-          pickDate: true,
-          pickTime: false,
-          format: 'YYYY-MM-DD'
+          format: 'YYYY-MM-DD',
+          icons: {
+            previous: 'fa fa-arrow-left',
+            next: 'fa fa-arrow-right'
+          }
         });
 
         // Respond to changes from input
@@ -62493,7 +62681,7 @@ angular.module('sumaAnalysis')
 
         // Respond to changes from model
         inputGroupAddon.on('click', function (e) {
-          inputGroup.data('DateTimePicker').setDate(scope.model);
+          inputGroup.data('DateTimePicker').date(scope.model);
           inputGroup.data('DateTimePicker').show();
         });
       }
@@ -62516,8 +62704,6 @@ angular.module('sumaAnalysis')
         inputGroup.datetimepicker({
           defaultDate: moment(scope.placeholder, 'HH:mm'),
           useCurrent: false,
-          pickDate: false,
-          pickTime: true,
           format: 'HH:mm',
           icons: {
             time: 'fa fa-clock-o',

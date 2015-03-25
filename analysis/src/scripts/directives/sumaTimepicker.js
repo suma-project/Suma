@@ -14,8 +14,6 @@ angular.module('sumaAnalysis')
         inputGroup.datetimepicker({
           defaultDate: moment(scope.placeholder, 'HH:mm'),
           useCurrent: false,
-          pickDate: false,
-          pickTime: true,
           format: 'HH:mm',
           icons: {
             time: 'fa fa-clock-o',

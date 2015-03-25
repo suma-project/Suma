@@ -20,7 +20,7 @@ module.exports = function(config) {
       'src/bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/tooltip.js',
       'src/bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/modal.js',
       'src/bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/popover.js',
-      'src/bower_components/bootstrap3-datetimepicker/src/js/bootstrap-datetimepicker.js',
+      'src/bower_components/bootstrap3-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
       'src/bower_components/lodash/lodash.js',
       'src/lib/js/lodash_mixins.js',
       'src/bower_components/d3/d3.js',

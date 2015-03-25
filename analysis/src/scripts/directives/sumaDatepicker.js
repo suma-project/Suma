@@ -13,10 +13,11 @@ angular.module('sumaAnalysis')
         // Initialize
         inputGroup.datetimepicker({
           defaultDate: scope.model,
-          showToday: false,
-          pickDate: true,
-          pickTime: false,
-          format: 'YYYY-MM-DD'
+          format: 'YYYY-MM-DD',
+          icons: {
+            previous: 'fa fa-arrow-left',
+            next: 'fa fa-arrow-right'
+          }
         });
 
         // Respond to changes from input
@@ -28,7 +29,7 @@ angular.module('sumaAnalysis')
 
         // Respond to changes from model
         inputGroupAddon.on('click', function (e) {
-          inputGroup.data('DateTimePicker').setDate(scope.model);
+          inputGroup.data('DateTimePicker').date(scope.model);
           inputGroup.data('DateTimePicker').show();
         });
       }
