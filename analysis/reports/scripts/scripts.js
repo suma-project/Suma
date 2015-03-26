@@ -61156,6 +61156,7 @@ angular.module('sumaAnalysis')
             edate         : cfg.params.edate || '',
             stime         : cfg.params.stime || '',
             etime         : cfg.params.etime || '',
+            startHour     : cfg.params.startHour      ? cfg.params.startHour.id             : null,
             classifyCounts: cfg.params.classifyCounts ? cfg.params.classifyCounts.id        : null,
             wholeSession  : cfg.params.wholeSession   ? cfg.params.wholeSession.id          : null,
             days          : cfg.params.days           ? cfg.params.days.join(',')           : null,
@@ -61370,6 +61371,7 @@ angular.module('sumaAnalysis')
           classifyCounts: params.classifyCounts               ? params.classifyCounts.id : null,
           wholeSession:   params.wholeSession                 ? params.wholeSession.id   : null,
           zeroCounts:     params.zeroCounts                   ? params.zeroCounts.id     : null,
+          startHour:      params.startHour                    ? params.startHour.id      : null,
           requireActs:    this.stringifyActs(acts, 'require'),
           excludeActs:    this.stringifyActs(acts, 'exclude'),
           requireActGrps: this.stringifyActs(acts, 'require', true),
@@ -61445,6 +61447,19 @@ angular.module('sumaAnalysis')
 
             if (!newParams.zeroCounts) {
               errors.push('Invalid value for zeroCounts. Valid values are "yes" or "no".');
+            }
+          }
+
+          // Set startHour options
+          if (sumaConfig.formFields.startHour) {
+            newParams.startHour = _.find(sumaConfig.formData.startHourOptions, function (e, i) {
+              return String(e.id) === String(urlParams.startHour);
+            });
+
+            newParams.startHourOptions = sumaConfig.formData.startHourOptions;
+
+            if (!newParams.startHour) {
+              errors.push('Invalid value for startHour. Valid values are 0000-2300, on the hour.');
             }
           }
 
@@ -61867,6 +61882,32 @@ angular.module('sumaAnalysis')
           {id: 'no', title: 'No'},
           {id: 'yes', title: 'Yes'}
         ],
+        startHourOptions: [
+          {id: '0000', title: '12:00 AM'},
+          {id: '0100', title: '01:00 AM'},
+          {id: '0200', title: '02:00 AM'},
+          {id: '0300', title: '03:00 AM'},
+          {id: '0400', title: '04:00 AM'},
+          {id: '0500', title: '05:00 AM'},
+          {id: '0600', title: '06:00 AM'},
+          {id: '0700', title: '07:00 AM'},
+          {id: '0800', title: '08:00 AM'},
+          {id: '0900', title: '09:00 AM'},
+          {id: '1000', title: '10:00 AM'},
+          {id: '1100', title: '11:00 AM'},
+          {id: '1200', title: '12:00 PM'},
+          {id: '1300', title: '01:00 PM'},
+          {id: '1400', title: '02:00 PM'},
+          {id: '1500', title: '03:00 PM'},
+          {id: '1600', title: '04:00 PM'},
+          {id: '1700', title: '05:00 PM'},
+          {id: '1800', title: '06:00 PM'},
+          {id: '1900', title: '07:00 PM'},
+          {id: '2000', title: '08:00 PM'},
+          {id: '2100', title: '09:00 PM'},
+          {id: '2200', title: '10:00 PM'},
+          {id: '2300', title: '11:00 PM'}
+        ],
         startDate: [moment().subtract(4, 'months').format('YYYY-MM-DD')],
         endDate: [moment().format('YYYY-MM-DD')],
         startTime: [''],
@@ -61876,6 +61917,7 @@ angular.module('sumaAnalysis')
         classifyCounts: 'countOptions',
         wholeSession: 'sessionOptions',
         zeroCounts: 'zeroOptions',
+        startHour: 'startHourOptions',
         sdate: 'startDate',
         edate: 'endDate',
         stime: 'startTime',
@@ -61886,6 +61928,7 @@ angular.module('sumaAnalysis')
         edate: true,
         stime: true,
         etime: true,
+        startHour: true,
         classifyCounts: true,
         days: true,
         wholeSession: true,
@@ -63359,8 +63402,8 @@ angular.module('sumaAnalysis')
             scope.stats.upperOutlier = upperOutlier.toFixed(2);
             scope.stats.lowerOutlier = (lowerOutlier.toFixed(2) > 0) ? lowerOutlier.toFixed(2) : 'No Threshold';
             scope.stats.median = quantiles[1].toFixed(2);
-            scope.stats.min = min;
-            scope.stats.max = max;
+            scope.stats.min = min.toFixed(2);
+            scope.stats.max = max.toFixed(2);
           }
         };
 
@@ -64039,8 +64082,8 @@ angular.module('sumaAnalysis')
             scope.stats.upperOutlier = upperOutlier.toFixed(2);
             scope.stats.lowerOutlier = (lowerOutlier.toFixed(2) > 0) ? lowerOutlier.toFixed(2) : 'No Threshold';
             scope.stats.median = quantiles[1].toFixed(2);
-            scope.stats.min = min;
-            scope.stats.max = max;
+            scope.stats.min = min.toFixed(2);
+            scope.stats.max = max.toFixed(2);
           }
         };
 
