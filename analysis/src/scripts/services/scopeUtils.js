@@ -82,6 +82,7 @@ angular.module('sumaAnalysis')
           classifyCounts: params.classifyCounts               ? params.classifyCounts.id : null,
           wholeSession:   params.wholeSession                 ? params.wholeSession.id   : null,
           zeroCounts:     params.zeroCounts                   ? params.zeroCounts.id     : null,
+          startHour:      params.startHour                    ? params.startHour.id      : null,
           requireActs:    this.stringifyActs(acts, 'require'),
           excludeActs:    this.stringifyActs(acts, 'exclude'),
           requireActGrps: this.stringifyActs(acts, 'require', true),
@@ -157,6 +158,19 @@ angular.module('sumaAnalysis')
 
             if (!newParams.zeroCounts) {
               errors.push('Invalid value for zeroCounts. Valid values are "yes" or "no".');
+            }
+          }
+
+          // Set startHour options
+          if (sumaConfig.formFields.startHour) {
+            newParams.startHour = _.find(sumaConfig.formData.startHourOptions, function (e, i) {
+              return String(e.id) === String(urlParams.startHour);
+            });
+
+            newParams.startHourOptions = sumaConfig.formData.startHourOptions;
+
+            if (!newParams.startHour) {
+              errors.push('Invalid value for startHour. Valid values are 0000-2300, on the hour.');
             }
           }
 

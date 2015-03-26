@@ -114,6 +114,12 @@
             <div data-suma-timepicker data-model="report.params.etime" data-placeholder="23:59"></div>
             <span class="help-block">24-hour format, e.g. 08:00</span>
           </div>
+
+          <div class="form-group">
+            <label class="suma-popover" data-title="Start 24-Hour Day On" data-content="Select an arbitrary start time for a 24-Hour period. Count dates will be adjusted backwards as necessary." data-suma-popover>Start 24-Hour Day On </label>
+            <select name="startHour" id="startHour" class="form-control" data-ng-model="report.params.startHour" data-ng-options="opt.title for opt in report.params.startHourOptions">
+            </select>
+          </div>
         </div>
 
         <div class="col-xs-3 supp-wrapper" data-ng-show="report.processMetadata">
