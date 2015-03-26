@@ -441,12 +441,22 @@ class Data
      */
     private function populateSumaParams($params)
     {
+        // Check startHour parameter and ajust end date as needed
+        if ($params['startHour'] === "0000")
+        {
+            $eDate = $params['edate'];
+        }
+        else
+        {
+            $edate = str_replace("-", "", date('Y-m-d', strtotime('+1 day', strtotime($params['edate']))));
+        }
+
         // Build suma array
         $sumaParams = array(
             'id'     => $params['id'],
             'format' => $params['format'],
             'sdate'  => $params['sdate'],
-            'edate'  => $params['edate'],
+            'edate'  => $edate,
             'stime'  => $params['stime'],
             'etime'  => $params['etime']
         );
@@ -620,6 +630,7 @@ class Data
     {
         if ($params['classifyCounts'] === 'count')
         {
+            // If startHour later than midnight, adjust count date
             if (strtotime(substr($count['time'], 11)) < strtotime($params['startHour']))
             {
                 ChromePhp::log('first', $count['time']);
