@@ -1425,7 +1425,8 @@ class Data
      * @param  array $data Processed data set to be returned to client
      * @return boolen
      */
-    private function checkData($data) {
+    private function checkData($data)
+    {
         $names = array(
             'activitiesAvgAvg',
             'activitiesAvgSum',
@@ -1444,12 +1445,12 @@ class Data
             'yearSummary'
         );
 
-       foreach($names as $name)
-       {
+        foreach($names as $name)
+        {
             if (!isset($data[$name])) {
                 return false;
             }
-       }
+        }
 
         return true;
     }
