@@ -295,8 +295,8 @@ angular.module('sumaAnalysis')
             scope.stats.upperOutlier = upperOutlier.toFixed(2);
             scope.stats.lowerOutlier = (lowerOutlier.toFixed(2) > 0) ? lowerOutlier.toFixed(2) : 'No Threshold';
             scope.stats.median = quantiles[1].toFixed(2);
-            scope.stats.min = min;
-            scope.stats.max = max;
+            scope.stats.min = min.toFixed(2);
+            scope.stats.max = max.toFixed(2);
           }
         };
 
