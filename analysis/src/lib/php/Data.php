@@ -3,6 +3,7 @@
 require_once 'vendor/autoload.php';
 require_once 'ServerIO.php';
 require_once 'SumaGump.php';
+require_once 'ChromePhp.php';
 
 /**
  * Data - Class to process data for display in a variety of charts.
@@ -105,7 +106,8 @@ class Data
     /**
      * [__construct]
      */
-    function __construct() {
+    function __construct()
+    {
         $config = Spyc::YAMLLoad(realpath(dirname(__FILE__)) . '/../../../config/config.yaml');
 
         // Set Error Reporting Levels
@@ -178,7 +180,6 @@ class Data
         {
             foreach($this->actListIds as $act)
             {
-                ChromePhp::log('two');
                 $name = $this->actGrpHash[$act['activityGroup']] . ": " . $act['title'] . "(" . $act['id'] . ")";
                 $scaffoldArray['activities'][$name] = NULL;
             }
@@ -349,6 +350,7 @@ class Data
             'edate'          => 'trim|rmpunctuation|rmhyphen',
             'stime'          => 'trim|rmpunctuation|pad_time',
             'etime'          => 'trim|rmpunctuation|pad_time',
+            'startHour'      => 'trim|rmpunctuation|pad_time',
             'classifyCounts' => 'trim',
             'wholeSession'   => 'trim',
             'days'           => 'trim',
@@ -366,6 +368,7 @@ class Data
             'edate'          => 'numeric|multi_exact_len, 0 8',
             'stime'          => 'numeric|multi_exact_len, 0 4',
             'etime'          => 'numeric|multi_exact_len, 0 4',
+            'startHour'      => 'numeric|multi_exact_len, 0 4',
             'classifyCounts' => 'alpha|contains, count start end',
             'wholeSession'   => 'alpha|contains, yes no',
             'days'           => 'day_of_week',
@@ -391,6 +394,7 @@ class Data
                 'edate'          => $input['edate'],
                 'stime'          => $input['stime'],
                 'etime'          => $input['etime'],
+                'startHour'      => $input['startHour'],
                 'classifyCounts' => $input['classifyCounts'],
                 'wholeSession'   => $input['wholeSession'],
                 'days'           => $input['days'],
@@ -616,14 +620,47 @@ class Data
     {
         if ($params['classifyCounts'] === 'count')
         {
-            return substr($count['time'], 0, -9);
+            if (strtotime(substr($count['time'], 11)) < strtotime($params['startHour']))
+            {
+                ChromePhp::log('first', $count['time']);
+                ChromePhp::log('adjusted', date('Y-m-d', strtotime('-1 day', strtotime($count['time']))));
+                return date('Y-m-d', strtotime('-1 day', strtotime($count['time'])));
+            }
+            else
+            {
+                ChromePhp::log('second', $count['time']);
+                ChromePhp::log('non-adjusted', substr($count['time'], 0, -9));
+                return substr($count['time'], 0, -9);
+            }
         }
         elseif ($params['classifyCounts'] === 'start') {
-            return substr($sess['start'], 0, -9);
+            if (strtotime(substr($sess['start'], 11)) < strtotime($params['startHour']))
+            {
+                ChromePhp::log('first', $sess['start']);
+                ChromePhp::log('adjusted', date('Y-m-d', strtotime('-1 day', strtotime($sess['start']))));
+                return date('Y-m-d', strtotime('-1 day', strtotime($sess['start'])));
+            }
+            else
+            {
+                ChromePhp::log('second', $count['time']);
+                ChromePhp::log('non-adjusted', substr($sess['start'], 0, -9));
+                return substr($sess['start'], 0, -9);
+            }
         }
         elseif ($params['classifyCounts'] === 'end')
         {
-            return substr($sess['end'], 0, -9);
+            if (strtotime(substr($sess['end'], 11)) < strtotime($params['startHour']))
+            {
+                ChromePhp::log('first', $sess['end']);
+                ChromePhp::log('adjusted', date('Y-m-d', strtotime('-1 day', strtotime($sess['end']))));
+                return date('Y-m-d', strtotime('-1 day', strtotime($sess['end'])));
+            }
+            else
+            {
+                ChromePhp::log('second', $count['time']);
+                ChromePhp::log('non-adjusted', substr($sess['start'], 0, -9));
+                return substr($sess['end'], 0, -9);
+            }
         }
     }
 
@@ -640,9 +677,9 @@ class Data
     private function addCount($count, $day, $locId, $sessId, $weekday)
     {
         $weekdayInt = date('w', strtotime($day));
-        $year = date('Y', strtotime($day));
-        $month = date('F', strtotime($day));
-        $hour = date('G', strtotime($count['time']));
+        $year       = date('Y', strtotime($day));
+        $month      = date('F', strtotime($day));
+        $hour       = date('G', strtotime($count['time']));
 
         // Build CSV, activitiesSum, and activitiesAvgAvg arrays
         if(!isset($this->countHash['csv'][$day]))
