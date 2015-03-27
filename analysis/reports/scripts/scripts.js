@@ -61959,6 +61959,7 @@ angular.module('sumaAnalysis')
         if (path === '/hourly') {
           newConfig.formFields.stime = false;
           newConfig.formFields.etime = false;
+          newConfig.formFields.startHour = false;
           newConfig.dataProcessor = 'processHourlyData';
           newConfig.suppWatch = false;
 
@@ -61972,6 +61973,7 @@ angular.module('sumaAnalysis')
          newConfig.formFields.zeroCounts = false;
          newConfig.formFields.activities = false;
          newConfig.formFields.locations = false;
+         newConfig.formFields.startHour = false;
 
          newConfig.dataSource = 'getSessionsData';
          newConfig.dataProcessor = false;
@@ -61996,7 +61998,6 @@ angular.module('sumaAnalysis')
             params.days = angular.copy(params.dayOptions);
           }
         });
-
         return params;
       }
     };
@@ -64441,6 +64442,31 @@ angular.module('sumaAnalysis')
 
         scope.$watch('acts', setActsDisplayStatus, true);
         scope.$watch('locs', setLocsDisplayStatus, true);
+      }
+    };
+  });
+
+'use strict';
+
+angular.module('sumaAnalysis')
+  .directive('sumaActiveStartHour', function () {
+    return {
+      restrict: 'A',
+      templateUrl: 'views/directives/activeStartHour.html',
+      scope: {startHour: '='},
+      link: function (scope, ele, attrs) {
+        scope.display = false;
+        scope.startHour = false;
+
+        function setDisplayStatus () {
+          if (scope.startHour.id === '0000') {
+            scope.display = false;
+          } else {
+            scope.display = true;
+          }
+        }
+
+        scope.$watch('startHour', setDisplayStatus, true);
       }
     };
   });
