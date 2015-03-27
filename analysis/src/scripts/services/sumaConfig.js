@@ -95,6 +95,7 @@ angular.module('sumaAnalysis')
         if (path === '/hourly') {
           newConfig.formFields.stime = false;
           newConfig.formFields.etime = false;
+          newConfig.formFields.startHour = false;
           newConfig.dataProcessor = 'processHourlyData';
           newConfig.suppWatch = false;
 
@@ -108,6 +109,7 @@ angular.module('sumaAnalysis')
          newConfig.formFields.zeroCounts = false;
          newConfig.formFields.activities = false;
          newConfig.formFields.locations = false;
+         newConfig.formFields.startHour = false;
 
          newConfig.dataSource = 'getSessionsData';
          newConfig.dataProcessor = false;
@@ -132,7 +134,7 @@ angular.module('sumaAnalysis')
             params.days = angular.copy(params.dayOptions);
           }
         });
-
+        console.log('setParams', JSON.stringify(params))
         return params;
       }
     };
