@@ -134,7 +134,6 @@ angular.module('sumaAnalysis')
             params.days = angular.copy(params.dayOptions);
           }
         });
-        console.log('setParams', JSON.stringify(params))
         return params;
       }
     };
