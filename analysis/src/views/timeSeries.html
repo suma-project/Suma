@@ -120,6 +120,8 @@
             <select name="startHour" id="startHour" class="form-control" data-ng-model="report.params.startHour" data-ng-options="opt.title for opt in report.params.startHourOptions">
             </select>
           </div>
+
+          <div data-suma-active-start-hour data-start-hour="report.params.startHour"></div>
         </div>
 
         <div class="col-xs-3 supp-wrapper" data-ng-show="report.processMetadata">
