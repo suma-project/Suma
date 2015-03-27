@@ -24,14 +24,16 @@ if (isset($config['nightly']))
 
     // Which day to retrieve hourly report
     $DAY_PROCESS = date('Ymd', strtotime('yesterday'));
+    // $DAY_PROCESS = str_replace("-", "", date('Y-m-d', strtotime('2015-03-18')));
+
+    // Start Hour
+    $START_HOUR = isset($config['nightly']['startHour']) ? $config['nightly']['startHour'] : "0000";
 
     // Initialize class and retrieve data
     try
     {
-        $data        = new NightlyData();
+        $data        = new NightlyData($START_HOUR);
         $nightlyData = $data->getData($DAY_PROCESS);
-
-        // Print Output
 
         // Add stylesheet if multiple locations
         if ($outputHtml)
