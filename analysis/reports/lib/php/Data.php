@@ -441,10 +441,10 @@ class Data
      */
     private function populateSumaParams($params)
     {
-        // Check startHour parameter and ajust end date as needed
+        // Check startHour parameter and adjust end date as needed
         if ($params['startHour'] === "0000")
         {
-            $eDate = $params['edate'];
+            $edate = $params['edate'];
         }
         else
         {
