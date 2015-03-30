@@ -24,14 +24,16 @@ if (isset($config['nightly']))
 
     // Which day to retrieve hourly report
     $DAY_PROCESS = date('Ymd', strtotime('yesterday'));
+    // $DAY_PROCESS = str_replace("-", "", date('Y-m-d', strtotime('2015-03-18')));
+
+    // Start Hour
+    $START_HOUR = isset($config['nightly']['startHour']) ? $config['nightly']['startHour'] : "0000";
 
     // Initialize class and retrieve data
     try
     {
-        $data        = new NightlyData();
+        $data        = new NightlyData($START_HOUR);
         $nightlyData = $data->getData($DAY_PROCESS);
-
-        // Print Output
 
         // Add stylesheet if multiple locations
         if ($outputHtml)
@@ -44,6 +46,11 @@ if (isset($config['nightly']))
             print '</style>';
         }
 
+        if (isset($config['nightly']['startHour']) && $config['nightly']['startHour'] !== "0000")
+        {
+            print "\nNOTICE: The 24-Hour period of this report has been modified to start at " . date('H:i', strtotime($config['nightly']['startHour'])) . ".\n";
+        }
+
         foreach ($nightlyData as $key => $init)
         {
             $table = ($data->buildLocationStatsTable($nightlyData[$key], $key));
@@ -52,20 +59,23 @@ if (isset($config['nightly']))
             {
                 $table = $data->eliminateLocations($table);
             }
+
             if ($hideZeroHours)
             {
                 $table = $data->hideZeroHours($table);
-                            $table = $data->hideZeroColumns($table);
+                $table = $data->hideZeroColumns($table);
             }
+
             if ($hoursAcross)
             {
                 $table = $data->sideways($table);
             }
+
             if ($outputHtml)
             {
                 print "<h2>" . $key . "</h2>\n";
                 print($data->formatTable($table, "html"));
-                        }
+            }
             else
             {
                 print "\n" . $key . "\n";

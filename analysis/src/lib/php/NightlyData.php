@@ -94,6 +94,8 @@ class NightlyData
     /**
      * Method for processing response from ServerIO
      * @param array $response
+     * @param string $boundaryStart Unix timestamp
+     * @param string $boundaryEnd Unix timestamp
      * @access private
      */
     private function populateHash($response, $boundaryStart, $boundaryEnd)
@@ -160,20 +162,14 @@ class NightlyData
         if ($this-> startHour === "0000")
         {
             $eDate = $day;
-            // Boundary Start
             $boundaryStart = strtotime($day . "0000");
-
-            // Boundary End
             $boundaryEnd = strtotime($eDate . "2359");
         }
         else
         {
-          $eDate = str_replace("-", "", date('Y-m-d', strtotime('+1 day', strtotime($day))));
-          // Boundary Start
-          $boundaryStart = strtotime($day . $this->startHour);
-
-          // Boundary End
-          $boundaryEnd = strtotime($eDate . $this->startHour);
+            $eDate = str_replace("-", "", date('Y-m-d', strtotime('+1 day', strtotime($day))));
+            $boundaryStart = strtotime($day . $this->startHour);
+            $boundaryEnd = strtotime(date('Y-m-d H:i', strtotime('-1 minute', strtotime($eDate . $this->startHour))));;
         }
 
         foreach ($initiatives as $id => $title)

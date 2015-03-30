@@ -8,6 +8,13 @@
 class NightlyData
 {
     /**
+     * [__construct description]
+     * @param string $startHour Start hour of 24-Hour period
+     */
+    public function __construct($startHour="0000") {
+      $this->startHour = $startHour;
+    }
+    /**
      * Placeholder for returned data.
      * @var array
      * @access private
@@ -87,19 +94,24 @@ class NightlyData
     /**
      * Method for processing response from ServerIO
      * @param array $response
+     * @param string $boundaryStart Unix timestamp
+     * @param string $boundaryEnd Unix timestamp
      * @access private
      */
-    private function populateHash($response)
+    private function populateHash($response, $boundaryStart, $boundaryEnd)
     {
         // Get init title
-        $title               = $response['initiative']['title'];
+        $title = $response['initiative']['title'];
+
         // Remember Initiative ID & Title
         $this->currentInitID = $response['initiative']['id'];
+
         // Add init to COUNTHASH
         if (!isset($this->countHash[$title]))
         {
             $this->countHash[$title] = $this->buildHoursScaffold();
         }
+
         // Process counts
         if (isset($response['initiative']['locations']))
         {
@@ -109,15 +121,22 @@ class NightlyData
                 $locID = $loc['id'];
                 foreach ($loc['counts'] as $count)
                 {
-                    $hour = date('G', strtotime($count['time']));
-                    // get a count of each location separately
-                    if (!is_int($this->countHash[$title][$hour][$locID]))
+                    $countTime = strtotime($count['time']);
+
+                    // Include count only if it falls within boundaries
+                    if ($countTime >= $boundaryStart && $countTime <= $boundaryEnd)
                     {
-                        $this->countHash[$title][$hour][$locID] = $count['number'];
-                    }
-                    else
-                    {
-                        $this->countHash[$title][$hour][$locID] += $count['number'];
+                      $hour = date('G', $countTime);
+
+                      // get a count of each location separately
+                      if (!is_int($this->countHash[$title][$hour][$locID]))
+                      {
+                          $this->countHash[$title][$hour][$locID] = $count['number'];
+                      }
+                      else
+                      {
+                          $this->countHash[$title][$hour][$locID] += $count['number'];
+                      }
                     }
                 }
             }
@@ -132,30 +151,48 @@ class NightlyData
     {
         // QueryServer config
         $queryType   = "counts";
+
         // Retrieve all active initiatives
         $initiatives = $this->activeInitiatives();
+
         // Build array of param arrays for active inits
         $inits       = array();
+
+        // Adjust end day if start hour !== "0000" and define boundaries
+        if ($this-> startHour === "0000")
+        {
+            $eDate = $day;
+            $boundaryStart = strtotime($day . "0000");
+            $boundaryEnd = strtotime($eDate . "2359");
+        }
+        else
+        {
+            $eDate = str_replace("-", "", date('Y-m-d', strtotime('+1 day', strtotime($day))));
+            $boundaryStart = strtotime($day . $this->startHour);
+            $boundaryEnd = strtotime(date('Y-m-d H:i', strtotime('-1 minute', strtotime($eDate . $this->startHour))));;
+        }
+
         foreach ($initiatives as $id => $title)
         {
             $params = array(
                 'id' => $id,
                 'format' => "lc",
                 'sdate' => $day,
-                'edate' => $day
+                'edate' => $eDate
             );
             array_push($inits, $params);
         }
+
         // Retrieve data for each initiative
         foreach ($inits as $params)
         {
             try
             {
                 $io = new ServerIO();
-                $this->populateHash($io->getData($params, $queryType));
+                $this->populateHash($io->getData($params, $queryType), $boundaryStart, $boundaryEnd);
                 while ($io->hasMore())
                 {
-                    $this->populateHash($io->next());
+                    $this->populateHash($io->next(), $boundaryStart, $boundaryEnd);
                 }
             }
             catch (Exception $e)

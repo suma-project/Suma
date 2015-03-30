@@ -16,6 +16,7 @@ serverIO:
 # Error recipient e-mail addresses separated by commas
 # emailFrom (optional). Single address
 # emailSubj (optional). Customize text for email subject
+# startHour indicates arbitary start of 24-Hour period, default is midnight
 nightly:
     timezone: America/New_York
     displayFormat: m-d-Y
@@ -23,3 +24,4 @@ nightly:
     errorRecipients: you@example.com
     emailFrom: "Suma Reports <you@example.edu>"
     emailSubj: "Suma Nightly Report:"
+    startHour: "0000"
