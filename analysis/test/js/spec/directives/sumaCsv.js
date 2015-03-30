@@ -16,11 +16,12 @@ describe('Directive: sumaCsv', function () {
       MockLink;
 
   beforeEach(inject(function ($rootScope, $compile, mockData, mockLink) {
-    element = angular.element('<div suma-csv data="data"></div>');
+    element = angular.element('<div suma-csv data="data" start-hour="startHour"></div>');
     MockLink = mockLink;
 
     scope = $rootScope.$new();
     scope.data = mockData;
+    scope.startHour = {id: '0000', title: '12:00 AM'};
 
     element = $compile(element)(scope);
     scope.$digest();

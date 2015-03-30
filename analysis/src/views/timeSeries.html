@@ -7,8 +7,9 @@
         <strong>Whole Session: </strong> {{report.summaryParams.wholeSession.title}} <br/>
         <strong>Dates: </strong> {{report.summaryParams.sdate}} - {{report.summaryParams.edate}}
         <strong>Subset: </strong> {{report.summaryParams.stime || '00:00'}} - {{report.summaryParams.etime || '23:59'}} <br/>
-        <strong>Days: </strong> <span data-ng-repeat="day in report.summaryParams.days">{{day | capitalize}}<span data-ng-show="!$last">,</span> </span>
-        <strong>EL: </strong> {{report.summaryParams.excludeLocs | locationTitle:report.locations}} <br/>
+        <strong>Start Hour: </strong> {{report.summaryParams.startHour.title}}
+        <strong>Days: </strong> <span data-ng-repeat="day in report.summaryParams.days">{{day | capitalize}}<span data-ng-show="!$last">,</span> </span><br/>
+        <strong>EL: </strong> {{report.summaryParams.excludeLocs | locationTitle:report.locations}}
         <strong>EA: </strong> {{report.summaryParams.excludeActs | activityTitle:report.activities:'activity'}}
         <strong>RA: </strong> {{report.summaryParams.requireActs | activityTitle:report.activities:'activity'}}
         <strong>EAG: </strong> {{report.summaryParams.excludeActGrps | activityTitle:report.activities:'activityGroup'}}
@@ -326,7 +327,7 @@
       </div>
       <div id="export-data" class="col-xs-12">
         <h3>Export Raw Data</h3>
-        <div data-suma-csv data-data="report.data"></div>
+        <div data-suma-csv data-data="report.data" data-start-hour="report.summaryParams.startHour"></div>
       </div>
     </div>
   </div>

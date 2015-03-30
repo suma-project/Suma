@@ -67061,7 +67061,7 @@ angular.module('sumaAnalysis')
     return {
       restrict: 'A',
       templateUrl: 'views/directives/csv.html',
-      scope: {data: '='},
+      scope: {data: '=', startHour: '='},
       controller: ['$scope', function ($scope) {
         $scope.addCSVIndent = function (item) {
           var indent = '';
@@ -67114,6 +67114,11 @@ angular.module('sumaAnalysis')
               finalData = '',
               base,
               href;
+
+          // Add note about startHour
+          if ($scope.startHour.id !== '0000') {
+            finalData += 'NOTICE: 24-Hour periods have been modified to start at ' + $scope.startHour.title + '\n';
+          }
 
           // Convert data to strings
           data.Primary    = $scope.buildPrimaryCSVString(counts.csv);
