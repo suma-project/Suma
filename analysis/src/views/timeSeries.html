@@ -5,9 +5,10 @@
         <strong>Initiative: </strong> {{report.summaryParams.init.title}} <br/>
         <strong>Classify By: </strong> {{report.summaryParams.classifyCounts.title}}
         <strong>Whole Session: </strong> {{report.summaryParams.wholeSession.title}} <br/>
-        <strong>Dates: </strong> {{report.summaryParams.sdate}} - {{report.summaryParams.edate}}
-        <strong>Subset: </strong> {{report.summaryParams.stime || '00:00'}} - {{report.summaryParams.etime || '23:59'}} <br/>
-        <strong>Start Hour: </strong> {{report.summaryParams.startHour.title}}
+        <strong>Dates: </strong> {{report.summaryParams.sdate}} - {{report.summaryParams.edate}}<br/>
+        <strong>No Counts Before: </strong> {{report.summaryParams.stime || '00:00'}}
+        <strong>No Counts After: </strong> {{report.summaryParams.etime || '23:59'}}<br/>
+        <strong>Start 24-Hour Day: </strong> {{report.summaryParams.startHour.title}}<br/>
         <strong>Days: </strong> <span data-ng-repeat="day in report.summaryParams.days">{{day | capitalize}}<span data-ng-show="!$last">,</span> </span><br/>
         <strong>EL: </strong> {{report.summaryParams.excludeLocs | locationTitle:report.locations}}
         <strong>EA: </strong> {{report.summaryParams.excludeActs | activityTitle:report.activities:'activity'}}
@@ -105,19 +106,19 @@
 
         <div class="col-xs-3">
           <div class="form-group">
-            <label class="suma-popover" data-title="Select Subset of Day" data-content="Include only data gathered during a certain time of day in your analysis, e.g. 20:00-22:00." data-suma-popover>Start Time</label>
+            <label class="suma-popover" data-title="No Counts Before" data-content="Include only data gathered after a certain time of day. Use 24-hour format." data-suma-popover>No Counts Before</label>
             <div data-suma-timepicker data-model="report.params.stime" data-placeholder="00:00"></div>
             <span class="help-block">24-hour format, e.g. 08:00</span>
           </div>
 
           <div class="form-group">
-            <label class="suma-popover" data-title="Select Subset of Day" data-content="Include only data gathered during a certain time of day in your analysis, e.g. 20:00-22:00." data-suma-popover>End Time</label>
+            <label class="suma-popover" data-title="No Counts After" data-content="Include only data gathered before a certain time of day. Use 24-hour format." data-suma-popover>No Counts After</label>
             <div data-suma-timepicker data-model="report.params.etime" data-placeholder="23:59"></div>
             <span class="help-block">24-hour format, e.g. 08:00</span>
           </div>
 
           <div class="form-group">
-            <label class="suma-popover" data-title="Start 24-Hour Day At" data-content="Select an arbitrary start time for a 24-Hour period. Count dates will be adjusted backwards as necessary. An extra day will be added to the End Date field in order to complete the last day." data-suma-popover>Start 24-Hour Day At </label>
+            <label class="suma-popover" data-title="Start 24-Hour Day At" data-content="Select an arbitrary start time for a 24-Hour period. Count dates will be adjusted backwards one day if their time is earlier than this value. An extra day will be automatically added to the End Date field in order to complete the last day." data-suma-popover>Start 24-Hour Day</label>
             <select name="startHour" id="startHour" class="form-control" data-ng-model="report.params.startHour" data-ng-options="opt.title for opt in report.params.startHourOptions">
             </select>
           </div>
