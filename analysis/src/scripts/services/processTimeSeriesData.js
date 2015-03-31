@@ -102,7 +102,7 @@ angular.module('sumaAnalysis')
       });
     }
 
-    function processData (response, activities, locations, zeroCounts) {
+    function processData (response, activities, locations, params) {
       var counts,
         divisor;
 
@@ -110,7 +110,7 @@ angular.module('sumaAnalysis')
       counts = {};
 
       // Configure divisor for avg/pct calculations
-      if (zeroCounts.id === 'no') {
+      if (params.zeroCounts.id === 'no') {
         divisor = response.total;
       } else {
         divisor = response.zeroDivisor;
@@ -172,13 +172,21 @@ angular.module('sumaAnalysis')
       });
 
       // Hourly Summary
-      counts.hourlySummary = _.filter(_.map(_.cloneDeep(response.hourSummary), function (element, index) {
+      counts.hourlySummary = _.filter(_.sortBy(_.map(_.cloneDeep(response.hourSummary), function (element, index) {
         return {
           name: index,
           count: element,
           percent: calcPct(element, divisor)
         };
       }), function (hour) {
+          // Sort so startHour is first hour listed
+          if (hour.name < parseInt(params.startHour.id.slice(0, 2), 10)) {
+            return hour.name + 24;
+          } else {
+            return hour.name;
+          }
+      }), function (hour) {
+        // Strip hours without data
         return hour.count !== null;
       });
 
@@ -252,7 +260,7 @@ angular.module('sumaAnalysis')
       get: function (response, acts, locs, params) {
         var dfd = $q.defer();
 
-        dfd.resolve(processData(response, acts, locs, params.zeroCounts));
+        dfd.resolve(processData(response, acts, locs, params));
 
         return dfd.promise;
       }
