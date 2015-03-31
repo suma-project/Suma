@@ -3,7 +3,6 @@
 require_once 'vendor/autoload.php';
 require_once 'ServerIO.php';
 require_once 'SumaGump.php';
-require_once 'ChromePhp.php';
 
 /**
  * Data - Class to process data for display in a variety of charts.
@@ -633,28 +632,20 @@ class Data
             // If startHour later than midnight, adjust count date
             if (strtotime(substr($count['time'], 11)) < strtotime($params['startHour']))
             {
-                ChromePhp::log('first', $count['time']);
-                ChromePhp::log('adjusted', date('Y-m-d', strtotime('-1 day', strtotime($count['time']))));
                 return date('Y-m-d', strtotime('-1 day', strtotime($count['time'])));
             }
             else
             {
-                ChromePhp::log('second', $count['time']);
-                ChromePhp::log('non-adjusted', substr($count['time'], 0, -9));
                 return substr($count['time'], 0, -9);
             }
         }
         elseif ($params['classifyCounts'] === 'start') {
             if (strtotime(substr($sess['start'], 11)) < strtotime($params['startHour']))
             {
-                ChromePhp::log('first', $sess['start']);
-                ChromePhp::log('adjusted', date('Y-m-d', strtotime('-1 day', strtotime($sess['start']))));
                 return date('Y-m-d', strtotime('-1 day', strtotime($sess['start'])));
             }
             else
             {
-                ChromePhp::log('second', $count['time']);
-                ChromePhp::log('non-adjusted', substr($sess['start'], 0, -9));
                 return substr($sess['start'], 0, -9);
             }
         }
@@ -662,14 +653,10 @@ class Data
         {
             if (strtotime(substr($sess['end'], 11)) < strtotime($params['startHour']))
             {
-                ChromePhp::log('first', $sess['end']);
-                ChromePhp::log('adjusted', date('Y-m-d', strtotime('-1 day', strtotime($sess['end']))));
                 return date('Y-m-d', strtotime('-1 day', strtotime($sess['end'])));
             }
             else
             {
-                ChromePhp::log('second', $count['time']);
-                ChromePhp::log('non-adjusted', substr($sess['start'], 0, -9));
                 return substr($sess['end'], 0, -9);
             }
         }
