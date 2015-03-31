@@ -7,13 +7,25 @@ require_once 'NightlyData.php';
    --hours-across
    --html
    --hide-zeros
+   --start-hour=****
 */
 $locationBreakdown = (array_search("locations", $argv) ? (array_search("locations", $argv) > 0 ? true : "") : false);
 $hoursAcross = (array_search("--hours-across", $argv) ? (array_search("--hours-across", $argv) > 0 ? true : "") : false);
 $outputHtml = (array_search("--html", $argv) ? (array_search("--html", $argv) > 0 ? true : "") : false);
 $hideZeroHours = (array_search("--hide-zeros", $argv) ? (array_search("--hide-zeros", $argv) > 0 ? true : "") : false);
 
-// Configuration
+$findStartHour = preg_grep('/start-hour=\d{4}$/', $argv);
+
+if ($findStartHour)
+{
+    $pieces = explode("=", array_values($findStartHour)[0]);
+    $startHour = $pieces[1];
+}
+else
+{
+    $startHour = "0000";
+}
+
 $config = Spyc::YAMLLoad(realpath(dirname(__FILE__)) . '/../../../config/config.yaml');
 
 if (isset($config['nightly']))
@@ -25,13 +37,10 @@ if (isset($config['nightly']))
     // Which day to retrieve hourly report
     $DAY_PROCESS = date('Ymd', strtotime('yesterday'));
 
-    // Start Hour
-    $START_HOUR = isset($config['nightly']['startHour']) ? $config['nightly']['startHour'] : "0000";
-
     // Initialize class and retrieve data
     try
     {
-        $data        = new NightlyData($START_HOUR);
+        $data        = new NightlyData($startHour);
         $nightlyData = $data->getData($DAY_PROCESS);
 
         // Add stylesheet if multiple locations
@@ -45,9 +54,9 @@ if (isset($config['nightly']))
             print '</style>';
         }
 
-        if (isset($config['nightly']['startHour']) && $config['nightly']['startHour'] !== "0000")
+        if ($startHour !== "0000")
         {
-            print "\nNOTICE: The 24-Hour period of this report has been modified to start at " . date('H:i', strtotime($config['nightly']['startHour'])) . ".\n";
+            print "\nNOTICE: The 24-Hour period of this report has been modified to start at " . date('H:i', strtotime($startHour)) . ".\n";
         }
 
         foreach ($nightlyData as $key => $init)
