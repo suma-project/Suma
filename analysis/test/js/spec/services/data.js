@@ -360,7 +360,7 @@ describe('Service: Data', function () {
       .respond([{}, {}]);
 
     Data.getSessionsData(cfg).then(function (result) {
-      expect(result.length).to.equal(2);
+      expect(result.length).to.equal(1);
       done();
     });
 
