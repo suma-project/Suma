@@ -80,6 +80,10 @@
     </div>
 
     <div class="col-xs-12" data-ng-show="report.state.success">
+      <span data-suma-csv-sessions data-data="report.data"></span>
+    </div>
+
+    <div class="col-xs-12" data-ng-show="report.state.success">
       <h3>Totals by Session</h3>
       <span data-ng-repeat="day in report.data">
         <h4>{{day.key}}</h4>
