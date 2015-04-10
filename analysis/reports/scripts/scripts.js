@@ -61676,7 +61676,7 @@ angular.module('sumaAnalysis')
         if (o.type === 'activityGroup') {
           o.count = 0;
         } else {
-          o.count = _.isNumber(response[o.id]) ? response[o.id] : null;
+          o.count = _.isNumber(response[o.id]) ? response[o.id] : 0;
         }
 
         return o;
