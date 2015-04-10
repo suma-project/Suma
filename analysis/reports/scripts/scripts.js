@@ -61608,9 +61608,11 @@ angular.module('sumaAnalysis')
 
     // Get counts of children recursively
     function calcCount(obj, coll, prop) {
-      var children;
+      var chldrn,
+          chldrnCnts;
 
-      children = _.filter(coll, function (item) {
+      // Get children of loc/act
+      chldrn = _.filter(coll, function (item) {
         if (prop === 'activityGroup') {
           return obj.id === item[prop] && obj.type === 'activityGroup';
         }
@@ -61618,13 +61620,21 @@ angular.module('sumaAnalysis')
         return obj.id === item[prop];
       });
 
-      if (children.length < 1) {
+      // Stop recursion if no children
+      if (chldrn.length < 1) {
         return obj.count;
       }
 
-      return _.reduce(_.map(children, function (o) {
-        return calcCount(o, coll, prop) + obj.count;
-      }), function (sum, num) {
+      // Get counts for children
+      chldrnCnts = _.map(chldrn, function (o) {
+        return calcCount(o, coll, prop);
+      });
+
+      // Add self count to array
+      chldrnCnts.push(obj.count);
+
+      // Reduce to single value
+      return _.reduce(chldrnCnts, function (sum, num) {
         return sum + num;
       });
     }
@@ -61657,18 +61667,24 @@ angular.module('sumaAnalysis')
     }
 
     // Build array for locations/activities table
-    function buildTableArray (source, response, total, flag) {
+    function buildTableArray (source, response, total, prop) {
       var counts;
 
       counts = _.map(_.cloneDeep(source), function (o) {
         o.name = o.title;
-        o.count = _.isNumber(response[o.id]) ? response[o.id] : null;
+
+        if (o.type === 'activityGroup') {
+          o.count = 0;
+        } else {
+          o.count = _.isNumber(response[o.id]) ? response[o.id] : null;
+        }
+
         return o;
       });
 
       // Calculate counts for children
       return _.map(counts, function (o, index, coll) {
-        o.count = calcCount(o, coll, flag);
+        o.count = calcCount(o, coll, prop);
         o.percent = calcPct(o.count, total);
         return o;
       });
