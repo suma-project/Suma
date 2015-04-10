@@ -171,6 +171,3 @@ sent to the server. This data should be retained even after restarting the brows
 or closing the browser without finishing the collection. The client will
 attempt to send the data to the server each time you reload the Suma client or
 finish collecting.
-
-## Reports
-
