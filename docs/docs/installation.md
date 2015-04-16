@@ -1,6 +1,11 @@
 Suma Install Instructions
 ==========================
 
+Experimental Virtual Machine
+-----------------------------
+
+We have released an [experimental virtual Suma environment](https://github.com/NCSU-Libraries/suma-vagrant) that can be used as a development or pilot testing environment on a desktop machine running Windows, OS X, or Linux. This may be a faster way to try Suma before following these installation instructions. **We do not recommend this for production use.**
+
 Requirements
 -------------
 
