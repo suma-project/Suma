@@ -65700,11 +65700,12 @@ angular.module('sumaAnalysis')
               return String(e.id) === String(urlParams.startHour);
             });
 
-            newParams.startHourOptions = sumaConfig.formData.startHourOptions;
-
+            // Default to "0000" on error to support legacy URLs
             if (!newParams.startHour) {
-              errors.push('Invalid value for startHour. Valid values are 0000-2300, on the hour.');
+              newParams.startHour = sumaConfig.formData.startHourOptions[0];
             }
+
+            newParams.startHourOptions = sumaConfig.formData.startHourOptions;
           }
 
           if (sumaConfig.formFields.days) {
