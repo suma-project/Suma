@@ -18,7 +18,8 @@ $findStartHour = preg_grep('/start-hour=\d{4}$/', $argv);
 
 if ($findStartHour)
 {
-    $pieces = explode("=", array_values($findStartHour)[0]);
+    $hour = array_values($findStartHour);
+    $pieces = explode("=", $hour[0]);
     $startHour = $pieces[1];
 }
 else
