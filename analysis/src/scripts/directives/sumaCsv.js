@@ -5,8 +5,8 @@ angular.module('sumaAnalysis')
     return {
       restrict: 'A',
       templateUrl: 'views/directives/csv.html',
-      scope: {data: '=', startHour: '='},
-      controller: ['$scope', function ($scope) {
+      scope: {data: '=', params: '='},
+      controller: ['$scope', '$location', function ($scope, $location) {
         $scope.addCSVIndent = function (item) {
           var indent = '';
 
@@ -52,7 +52,13 @@ angular.module('sumaAnalysis')
           }));
         };
 
-        $scope.buildCSV = function (counts) {
+        $scope.buildMetadata = function (params) {
+          return params.init.title + '\n' +
+          params.sdate + ' to ' +  params.edate + '\n' +
+          _.capitalize(_.trim($location.path(), '/')) + ' Report' + '\n';
+        };
+
+        $scope.buildCSV = function (counts, params) {
           var space = '\n\n\n',
               data = {},
               finalData = '',
@@ -60,11 +66,12 @@ angular.module('sumaAnalysis')
               href;
 
           // Add note about startHour
-          if ($scope.startHour.id !== '0000') {
-            finalData += 'NOTICE: 24-Hour periods have been modified to start at ' + $scope.startHour.title + '\n';
+          if (params.startHour.id !== '0000') {
+            finalData += 'NOTICE: 24-Hour periods have been modified to start at ' + params.startHour.title + '\n';
           }
 
           // Convert data to strings
+          data.Metadata   = $scope.buildMetadata(params);
           data.Primary    = $scope.buildPrimaryCSVString(counts.csv);
           data.Locations  = $scope.buildCSVString(counts.locationsTable, 'Location', true);
           data.Activities = $scope.buildCSVString(counts.activitiesTable, 'Activity', true);
@@ -87,8 +94,8 @@ angular.module('sumaAnalysis')
           return href;
         };
 
-        $scope.download = function (data) {
-          $scope.href = $scope.buildCSV(data);
+        $scope.download = function (data, params) {
+          $scope.href = $scope.buildCSV(data, params);
         };
       }]
     };

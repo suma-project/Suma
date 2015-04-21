@@ -16,12 +16,16 @@ describe('Directive: sumaCsv', function () {
       MockLink;
 
   beforeEach(inject(function ($rootScope, $compile, mockData, mockLink) {
-    element = angular.element('<div suma-csv data="data" start-hour="startHour"></div>');
+    element = angular.element('<div suma-csv data="data" params="params"></div>');
     MockLink = mockLink;
 
     scope = $rootScope.$new();
     scope.data = mockData;
-    scope.startHour = {id: '0000', title: '12:00 AM'};
+    scope.params = {};
+    scope.params.startHour = {id: '0000', title: '12:00 AM'};
+    scope.params.init = {title: 'Test'};
+    scope.params.sdate = '2014-01-01';
+    scope.params.edate = '2014-01-31';
 
     element = $compile(element)(scope);
     scope.$digest();
@@ -30,7 +34,7 @@ describe('Directive: sumaCsv', function () {
   }));
 
   it('should attach a data url to the element', function () {
-    Ctrlscope.download(scope.data);
+    Ctrlscope.download(scope.data, scope.params);
     expect(Ctrlscope.href).to.equal(MockLink);
   });
 });

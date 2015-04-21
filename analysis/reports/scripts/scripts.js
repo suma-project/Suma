@@ -67070,8 +67070,8 @@ angular.module('sumaAnalysis')
     return {
       restrict: 'A',
       templateUrl: 'views/directives/csv.html',
-      scope: {data: '=', startHour: '='},
-      controller: ['$scope', function ($scope) {
+      scope: {data: '=', params: '='},
+      controller: ['$scope', '$location', function ($scope, $location) {
         $scope.addCSVIndent = function (item) {
           var indent = '';
 
@@ -67117,7 +67117,13 @@ angular.module('sumaAnalysis')
           }));
         };
 
-        $scope.buildCSV = function (counts) {
+        $scope.buildMetadata = function (params) {
+          return params.init.title + '\n' +
+          params.sdate + ' to ' +  params.edate + '\n' +
+          _.capitalize(_.trim($location.path(), '/')) + ' Report' + '\n';
+        };
+
+        $scope.buildCSV = function (counts, params) {
           var space = '\n\n\n',
               data = {},
               finalData = '',
@@ -67125,11 +67131,12 @@ angular.module('sumaAnalysis')
               href;
 
           // Add note about startHour
-          if ($scope.startHour.id !== '0000') {
-            finalData += 'NOTICE: 24-Hour periods have been modified to start at ' + $scope.startHour.title + '\n';
+          if (params.startHour.id !== '0000') {
+            finalData += 'NOTICE: 24-Hour periods have been modified to start at ' + params.startHour.title + '\n';
           }
 
           // Convert data to strings
+          data.Metadata   = $scope.buildMetadata(params);
           data.Primary    = $scope.buildPrimaryCSVString(counts.csv);
           data.Locations  = $scope.buildCSVString(counts.locationsTable, 'Location', true);
           data.Activities = $scope.buildCSVString(counts.activitiesTable, 'Activity', true);
@@ -67152,8 +67159,8 @@ angular.module('sumaAnalysis')
           return href;
         };
 
-        $scope.download = function (data) {
-          $scope.href = $scope.buildCSV(data);
+        $scope.download = function (data, params) {
+          $scope.href = $scope.buildCSV(data, params);
         };
       }]
     };
@@ -68434,8 +68441,8 @@ angular.module('sumaAnalysis')
     return {
       templateUrl: 'views/directives/csv.html',
       restrict: 'A',
-      scope: {data: '='},
-      controller: ['$scope', function ($scope) {
+      scope: {data: '=', params: '='},
+      controller: ['$scope', '$location', function ($scope, $location) {
         $scope.buildCSVString = function (counts, dict) {
           return d3.csv.format(_.map(counts, function (obj) {
             var count;
@@ -68454,7 +68461,13 @@ angular.module('sumaAnalysis')
           }));
         };
 
-        $scope.buildCSV = function (counts, dict) {
+        $scope.buildMetadata = function (params) {
+          return params.init.title + '\n' +
+          params.sdate + ' to ' +  params.edate + '\n' +
+          _.capitalize(_.trim($location.path(), '/')) + ' Report' + '\n';
+        };
+
+        $scope.buildCSV = function (counts, dict, params) {
           var data = {},
               finalData = '',
               base,
@@ -68462,6 +68475,7 @@ angular.module('sumaAnalysis')
               lines,
               space = '\n\n\n\n';
 
+          data.Metadata = $scope.buildMetadata(params);
           data.AvgOfCounts = $scope.buildCSVString(counts.avg, dict);
           data.AvgOfDays = $scope.buildCSVString(counts.avgDays, dict);
           data.Sums = $scope.buildCSVString(counts.sum, dict);
@@ -68479,8 +68493,8 @@ angular.module('sumaAnalysis')
           return href;
         };
 
-        $scope.download = function (data) {
-          $scope.href = $scope.buildCSV(data, dict);
+        $scope.download = function (data, params) {
+          $scope.href = $scope.buildCSV(data, dict, params);
         };
       }]
     };
@@ -68493,8 +68507,8 @@ angular.module('sumaAnalysis')
     return {
       templateUrl: 'views/directives/csv.html',
       restrict: 'A',
-      scope: {data: '='},
-      controller: ['$scope', function ($scope) {
+      scope: {data: '=', params: '='},
+      controller: ['$scope', '$location', function ($scope, $location) {
 
         $scope.buildCSVString = function (values) {
           return d3.csv.format(_.map(values, function (val){
@@ -68509,11 +68523,19 @@ angular.module('sumaAnalysis')
           }));
         };
 
-        $scope.buildCSV = function (counts, dict) {
+        $scope.buildMetadata = function (params) {
+          return params.init.title + '\n' +
+          params.sdate + ' to ' +  params.edate + '\n' +
+          _.capitalize(_.trim($location.path(), '/')) + ' Report' + '\n';
+        };
+
+        $scope.buildCSV = function (counts, params) {
           var data = '',
               base,
               href,
               space = '\n\n\n\n';
+
+          data += $scope.buildMetadata(params);
 
           _.each(counts, function (e) {
             data += (e.key + '\n');
@@ -68528,8 +68550,8 @@ angular.module('sumaAnalysis')
           return href;
         };
 
-        $scope.download = function (data) {
-          $scope.href = $scope.buildCSV(data);
+        $scope.download = function (data, params) {
+          $scope.href = $scope.buildCSV(data, params);
         };
       }]
     };

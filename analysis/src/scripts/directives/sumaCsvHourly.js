@@ -43,8 +43,8 @@ angular.module('sumaAnalysis')
     return {
       templateUrl: 'views/directives/csv.html',
       restrict: 'A',
-      scope: {data: '='},
-      controller: ['$scope', function ($scope) {
+      scope: {data: '=', params: '='},
+      controller: ['$scope', '$location', function ($scope, $location) {
         $scope.buildCSVString = function (counts, dict) {
           return d3.csv.format(_.map(counts, function (obj) {
             var count;
@@ -63,7 +63,13 @@ angular.module('sumaAnalysis')
           }));
         };
 
-        $scope.buildCSV = function (counts, dict) {
+        $scope.buildMetadata = function (params) {
+          return params.init.title + '\n' +
+          params.sdate + ' to ' +  params.edate + '\n' +
+          _.capitalize(_.trim($location.path(), '/')) + ' Report' + '\n';
+        };
+
+        $scope.buildCSV = function (counts, dict, params) {
           var data = {},
               finalData = '',
               base,
@@ -71,6 +77,7 @@ angular.module('sumaAnalysis')
               lines,
               space = '\n\n\n\n';
 
+          data.Metadata = $scope.buildMetadata(params);
           data.AvgOfCounts = $scope.buildCSVString(counts.avg, dict);
           data.AvgOfDays = $scope.buildCSVString(counts.avgDays, dict);
           data.Sums = $scope.buildCSVString(counts.sum, dict);
@@ -88,8 +95,8 @@ angular.module('sumaAnalysis')
           return href;
         };
 
-        $scope.download = function (data) {
-          $scope.href = $scope.buildCSV(data, dict);
+        $scope.download = function (data, params) {
+          $scope.href = $scope.buildCSV(data, dict, params);
         };
       }]
     };
