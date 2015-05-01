@@ -9,8 +9,8 @@ Please see the [installation docs](installation.md).
 ### Location trees
 
 <video controls style="width: 100%; max-width:500px; height:auto">
-  <source src="/movies/location_movie.mp4" type="video/mp4">
-  <source src="/movies/location_movie.webm" type="video/webm">
+  <source src="/Suma/movies/location_movie.mp4" type="video/mp4">
+  <source src="/Suma/movies/location_movie.webm" type="video/webm">
 </video>
 
 * Location trees are reusable across multiple initiatives.
@@ -66,8 +66,8 @@ Disabling a location will suppress it in the data collection client.
 ### Initiatives and activities
 
 <video controls style="width: 100%; max-width:500px; height:auto">
-  <source src="/movies/activities_movie.mp4" type="video/mp4">
-  <source src="/movies/activities_movie.webm" type="video/webm">
+  <source src="/Suma/movies/activities_movie.mp4" type="video/mp4">
+  <source src="/Suma/movies/activities_movie.webm" type="video/webm">
 </video>
 
 #### Navigate to the initiative editor
@@ -125,8 +125,8 @@ whether member activities can be selected for the same count.
 ## Collecting Data (Client)
 
 <video controls style="width: 100%; max-width:500px; height:auto">
-  <source src="/movies/client_movie.mp4" type="video/mp4">
-  <source src="/movies/client_movie.webm" type="video/webm">
+  <source src="/Suma/movies/client_movie.mp4" type="video/mp4">
+  <source src="/Suma/movies/client_movie.webm" type="video/webm">
 </video>
 
 ### Start a collecting session
