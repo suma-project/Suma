@@ -37,7 +37,8 @@ $ERROR_GREETING   = 'The nightly Suma report encountered an error.';
 $ERROR_SUBJECT    = 'ERROR: Suma Nightly Report: ' . $DAY_DISPLAY;
 
 // Run Script
-$data = `php nightly.php $args`;
+$dir = realpath(dirname(__FILE__));
+$data = `php $dir/nightly.php $args`;
 
 $errorCheck = explode(" ", $data);
 
