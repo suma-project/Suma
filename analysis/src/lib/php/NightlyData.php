@@ -421,6 +421,29 @@ class NightlyData
         return $sideways;
     }
     /**
+     * Sort each initiatives hours based on start hour
+     */
+    public function resortCountHash() {
+        // Convert start hour to usable index
+        $startHourIndex = ltrim(substr($this->startHour, 0, -2), "0");
+
+        // Process each initiative hours, preserving indices
+        foreach ($this->countHash as $init => $hours)
+        {
+            // Capture end of hours starting at startHourIndex
+            $end = array_slice($hours, $startHourIndex, null, true);
+
+            // Capture beginning of hours
+            $start = array_slice($hours, 0, $startHourIndex, true);
+
+            // Create new array with end at beginning of array
+            $new = $end + $start;
+
+            // Update $this->countHash
+            $this->countHash[$init] = $new;
+        }
+    }
+    /**
      * Get data from server
      *
      * @param string $day YYYYMMDD string for date
@@ -430,6 +453,12 @@ class NightlyData
     public function getData($day)
     {
         $this->processData($day);
+
+        if ($this->startHour !== "0000")
+        {
+          $this->resortCountHash();
+        }
+
         return $this->countHash;
     }
 }
