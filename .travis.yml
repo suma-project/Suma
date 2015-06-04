@@ -1,0 +1,14 @@
+language: node_js
+node_js:
+  - "0.12"
+  - "0.11"
+  - "0.10"
+script: npm install && npm test
+before_install:
+  - npm install -g grunt-cli
+  - gem install bundler
+  - cd analysis && bundle install
+notifications:
+  email:
+    - jmcasden@ncsu.edu
+    - bddavids@ncsu.edu

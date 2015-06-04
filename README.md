@@ -1,6 +1,8 @@
 Suma
 =====
 
+[![Build Status](https://travis-ci.org/cazzerson/Suma.svg?branch=travis_ci)](https://travis-ci.org/cazzerson/Suma)
+
 Suma comprises a set of tools, including a mobile tablet-based (i.e. Apple iPad) data collection application, that will allow library staff to collect, aggregate, and interactively analyze real-time data about the usage of physical space and services. This tool will support the collection of more fine-grained data about physical space usage patterns by supporting the annotation of users with "activities." The data that this tool provides will allow the libraries to build on existing assessment practices by significantly improving our ability to analyze physical space usage trends against various milestones, as well as generating more dynamic and current data visualizations. As a result, this data can be both collected and utilized more frequently and at a much wider scope than before with relative ease.
 
 This project is currently being used at NC State as a pilot project for a wider deployment. Examples of the current and planned uses for this toolkit include the collection and analysis of data relating to:
