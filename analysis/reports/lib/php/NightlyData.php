@@ -92,13 +92,34 @@ class NightlyData
         return $hours;
     }
     /**
+     * Method for building a query string for a timeseries report URL. Should be
+     * appended to baseUrl for analysis environment
+     * @param  string $id    Initiative ID
+     * @param  string $sDate Start date of query
+     * @param  string $eDate End date of Query
+     * @return string
+     */
+    private function buildReportUrl($id, $day, $startHour)
+    {
+      $urlParams = "/#/timeseries?stime=&etime=&classifyCounts=count&wholeSession=no"
+      . "&zeroCounts=no&requireActs=&excludeActs=&requireActGrps="
+      . "&excludeActGrps=&excludeLocs=&days=mo,tu,we,th,fr,sa,su";
+
+      $urlParams .= "&startHour" . $startHour;
+      $urlParams .= "&id=" . $id;
+      $urlParams .= "&sdate=" . $day;
+      $urlParams .= "&edate=" . $day;
+
+      return $urlParams;
+    }
+    /**
      * Method for processing response from ServerIO
      * @param array $response
      * @param string $boundaryStart Unix timestamp
      * @param string $boundaryEnd Unix timestamp
      * @access private
      */
-    private function populateHash($response, $boundaryStart, $boundaryEnd)
+    private function populateHash($response, $boundaryStart, $boundaryEnd, $day, $startHour)
     {
         // Get init title
         $title = $response['initiative']['title'];
@@ -109,7 +130,8 @@ class NightlyData
         // Add init to COUNTHASH
         if (!isset($this->countHash[$title]))
         {
-            $this->countHash[$title] = $this->buildHoursScaffold();
+            $this->countHash[$title]['counts'] = $this->buildHoursScaffold();
+            $this->countHash[$title]['url'] = $this->buildReportUrl($response['initiative']['id'], $day, $startHour);
         }
 
         // Process counts
@@ -129,13 +151,13 @@ class NightlyData
                       $hour = date('G', $countTime);
 
                       // get a count of each location separately
-                      if (!is_int($this->countHash[$title][$hour][$locID]))
+                      if (!is_int($this->countHash[$title]['counts'][$hour][$locID]))
                       {
-                          $this->countHash[$title][$hour][$locID] = $count['number'];
+                          $this->countHash[$title]['counts'][$hour][$locID] = $count['number'];
                       }
                       else
                       {
-                          $this->countHash[$title][$hour][$locID] += $count['number'];
+                          $this->countHash[$title]['counts'][$hour][$locID] += $count['number'];
                       }
                     }
                 }
@@ -189,10 +211,10 @@ class NightlyData
             try
             {
                 $io = new ServerIO();
-                $this->populateHash($io->getData($params, $queryType), $boundaryStart, $boundaryEnd);
+                $this->populateHash($io->getData($params, $queryType), $boundaryStart, $boundaryEnd, $day, $this->startHour);
                 while ($io->hasMore())
                 {
-                    $this->populateHash($io->next(), $boundaryStart, $boundaryEnd);
+                    $this->populateHash($io->next(), $boundaryStart, $boundaryEnd, $day, $this->startHour);
                 }
             }
             catch (Exception $e)
@@ -428,19 +450,19 @@ class NightlyData
         $startHourIndex = ltrim(substr($this->startHour, 0, -2), "0");
 
         // Process each initiative hours, preserving indices
-        foreach ($this->countHash as $init => $hours)
+        foreach ($this->countHash as $init => $data)
         {
             // Capture end of hours starting at startHourIndex
-            $end = array_slice($hours, $startHourIndex, null, true);
+            $end = array_slice($data['counts'], $startHourIndex, null, true);
 
             // Capture beginning of hours
-            $start = array_slice($hours, 0, $startHourIndex, true);
+            $start = array_slice($data['counts'], 0, $startHourIndex, true);
 
             // Create new array with end at beginning of array
             $new = $end + $start;
 
             // Update $this->countHash
-            $this->countHash[$init] = $new;
+            $this->countHash[$init]['counts'] = $new;
         }
     }
     /**

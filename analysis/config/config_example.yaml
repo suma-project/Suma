@@ -9,6 +9,9 @@ showErrors: false
 serverIO:
     baseUrl: http://YOUR_SERVER/sumaserver/query
 
+# Change analysisBaseUrl to the URL for your analysis tools
+analysisBaseUrl: http://YOUR_SERVER/suma/analysis
+
 # Configuration for nightly report
 # Default Timezone. See: http://php.net/manual/en/timezones.php
 # Date display format. See: http://php.net/manual/en/function.date.php
