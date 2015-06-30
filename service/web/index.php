@@ -6,7 +6,7 @@ require_once "lib/spyc/Spyc.php";
 // Check that config exists
 if (!is_readable('config/config.yaml'))
 {
-   header("HTTP/1.1 500 Internal Server Error");
+    header("HTTP/1.1 500 Internal Server Error");
     echo "<h1>500 Internal Server Error</h1>";
     echo "<p><strong>service/web/config/config.yaml</strong> does not exist or is not readable.</p>";
     die;
@@ -41,41 +41,68 @@ ini_set('display_errors', $SUMA_DISPLAY_ERRORS);
 // Set paths
 ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR . $SUMA_SERVER_PATH . PATH_SEPARATOR . $SUMA_SERVER_PATH . '/lib/zend/library');
 
-// Zend Framework CLass Loader
-require_once "Zend/Loader.php";
-require_once "Zend/Session.php";
-
-require_once "config/Globals.php";
-
-Zend_Loader::loadClass('Zend_Controller_Front');
-
-$sessionFileBase = "../config/session";
-if (is_readable($sessionFileBase.'.yaml'))
+try
 {
-    $sessionConfig = new Zend_Config_Yaml($sessionFileBase.'.yaml', 'production');
+    // Zend Framework CLass Loader
+    if (!include_once('Zend/Loader.php'))
+    {
+        throw new Exception('Possible error in SUMA_SERVER_PATH.');
+    }
+
+    if (!include_once('Zend/Session.php'))
+    {
+        throw new Exception('Possible error in SUMA_SERVER_PATH.');
+    }
+
+    if (!include_once('config/Globals.php'))
+    {
+        throw new Exception('Possible error in SUMA_SERVER_PATH.');
+    }
+
+    try {
+        Zend_Loader::loadClass('Zend_Controller_Front');
+
+        $sessionFileBase = "../config/session";
+        if (is_readable($sessionFileBase.'.yaml'))
+        {
+            $sessionConfig = new Zend_Config_Yaml($sessionFileBase.'.yaml', 'production');
+        }
+        elseif (is_readable($sessionFileBase.'.ini'))
+        {
+            $sessionConfig = new Zend_Config_Ini($sessionFileBase.'.ini', 'production');
+        }
+        else
+        {
+            $sessionConfig = null;
+        }
+
+        // If session config has been loaded properly, set it.
+        // App shouldn't die if session options are not set
+        if ($sessionConfig) {
+            Zend_Session::setOptions($sessionConfig->toArray());
+        }
+
+        // Get front controller instance
+        // Configure for Zone
+        $front = Zend_Controller_Front::getInstance();
+        $front->setControllerDirectory($SUMA_CONTROLLER_PATH)
+              ->setBaseUrl($SUMA_BASE_URL);
+
+        Zend_Registry::set('sumaDisplayExceptions', $SUMA_THROW_EXCEPTIONS);
+
+        // Go
+        $front->dispatch();
+    }
+    catch (Exception $e)
+    {
+        throw new Exception("Possible error in SUMA_CONTROLLER_PATH. " . $e->getMessage());
+    }
 }
-elseif (is_readable($sessionFileBase.'.ini'))
+catch (Exception $e)
 {
-    $sessionConfig = new Zend_Config_Ini($sessionFileBase.'.ini', 'production');
+    header("HTTP/1.1 500 Internal Server Error");
+    print "Trouble loading Suma server application. This is often caused by configuration issues. Please refer to the troubleshooting docs at http://cazzerson.github.io/Suma ";
+    print "The raw output is below: ";
+    print $e->getMessage();
+    die;
 }
-else
-{
-    $sessionConfig = null;
-}
-
-// If session config has been loaded properly, set it. 
-// App shouldn't die if session options are not set
-if ($sessionConfig) {
-    Zend_Session::setOptions($sessionConfig->toArray());
-}
-
-// Get front controller instance
-// Configure for Zone
-$front = Zend_Controller_Front::getInstance();
-$front->setControllerDirectory($SUMA_CONTROLLER_PATH)
-      ->setBaseUrl($SUMA_BASE_URL);
-
-Zend_Registry::set('sumaDisplayExceptions', $SUMA_THROW_EXCEPTIONS);
-
-// Go
-$front->dispatch();

@@ -8,6 +8,7 @@ pages:
 - [index.md, Overview]
 - [quickstart.md, Quickstart]
 - [installation.md, Installation]
+- [troubleshooting.md, Troubleshooting]
 - [logs.md, Logs]
 - [queryserver.md, Queryserver]
 - [developer.md, Developer]

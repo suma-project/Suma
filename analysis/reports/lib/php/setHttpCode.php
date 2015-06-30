@@ -29,7 +29,7 @@ function setHttpCode ($code) {
         return "HTTP/1.0 503 Service Unavailable";
     }
     elseif ($code === 504) {
-        return "HTTP/1.0 500 Gateway Timeout";
+        return "HTTP/1.0 504 Gateway Timeout";
     }
     else
     {

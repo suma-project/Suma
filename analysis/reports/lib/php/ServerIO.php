@@ -17,6 +17,7 @@ class ServerIO
      * @access  private
      */
     private $_client = NULL;
+
     /**
      * Base url of Suma query server
      *
@@ -24,6 +25,7 @@ class ServerIO
      * @access  private
      */
     private $_baseUrl;
+
     /**
      * Parameters to append to $_baseUrl
      *
@@ -31,6 +33,7 @@ class ServerIO
      * @access  private
      */
     private $_urlParams = '';
+
     /**
      * Record of server response field hasMore
      *
@@ -38,6 +41,7 @@ class ServerIO
      * @access  private
      */
     private $_hasMore = NULL;
+
     /**
      * Record of incremented (5000) offset
      *
@@ -45,6 +49,7 @@ class ServerIO
      * @access  private
      */
     private $_offset = NULL;
+
     /**
      * Constructor to set url configuration
      */
@@ -82,6 +87,7 @@ class ServerIO
             throw new Exception('The cURL extension was not found and is required for the Suma analysis tools.');
         }
     }
+
     /**
      * Builds full URL and returns result of sendRequest
      *
@@ -115,6 +121,7 @@ class ServerIO
 
         return $this->sendRequest($this->_urlParams);
     }
+
     /**
      * Returns value of $this->_hasMore
      *
@@ -125,6 +132,7 @@ class ServerIO
     {
         return $this->_hasMore;
     }
+
     /**
      * Calls sendRequest, appending appropriate offset to
      * $this->_urlParams
@@ -136,6 +144,7 @@ class ServerIO
     {
         return $this->sendRequest($this->_urlParams . '/offset/'. $this->_offset);
     }
+
     /**
      * Retrieve a dictionary of available initiatives
      *
@@ -146,6 +155,7 @@ class ServerIO
     {
         return $this->sendRequest($this->_urlParams . 'initiatives');
     }
+
     /**
      * Sends request to Suma server using base url
      * and parameters defined elsewhere in this class.
@@ -165,9 +175,17 @@ class ServerIO
         {
             $request  = $this->_client->get($url);
             $response = $request->send();
-        } catch (Exception $e){
-            $message = $e->getResponse()->getBody();
-            $code = (string)$e->getResponse()->getStatusCode();
+        }
+        catch (Exception $e)
+        {
+            $code = $e->getResponse()->getStatusCode();
+
+            // Set reason phrase from Guzzle exception
+            $message = $e->getResponse()->getReasonPhrase() . ". ";
+
+            // If available, append error body content
+            $message .= $e->getResponse()->getBody();
+
             throw new Exception($message, $code);
         }
 
@@ -175,28 +193,40 @@ class ServerIO
         {
             $results = json_decode($response->getBody(), true);
 
-            if ($results)
+            // Throw error if results empty (no initiatives)
+            if (empty($results))
             {
-                if (isset($results['status']))
-                {
-                    if (strtolower($results['status']['has more']) == 'true')
-                    {
-                        $this->_hasMore = true;
-                        $this->_offset = $results['status']['offset'];
-                    }
-                    else
-                    {
-                        $this->_hasMore = false;
-                    }
-                }
+                throw new Exception("No initiatives found. Please create an initiative in the Suma admin tools.", 500);
+            }
 
-                return $results;
-            }
-            else
+            // Throw error if no data
+            if (isset($results['initiative']))
             {
-                throw new Exception("JSON Parse Error in ServerIO.php.");
+                if (!isset($results['initiative']['sessions']) && !isset($results['initiative']['counts']))
+                {
+                    throw new Exception("No data found for that combination of filters. Please try a broader search.", 500);
+                }
             }
-        } catch (Exception $e) {
+
+            // Set offset if more results exist
+            if (isset($results['status']))
+            {
+                if (strtolower($results['status']['has more']) == 'true')
+                {
+                    $this->_hasMore = true;
+                    $this->_offset = $results['status']['offset'];
+                }
+                else
+                {
+                    $this->_hasMore = false;
+                }
+            }
+
+            return $results;
+
+        }
+        catch (Exception $e)
+        {
             throw new Exception($e->getMessage(), $e->getCode());
         }
     }
