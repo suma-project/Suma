@@ -1,8 +1,7 @@
 site_name: Suma
 site_url: http://cazzerson.github.io/Suma
 theme: readthedocs
-theme_dir: custom_theme
-repo_url: https://github.com/cazzerson/Suma/releases
+repo_url: https://github.com/cazzerson/Suma
 include_next_prev: false
 pages:
 - [index.md, Overview]
