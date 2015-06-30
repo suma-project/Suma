@@ -141,6 +141,26 @@
             "title": "Overview of administrative tools"
         }, 
         {
+            "location": "/troubleshooting/", 
+            "text": "Troubleshooting\n\n\nConfiguration Errors\n\n\nSuma Server Configuration\n\n\n\n\n\n\nIssues with the \nSUMA_SERVER_PATH\n will be reported as a \nPossible error in SUMA_SERVER_PATH\n.\n\n\n\n\n\n\nAn \nInvalid controller specified (error)\n may indicate an issue with the \nSUMA_CONTROLLER_PATH\n and will also be reported as a \nPossible error in SUMA_CONTROLLER_PATH\n.  \n\n\n\n\n\n\nIssues \nSUMA_BASE_URL\n will be reported as a \n404 Not Found\n error.\n\n\n\n\n\n\nGitHub Issues\n\n\nClosed Suma issues\n on Github may also be a good source of information for troubleshooting your installation.", 
+            "title": "Troubleshooting"
+        }, 
+        {
+            "location": "/troubleshooting/#troubleshooting", 
+            "text": "", 
+            "title": "Troubleshooting"
+        }, 
+        {
+            "location": "/troubleshooting/#configuration-errors", 
+            "text": "Suma Server Configuration    Issues with the  SUMA_SERVER_PATH  will be reported as a  Possible error in SUMA_SERVER_PATH .    An  Invalid controller specified (error)  may indicate an issue with the  SUMA_CONTROLLER_PATH  and will also be reported as a  Possible error in SUMA_CONTROLLER_PATH .      Issues  SUMA_BASE_URL  will be reported as a  404 Not Found  error.", 
+            "title": "Configuration Errors"
+        }, 
+        {
+            "location": "/troubleshooting/#github-issues", 
+            "text": "Closed Suma issues  on Github may also be a good source of information for troubleshooting your installation.", 
+            "title": "GitHub Issues"
+        }, 
+        {
             "location": "/logs/", 
             "text": "Suma Logs\n\n\nOverview\n\n\n\n\nThe log directory path and log file name must be set in service/config/config.ini\n\n\nThe log file must also be created with write permissions for the web server user.\n\n\n\n\n\n\n\n\nLog actions\n\n\n\n\nInfo\n\n\nJSON INPUT - Input string sent to server from client.\n\n\nSESSION INSERT - New database session entry.\n\n\nCOUNT INSERT - New database count entry.\n\n\nC_A_JOIN INSERT - New database count_activity_join entry.\n\n\nSESSION COMMITTED - Session committed to database.\n\n\nACTIVITY ENABLED - Activity flagged as enabled.\n\n\nACTIVITY DISABLED - Activity flagged as disabled.\n\n\nACTIVITY CREATED - New database activity entry.\n\n\nACTIVITY GROUP CREATED - New database activity_group entry.\n\n\nACTIVITY GROUP UPDATED - Activity Group updated.\n\n\nINITIATIVE ENABLED - Initiative flagged as enabled.\n\n\nINITIATIVE DISABLED - Initiative flagged as disabled.\n\n\nINITIATIVE UPDATED - Initiative updated.\n\n\nINITIATIVE ROOT SET - Initiative assigned a location root.\n\n\nINITIATIVE CREATED - New database initiative entry.\n\n\nLOCATION CREATED - New database location entry.\n\n\nLOCATION DISABLED - Location flagged as disabled.\n\n\nLOCATION ENABLED - Location flagged as enabled.\n\n\n\n\n\n\nError\n\n\nMALFORMED JSON - Input string that does not follow the rules and conventions of JSON.\n\n\nSKIPPING INVALID/MALFORMED SESSION - Session input is improperly formed.\n\n\nNULL JSON ELEMENT(S) - Session missing critical component(s).\n\n\nINVALID INITIATIVE ID - Id is invalid because it is not numeric\n\n\nNONEXISTENT INITIATIVE - No initiative found with requested id.\n\n\nNONEXISTENT ACTIVITY - No activity found with requested id.\n\n\nNONEXISTENT LOCATION - No location found with requested id.\n\n\nNONEXISTENT SESSION - No session found with requested id.\n\n\nNONEXISTENT ACTIVITY GROUP - No activity group found with requested id.\n\n\n\n\n\n\nWarning\n\n\nSKIPPING SESSION WITH INVALID INITIATIVE ID - Sessions references a nonexistent initiative.\n\n\nSKIPPING DUPLICATE SESSION - An identical session already exists in the database and is considered to have already been submitted.\n\n\nSESSION ROLLBACK - Internal database transaction rollback which spans a single session.\n\n\nAssuming unix timestamp is in milliseconds - Self explanatory.\n\n\nDUPLICATE ACTIVITY CREATION DENIED - Activity name conflict, must be unique.\n\n\nDUPLICATE INITIATIVE CREATION DENIED - Initiative name conflict, must be unique.\n\n\nFAILED ADMIN LOGIN - Invalid login credentials entered for admin page.\n\n\nCANNOT SET INITIATIVE ROOT, LOCATION DOES NOT EXIST - Necessary location not found.\n\n\n\n\n\n\nDebug\n\n\nTRANSACTION START - Start of server processing client input.\n\n\nTRANSACTION END - End of server processing client input.", 
             "title": "Logs"
