@@ -82,27 +82,23 @@ if (isset($config['nightly']))
 
             if ($outputHtml)
             {
-                $returnData = $data->formatTable($table, "html");
-
                 print "<h2>" . $key . "</h2>\n";
                 # print link to timeseries report only if analysisBaseUrl is set and there is data
-                if (isset($config['analysisBaseUrl']) && strpos($returnData, 'No data') === false)
+                if (isset($config['analysisBaseUrl']))
                 {
                     print "<a href='" . $config['analysisBaseUrl'] . $nightlyData[$key]['url'] . "'>Time Series Report</a>\n";
                 }
-                print($returnData);
+                print($data->formatTable($table, "html"));
             }
             else
             {
-                $returnData = $data->formatTable($table);
-
                 print "\n" . $key . "\n";
                 # print link to timeseries report only if analysisBaseUrl is set there is data
-                if (isset($config['analysisBaseUrl']) && strpos($returnData, 'No data') === false)
+                if (isset($config['analysisBaseUrl']))
                 {
                     print $config['analysisBaseUrl'] . $nightlyData[$key]['url'] . "\n\n";
                 }
-                print($returnData);
+                print($data->formatTable($table));
             }
         }
     }
