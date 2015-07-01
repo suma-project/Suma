@@ -199,15 +199,6 @@ class ServerIO
                 throw new Exception("No initiatives found. Please create an initiative in the Suma admin tools.", 500);
             }
 
-            // Throw error if no data
-            if (isset($results['initiative']))
-            {
-                if (!isset($results['initiative']['sessions']) && !isset($results['initiative']['counts']))
-                {
-                    throw new Exception("No data found for that combination of filters. Please try a broader search.", 500);
-                }
-            }
-
             // Set offset if more results exist
             if (isset($results['status']))
             {
