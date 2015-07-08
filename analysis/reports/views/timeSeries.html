@@ -21,7 +21,7 @@
       <div class="row">
         <div data-suma-buttons-radio class="btn-group col-xs-4 pull-right" data-model="report.data.timeSeriesData" data-options="report.data.timeSeriesOptions"></div>
         <div class="pull-right">
-          <a class="btn btn-default btn-sm" data-ng-click="report.scrollTo('export-data')">Export Raw Data</a>
+          <a class="btn btn-default btn-sm" data-ng-click="report.scrollTo('export-data')">Export Data</a>
           <a class="btn btn-default btn-sm" data-ng-click="report.scrollTo('summary-data')">Summary Data</a>
           <span data-suma-chart-download data-chart="#chart-1" title="suma_timeseries_chart.png" data-filter=".sub-graph"></span>
         </div>
@@ -327,7 +327,7 @@
         <div data-suma-bar-chart id="chart-2" data-data="report.data.barChartData" data-acts-locs="report.data.actsLocsData"></div>
       </div>
       <div id="export-data" class="col-xs-12">
-        <h3>Export Raw Data</h3>
+        <h3>Export Data</h3>
         <div data-suma-csv data-data="report.data" data-params="report.summaryParams"></div>
       </div>
     </div>
