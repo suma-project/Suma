@@ -509,7 +509,7 @@ class Data
      */
     private function rejectBasedOnActs($count)
     {
-        // Reject if no count acts in exclude acts
+        // Reject if count acts in exclude acts
         if (count(array_intersect($count['activities'], $this->excludeActs)) > 0) {
             return true;
         }
