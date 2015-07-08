@@ -54,5 +54,7 @@ The "Avg of Sum" value is calculated by adding all of the daily totals and divid
 
 The "Avg of Avg" value is calculated by adding all of the daily averages and dividing by the number of days in the time period. The daily average is the sum of each session in a day divided by the number of sessions in that day.
 
+"Avg of Avg" is useful when examining initiatvies that are more census oriented, like headcounts. "Avg of Sum" is useful for exploring initiatives that have more constant data collection, like reference desk transactions.
+
 #### How do I export raw data from Suma?
 Please see the [Suma Queryserver Documentation](queryserver.md).
