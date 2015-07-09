@@ -68939,7 +68939,7 @@ angular.module('sumaAnalysis')
           });
 
           return dict;
-        }
+        };
 
         $scope.buildCSVString = function (values, itemsSrc) {
           return d3.csv.format(_.map(values, function (val){
@@ -68950,7 +68950,7 @@ angular.module('sumaAnalysis')
             items['Session End']   = val.sessionEnd;
             items['Count ID']      = val.countId;
             items['Session ID']    = val.sessionId;
-            items['Location']      = val.location;
+            items.Location         = val.location;
 
             _.each(val.activities, function (act, i) {
                 var title = $scope.actDict[act];
