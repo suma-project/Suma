@@ -20,7 +20,7 @@ describe('Service: SumaConfig', function () {
   }));
 
   it('SumaConfig.getConfig should return a config object', function () {
-    var routes = ['/timeseries', '/calendar', '/hourly', '/sessions', '/default'];
+    var routes = ['/timeseries', '/calendar', '/hourly', '/sessions', '/raw', '/default'];
 
     _.each(routes, function (route) {
       expect(SumaConfig.getConfig(route)).to.deep.equal(configMock[route]);
