@@ -35,4 +35,5 @@ angular.module('dataMock', [])
 .value('mockUrl3', 'lib/php/sessionsResults.php?classifyCounts=session&days=mo,tu,we,th,fr,sa,su&edate=&etime=&id=1&locations=all&sdate=&stime=&wholeSession=yes')
 .value('mockUrl4', 'lib/php/dataResults.php?classifyCounts=count&days=mo,tu,we,th,fr,sa,su&edate=&etime=&id=1&sdate=&stime=&wholeSession=yes')
 .value('mockUrl5', 'lib/php/sessionsResults.php?edate=&etime=&id=1&sdate=&stime=')
-.value('mockUrl6', 'lib/php/dataResults.php?edate=&etime=&excludeActGrps=&excludeActs=&excludeLocs=&id=1&requireActGrps=&requireActs=&sdate=&stime=');
+.value('mockUrl6', 'lib/php/dataResults.php?edate=&etime=&excludeActGrps=&excludeActs=&excludeLocs=&id=1&requireActGrps=&requireActs=&sdate=&stime=')
+.value('mockUrl7', 'lib/php/rawDataResults.php?edate=&etime=&id=1&sdate=&stime=');

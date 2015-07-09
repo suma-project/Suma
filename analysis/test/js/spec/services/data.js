@@ -23,6 +23,7 @@ describe('Service: Data', function () {
     MockUrl4,
     MockUrl5,
     MockUrl6,
+    MockUrl7,
     Processtimeseriesdata,
     Processcalendardata,
     Processhourlydata,
@@ -52,7 +53,8 @@ describe('Service: Data', function () {
     mockUrl3,
     mockUrl4,
     mockUrl5,
-    mockUrl6) {
+    mockUrl6,
+    mockUrl7) {
 
     Data = _data_;
     Processtimeseriesdata = _processTimeSeriesData_;
@@ -71,6 +73,7 @@ describe('Service: Data', function () {
     MockUrl4 = mockUrl4;
     MockUrl5 = mockUrl5;
     MockUrl6 = mockUrl6;
+    MockUrl7 = mockUrl7;
     Timeout = $timeout;
 
     tPromise = $q.defer();
@@ -441,6 +444,110 @@ describe('Service: Data', function () {
     }, function (result) {
       expect(result).to.deep.equal({
         message: 'Data.getSessionsData Timeout',
+        code: 0
+      });
+
+      done();
+    });
+
+    Timeout.flush();
+  });
+
+  it(':getRawData should make an AJAX call', function (done) {
+    var cfg = {
+      params: Params4,
+      acts: [],
+      locs: [],
+      dataProcessor: '',
+      timeoutPromise: tPromise,
+      timeout: 180000
+    };
+
+    $httpBackend.whenGET(MockUrl7)
+      .respond([{}, {}]);
+
+    Data.getRawData(cfg).then(function (result) {
+      expect(result.length).to.equal(1);
+      done();
+    });
+
+    $httpBackend.flush();
+  });
+
+  it(':getRawData should return an error if AJAX fails', function (done) {
+    var cfg = {
+      params: Params4,
+      acts: [],
+      locs: [],
+      dataProcessor: '',
+      timeoutPromise: tPromise,
+      timeout: 180000
+    };
+
+    $httpBackend.whenGET(MockUrl7)
+      .respond(500, {message: 'Error'});
+
+    Data.getRawData(cfg).then(function (result) {
+
+    }, function (result) {
+      expect(result).to.deep.equal({
+        message: 'Error',
+        code: 500
+      });
+
+      done();
+    });
+
+    $httpBackend.flush();
+  });
+
+  it(':getRawData should return error with promiseTimeout true on aborted http request', function (done) {
+    var cfg = {
+      params: Params4,
+      acts: [],
+      locs: [],
+      dataProcessor: 'processTimeSeriesData',
+      timeoutPromise: tPromise,
+      timeout: 180000
+    };
+
+    // simulate aborted request
+    $httpBackend.whenGET(MockUrl7)
+      .respond(0, {message: 'Error'});
+
+    Data.getRawData(cfg).then(function (result) {
+
+    }, function(result) {
+      expect(result).to.deep.equal({
+        message: 'Data.getRawData Timeout',
+        code: 0,
+        promiseTimeout: true
+      });
+
+      done();
+    });
+
+    $httpBackend.flush();
+  });
+
+  it(':getRawData should return error without promiseTimeout on http timeout', function (done) {
+    var cfg = {
+      params: Params4,
+      acts: [],
+      locs: [],
+      dataProcessor: 'processTimeSeriesData',
+      timeoutPromise: tPromise,
+      timeout: 180000
+    };
+
+    $httpBackend.whenGET(MockUrl7)
+          .respond([{}, {}]);
+
+    Data.getRawData(cfg).then(function (result) {
+
+    }, function (result) {
+      expect(result).to.deep.equal({
+        message: 'Data.getRawData Timeout',
         code: 0
       });
 

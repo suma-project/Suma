@@ -65354,7 +65354,7 @@ angular.module('sumaAnalysis')
         this.httpError = function (response) {
           if (response.status === 0) {
             dfd.reject({
-              message: 'Data.getSessionsData Timeout',
+              message: 'Data.getRawData Timeout',
               code: response.status,
               promiseTimeout: true
             });
@@ -65370,7 +65370,7 @@ angular.module('sumaAnalysis')
 
         $timeout(function () {
           dfd.reject({
-            message: 'Data.getSessionsData Timeout',
+            message: 'Data.getRawData Timeout',
             code: 0
           });
           cfg.timeoutPromise.resolve();
