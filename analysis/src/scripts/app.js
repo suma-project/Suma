@@ -29,6 +29,11 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
         controller: 'ReportCtrl as report',
         reloadOnSearch: false
       })
+      .when('/raw', {
+        templateUrl: 'views/raw.html',
+        controller: 'ReportCtrl as report',
+        reloadOnSearch: false
+      })
       .when('/about', {
         templateUrl: 'views/about.html'
       })

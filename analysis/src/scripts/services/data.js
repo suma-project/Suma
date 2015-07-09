@@ -1,8 +1,61 @@
 'use strict';
 
 angular.module('sumaAnalysis')
-  .factory('data', function ($http, $q, $timeout, processTimeSeriesData, processCalendarData, processHourlyData, processSessionsData) {
+  .factory('data', function ($http, $q, $timeout, processTimeSeriesData, processCalendarData, processHourlyData, processSessionsData, processRawData) {
     return {
+      getRawData: function (cfg) {
+        var dfd,
+            options,
+            self = this,
+            url;
+
+        dfd = $q.defer();
+        url = 'lib/php/rawDataResults.php';
+
+        options = {
+          'params': {
+            'id'   : cfg.params.init.id,
+            'sdate': cfg.params.sdate || '',
+            'edate': cfg.params.edate || '',
+            'stime': cfg.params.stime || '',
+            'etime': cfg.params.etime || ''
+          },
+          timeout: cfg.timeoutPromise.promise
+        };
+
+        this.httpSuccess = function (response) {
+          processRawData.get(response.data).then(function (processedData) {
+            dfd.resolve(processedData);
+          });
+        };
+
+        this.httpError = function (response) {
+          if (response.status === 0) {
+            dfd.reject({
+              message: 'Data.getSessionsData Timeout',
+              code: response.status,
+              promiseTimeout: true
+            });
+          } else {
+            dfd.reject({
+              message: response.data.message,
+              code: response.status
+            });
+          }
+        };
+
+        $http.get(url, options).then(self.httpSuccess, self.httpError);
+
+        $timeout(function () {
+          dfd.reject({
+            message: 'Data.getSessionsData Timeout',
+            code: 0
+          });
+          cfg.timeoutPromise.resolve();
+        }, cfg.timeout);
+
+        return dfd.promise;
+      },
       getSessionsData: function (cfg) {
         var dfd,
             options,

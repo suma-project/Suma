@@ -64981,6 +64981,11 @@ angular.module('sumaAnalysis', ['ngRoute', 'ajoslin.promise-tracker'])
         controller: 'ReportCtrl as report',
         reloadOnSearch: false
       })
+      .when('/raw', {
+        templateUrl: 'views/raw.html',
+        controller: 'ReportCtrl as report',
+        reloadOnSearch: false
+      })
       .when('/about', {
         templateUrl: 'views/about.html'
       })
@@ -65318,8 +65323,61 @@ angular.module('sumaAnalysis')
 'use strict';
 
 angular.module('sumaAnalysis')
-  .factory('data', ["$http", "$q", "$timeout", "processTimeSeriesData", "processCalendarData", "processHourlyData", "processSessionsData", function ($http, $q, $timeout, processTimeSeriesData, processCalendarData, processHourlyData, processSessionsData) {
+  .factory('data', ["$http", "$q", "$timeout", "processTimeSeriesData", "processCalendarData", "processHourlyData", "processSessionsData", "processRawData", function ($http, $q, $timeout, processTimeSeriesData, processCalendarData, processHourlyData, processSessionsData, processRawData) {
     return {
+      getRawData: function (cfg) {
+        var dfd,
+            options,
+            self = this,
+            url;
+
+        dfd = $q.defer();
+        url = 'lib/php/rawDataResults.php';
+
+        options = {
+          'params': {
+            'id'   : cfg.params.init.id,
+            'sdate': cfg.params.sdate || '',
+            'edate': cfg.params.edate || '',
+            'stime': cfg.params.stime || '',
+            'etime': cfg.params.etime || ''
+          },
+          timeout: cfg.timeoutPromise.promise
+        };
+
+        this.httpSuccess = function (response) {
+          processRawData.get(response.data).then(function (processedData) {
+            dfd.resolve(processedData);
+          });
+        };
+
+        this.httpError = function (response) {
+          if (response.status === 0) {
+            dfd.reject({
+              message: 'Data.getSessionsData Timeout',
+              code: response.status,
+              promiseTimeout: true
+            });
+          } else {
+            dfd.reject({
+              message: response.data.message,
+              code: response.status
+            });
+          }
+        };
+
+        $http.get(url, options).then(self.httpSuccess, self.httpError);
+
+        $timeout(function () {
+          dfd.reject({
+            message: 'Data.getSessionsData Timeout',
+            code: 0
+          });
+          cfg.timeoutPromise.resolve();
+        }, cfg.timeout);
+
+        return dfd.promise;
+      },
       getSessionsData: function (cfg) {
         var dfd,
             options,
@@ -66229,6 +66287,22 @@ angular.module('sumaAnalysis')
          newConfig.formFields.startHour = false;
 
          newConfig.dataSource = 'getSessionsData';
+         newConfig.dataProcessor = false;
+         newConfig.suppWatch = false;
+
+          return newConfig;
+        }
+
+        if (path === '/raw') {
+         newConfig.formFields.classifyCounts = false;
+         newConfig.formFields.days = false;
+         newConfig.formFields.wholeSession = false;
+         newConfig.formFields.zeroCounts = false;
+         newConfig.formFields.activities = true;
+         newConfig.formFields.locations = true;
+         newConfig.formFields.startHour = false;
+
+         newConfig.dataSource = 'getRawData';
          newConfig.dataProcessor = false;
          newConfig.suppWatch = false;
 
@@ -68817,5 +68891,122 @@ angular.module('sumaAnalysis')
         var obj = _.find(locs, {id: parseInt(loc, 10)});
         return obj ? _.unescape(obj.title) : 'None';
       }).join(', ');
+    };
+  });
+'use strict';
+
+angular.module('sumaAnalysis')
+  .factory('processRawData', ["$q", "$rootScope", function ($q, $rootScope) {
+    function sortData(response) {
+      return _.sortBy(response, 'time').reverse();
+    }
+
+    function processData(response) {
+      return d3.nest()
+          .key(function (d) {
+            return moment(d.time, 'YYYY-MM-DD hh:mm:ss').format('YYYY-MM-DD');
+          })
+          .entries(sortData(response));
+    }
+
+    return {
+      get: function (response) {
+        var dfd = $q.defer();
+
+        dfd.resolve(processData(response));
+
+        return dfd.promise;
+      }
+    };
+  }]);
+
+'use strict';
+
+angular.module('sumaAnalysis')
+  .directive('sumaCsvRaw', function () {
+    return {
+      templateUrl: 'views/directives/csv.html',
+      restrict: 'A',
+      scope: {data: '=', params: '=', acts: '='},
+      controller: ['$scope', '$location', function ($scope, $location) {
+        $scope.buildDict = function (acts) {
+          var dict = {};
+
+          _.each(acts, function (act) {
+            if (act.type === 'activity') {
+              dict[act.id] = act.altName;
+            }
+          });
+
+          return dict;
+        }
+
+        $scope.buildCSVString = function (values, itemsSrc) {
+          return d3.csv.format(_.map(values, function (val){
+            var items = _.cloneDeep(itemsSrc);
+
+            items['Count Date']    = val.time;
+            items['Session Start'] = val.sessionStart;
+            items['Session End']   = val.sessionEnd;
+            items['Count ID']      = val.countId;
+            items['Session ID']    = val.sessionId;
+            items['Location']      = val.location;
+
+            _.each(val.activities, function (act, i) {
+                var title = $scope.actDict[act];
+                items[title] = 1;
+            });
+
+            return items;
+          }));
+        };
+
+        $scope.buildMetadata = function (params) {
+          return params.init.title + '\n' +
+          params.sdate + ' to ' +  params.edate + '\n' +
+          _.capitalize(_.trim($location.path(), '/')) + ' Report' + '\n';
+        };
+
+        $scope.buildCSV = function (counts, params) {
+          var data = '',
+              base,
+              href,
+              itemsSrc,
+              space = '\n\n\n\n';
+
+          data += $scope.buildMetadata(params);
+
+          // Create base object to force activity headers
+          itemsSrc = {
+            'Count Date': null,
+            'Session Start': null,
+            'Session End': null,
+            'Count ID': null,
+            'Session ID': null,
+            'Location': null
+          };
+
+          _.each($scope.actDict, function (act) {
+            itemsSrc[act] = '';
+          });
+
+          _.each(counts, function (e) {
+            data += (e.key + '\n');
+            data += $scope.buildCSVString(e.values, itemsSrc);
+            data += space;
+          });
+
+          // Build download URL
+          base = 'data:application/csv;charset=utf-8,';
+          href = encodeURI(base + _.unescape(data));
+
+          return href;
+        };
+
+        $scope.download = function (data, params) {
+          $scope.actDict = $scope.buildDict($scope.acts);
+          $scope.href = $scope.buildCSV(data, params);
+        };
+      }]
     };
   });

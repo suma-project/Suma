@@ -1,0 +1,119 @@
+<div class="sessions">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="alert alert-info alert-block" data-ng-show="report.state.initial">
+        <h4>Welcome!</h4>
+        Please select an initiative from the select menu below. You can also limit your search by date or time.
+      </div>
+    </div>
+  </div>
+  <div class="row" data-ng-hide="report.initTracker.active()">
+    <div class="col-xs-3">
+      <h3>Filter Sessions</h3>
+    </div>
+  </div>
+
+  <div class="row" data-ng-show="report.initTracker.active()">
+    <div class="col-xs-12 initial-loading-wrap">
+      <div class="loading"><img src="images/spinner.gif" alt="Spinner"></div>
+    </div>
+  </div>
+
+  <div class="row filter-row" data-ng-hide="report.initTracker.active()">
+    <form data-ng-submit="report.submit()">
+      <fieldset data-ng-disabled="report.state.loading">
+        <div class="col-xs-3">
+          <div class="form-group">
+            <label class="suma-popover" data-title="Select Initiative" data-content="Select an initiative to reveal additional filters." data-suma-popover>Select an Initiative</label>
+            <select name="initiative" data-ng-model="report.params.init" data-ng-options="init.title for init in report.inits" class="form-control">
+              <option value="">Select an Initiative</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="col-xs-3">
+          <div class="form-group">
+            <label class="suma-popover" data-title="Choose Date Range" data-content="Select a start date for your analysis. Defaults to 4 months from current day. Clear fields to retrieve the complete data set." data-suma-popover>Start Date</label>
+            <div data-suma-datepicker data-model="report.params.sdate"></div>
+            <span class="help-block">YYYY-MM-DD</span>
+          </div>
+
+          <div class="form-group">
+            <label class="suma-popover" data-title="Choose Date Range" data-content="Select an end date for your analysis. Clear fields to retrieve complete data set." data-suma-popover>End Date</label>
+            <div data-suma-datepicker data-model="report.params.edate"></div>
+            <span class="help-block">YYYY-MM-DD</span>
+          </div>
+        </div>
+
+        <div class="col-xs-3">
+          <div class="form-group">
+            <label class="suma-popover" data-title="Select Subset of Day" data-content="Include only data gathered during a certain time of day in your analysis, e.g. 20:00-22:00." data-suma-popover>Start Time</label>
+            <div data-suma-timepicker data-model="report.params.stime" data-placeholder="00:00"></div>
+            <span class="help-block">24-hour format, e.g. 08:00</span>
+          </div>
+
+          <div class="form-group">
+            <label class="suma-popover" data-title="Select Subset of Day" data-content="Include only data gathered during a certain time of day in your analysis, e.g. 20:00-22:00." data-suma-popover>End Time</label>
+            <div data-suma-timepicker data-model="report.params.etime" data-placeholder="23:59"></div>
+            <span class="help-block">24-hour format, e.g. 08:00</span>
+          </div>
+          <div data-ng-show="report.params.init">
+            <input type="submit" id="submit" class="btn btn-success" value="{{report.state.loading ? 'Loading...' : 'Submit'}}" />
+          </div>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+
+  <div class="row" >
+    <div class="col-xs-12" data-ng-show="report.state.loading">
+      <div class="loading"><img src="images/spinner.gif" alt="Spinner"></div>
+    </div>
+
+    <div class="col-xs-12" data-ng-show="report.state.error">
+      <div class="alert alert-danger alert-block">
+        <h4>Notice!</h4>
+        <p>There was a problem generating the report. Please try again or contact your system administrator.</p>
+        <p>Error Code: {{report.errorCode}}</p>
+        <p>Error Message: {{report.errorMessage}}</p>
+      </div>
+    </div>
+
+    <div class="col-xs-12" data-ng-show="report.state.success">
+      <span data-suma-csv-raw data-data="report.data" data-params="report.summaryParams" data-acts="report.activities"></span>
+    </div>
+
+    <div class="col-xs-12" data-ng-show="report.state.success">
+      <h3>Counts</h3>
+      <span data-ng-repeat="day in report.data">
+        <h4>{{day.key}}</h4>
+        <table class="table table-hover table-condensed">
+          <thead>
+            <tr>
+              <th>Count Date</th>
+              <th>Session Start</th>
+              <th>Session End</th>
+              <th>Count ID</th>
+              <th>Session ID</th>
+              <th>Count</th>
+              <th>Location</th>
+              <th>Activities</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-ng-repeat="data in day.values">
+              <td>{{data.time}}</td>
+              <td>{{data.sessionStart}}</td>
+              <td>{{data.sessionEnd}}</td>
+              <td>{{data.countId}}</td>
+              <td>{{data.sessionId}}</td>
+              <td>{{data.count}}</td>
+              <td>{{data.location}}</td>
+              <td>{{data.activities | activityTitle:report.activities:'activity'}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </span>
+    </div>
+  </div>
+</div>

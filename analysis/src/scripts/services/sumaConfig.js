@@ -118,6 +118,22 @@ angular.module('sumaAnalysis')
           return newConfig;
         }
 
+        if (path === '/raw') {
+         newConfig.formFields.classifyCounts = false;
+         newConfig.formFields.days = false;
+         newConfig.formFields.wholeSession = false;
+         newConfig.formFields.zeroCounts = false;
+         newConfig.formFields.activities = true;
+         newConfig.formFields.locations = true;
+         newConfig.formFields.startHour = false;
+
+         newConfig.dataSource = 'getRawData';
+         newConfig.dataProcessor = false;
+         newConfig.suppWatch = false;
+
+          return newConfig;
+        }
+
         return newConfig;
       },
       setParams: function (cfg) {
