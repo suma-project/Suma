@@ -176,7 +176,8 @@ class ServerIO
             $request  = $this->_client->get($url);
             $response = $request->send();
         }
-        catch (Exception $e)
+        // Guzzle Exceptions
+        catch (Guzzle\Http\Exception\BadResponseException $e)
         {
             $code = $e->getResponse()->getStatusCode();
 
@@ -185,6 +186,14 @@ class ServerIO
 
             // If available, append error body content
             $message .= $e->getResponse()->getBody();
+
+            throw new Exception($message, $code);
+        }
+        // Generic Exceptions
+        catch (Exception $e)
+        {
+            $code = $e->getCode();
+            $message = $e->getMessage();
 
             throw new Exception($message, $code);
         }
