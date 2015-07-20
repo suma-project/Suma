@@ -179,13 +179,20 @@ class ServerIO
         // Guzzle Exceptions
         catch (Guzzle\Http\Exception\BadResponseException $e)
         {
-            $code = $e->getResponse()->getStatusCode();
+            $badResponse = $e->getResponse();
 
-            // Set reason phrase from Guzzle exception
-            $message = $e->getResponse()->getReasonPhrase() . ". ";
+            if (is_a($badResponse, 'Guzzle\Http\Message\Response')) {
+                $code = $badResponse->getStatusCode();
 
-            // If available, append error body content
-            $message .= $e->getResponse()->getBody();
+                // Set reason phrase from Guzzle exception
+                $message = $badResponse->getReasonPhrase() . ". ";
+
+                // If available, append error body content
+                $message .= $badResponse->getBody();
+            } else {
+                $code = $e->getCode();
+                $message = $e->getMessage();
+            }
 
             throw new Exception($message, $code);
         }
