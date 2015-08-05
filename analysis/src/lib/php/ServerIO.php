@@ -176,15 +176,31 @@ class ServerIO
             $request  = $this->_client->get($url);
             $response = $request->send();
         }
+        // Guzzle Exceptions
+        catch (Guzzle\Http\Exception\BadResponseException $e)
+        {
+            $badResponse = $e->getResponse();
+
+            if (is_a($badResponse, 'Guzzle\Http\Message\Response')) {
+                $code = $badResponse->getStatusCode();
+
+                // Set reason phrase from Guzzle exception
+                $message = $badResponse->getReasonPhrase() . ". ";
+
+                // If available, append error body content
+                $message .= $badResponse->getBody();
+            } else {
+                $code = $e->getCode();
+                $message = $e->getMessage();
+            }
+
+            throw new Exception($message, $code);
+        }
+        // Generic Exceptions
         catch (Exception $e)
         {
-            $code = $e->getResponse()->getStatusCode();
-
-            // Set reason phrase from Guzzle exception
-            $message = $e->getResponse()->getReasonPhrase() . ". ";
-
-            // If available, append error body content
-            $message .= $e->getResponse()->getBody();
+            $code = $e->getCode();
+            $message = $e->getMessage();
 
             throw new Exception($message, $code);
         }
