@@ -488,10 +488,6 @@ function isSessionWiped(callback) {
 
 function startCollecting(){
     if (!currentlyCollecting) {
-        if (!readyToCollect(false)) {
-            return false;
-        }
-
         if (sessionInit === null) {
             alert("There is an error; please reload this page");
         }
