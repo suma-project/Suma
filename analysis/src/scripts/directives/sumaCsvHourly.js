@@ -43,8 +43,11 @@ angular.module('sumaAnalysis')
     return {
       templateUrl: 'views/directives/csv.html',
       restrict: 'A',
-      scope: {data: '=', params: '='},
-      controller: ['$scope', '$location', function ($scope, $location) {
+      scope: {data: '=', params: '=', acts: '=', locs: '='},
+      controller: ['$scope', '$location', '$filter', function ($scope, $location, $filter) {
+        $scope.locationTitleFilter = $filter('locationTitle');
+        $scope.activityTitleFilter = $filter('activityTitle');
+
         $scope.buildCSVString = function (counts, dict) {
           return d3.csv.format(_.map(counts, function (obj) {
             var count;
@@ -64,9 +67,23 @@ angular.module('sumaAnalysis')
         };
 
         $scope.buildMetadata = function (params) {
-          return params.init.title + '\n' +
-          params.sdate + ' to ' +  params.edate + '\n' +
-          _.capitalize(_.trim($location.path(), '/')) + ' Report' + '\n';
+          var string = '';
+
+          string += _.capitalize(_.trim($location.path(), '/')) + ' Report' + '\n';
+          string += 'Initiative: ' +  params.init.title + '\n';
+          string += 'Classify By: ' + params.classifyCounts.title + '\n';
+          string += 'Whole Session: ' + params.wholeSession.title + '\n';
+          string += 'Dates: ' + params.sdate + ' - ' +  params.edate + '\n';
+          string += 'No Counts Before: ' + (params.stime || '00:00') + '\n';
+          string += 'No Counts After: ' + (params.etime || '23:59') + '\n';
+          string += 'Days: ' + params.days.join() +  '\n';
+          string += 'EL: ' + $scope.locationTitleFilter(params.excludeLocs, $scope.locs) + '\n';
+          string += 'EA: ' + $scope.activityTitleFilter(params.excludeActs, $scope.acts, 'activity') + '\n';
+          string += 'RA: ' + $scope.activityTitleFilter(params.requireActs, $scope.acts, 'activity') + '\n';
+          string += 'EAG: ' + $scope.activityTitleFilter(params.excludeActGrps, $scope.acts, 'activityGroup') + '\n';
+          string += 'RAG: ' + $scope.activityTitleFilter(params.requireActGrps, $scope.acts, 'activityGroup') + '\n';
+
+          return string;
         };
 
         $scope.buildCSV = function (counts, dict, params) {

@@ -40,9 +40,15 @@ angular.module('sumaAnalysis')
         };
 
         $scope.buildMetadata = function (params) {
-          return params.init.title + '\n' +
-          params.sdate + ' to ' +  params.edate + '\n' +
-          _.capitalize(_.trim($location.path(), '/')) + ' Report' + '\n';
+          var string = '';
+
+          string += _.capitalize(_.trim($location.path(), '/')) + ' Report' + '\n';
+          string += 'Initiative: ' +  params.init.title + '\n';
+          string += 'Dates: ' + params.sdate + ' - ' +  params.edate + '\n';
+          string += 'No Counts Before: ' + (params.stime || '00:00') + '\n';
+          string += 'No Counts After: ' + (params.etime || '23:59') + '\n';
+
+          return string;
         };
 
         $scope.buildCSV = function (counts, params) {

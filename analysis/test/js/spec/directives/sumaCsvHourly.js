@@ -25,6 +25,16 @@ describe('Directive: sumaCsvHourly', function () {
     scope.params.init = {title: 'Test'};
     scope.params.sdate = '2014-01-01';
     scope.params.edate = '2014-01-31';
+    scope.params.classifyCounts = {title: 'Test'};
+    scope.params.wholeSession = {title: 'Yes'};
+    scope.params.stime = '';
+    scope.params.etime = '';
+    scope.params.days = ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su'];
+    scope.params.excludeLocs = [''];
+    scope.params.excludeActs = [''];
+    scope.params.requireActs = [''];
+    scope.params.excludeActGrps = [''];
+    scope.params.requireActGrps = [''];
 
     element = $compile(element)(scope);
     scope.$digest();
