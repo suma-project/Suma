@@ -1075,6 +1075,10 @@ class Data
         // Evaluate counts for inclusion
         foreach ($response['initiative']['sessions'] as $sess)
         {
+            $anyCountsOverlapQuery = false;
+            $storedCounts = array();
+            $overlapParams = array('sdate' => $params['sdate'], 'edate' => $params['edate'], 'stime' => $params['stime'], 'etime' => $params['etime'], 'wholeSession' => 'no', 'days' => $params['days']);
+
             foreach ($sess['locations'] as $loc)
             {
                 // Test if location is in locations array
@@ -1082,15 +1086,34 @@ class Data
                 {
                     foreach ($loc['counts'] as $count)
                     {
-                        // Get date based on count or session
+                        // Set date based on count or session
                         $day = $this->setDay($count, $params, $sess);
                         $weekday = date('l', strtotime($day));
 
+                        // Look for count in session that overlaps with query params
+                        if (!$anyCountsOverlapQuery)
+                        {
+                            if ($this->includeCount($count, $day, $overlapParams, $weekday))
+                            {
+                                $anyCountsOverlapQuery = true;
+                            }
+                        }
+
+                        // Evaluate count for inclusion
                         if ($this->includeCount($count, $day, $params, $weekday))
                         {
-                            $this->addCount($count, $day, $loc['id'], $sess['id'], $weekday);
+                            $storedCounts[] = array('count' => $count, 'day' => $day, 'weekday' => $weekday, 'locId' => $loc['id'], 'sessId' => $sess['id'], 'params' => $params);
                         }
                     }
+                }
+            }
+
+            // Handle stored counts
+            if ($anyCountsOverlapQuery)
+            {
+                foreach ($storedCounts as $count)
+                {
+                    $this->addCount($count['count'], $count['day'], $count['locId'], $count['sessId'], $count['weekday']);
                 }
             }
         }
