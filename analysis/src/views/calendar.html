@@ -43,8 +43,12 @@
   </div>
 
   <div class="row" data-ng-hide="report.initTracker.active()">
-    <div class="col-xs-9">
+    <div class="col-xs-6">
       <h3>Modify Chart</h3>
+    </div>
+
+    <div class="col-xs-3">
+      <h3>Set Count Times</h3>
     </div>
 
     <div class="col-xs-3" data-ng-show="report.params.init && !report.processMetadata">
@@ -68,20 +72,6 @@
           </div>
 
           <div class="form-group">
-            <label class="suma-popover" data-title="Classify Counts By" data-content='Choose the date to use for grouping counts by date. "Count Date" shows the actual date of the count, while "Session Start" and "Session End" use the respective date on the collection session containing each count.' data-suma-popover>Classify Counts By</label>
-            <select name="classifyCounts" id="classifyCounts" class="form-control" data-ng-model="report.params.classifyCounts" data-ng-options="opt.title for opt in report.params.countOptions">
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label class="suma-popover" data-title="Always Include Whole Session" data-content="Select yes if you would like to include counts inside of sessions that may fall outside of your other filters." data-suma-popover>Always Include Whole Session</label>
-            <select name="wholeSession" id="wholeSession" class="form-control" data-ng-model="report.params.wholeSession" data-ng-options="opt.title for opt in report.params.sessionOptions">
-            </select>
-          </div>
-        </div>
-
-        <div class="col-xs-3">
-          <div class="form-group">
             <label class="suma-popover" data-title="Choose Date Range" data-content="Select a start date for your analysis. Defaults to 4 months from current day. Clear fields to retrieve the complete data set." data-suma-popover>Start Date</label>
             <div data-suma-datepicker data-model="report.params.sdate"></div>
             <span class="help-block">YYYY-MM-DD</span>
@@ -96,6 +86,12 @@
 
         <div class="col-xs-3">
           <div class="form-group">
+            <label class="suma-popover" data-title="Always Include Whole Session" data-content="Select yes if you would like to include all counts from sessions that extend beyond your other date and time filters. At least one count in the session must overlap with your other date and time filters for the session to be included." data-suma-popover>Always Include Whole Session</label>
+            <select name="wholeSession" id="wholeSession" class="form-control" data-ng-model="report.params.wholeSession" data-ng-options="opt.title for opt in report.params.sessionOptions">
+            </select>
+          </div>
+
+          <div class="form-group">
             <label class="suma-popover" data-title="Select Subset of Day" data-content="Include only data gathered during a certain time of day in your analysis, e.g. 20:00-22:00." data-suma-popover>Start Time</label>
             <div data-suma-timepicker data-model="report.params.stime" data-placeholder="00:00"></div>
             <span class="help-block">24-hour format, e.g. 08:00</span>
@@ -106,6 +102,16 @@
             <div data-suma-timepicker data-model="report.params.etime" data-placeholder="23:59"></div>
             <span class="help-block">24-hour format, e.g. 08:00</span>
           </div>
+        </div>
+
+        <div class="col-xs-3">
+          <div class="form-group">
+            <label class="suma-popover" data-title="Classify Counts By" data-content='Warning: This filter changes the way counts are represented in the report and may create unexpected results. Choose the date to use for grouping counts by date. Choose the date to use for grouping counts by date. "Count Date" shows the actual date of the count, while "Session Start" and "Session End" use the respective date on the collection session containing each count.' data-suma-popover>Classify Counts By</label>
+            <select name="classifyCounts" id="classifyCounts" class="form-control" data-ng-model="report.params.classifyCounts" data-ng-options="opt.title for opt in report.params.countOptions">
+            </select>
+          </div>
+
+          <div data-suma-active-classify-counts data-classify-counts="report.params.classifyCounts"></div>
         </div>
 
         <div class="col-xs-3 supp-wrapper" data-ng-show="report.processMetadata">

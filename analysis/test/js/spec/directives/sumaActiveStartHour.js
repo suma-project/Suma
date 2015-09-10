@@ -29,7 +29,7 @@ describe('Directive: sumaActiveStartHour', function () {
     expect(linkScope.display).to.equal(false);
   });
 
-  it(':sumaActiveFilters should set scope.display to true if startHour is not 0000', function () {
+  it(':sumaActiveStartHour should set scope.display to true if startHour is not 0000', function () {
     scope.$apply(function() {
       scope.startHour = {id: '0100'};
     });
