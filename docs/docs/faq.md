@@ -15,19 +15,19 @@ Each count is associated with a `session`, which is the data collection period t
 In the analysis tools, data is first returned from the queryserver grouped by sessions. If any part of a session intersects with the selected date or time filters, it is included in the queryserver results. The analysis tools filters are then applied to these results. The "Classify Counts By" and "Always Include Whole Session" filters play an important role in determining if an individual count is displayed in the analysis tools.
 
 #### What is the "Classify Counts By" filter?
-**This filter determines which time to use when filtering counts.** Three times are available: the start time of the session, the end time of the session, and the timestamp of the count. The assigned time will be used in evaluting individual counts for inclusion in the analysis results.
+**This filter determines which time to use when filtering counts, and will change the way individual counts are represented in the report and may create unexpected results. Both count times and dates may be affected.** Three times are available: the start time of the session, the end time of the session, and the timestamp of the count. The assigned time will be used in evaluting individual counts for inclusion in the analysis results. **In general, this filter should be set to the count timestamp.** Session end time should only be used for midnight (crossing day boundaries) analyses and session start is included for completeness.
 
 #### What is the "Always Include Whole Session" filter?
-This is particularly useful when used in conjunction with the "classify counts by" filter described above. In some instances, for example when analyzing overnight counts or initiatives that may have some slight variance in start time, it can be useful to force the analysis tools to include all counts in the sessions that are returned. Another example is the analysis of head counts, where the start and end time may fall outside of a given window (say, 10:00-11:00 for a 10:00am head count), but you want any session that overlaps with the date or time range to be included in its entirety. **This filter will ignore date and time filters if a session contains counts outside of the selected ranges.**
+This filter determines whether or not to include all counts from sessions that extend beyond the selected date and time filters. At least one count in a session must overlap with the selected date and time filters for the session to be included in the displayed results. **Once a session is included in a result set, this filter will ignore date and time filters if a session contains counts outside of the selected ranges.** In some instances, for example when analyzing overnight counts, initiatives that may have some slight variance in start time, or sampling based initiatives like headcounts, it can be useful to force the analysis tools to include all counts in the sessions that are returned. Another example is the analysis of head counts, where the start and end time may fall outside of a given window (say, 10:00-11:00 for a 10:00am head count), but you want any session that overlaps with the date or time range to be included in its entirety. 
 
 #### What is the difference between "null" and "zero" counts?
 Suma distinguishes between `null` and `zero`. This allows observations of `zero` to be made, for example, when a particular space is empty. When a location is selected in the Suma client, a count of 0 is initially registered to say that "the space has been observed, and no one was there." This allows us to incorporate empty spaces into calculations about average space utilization.
 
 #### How does the "Use Zero Counts for Locations" filter work?
-It is possible to observe `zero` when using Suma, but these observations may not be desirable to include in the calculation of averages for locations. This filter will control if zero counts are included in the denominator when calculating averages.
+It is possible to observe `zero` when using Suma, but these observations may not be desirable to include in the calculation of averages for locations. This filter will control if zero counts are included in the denominator when calculating averages and percentages for **locations only**.
 
 #### How does the "Start 24-Hour Day" filter work?
-This filter allows for the selection of an arbitrary start time for a 24-Hour period. Count dates will be adjusted backwards one day if their time is earlier than this value. An extra day will automatically be included in the result set to complete the last day. 
+This filter allows for the selection of an arbitrary start time for a 24-Hour period. Count dates will be adjusted backwards one day if their time is earlier than this value. An extra day will automatically be included in the result set to complete the last day. **This filter changes the way individual counts are represented in the report and may create unexpected results. Only count dates will be modified.**
 
 #### How do the activity and location filters work?
 Each count has a single location and may have several activities associated with it. The analysis tools include a variety of filtering options to select subsets of counts based on activity and location combinations. The location filter supports the inclusion or exclusion of children locations, and will respond appropriately to user input.
@@ -44,6 +44,13 @@ Some initiatives may regularly have collection sessions that intersect with midn
 3) Set the "Start Date" and "End Date" to the date of the midnight hour of the day you are analyzing.
 
 4) Set the "No Counts Before" filter to "0000" and the "No Counts After" filter to "0100". This assumes you are doing an hourly observation. You may want to include some buffer time depending on your collection activities.
+
+#### How should I analyze sampling based initiatives like headcounts?
+Some initiatives collect data at regular intervals througout the day. For these initiatives, sessions are very important for generating accurate reports.
+
+1) Set "Always Include Whole Session" to "Yes"
+
+2) Set "Classify Counts By" to "Count" (default)
 
 #### Why is the "Total Sum" and "Total # of Counts" Different in the Summary Data
 As mentioned above, a `count` in Suma is the action of making an observation. 
