@@ -55,7 +55,7 @@ input#goesup {
 }
 
 input#countInput {
-    display: none;
+    /*display: none;*/
     width: 80px;
     height: 50px;
     font-size: 2em;

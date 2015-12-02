@@ -374,11 +374,17 @@ function syncSessions() {
         serializeCollectedData(function(serJson, sessionIDs) {
             var syncStart = (new Date()).getTime(),
                 numOfCounts = 0,
-                numOfSessions = 0;
+                numOfSessions = 0,
+                numOfSubjects = 0;
 
             $.each(serJson["sessions"], function(i, e) {
                 numOfSessions++;
                 numOfCounts += e["counts"].length;
+                numOfSubjects += e["counts"].map(function (count) {
+                    return count.number;
+                }).reduce(function (a, b) {
+                    return parseInt(a, 10) + parseInt(b, 10);
+                });
             });
 
             $.ajax({
@@ -395,7 +401,7 @@ function syncSessions() {
                             session.people.destroyAll(function() {
                                 persistence.flush(function() {
                                     currentlySyncing--;
-                                    alert(numOfCounts + ((numOfCounts==1)?" count":" counts") + " (including \"zero\" counts) across " +
+                                    alert(numOfCounts + ((numOfCounts==1)?" count":" counts") + " representing " + numOfSubjects + ((numOfSubjects==1)?" subject":" subjects") + " (including \"zero\" counts) across " +
                                         numOfSessions + ((numOfSessions==1)?" session":" sessions") + " sent to server");
                                 });
                             });
@@ -564,9 +570,9 @@ function countPeople(doubleTap) {
     }
 
     // If we want to re-enable non-incremental counts
-    //countInput = $("input#count_input");
-    //var newCount = parseInt(countInput.val(), 10);
-    var newCount = 1;
+    var countInput = $("input#countInput");
+    var newCount = parseInt(countInput.val(), 10);
+    // var newCount = 1;
     if (!isNaN(newCount)) {
 
         if ((newCount === 1) && doubleTap) {
@@ -852,6 +858,7 @@ $(function() {
 
     $("body").on(buttonEventType, "input#goesup", function() {
         countPeople(false);
+        $("input#countInput").val(1);
         return false;
     });
 
