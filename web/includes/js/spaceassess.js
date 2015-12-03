@@ -615,12 +615,30 @@ function initAfterDB() {
     });
 }
 
+// Snippet from https://css-tricks.com/snippets/javascript/get-url-variables/
+function getQueryVariable(variable) {
+    var query = window.location.search.substring(1);
+    var vars = query.split("&");
+    for (var i=0; i < vars.length; i++) {
+        var pair = vars[i].split("=");
+        if (pair[0] === variable) {
+            return pair[1];
+        }
+    }
+    return(false);
+}
+
 $(function() {
     initSelectObj = $("select#init_selector");
     countForm = $("form#count_form");
     countIndicator = $("input#goesup", countForm);
 
     initSADB(initAfterDB);
+
+    // Check for multiCount query string and show input if present
+    if (getQueryVariable('multiCount') === 'true') {
+        $('input#countInput').show();
+    }
 
     $("#spaceAssessDialog").dialog({
         bgiframe: true,
@@ -858,6 +876,7 @@ $(function() {
 
     $("body").on(buttonEventType, "input#goesup", function() {
         countPeople(false);
+        // Reset input to 1 after tapping count
         $("input#countInput").val(1);
         return false;
     });

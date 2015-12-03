@@ -55,11 +55,13 @@ input#goesup {
 }
 
 input#countInput {
-    /*display: none;*/
-    width: 80px;
+    display: none;
+    width: 10%;
+    float: right;
     height: 50px;
     font-size: 2em;
-    margin-left: 30px;
+    margin-bottom: 30px;
+    text-align: center;
 }
 
 #goesdown_heading {
