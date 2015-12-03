@@ -893,4 +893,12 @@ $(function() {
     $("body").on("submit", "form", function() {
         return false;
     });
+
+    $("body").on("blur", "input#countInput", function () {
+        var countInput = $("input#countInput");
+        // If countInput blank, set to 1
+        if (!countInput.val()) {
+            countInput.val(1);
+        }
+    });
 });
