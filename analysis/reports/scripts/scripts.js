@@ -68996,7 +68996,7 @@ angular.module('sumaAnalysis')
 
             _.each(val.activities, function (act, i) {
                 var title = $scope.actDict[act];
-                items[title] = 1;
+                items[title] = val.count;
             });
 
             return items;
