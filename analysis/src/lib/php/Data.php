@@ -1075,9 +1075,20 @@ class Data
         // Evaluate counts for inclusion
         foreach ($response['initiative']['sessions'] as $sess)
         {
-            $anyCountsOverlapQuery = false;
-            $storedCounts = array();
-            $overlapParams = array('sdate' => $params['sdate'], 'edate' => $params['edate'], 'stime' => $params['stime'], 'etime' => $params['etime'], 'wholeSession' => 'no', 'days' => $params['days']);
+            // In order to handle long running sessions, we need to track if any counts
+            // in the session overlap with the query params. This defaults to true unless
+            // wholeSession is yes, in which case it is set to false until an overlapping
+            // count in the session is identified
+            $anyCountsOverlapQuery = $params['wholeSession'] === 'yes' ? false : true;
+            $storedSessionCounts = array();
+            $overlapParams = array(
+                'sdate' => $params['sdate'], 
+                'edate' => $params['edate'], 
+                'stime' => $params['stime'], 
+                'etime' => $params['etime'], 
+                'wholeSession' => 'no', // Force check of counts when passed to includeCount()
+                'days' => $params['days']
+            );
 
             foreach ($sess['locations'] as $loc)
             {
@@ -1090,28 +1101,38 @@ class Data
                         $day = $this->setDay($count, $params, $sess);
                         $weekday = date('l', strtotime($day));
 
-                        // Look for count in session that overlaps with query params
+                        // Look for any count in session that overlaps with query params
                         if (!$anyCountsOverlapQuery)
                         {
+                            // Evaluate count using overlapParams
                             if ($this->includeCount($count, $day, $overlapParams, $weekday))
                             {
                                 $anyCountsOverlapQuery = true;
                             }
                         }
 
-                        // Evaluate count for inclusion
+                        // Evaluate count for inclusion using the original params and add 
+                        // to the temporary array of stored counts
                         if ($this->includeCount($count, $day, $params, $weekday))
                         {
-                            $storedCounts[] = array('count' => $count, 'day' => $day, 'weekday' => $weekday, 'locId' => $loc['id'], 'sessId' => $sess['id'], 'params' => $params);
+                            $storedSessionCounts[] = array(
+                                'count' => $count, 
+                                'day' => $day, 
+                                'weekday' => $weekday, 
+                                'locId' => $loc['id'], 
+                                'sessId' => $sess['id'], 
+                                'params' => $params
+                            );
                         }
                     }
                 }
             }
 
-            // Handle stored counts
+            // If any count in the session overlaps with the query params, add
+            // the stored counts to the returned data set
             if ($anyCountsOverlapQuery)
             {
-                foreach ($storedCounts as $count)
+                foreach ($storedSessionCounts as $count)
                 {
                     $this->addCount($count['count'], $count['day'], $count['locId'], $count['sessId'], $count['weekday']);
                 }
