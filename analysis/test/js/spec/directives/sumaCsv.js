@@ -29,6 +29,7 @@ describe('Directive: sumaCsv', function () {
     scope.params.classifyCounts = {title: 'Test'};
     scope.params.startHour = {title: '0000'};
     scope.params.wholeSession = {title: 'Yes'};
+    scope.params.zeroCounts = {title: 'No'};
     scope.params.stime = '';
     scope.params.etime = '';
     scope.params.days = ['mo', 'tu', 'we', 'th', 'fr', 'sa', 'su'];

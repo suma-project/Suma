@@ -62,6 +62,7 @@ angular.module('sumaAnalysis')
           string += 'Initiative: ' +  params.init.title + '\n';
           string += 'Classify By: ' + params.classifyCounts.title + '\n';
           string += 'Whole Session: ' + params.wholeSession.title + '\n';
+          string += 'Zero Counts: ' + params.zeroCounts.title + '\n';
           string += 'Dates: ' + params.sdate + ' - ' +  params.edate + '\n';
           string += 'No Counts Before: ' + (params.stime || '00:00') + '\n';
           string += 'No Counts After: ' + (params.etime || '23:59') + '\n';

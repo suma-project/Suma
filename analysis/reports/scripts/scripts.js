@@ -67201,6 +67201,7 @@ angular.module('sumaAnalysis')
           string += 'Initiative: ' +  params.init.title + '\n';
           string += 'Classify By: ' + params.classifyCounts.title + '\n';
           string += 'Whole Session: ' + params.wholeSession.title + '\n';
+          string += 'Zero Counts: ' + params.zeroCounts.title + '\n';
           string += 'Dates: ' + params.sdate + ' - ' +  params.edate + '\n';
           string += 'No Counts Before: ' + (params.stime || '00:00') + '\n';
           string += 'No Counts After: ' + (params.etime || '23:59') + '\n';
@@ -69055,5 +69056,30 @@ angular.module('sumaAnalysis')
           $scope.href = $scope.buildCSV(data, params);
         };
       }]
+    };
+  });
+
+'use strict';
+
+angular.module('sumaAnalysis')
+  .directive('sumaActiveClassifyCounts', function () {
+    return {
+      restrict: 'A',
+      templateUrl: 'views/directives/activeClassifyCounts.html',
+      scope: {classifyCounts: '='},
+      link: function (scope, ele, attrs) {
+        scope.display = false;
+        scope.classifyCounts = false;
+
+        function setDisplayStatus () {
+          if (scope.classifyCounts.id === 'count') {
+            scope.display = false;
+          } else {
+            scope.display = true;
+          }
+        }
+
+        scope.$watch('classifyCounts', setDisplayStatus, true);
+      }
     };
   });
