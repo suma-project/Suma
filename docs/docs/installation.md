@@ -13,7 +13,7 @@ These requirements are based on our local testing. Earlier versions may also wor
 
 * MySQL recommended version 5.1
 * Apache recommended version 2.2
-* PHP required version of at least 5.3.3 (including cURL)
+* PHP required version of at least 5.3.3 (including cURL, mbstring, and DOM)
 * Zend Framework 1.12 - required for Suma server, included with Suma code
 * Various Javascript Libraries - all included with Suma code
 
