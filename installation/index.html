@@ -3,7 +3,10 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
   
   <title>Installation - Suma</title>
   
@@ -23,6 +26,8 @@
   <script>
     // Current page data
     var mkdocs_page_name = "Installation";
+    var mkdocs_page_input_path = "installation.md";
+    var mkdocs_page_url = "/installation/";
   </script>
   
   <script src="../js/jquery-2.1.1.min.js"></script>
@@ -198,7 +203,7 @@
 <ul>
 <li>MySQL recommended version 5.1</li>
 <li>Apache recommended version 2.2</li>
-<li>PHP required version of at least 5.3.3 (including cURL)</li>
+<li>PHP required version of at least 5.3.3 (including cURL, mbstring, and DOM)</li>
 <li>Zend Framework 1.12 - required for Suma server, included with Suma code</li>
 <li>Various Javascript Libraries - all included with Suma code</li>
 </ul>
@@ -405,7 +410,7 @@ RewriteRule ^.*$ index.php [NC,L]
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../troubleshooting/" class="btn btn-neutral float-right" title="Troubleshooting"/>Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../troubleshooting/" class="btn btn-neutral float-right" title="Troubleshooting">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
         <a href="../quickstart/" class="btn btn-neutral" title="Quickstart"><span class="icon icon-circle-arrow-left"></span> Previous</a>
@@ -433,7 +438,7 @@ RewriteRule ^.*$ index.php [NC,L]
 <div class="rst-versions" role="note" style="cursor: pointer">
     <span class="rst-current-version" data-toggle="rst-current-version">
       
-          <a class="icon icon-github" style="float: left; color: #fcfcfc"> GitHub</a>
+          <a href="https://github.com/cazzerson/Suma" class="icon icon-github" style="float: left; color: #fcfcfc"> GitHub</a>
       
       
         <span><a href="../quickstart/" style="color: #fcfcfc;">&laquo; Previous</a></span>
