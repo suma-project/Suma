@@ -147,7 +147,7 @@ class ActivityGroupModel
                       'description'    =>  isset($data['descr']) ? $data['descr'] : null,
                       'required'       =>  isset($data['required']) ? (int)$data['required'] : 0,
                       'allowMulti'     =>  isset($data['allowMulti']) ? (int)$data['allowMulti'] : 1,
-                      'sticky'         =>  isset($data['sticky']) ? (int)$data['sticky'] : 1,
+                      'sticky'         =>  isset($data['sticky']) ? (int)$data['sticky'] : 0,
                       'fk_initiative'  =>  $data['init']);
 
         $select = $db->select()
