@@ -134,7 +134,7 @@ class QueryModel
             $select = $this->_db->select()
                 ->distinct()
                 ->from(array('ag' => 'activity_group'),
-                       array('id', 'title', 'rank', 'description', 'required', 'allowMulti'))
+                       array('id', 'title', 'rank', 'description', 'required', 'allowMulti','sticky'))
                 ->join(array('a' => 'activity'),
                        'a.fk_activity_group = ag.id',
                         array())
@@ -146,7 +146,7 @@ class QueryModel
             {
                 foreach($grp as $key => $val)
                 {
-                    if (($key === 'required') || ($key === 'allowMulti'))
+                    if (($key === 'required') || ($key === 'allowMulti') || ($key === 'sticky'))
                     {
                         $grp[$key] = ($val == 1 || $val == TRUE) ? TRUE : FALSE;
                     } else if (is_numeric($val))
@@ -164,7 +164,8 @@ class QueryModel
                 'rank'  => 9999,
                 'description' => '',
                 'required' => 0,
-                'allowedMulti' => 0
+                'allowedMulti' => 0,
+                'sticky' => 0
             );
         }
 

@@ -21,8 +21,9 @@ $activityGroups = $this->init->getActivityGroups(FALSE);
 foreach ($activityGroups as $activityGroup) {
     $actGroupRequired = ($activityGroup->getMetadata('required')) ? 'required-act-group' : '';
     $actGroupAllowMulti = ($activityGroup->getMetadata('allowMulti')) ? 'allowMulti-act-group' : '';
+    $actGroupSticky = ($activityGroup->getMetadata('sticky')) ? 'sticky-act-group' : '';
 
-    echo "<li class=\"activityGroup {$actGroupRequired} {$actGroupAllowMulti}\"><div><span class=\"actGroupTitle\">".$activityGroup->getMetadata('title') .
+    echo "<li class=\"activityGroup {$actGroupRequired} {$actGroupAllowMulti} {$actGroupSticky}\"><div><span class=\"actGroupTitle\">".$activityGroup->getMetadata('title') .
         "</span> <span class=\"actGroupDesc\">".$activityGroup->getMetadata('description') .
         "</span><span class=\"actGroupID\">{$activityGroup->getMetadata('id')}</span><span class=\"activityControls\">" .
         "<a href=\"#\" class=\"addActivity\">Add Activity</a><a href=\"#\" class=\"editActGroup\">Edit</a></span></div>\n";
