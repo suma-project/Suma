@@ -230,7 +230,7 @@ class ActivityModel
                         }
                     }
                 } else {
-                    throw new Exception('Missing required activity group fields (title, ID, required, allowMulti, or desc)');
+                    throw new Exception('Missing required activity group fields (title, ID, required, allowMulti, sticky, or desc)');
                 }
             }
             $db->commit();
