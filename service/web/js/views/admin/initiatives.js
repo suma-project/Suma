@@ -356,7 +356,7 @@ $(document).ready(function(){
     });
 
     $("body").on("click", "#addActivityGroup", function() {
-        $('<li class="activityGroup allowMulti-act-group sticky-act-group"><div><span class="actGroupTitle">New Activity Group</span>' +
+        $('<li class="activityGroup allowMulti-act-group"><div><span class="actGroupTitle">New Activity Group</span>' +
             '<span class="actGroupDesc"></span><span class="actGroupID">new-act-group</span><span class=\"activityControls\">' +
             '<a href=\"#\" class=\"addActivity\">Add Activity</a><a href="#" class="editActGroup">Edit</a></span></div><ol></ol></li>').prependTo('#activities').find('a.addActivity').click();
         $('#activities').nestedSortable('refresh');
