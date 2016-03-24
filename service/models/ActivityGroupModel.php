@@ -117,7 +117,7 @@ class ActivityGroupModel
                       'rank'         =>  $data['rank'],
                       'description'  =>  $data['desc'],
                       'required'     =>  (int)$data['required'],
-                      'allowMulti'   =>  (int)$data['allowMulti']),
+                      'allowMulti'   =>  (int)$data['allowMulti'],
                       'sticky'       =>  (int)$data['sticky']);
 
         $this->_db->update('activity_group', $hash, 'id = '.$this->_id);

@@ -286,7 +286,7 @@ class InitiativeModel
                              'rank'     => (int)$group->getMetadata('rank'),
                              'required' => ($group->getMetadata('required')) ? true : false,
                              'allowMulti' => ($group->getMetadata('allowMulti')) ? true : false,
-                             'sticky'     => ($group->getMetadata('sticky')) ? true : false,
+                             'sticky'     => ($group->getMetadata('sticky')) ? true : false
                              );
         }
 
