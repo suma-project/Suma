@@ -158,14 +158,15 @@ class ActivityModel
 
                 if ((isset($activityGroup['title']) && strlen($activityGroup['title']) > 0) && isset($activityGroup['id'])
                     && isset($activityGroup['desc'])  && (isset($activityGroup['required']))
-                    && (isset($activityGroup['allowMulti'])))
+                    && (isset($activityGroup['allowMulti']))  && (isset($activityGroup['sticky'])))
                 {
                     $actGroupData = Array(
                         'title'    => $activityGroup['title'],
                         'desc'     => $activityGroup['desc'],
                         'rank'     => $actGroupKey,
                         'required' => (int)$activityGroup['required'],
-                        'allowMulti' => (int)$activityGroup['allowMulti']
+                        'allowMulti' => (int)$activityGroup['allowMulti'],
+                        'sticky' => (int)$activityGroup['sticky']
                         );
 
                     if (is_numeric($activityGroup['id']))

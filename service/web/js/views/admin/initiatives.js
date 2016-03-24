@@ -188,7 +188,7 @@ $(document).ready(function(){
     });
 
     $("body").on("click", "a.editAct, a.editActGroup", function() {
-        var actLi, actEnabledCheck, titleSib, descSib, actTitleInput, actDescInput, actGroupRequiredCheck, actGroupMultiCheck;
+        var actLi, actEnabledCheck, titleSib, descSib, actTitleInput, actDescInput, actGroupRequiredCheck, actGroupMultiCheck, actGroupStickyCheck;
 
         actLi = $(this).closest("li")[0];
         actEnableArea = $("#enableInput")[0];
@@ -197,6 +197,7 @@ $(document).ready(function(){
         actDescInput = $("textarea#actDescInput")[0];
         actGroupRequiredCheck = $("#actGroupRequiredCheck");
         actGroupMultiCheck = $("#actGroupMultiCheck");
+        actGroupStickyCheck = $("#actGroupStickyCheck");
 
         if ($(this).hasClass("editActGroup")) {
             titleSib = $(actLi).children("div").children("span.actGroupTitle")[0];
@@ -215,6 +216,12 @@ $(document).ready(function(){
                 $(actGroupMultiCheck).attr("checked", "checked");
             } else {
                 $(actGroupMultiCheck).removeAttr("checked");
+            }
+
+            if ($(actLi).hasClass("sticky-act-group")){
+                $(actGroupStickyCheck).attr("checked", "checked");
+            } else {
+                $(actGroupStickyCheck).removeAttr("checked");
             }
 
             $(activityGroupFormContent).show();
@@ -284,6 +291,12 @@ $(document).ready(function(){
                                 $(actLi).addClass("allowMulti-act-group");
                             } else {
                                 $(actLi).removeClass("allowMulti-act-group");
+                            }
+
+                            if ($(actGroupStickyCheck).is(":checked")) {
+                                $(actLi).addClass("sticky-act-group");
+                            } else {
+                                $(actLi).removeClass("sticky-act-group");
                             }
 
                         } else {
@@ -371,6 +384,7 @@ $(document).ready(function(){
                 desc: _.escape($(this).find("span.actGroupDesc").text()),
                 required: $(this).hasClass("required-act-group"),
                 allowMulti: $(this).hasClass("allowMulti-act-group"),
+                sticky: $(this).hasClass("sticky-act-group"),
                 activities: []
             };
 

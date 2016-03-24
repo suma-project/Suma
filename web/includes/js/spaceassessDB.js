@@ -59,7 +59,8 @@ function initSADB(callback) {
         title: "TEXT",
         required: "BOOL",
         rank: "INT",
-        allowMulti: "BOOL"
+        allowMulti: "BOOL",
+        sticky: "BOOL"
     });
 
     Person = persistence.define('Person', {

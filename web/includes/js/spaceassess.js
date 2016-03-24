@@ -194,6 +194,7 @@ function displayActivities(actInit, callback) {
             currentActivityGroup = $('<div class="activityGroup clearfix"><h5 class="actGroupLabel">' + activityGroup.title + '</h5></div>').appendTo(activityContainer);
             (true === activityGroup.required) ? currentActivityGroup.addClass('requiredGroup') : false;
             (true === activityGroup.allowMulti) ? currentActivityGroup.addClass('allowMulti') : false;
+            (true === activityGroup.sticky) ? currentActivityGroup.addClass('sticky') : false;
 
             leftActivity = $('<div class="leftActivities activityContainer"></div>').appendTo(currentActivityGroup);
             rightActivity = $('<div class="rightActivities activityContainer"></div>').appendTo(currentActivityGroup);
@@ -278,7 +279,7 @@ function fetchLocsActivities(init, callback)
 
                 $.each(locData["activityGroups"], function(key, activityGroup) {
                     var newActGroup = new ActivityGroup({title: activityGroup["title"], serverId: activityGroup["id"],
-                        rank: activityGroup["rank"], required: activityGroup["required"], allowMulti: activityGroup["allowMulti"]});
+                        rank: activityGroup["rank"], required: activityGroup["required"], allowMulti: activityGroup["allowMulti"], sticky: activityGroup["sticky"]});
                     newActGroup.initiative = init;
                     persistence.add(newActGroup);
                     activityGroups[activityGroup["id"]] = newActGroup;
@@ -581,8 +582,13 @@ function countPeople(doubleTap) {
 
         var countObj = new Person({timestamp:date.getTime()});
         $("input.check:checked", countForm).each(function() {
-            countObj.activities.add(currentActivities[$(this).val()]);
-        }).prop("checked", false).button("refresh");
+          var activityGroup
+          activityGroup = $(this).closest(".activityGroup");
+          countObj.activities.add(currentActivities[$(this).val()]);
+          if (!activityGroup.hasClass("sticky")) {
+            $(this).prop("checked", false).button("refresh");
+          }
+        });
         countObj.location = currentLoc;
         countObj.session = currentSession;
         countObj.count = newCount;
