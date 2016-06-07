@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('sumaAnalysis')
-  .directive('sumaCsvRaw', function () {
+  .directive('sumaCsvRawUnprocessed', function () {
     return {
       templateUrl: 'views/directives/csv.html',
       restrict: 'A',
@@ -39,26 +39,12 @@ angular.module('sumaAnalysis')
           }));
         };
 
-        $scope.buildMetadata = function (params) {
-          var string = '';
-
-          string += _.capitalize(_.trim($location.path(), '/')) + ' Report' + '\n';
-          string += 'Initiative: ' +  params.init.title + '\n';
-          string += 'Dates: ' + params.sdate + ' - ' +  params.edate + '\n';
-          string += 'No Counts Before: ' + (params.stime || '00:00') + '\n';
-          string += 'No Counts After: ' + (params.etime || '23:59') + '\n';
-
-          return string;
-        };
-
         $scope.buildCSV = function (counts, params) {
           var data = '',
               base,
               href,
               itemsSrc,
               space = '\n\n\n\n';
-
-          data += $scope.buildMetadata(params);
 
           // Create base object to force activity headers
           itemsSrc = {
@@ -74,11 +60,12 @@ angular.module('sumaAnalysis')
             itemsSrc[act] = '';
           });
 
-          _.each(counts, function (e) {
-            data += (e.key + '\n');
-            data += $scope.buildCSVString(e.values, itemsSrc);
-            data += space;
-          });
+          // Concat each days counts into a single array for processing
+          var allCounts = _.reduce(counts, function (allCounts, countRange) {
+            return allCounts.concat(countRange.values);
+          }, []);
+
+          data += $scope.buildCSVString(allCounts, itemsSrc);
 
           // Build download URL
           base = 'data:application/csv;charset=utf-8,';
