@@ -77,7 +77,7 @@ Week 3: 2
 
 Value will be 7/(2 Sundays with counts) = 3.5
 
-2) **Avg Days**: This average shows the total number of observations during each hour over the entire period divided by the actual number of weekdays in the period. This number will often be lower than Avg Counts. 
+2) **Avg Days**: This average shows the total number of observations during each hour over the entire period divided by the actual number of weekdays in the period. This number will often be lower than Avg Counts.
 
 Example Scenario: 12 AM Sunday
 
@@ -98,4 +98,6 @@ Week 3: 2
 Value will be 5+2=7
 
 #### How do I export raw data from Suma?
-Please see the [Suma Queryserver Documentation](queryserver.md).
+For a CSV export, please use the Raw Export report in the analysis tools.
+
+To access the Suma JSON API, please see the [Suma Queryserver Documentation](queryserver.md).
