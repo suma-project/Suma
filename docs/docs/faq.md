@@ -3,7 +3,7 @@
 ## Analysis Tools
 
 #### How is data captured and represented in Suma?
-The core data collection construct in Suma is the `count`, which typically represents an observation of, or interaction with, a patron. A count is captured every time the count button is tapped in the Suma data collection client. This action captures a timestamp and creates associations between the count and its locations and activities, depending on how a particular data collection initiative is configured. 
+The core data collection construct in Suma is the `count`, which typically represents an observation of, or interaction with, a patron. A count is captured every time the count button is tapped in the Suma data collection client. This action captures a timestamp and creates associations between the count and its locations and activities, depending on how a particular data collection initiative is configured.
 
 It's best to think about the count as an action, which may record any number of observed subjects (including zero). In the Suma client, the count button always records counts of 1, but that is only a convention. For example, when a location is selected in the Suma client, a count of 0 is registered. This count will be replaced by the first count, but will remain if there are no counts submitted for this location. This will result in a larger number of counts than observed transactions, since one count will include 0 observed transactions.
 
@@ -18,7 +18,7 @@ In the analysis tools, data is first returned from the queryserver grouped by se
 **This filter determines which time to use when filtering counts, and will change the way individual counts are represented in the report and may create unexpected results. Both count times and dates may be affected.** Three times are available: the start time of the session, the end time of the session, and the timestamp of the count. The assigned time will be used in evaluting individual counts for inclusion in the analysis results. **In general, this filter should be set to the count timestamp.** Session end time should only be used for midnight (crossing day boundaries) analyses and session start is included for completeness.
 
 #### What is the "Always Include Whole Session" filter?
-This filter determines whether or not to include all counts from sessions that extend beyond the selected date and time filters. At least one count in a session must overlap with the selected date and time filters for the session to be included in the displayed results. **Once a session is included in a result set, this filter will ignore date and time filters if a session contains counts outside of the selected ranges.** In some instances, for example when analyzing overnight counts, initiatives that may have some slight variance in start time, or sampling based initiatives like headcounts, it can be useful to force the analysis tools to include all counts in the sessions that are returned. Another example is the analysis of head counts, where the start and end time may fall outside of a given window (say, 10:00-11:00 for a 10:00am head count), but you want any session that overlaps with the date or time range to be included in its entirety. 
+This filter determines whether or not to include all counts from sessions that extend beyond the selected date and time filters. At least one count in a session must overlap with the selected date and time filters for the session to be included in the displayed results. **Once a session is included in a result set, this filter will ignore date and time filters if a session contains counts outside of the selected ranges.** In some instances, for example when analyzing overnight counts, initiatives that may have some slight variance in start time, or sampling based initiatives like headcounts, it can be useful to force the analysis tools to include all counts in the sessions that are returned. Another example is the analysis of head counts, where the start and end time may fall outside of a given window (say, 10:00-11:00 for a 10:00am head count), but you want any session that overlaps with the date or time range to be included in its entirety.
 
 #### What is the difference between "null" and "zero" counts?
 Suma distinguishes between `null` and `zero`. This allows observations of `zero` to be made, for example, when a particular space is empty. When a location is selected in the Suma client, a count of 0 is initially registered to say that "the space has been observed, and no one was there." This allows us to incorporate empty spaces into calculations about average space utilization.
@@ -53,7 +53,7 @@ Some initiatives collect data at regular intervals througout the day. For these 
 2) Set "Classify Counts By" to "Count" (default)
 
 #### Why is the "Total Sum" and "Total # of Counts" Different in the Summary Data
-As mentioned above, a `count` in Suma is the action of making an observation. 
+As mentioned above, a `count` in Suma is the action of making an observation.
 In some cases, the observed value is 0. As a result, "Total # of Counts" represents the total number of observations made and "Total Sum" represents the sum of the observed values.
 
 #### What is the difference between "Avg of Sum" and "Avg of Avg" in the Locations and Activities bar chart?
@@ -62,6 +62,40 @@ The "Avg of Sum" value is calculated by adding all of the daily totals and divid
 The "Avg of Avg" value is calculated by adding all of the daily averages and dividing by the number of days in the time period. The daily average is the sum of each session in a day divided by the number of sessions in that day.
 
 "Avg of Avg" is useful when examining initiatvies that are more census oriented, like headcounts. "Avg of Sum" is useful for exploring initiatives that have more constant data collection, like reference desk transactions.
+
+#### In the Hourly Report, how are averages calculated?
+
+The three display buttons break down like this:
+
+1) **Avg Counts**: This average shows the total number of observations during each hour over the entire period divided by the number of the weekdays in which there were actually observations. This number will often be higher than Avg Days.
+
+Example Scenario: 12 AM Sunday
+
+Week 1: 5
+Week 2:
+Week 3: 2
+
+Value will be 7/(2 Sundays with counts) = 3.5
+
+2) **Avg Days**: This average shows the total number of observations during each hour over the entire period divided by the actual number of weekdays in the period. This number will often be lower than Avg Counts. 
+
+Example Scenario: 12 AM Sunday
+
+Week 1: 5
+Week 2:
+Week 3: 2
+
+Value will be 7/(3 Sundays in the period) = 2.33
+
+3) **Sum**: This is straightforward, it will display the total number of observations during each hour over the entire period.
+
+Example Scenario: 12 AM Sunday
+
+Week 1: 5
+Week 2:
+Week 3: 2
+
+Value will be 5+2=7
 
 #### How do I export raw data from Suma?
 Please see the [Suma Queryserver Documentation](queryserver.md).
