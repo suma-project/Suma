@@ -108,8 +108,7 @@ module.exports = function (grunt) {
           ]
         }]
       },
-      server: '.tmp',
-      validate: 'validation-status.json'
+      server: '.tmp'
     },
     jshint: {
       options: {
@@ -320,12 +319,6 @@ module.exports = function (grunt) {
       }
     }
   });
-
-  grunt.registerTask('validateHTML', [
-    'clean:validate',
-    'validation',
-    'clean:validate'
-  ]);
 
   grunt.registerTask('prepareDevEnv', [
     'copy:cssScss',
