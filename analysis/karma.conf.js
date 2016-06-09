@@ -65,6 +65,18 @@ module.exports = function(config) {
       dir: 'test/js/coverage/'
     },
 
+    plugins:[
+      'karma-chai-jquery',
+      'karma-coverage',
+      'karma-jasmine',
+      'karma-jquery',
+      'karma-mocha',
+      'karma-ng-html2js-preprocessor',
+      'karma-phantomjs-launcher',
+      'karma-requirejs',
+      'karma-sinon-chai'
+    ],
+
     // Start these browsers, currently available:
     // - Chrome
     // - ChromeCanary
