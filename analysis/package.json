@@ -4,12 +4,11 @@
   "description": "Packages for building the analysis directory of the Suma space assessment toolkit",
   "readme": "Suma is an open-source mobile web-based assessment toolkit for collecting and analyzing observational data about the usage of physical spaces and services.",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/cazzerson/Suma"
+    "type": "git",
+    "url": "https://github.com/cazzerson/Suma"
   },
   "dependencies": {},
   "devDependencies": {
-    "grunt-autoprefixer": "~2.2.0",
     "grunt-contrib-clean": "~1.0.0",
     "grunt-contrib-compass": "~1.1.1",
     "grunt-contrib-concat": "~1.0.1",
@@ -18,14 +17,13 @@
     "grunt-contrib-htmlmin": "~1.4.0",
     "grunt-contrib-imagemin": "~1.0.1",
     "grunt-contrib-jshint": "~1.0.0",
+    "grunt-postcss": "~0.8.0",
     "grunt-contrib-uglify": "~1.0.1",
     "grunt-contrib-watch": "~1.0.0",
     "grunt-karma": "~2.0.0",
     "grunt-ng-annotate": "~2.0.2",
-    "grunt-phpunit": "~0.3.6",
     "grunt-usemin": "~3.1.1",
     "grunt": "~1.0.1",
-    "grunt-cli": "~1.2.0",
     "karma-chai-jquery": "~1.0.0",
     "karma-coverage": "~1.0.0",
     "karma-html2js-preprocessor": "~1.0.0",
@@ -41,13 +39,14 @@
     "karma": "~0.13.22",
     "load-grunt-tasks": "~3.1.0",
     "mocha": "~2.1.0",
-    "time-grunt": "~1.0.0"
+    "time-grunt": "~1.0.0",
+    "autoprefixer": "~6.3.6"
   },
   "scripts": {
     "test": "grunt test"
   },
   "engines": {
-     "node": ">=0.10.0"
-   },
+    "node": ">=0.10.0"
+  },
   "private": true
 }

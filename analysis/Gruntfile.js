@@ -23,7 +23,7 @@ module.exports = function (grunt) {
           atBegin: true
         },
         files: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass,css}'],
-        tasks: ['copy:cssScss', 'copy:styles', 'compass:server', 'copy:minCss', 'copy:devFonts', 'autoprefixer:development']
+        tasks: ['copy:cssScss', 'copy:styles', 'compass:server', 'copy:minCss', 'copy:devFonts', 'postcss:development']
       },
       livereload: {
         options: {
@@ -43,7 +43,7 @@ module.exports = function (grunt) {
         tasks: ['phpunit']
       }
     },
-    autoprefixer: {
+    postcss: {
       options: {
         map: true
       },
@@ -326,7 +326,7 @@ module.exports = function (grunt) {
     'compass:server',
     'copy:minCss',
     'copy:devFonts',
-    'autoprefixer:development'
+    'postcss:development'
   ]);
 
   grunt.registerTask('lint', [
@@ -339,7 +339,7 @@ module.exports = function (grunt) {
     'copy:styles',
     'compass',
     'copy:minCss',
-    'autoprefixer:development',
+    'postcss:development',
     'connect:test',
     'karma'
   ]);
@@ -351,7 +351,7 @@ module.exports = function (grunt) {
     'copy:styles',
     'compass:dist',
     'copy:minCss',
-    'autoprefixer:dist',
+    'postcss:dist',
     'concat',
     'copy:dist',
     'copy:sourceMapPrep',
