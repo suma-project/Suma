@@ -174,7 +174,7 @@
                 <h1 id="frequently-asked-questions">Frequently Asked Questions</h1>
 <h2 id="analysis-tools">Analysis Tools</h2>
 <h4 id="how-is-data-captured-and-represented-in-suma">How is data captured and represented in Suma?</h4>
-<p>The core data collection construct in Suma is the <code>count</code>, which typically represents an observation of, or interaction with, a patron. A count is captured every time the count button is tapped in the Suma data collection client. This action captures a timestamp and creates associations between the count and its locations and activities, depending on how a particular data collection initiative is configured. </p>
+<p>The core data collection construct in Suma is the <code>count</code>, which typically represents an observation of, or interaction with, a patron. A count is captured every time the count button is tapped in the Suma data collection client. This action captures a timestamp and creates associations between the count and its locations and activities, depending on how a particular data collection initiative is configured.</p>
 <p>It's best to think about the count as an action, which may record any number of observed subjects (including zero). In the Suma client, the count button always records counts of 1, but that is only a convention. For example, when a location is selected in the Suma client, a count of 0 is registered. This count will be replaced by the first count, but will remain if there are no counts submitted for this location. This will result in a larger number of counts than observed transactions, since one count will include 0 observed transactions.</p>
 <p>In summary, <strong>counts are a counting action, not a total of observed subjects.</strong></p>
 <h4 id="what-are-sessions">What are sessions?</h4>
@@ -183,7 +183,7 @@
 <h4 id="what-is-the-classify-counts-by-filter">What is the "Classify Counts By" filter?</h4>
 <p><strong>This filter determines which time to use when filtering counts, and will change the way individual counts are represented in the report and may create unexpected results. Both count times and dates may be affected.</strong> Three times are available: the start time of the session, the end time of the session, and the timestamp of the count. The assigned time will be used in evaluting individual counts for inclusion in the analysis results. <strong>In general, this filter should be set to the count timestamp.</strong> Session end time should only be used for midnight (crossing day boundaries) analyses and session start is included for completeness.</p>
 <h4 id="what-is-the-always-include-whole-session-filter">What is the "Always Include Whole Session" filter?</h4>
-<p>This filter determines whether or not to include all counts from sessions that extend beyond the selected date and time filters. At least one count in a session must overlap with the selected date and time filters for the session to be included in the displayed results. <strong>Once a session is included in a result set, this filter will ignore date and time filters if a session contains counts outside of the selected ranges.</strong> In some instances, for example when analyzing overnight counts, initiatives that may have some slight variance in start time, or sampling based initiatives like headcounts, it can be useful to force the analysis tools to include all counts in the sessions that are returned. Another example is the analysis of head counts, where the start and end time may fall outside of a given window (say, 10:00-11:00 for a 10:00am head count), but you want any session that overlaps with the date or time range to be included in its entirety. </p>
+<p>This filter determines whether or not to include all counts from sessions that extend beyond the selected date and time filters. At least one count in a session must overlap with the selected date and time filters for the session to be included in the displayed results. <strong>Once a session is included in a result set, this filter will ignore date and time filters if a session contains counts outside of the selected ranges.</strong> In some instances, for example when analyzing overnight counts, initiatives that may have some slight variance in start time, or sampling based initiatives like headcounts, it can be useful to force the analysis tools to include all counts in the sessions that are returned. Another example is the analysis of head counts, where the start and end time may fall outside of a given window (say, 10:00-11:00 for a 10:00am head count), but you want any session that overlaps with the date or time range to be included in its entirety.</p>
 <h4 id="what-is-the-difference-between-null-and-zero-counts">What is the difference between "null" and "zero" counts?</h4>
 <p>Suma distinguishes between <code>null</code> and <code>zero</code>. This allows observations of <code>zero</code> to be made, for example, when a particular space is empty. When a location is selected in the Suma client, a count of 0 is initially registered to say that "the space has been observed, and no one was there." This allows us to incorporate empty spaces into calculations about average space utilization.</p>
 <h4 id="how-does-the-use-zero-counts-for-locations-filter-work">How does the "Use Zero Counts for Locations" filter work?</h4>
@@ -204,14 +204,35 @@
 <p>1) Set "Always Include Whole Session" to "Yes"</p>
 <p>2) Set "Classify Counts By" to "Count" (default)</p>
 <h4 id="why-is-the-total-sum-and-total-of-counts-different-in-the-summary-data">Why is the "Total Sum" and "Total # of Counts" Different in the Summary Data</h4>
-<p>As mentioned above, a <code>count</code> in Suma is the action of making an observation. 
+<p>As mentioned above, a <code>count</code> in Suma is the action of making an observation.
 In some cases, the observed value is 0. As a result, "Total # of Counts" represents the total number of observations made and "Total Sum" represents the sum of the observed values.</p>
 <h4 id="what-is-the-difference-between-avg-of-sum-and-avg-of-avg-in-the-locations-and-activities-bar-chart">What is the difference between "Avg of Sum" and "Avg of Avg" in the Locations and Activities bar chart?</h4>
 <p>The "Avg of Sum" value is calculated by adding all of the daily totals and dividing by the number of days in the time period.</p>
 <p>The "Avg of Avg" value is calculated by adding all of the daily averages and dividing by the number of days in the time period. The daily average is the sum of each session in a day divided by the number of sessions in that day.</p>
 <p>"Avg of Avg" is useful when examining initiatvies that are more census oriented, like headcounts. "Avg of Sum" is useful for exploring initiatives that have more constant data collection, like reference desk transactions.</p>
+<h4 id="in-the-hourly-report-how-are-averages-calculated">In the Hourly Report, how are averages calculated?</h4>
+<p>The three display buttons break down like this:</p>
+<p>1) <strong>Avg Counts</strong>: This average shows the total number of observations during each hour over the entire period divided by the number of the weekdays in which there were actually observations. This number will often be higher than Avg Days.</p>
+<p>Example Scenario: 12 AM Sunday</p>
+<p>Week 1: 5
+Week 2:
+Week 3: 2</p>
+<p>Value will be 7/(2 Sundays with counts) = 3.5</p>
+<p>2) <strong>Avg Days</strong>: This average shows the total number of observations during each hour over the entire period divided by the actual number of weekdays in the period. This number will often be lower than Avg Counts.</p>
+<p>Example Scenario: 12 AM Sunday</p>
+<p>Week 1: 5
+Week 2:
+Week 3: 2</p>
+<p>Value will be 7/(3 Sundays in the period) = 2.33</p>
+<p>3) <strong>Sum</strong>: This is straightforward, it will display the total number of observations during each hour over the entire period.</p>
+<p>Example Scenario: 12 AM Sunday</p>
+<p>Week 1: 5
+Week 2:
+Week 3: 2</p>
+<p>Value will be 5+2=7</p>
 <h4 id="how-do-i-export-raw-data-from-suma">How do I export raw data from Suma?</h4>
-<p>Please see the <a href="../queryserver/">Suma Queryserver Documentation</a>.</p>
+<p>For a CSV export, please use the Raw Export report in the analysis tools.</p>
+<p>To access the Suma JSON API, please see the <a href="../queryserver/">Suma Queryserver Documentation</a>.</p>
               
             </div>
           </div>
