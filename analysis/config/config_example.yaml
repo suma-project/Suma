@@ -10,7 +10,7 @@ serverIO:
     baseUrl: http://YOUR_SERVER/sumaserver/query
 
 # Change analysisBaseUrl to the URL for your analysis tools
-analysisBaseUrl: http://YOUR_SERVER/suma/analysis
+analysisBaseUrl: http://YOUR_SERVER/suma/analysis/reports
 
 # Configuration for nightly report
 # Default Timezone. See: http://php.net/manual/en/timezones.php
