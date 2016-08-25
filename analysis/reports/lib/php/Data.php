@@ -126,6 +126,52 @@ class Data
     }
 
     /**
+     * Method for creating full location ancestry as a string
+     * @param object location
+     * @param array location dictionary
+     * @access private
+     * @return string
+     */
+     private function locAncestry($loc, $locDict, $rootLocation, $base="")
+     {
+         // Exit recursion if parent is rootLocation
+         if ($loc['parent'] == $rootLocation)
+         {
+             if (empty($base))
+             {
+                return $loc['title'] . " (" . $loc['id'] . ")";
+             }
+             else
+             {
+                return $loc['title'] . "-" . $base;
+             }
+         }
+
+        // Find parent location
+        $parentLoc = NULL;
+        foreach($locDict as $l)
+        {
+            if ($l['id'] == $loc['parent'])
+            {
+                $parentLoc = $l;
+            }
+        }
+
+        // Build location string component
+        if (empty($base))
+        {
+            $locString = $loc['title'] . " (" . $loc['id'] . ")";
+        }
+        else
+        {
+            $locString = $loc['title'] . "-" . $base;
+        }
+
+        // Recurse
+        return $this->locAncestry($parentLoc, $locDict, $rootLocation, $locString);
+     }
+
+    /**
      * Method to populate $csvScaffold, used for csv count collection
      *
      * @access private
@@ -134,7 +180,7 @@ class Data
      * @param  array $actGrpDict
      * @return array
      */
-    private function buildCSVScaffold ($actDict, $locDict, $actGrpDict)
+    private function buildCSVScaffold ($actDict, $locDict, $actGrpDict, $rootLocation)
     {
         $scaffoldArray = array(
                 'date' => NULL,
@@ -163,7 +209,7 @@ class Data
         {
             foreach($locDict as $loc)
             {
-                $this->locHash[$loc['id']] = $loc['title'] . "(" . $loc['id'] . ")";
+                $this->locHash[$loc['id']] = $this->locAncestry($loc, $locDict, $rootLocation);
             }
         }
 
@@ -1025,6 +1071,7 @@ class Data
         $actDict     = $response['initiative']['dictionary']['activities'];
         $actGrpDict  = $response['initiative']['dictionary']['activityGroups'];
         $locDict     = $response['initiative']['dictionary']['locations'];
+        $rootLocation = $response['initiative']['rootLocation'];
 
         // Check for sessions object
         if (!isset($response['initiative']['sessions']))
@@ -1057,7 +1104,7 @@ class Data
         // Populate $csvScaffold for csv array
         if (!isset($this->csvScaffold))
         {
-            $this->csvScaffold = $this->buildCSVScaffold($actDict, $locDict, $actGrpDict);
+            $this->csvScaffold = $this->buildCSVScaffold($actDict, $locDict, $actGrpDict, $rootLocation);
         }
 
         // Populate hour summary scaffold
@@ -1082,10 +1129,10 @@ class Data
             $anyCountsOverlapQuery = $params['wholeSession'] === 'yes' ? false : true;
             $storedSessionCounts = array();
             $overlapParams = array(
-                'sdate' => $params['sdate'], 
-                'edate' => $params['edate'], 
-                'stime' => $params['stime'], 
-                'etime' => $params['etime'], 
+                'sdate' => $params['sdate'],
+                'edate' => $params['edate'],
+                'stime' => $params['stime'],
+                'etime' => $params['etime'],
                 'wholeSession' => 'no', // Force check of counts when passed to includeCount()
                 'days' => $params['days']
             );
@@ -1111,16 +1158,16 @@ class Data
                             }
                         }
 
-                        // Evaluate count for inclusion using the original params and add 
+                        // Evaluate count for inclusion using the original params and add
                         // to the temporary array of stored counts
                         if ($this->includeCount($count, $day, $params, $weekday))
                         {
                             $storedSessionCounts[] = array(
-                                'count' => $count, 
-                                'day' => $day, 
-                                'weekday' => $weekday, 
-                                'locId' => $loc['id'], 
-                                'sessId' => $sess['id'], 
+                                'count' => $count,
+                                'day' => $day,
+                                'weekday' => $weekday,
+                                'locId' => $loc['id'],
+                                'sessId' => $sess['id'],
                                 'params' => $params
                             );
                         }

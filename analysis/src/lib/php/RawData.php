@@ -113,6 +113,53 @@ class RawData
         }
 
     }
+
+    /**
+       * Method for creating full location ancestry as a string
+       * @param object location
+       * @param array location dictionary
+       * @access private
+       * @return string
+       */
+     private function locAncestry($loc, $locDict, $rootLocation, $base="")
+     {
+         // Exit recursion if parent is rootLocation
+         if ($loc['parent'] == $rootLocation)
+         {
+             if (empty($base))
+             {
+                return $loc['title'] . " (" . $loc['id'] . ")";
+             }
+             else
+             {
+                return $loc['title'] . "-" . $base;
+             }
+         }
+
+        // Find parent location
+        $parentLoc = NULL;
+        foreach($locDict as $l)
+        {
+            if ($l['id'] == $loc['parent'])
+            {
+                $parentLoc = $l;
+            }
+        }
+
+        // Build location string component
+        if (empty($base))
+        {
+            $locString = $loc['title'] . " (" . $loc['id'] . ")";
+        }
+        else
+        {
+            $locString = $loc['title'] . "-" . $base;
+        }
+
+        // Recurse
+        return $this->locAncestry($parentLoc, $locDict, $rootLocation, $locString);
+     }
+
     /**
      * Method for processing response from ServerIO
      * @param  array $response
@@ -127,12 +174,13 @@ class RawData
 
         // Build Dictionaries
         $locDict = $response['initiative']['dictionary']['locations'];
+        $rootLocation = $response['initiative']['rootLocation'];
 
         if(empty($this->locHash))
         {
             foreach($locDict as $loc)
             {
-                $this->locHash[$loc['id']] = $loc['title'] . " (" . $loc['id'] . ")";
+                $this->locHash[$loc['id']] = $this->locAncestry($loc, $locDict, $rootLocation);
             }
         }
 
