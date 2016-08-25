@@ -139,7 +139,7 @@ class Data
          {
              if (empty($base))
              {
-                return $loc['title'] . " (" . $loc['id'] . ")";
+                return $loc['title'] . " (id:" . $loc['id'] . ")";
              }
              else
              {
@@ -160,7 +160,7 @@ class Data
         // Build location string component
         if (empty($base))
         {
-            $locString = $loc['title'] . " (" . $loc['id'] . ")";
+            $locString = $loc['title'] . " (id:" . $loc['id'] . ")";
         }
         else
         {
