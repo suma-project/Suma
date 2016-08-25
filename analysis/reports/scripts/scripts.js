@@ -67165,6 +67165,7 @@ angular.module('sumaAnalysis')
             var newObj = {};
 
             newObj.Date = o.date;
+            newObj.Weekday = o.weekday;
             newObj.Total = o.total;
 
             _.each(o.locations, function (loc, i) {

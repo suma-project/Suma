@@ -733,6 +733,7 @@ class Data
 
             // Insert Base information for day, total and locations
             $this->countHash['csv'][$day]['date'] = $day;
+            $this->countHash['csv'][$day]['weekday'] = $weekday;
             $this->countHash['csv'][$day]['total'] = $count['number'];
             $this->countHash['csv'][$day]['locations'][$this->locHash[$locId]] = $count['number'];
 
