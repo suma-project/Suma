@@ -44,9 +44,9 @@ angular.module('sumaAnalysis')
           y2 = d3.scaleLinear().range([height2, 0]);
 
           // Create axes using scales
-          xAxis  = d3.svg.axis().scale(x).orient('bottom');
-          xAxis2 = d3.svg.axis().scale(x2).orient('bottom');
-          yAxis  = d3.svg.axis().scale(y).orient('left');
+          xAxis = d3.axisBottom(x);     //xAxis  = d3.svg.axis().scale(x).orient('bottom');
+          xAxis2 = d3.axisBottom(x2);   //xAxis2 = d3.svg.axis().scale(x2).orient('bottom');
+          yAxis = d3.axisLeft(y);       //yAxis  = d3.svg.axis().scale(y).orient('left');
 
           // Create primary area path
           area = d3.svg.area()
