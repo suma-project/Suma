@@ -38,10 +38,10 @@ angular.module('sumaAnalysis')
               daysOfWeek; // Array of weekday names for legend
 
           // Create scales
-          x  = d3.time.scale().range([0, width]);
-          x2 = d3.time.scale().range([0, width]);
-          y  = d3.scale.linear().range([height, 10]); // Change second value to 10 to add padding at top of chart
-          y2 = d3.scale.linear().range([height2, 0]);
+          x  = d3.scaleTime().range([0, width]);
+          x2 = d3.scaleTime().range([0, width]);
+          y  = d3.scaleLinear().range([height, 10]); // Change second value to 10 to add padding at top of chart
+          y2 = d3.scaleLinear().range([height2, 0]);
 
           // Create axes using scales
           xAxis  = d3.svg.axis().scale(x).orient('bottom');
