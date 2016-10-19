@@ -24,7 +24,7 @@ angular.module('sumaAnalysis')
           $('.barLabel').tooltip('destroy');
 
           // Define scales
-          x = d3.scale.linear()
+          x = d3.scaleLinear()
             .domain([0, d3.max(data.map(function (d) { return +d.count; }))])
             .range([0, 285]);
 
