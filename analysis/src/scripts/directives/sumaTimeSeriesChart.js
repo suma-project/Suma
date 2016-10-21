@@ -34,7 +34,8 @@ angular.module('sumaAnalysis')
               yAxis,      // y-axis for both charts
               area,       // Area setup for primary chart
               area2,      // Area setup for scroll/zoom chart
-              formatDate, // Create date object with specified format
+              formatDate, // Create date string with specified format
+              parseDate,  // Create date object from formatted date string
               daysOfWeek; // Array of weekday names for legend
 
           // Create scales
@@ -61,7 +62,8 @@ angular.module('sumaAnalysis')
             .y1(function (d) {return y2(d.count); });
 
           // Date formatter
-          formatDate = d3.time.format('%Y-%m-%d');
+          formatDate = d3.timeFormat('%Y-%m-%d'); // date -> string
+          parseDate  = d3.timeParse('%Y-%m-%d');  // string -> date
 
           // Days of the week for display
           daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -105,8 +107,8 @@ angular.module('sumaAnalysis')
 
             data.forEach(function (d) {
               d.title = d.date;
-              d.fDate  = formatDate.parse(d.date);
-              d.day   = daysOfWeek[d.fDate.getDay()];
+              d.fDate  = parseDate(d.date);             // parses string d.date into date d.fDate
+              d.day   = daysOfWeek[d.fDate.getDay()];   // gets day of week from date d.fDate
               d.count = d.count;
             });
 
