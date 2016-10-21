@@ -44,20 +44,18 @@ angular.module('sumaAnalysis')
           y2 = d3.scaleLinear().range([height2, 0]);
 
           // Create axes using scales
-          xAxis = d3.axisBottom(x);     //xAxis  = d3.svg.axis().scale(x).orient('bottom');
-          xAxis2 = d3.axisBottom(x2);   //xAxis2 = d3.svg.axis().scale(x2).orient('bottom');
-          yAxis = d3.axisLeft(y);       //yAxis  = d3.svg.axis().scale(y).orient('left');
+          xAxis = d3.axisBottom(x);
+          xAxis2 = d3.axisBottom(x2);
+          yAxis = d3.axisLeft(y);
 
           // Create primary area path
-          area = d3.svg.area()
-            .interpolate('linear')
+          area = d3.area()
             .x(function (d) {return x(d.fDate); })
             .y0(height)
             .y1(function (d) {return y(d.count); });
 
           // Create scroll/zoom path
-          area2 = d3.svg.area()
-            .interpolate('linear')
+          area2 = d3.area()
             .x(function (d) {return x2(d.fDate); })
             .y0(height2)
             .y1(function (d) {return y2(d.count); });
