@@ -121,8 +121,7 @@ angular.module('sumaAnalysis')
             // Create array of date objects using dates in dataset (used during interaction.on())
             dateMap = data.map(function (d) {return d.fDate; });
 
-            brush = d3.svg.brush()
-              .x(x2)
+            brush = d3.brushX()
               .on('brush', chartBrush);
 
             svg = d3.select(this).append('svg')
