@@ -293,7 +293,7 @@ angular.module('sumaAnalysis')
 
           // Month Label
           gWrap.selectAll('monthName')
-            .data(function (d) { return d3.time.months(new Date(d, 0, 1), new Date(d + 1, 0, 1)); })
+            .data(function (d) { return d3.timeMonths(new Date(d, 0, 1), new Date(d + 1, 0, 1)); })
             .enter()
             .append('text')
             .attr('class', 'chartLabel')
