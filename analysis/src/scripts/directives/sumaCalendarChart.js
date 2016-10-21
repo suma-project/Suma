@@ -12,7 +12,7 @@ angular.module('sumaAnalysis')
     var Calendar = function () {
       var width = 960,
           height = 136,
-          totalHeight;
+          totalHeight = 0;
 
       function chart(selection) {
         var monthCount = 0,
