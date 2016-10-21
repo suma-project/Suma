@@ -194,7 +194,7 @@ angular.module('sumaAnalysis')
 
           // Create day rects
           rect = gWrap.selectAll('.day')
-            .data(function (d) { return d3.time.days(new Date(d, 0, 1), new Date(d + 1, 0, 1)); });
+            .data(function (d) { return d3.timeDays(new Date(d, 0, 1), new Date(d + 1, 0, 1)); });
 
           // ENTER
           rect.enter()
