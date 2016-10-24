@@ -78,16 +78,12 @@ angular.module('sumaAnalysis')
                      .range([h - padding, padding]);
 
             //Define X axis
-            xAxis = d3.svg.axis()
-              .scale(xScale)
-              .orient('bottom')
+            xAxis = d3.axisBottom(x)
               .ticks(5)
-              .tickFormat(d3.time.format('%a %I %p'));
+              .tickFormat(d3.timeFormat('%a %I %p'));
 
             //Define Y axis
-            yAxis = d3.svg.axis()
-              .scale(yScale)
-              .orient('left')
+            yAxis = d3.axisLeft(y)
               .ticks(5);
 
             // // Define area
