@@ -68,12 +68,12 @@ angular.module('sumaAnalysis')
             dateMap = counts.map(function (d) {return d.date; });
 
             //Create scale functions
-            xScale = d3.time.scale()
+            xScale = d3.scaleTime()
                     .domain(d3.extent(counts.map(function (d) {return d.date; })))
                     .range([padding, w - padding]);
 
 
-            yScale = d3.scale.linear()
+            yScale = d3.scaleLinear()
                      .domain([0, d3.max(counts, function (d) { return d.value || 0; })])
                      .range([h - padding, padding]);
 
