@@ -87,8 +87,7 @@ angular.module('sumaAnalysis')
               .ticks(5);
 
             // // Define area
-            area = d3.svg.area()
-              .interpolate('linear')
+            area = d3.area()
               .x(function (d) {return xScale(d.date); })
               .y0(h - padding)
               .y1(function (d) {return yScale(d.value); });
