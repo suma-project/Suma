@@ -5,7 +5,7 @@ angular.module('sumaAnalysis')
     var HourlyLine = function () {
       function chart(selection) {
 
-        var displayFormat = d3.time.format('%a %I %p');
+        var displayFormat = d3.timeFormat('%a %I %p');
 
         function calcDate(day, hour) {
           var d,
