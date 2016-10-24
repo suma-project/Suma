@@ -68,10 +68,8 @@ angular.module('sumaAnalysis')
           line.enter()
             .append('line')
             .attr('class', 'line')
-            .style('stroke', '#ccc');
-
-          // UPDATE
-          line
+            .style('stroke', '#ccc')
+          .merge(line) // UPDATE
             .transition().duration(500)
             .attr('x1', 0)
             .attr('x2', 0)
@@ -98,10 +96,8 @@ angular.module('sumaAnalysis')
           rule.enter().append('text')
             .attr('class', 'rule')
             .style('font-size', '12px')
-            .style('font-family', 'Verdana');
-
-          // UPDATE
-          rule
+            .style('font-family', 'Verdana')
+          .merge(rule) // UPDATE
             .transition().duration(500)
             .attr('x', 0)
             .style('opacity', 0.000001)
@@ -127,10 +123,8 @@ angular.module('sumaAnalysis')
           rects.enter()
             .append('rect')
             .attr('class', 'rect')
-            .style('fill', 'steelblue');
-
-          // UPDATE
-          rects
+            .style('fill', 'steelblue')
+          .merge(rects) // UPDATE
             .transition().duration(500)
             .attr('width', 0)
             .attr('y', function (d, i) {return 25 * i; })
@@ -164,10 +158,8 @@ angular.module('sumaAnalysis')
             .attr('class', 'barLabel')
             .style('font-size', '11px')
             .style('font-family', 'Verdana')
-            .attr('data-toggle', 'tooltip');
-
-          // UPDATE
-          text
+            .attr('data-toggle', 'tooltip')
+          .merge(text) // UPDATE
             .attr('title', function (d, i) {
               return d.tooltipTitle;
             })
@@ -204,10 +196,8 @@ angular.module('sumaAnalysis')
             .append('text')
             .attr('class', 'ann')
             .style('font-size', '9px')
-            .style('font-family', 'Verdana');
-
-          // UPDATE
-          ann
+            .style('font-family', 'Verdana')
+          .merge(ann) // UPDATE
             .transition().duration(500)
             .attr('x', 0)
             .style('opacity', 0.000001)

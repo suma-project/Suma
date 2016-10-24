@@ -96,7 +96,7 @@ angular.module('sumaAnalysis')
 
             // Function called by brush event handler
             function chartBrush() {
-              x.domain(brush.empty() ? x2.domain() : brush.extent());
+              x.domain(d3.event.selection==null ? x2.domain() : brush.extent());
 
               focus.select('path').attr('d', area);
               focus.select('.x.axis').call(xAxis);
