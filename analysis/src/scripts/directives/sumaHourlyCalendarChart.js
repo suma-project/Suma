@@ -178,10 +178,9 @@ angular.module('sumaAnalysis')
                 .attr('stroke-width', '2px')
                 .attr('width', gridSize)
                 .attr('height', gridSize)
-                .style('fill', '#eee');
-
-              // UPDATE
-              heatMap.attr('data-toggle', 'tooltip')
+                .style('fill', '#eee')
+              .merge(heatMap) // UPDATE
+                .attr('data-toggle', 'tooltip')
                 .attr('data-original-title', function (d) { return setTitle(d); })
                 .transition().duration(750)
                 .style('fill', function (d) { return setColor(d.value); });
