@@ -71,20 +71,21 @@ angular.module('sumaAnalysis')
             xScale = d3.scaleTime()
                     .domain(d3.extent(counts.map(function (d) {return d.date; })))
                     .range([padding, w - padding]);
+                    //.ticks(5 , '%a %I %p');
 
 
             yScale = d3.scaleLinear()
                      .domain([0, d3.max(counts, function (d) { return d.value || 0; })])
                      .range([h - padding, padding]);
+                     //.ticks(5);
+
+
 
             //Define X axis
-            xAxis = d3.axisBottom(x)
-              .ticks(5)
-              .tickFormat(d3.timeFormat('%a %I %p'));
+            xAxis = d3.axisBottom(xScale);
 
             //Define Y axis
-            yAxis = d3.axisLeft(y)
-              .ticks(5);
+            yAxis = d3.axisLeft(yScale);
 
             // // Define area
             area = d3.area()
