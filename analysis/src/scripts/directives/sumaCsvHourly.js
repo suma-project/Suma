@@ -49,7 +49,7 @@ angular.module('sumaAnalysis')
         $scope.activityTitleFilter = $filter('activityTitle');
 
         $scope.buildCSVString = function (counts, dict) {
-          return d3.csv.format(_.map(counts, function (obj) {
+          return d3.csvFormat(_.map(counts, function (obj) {
             var count;
 
             if (obj.value === undefined || obj.value === null) {
