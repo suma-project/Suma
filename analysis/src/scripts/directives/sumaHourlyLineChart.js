@@ -111,10 +111,9 @@ angular.module('sumaAnalysis')
             // ENTER
             x.enter()
               .append('g')
-              .attr('class', 'xAxis');
-
-            // UPDATE
-            x.attr('transform', 'translate(0,' + (h - padding) + ')')
+              .attr('class', 'xAxis')
+            .merge(x) // UPDATE
+              .attr('transform', 'translate(0,' + (h - padding) + ')')
               .call(xAxis);
 
             // Create y-axis
@@ -123,10 +122,9 @@ angular.module('sumaAnalysis')
             // ENTER
             y.enter()
               .append('g')
-              .attr('class', 'yAxis');
-
-            // UPDATE
-            y.attr('transform', 'translate(' + padding + ',0)')
+              .attr('class', 'yAxis')
+            .merge(y) // UPDATE
+              .attr('transform', 'translate(' + padding + ',0)')
               .transition().duration(750)
               .call(yAxis);
 
@@ -143,10 +141,9 @@ angular.module('sumaAnalysis')
               .append('path')
               .attr('clip-path', 'url(#clip)')
               .attr('fill', 'steelblue')
-              .attr('class', 'mainGraph');
-
-            // UPDATE
-            areaChart.transition().duration(750)
+              .attr('class', 'mainGraph')
+            .merge(areaChart) // UPDATE
+              .transition().duration(750)
               .attr('d', area);
 
             // Create points
@@ -160,10 +157,9 @@ angular.module('sumaAnalysis')
               .attr('fill', function (d) {return setColor(d.value); })
               .attr('stroke', '#f7f7f7')
               .attr('stroke-width', 2)
-              .attr('opacity', 0);
-
-            // UPDATE
-            circles.attr('cx', function (d) {return xScale(d.date); })
+              .attr('opacity', 0)
+            .merge(circles) // UPDATE
+              .attr('cx', function (d) {return xScale(d.date); })
               .attr('cy', function (d) {return yScale(d.value); });
 
             // Create interaction layer
@@ -178,10 +174,9 @@ angular.module('sumaAnalysis')
               .attr('x', padding)
               .attr('y', padding)
               .attr('height', h - (padding * 2))
-              .attr('width', w - (padding * 2));
-
-              // UPDATE
-            interaction.on('mousemove', function () {
+              .attr('width', w - (padding * 2))
+            .merge(interaction) // UPDATE
+              .on('mousemove', function () {
               var xCoord      = d3.mouse(this)[0],  // X coordinate of mouse over primary graph
                   xInvert     = xScale.invert(xCoord), // Convert xCoord to date value using x scale
                   cut         = d3.bisectLeft(dateMap, xInvert), // Return index to right of xInvert
