@@ -116,7 +116,7 @@ angular.module('sumaAnalysis')
               domain = _.pluck(data, 'value');
 
               // Color Scale
-              color = d3.scale.quantile()
+              color = d3.scaleQuantile()
                   .domain(domain)
                   .range(colorRange);
 
