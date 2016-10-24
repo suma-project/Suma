@@ -22,7 +22,7 @@ angular.module('sumaAnalysis')
         };
 
         $scope.buildPrimaryCSVString = function (counts) {
-          return d3.csv.format(_.map(counts, function (o) {
+          return d3.csvFormat(_.map(counts, function (o) {
             var newObj = {};
 
             newObj.Date = o.date;
@@ -42,7 +42,7 @@ angular.module('sumaAnalysis')
         };
 
         $scope.buildCSVString = function (counts, label, indent) {
-          return d3.csv.format(_.map(counts, function (o, i) {
+          return d3.csvFormat(_.map(counts, function (o, i) {
             var obj = {};
 
             obj[label]  = indent ? $scope.addCSVIndent(o) : o.name;
