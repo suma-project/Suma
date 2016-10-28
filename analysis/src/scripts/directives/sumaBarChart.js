@@ -9,6 +9,7 @@ angular.module('sumaAnalysis')
 
       function chart(selection) {
         selection.each(function (data) {
+          console.log(data);
           var ann,
           gBar,
           gEnter,
@@ -59,7 +60,7 @@ angular.module('sumaAnalysis')
                   .attr('transform', 'translate(170,15)');
 
           gRule = svg.select('.gRule')
-                    .attr('transorm', 'translate(170,15(');
+                    .attr('transorm', 'translate(170,15)');
 
           //Append lines for scale
           line = gRule.selectAll('line').data(x.ticks(3));
