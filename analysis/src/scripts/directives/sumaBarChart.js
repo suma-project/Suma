@@ -43,85 +43,28 @@ angular.module('sumaAnalysis')
             .classed('gRule', true);;
 
           svg = d3.select('.chart')
-            .attr('width', width)
-            .attr('height', height);
+           .attr('width', width);
 
-          gBar = d3.select('.gBar');
+          gBar = d3.select('.gBar')
+            .attr('transform', 'translate(170,15)');
 
           gRule = d3.select('.gRule');
 
-          // Set height (change to dynamic)
-          height = 600;
-
-          // Data Join
-          rects = gBar.selectAll("rect")
-              .data(data)
-
-          // Enter and Update
-          rects.enter().append("rect")
-              .attr("transform", function(d, i) { return "translate(0," + i * 25 + ")"; })
-              .attr("height", 25 - 1)
-              .merge(rects)
-              .attr("width", function(d) { return x(+d.count); })
-
-          // Exit
-          rects.exit().remove();
-
-
-
-/*          var ann,
-          gBar,
-          gEnter,
-          gRule,
-          line,
-          rects,
-          rule,
-          svg,
-          text,
-          x, 
-          debug;
-          debug = true;
-
-          // Destroy uneeded tooltips
-          $('.barLabel').tooltip('destroy');
-
-          // Define scales
-          x = d3.scaleLinear()
-            .domain([0, d3.max(data.map(function (d) { return +d.count; }))])
-            .range([0, 285]);
-
-          // Select svg container and join data
-          svg = d3.select(this).selectAll('svg').data([data]);
-
-          // Append containers for draw order
-          gEnter = svg.enter().append('svg')
-            .append('g')
-            .attr('class', 'gBar')
-            .append('g')
-            .attr('class', 'gRule');
-
-          // Set width and height of chart
-          svg.attr('width', width);
-
+          // Find height for svg
           oldHeight = height;
           height = 20 + (25 * data.length);
 
           if (!oldHeight) {
             svg.attr('height', height);
-          } else {
+          } 
+          else {
             if (height > oldHeight) {
-              svg.transition().duration(500).attr('height', height);
-            } else {
-              svg.transition().delay(500).duration(500).attr('height', height);
+              svg.transition().duration(1000).attr('height', height);
+            } 
+            else {
+              svg.transition().duration(1000).attr('height', height);
             }
           }
-
-          // Apply transforms to containers
-          gBar = svg.select('.gBar')
-                  .attr('transform', 'translate(170,15)');
-
-          gRule = svg.select('.gRule')
-                    .attr('transorm', 'translate(170,15)');
 
           //Append lines for scale
           line = gRule.selectAll('line').data(x.ticks(3));
@@ -152,7 +95,7 @@ angular.module('sumaAnalysis')
             .remove();
 
           // Append line labels
-          rule = gBar.selectAll('.rule').data(x.ticks(3));
+          rule = gRule.selectAll('.rule').data(x.ticks(3));
 
           // ENTER
           rule.enter().append('text')
@@ -302,7 +245,6 @@ angular.module('sumaAnalysis')
             html: true,
             placement: 'auto'
           });
-*/
         });
       }
 
