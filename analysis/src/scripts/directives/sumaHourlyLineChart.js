@@ -55,7 +55,8 @@ angular.module('sumaAnalysis')
                 legend,
                 circle,
                 text,
-                interaction;
+                interaction,
+                wrapper;
 
             w = 960;
             h = 300;
@@ -92,7 +93,7 @@ angular.module('sumaAnalysis')
               .y0(h - padding)
               .y1(function (d) {return yScale(d.value); });
 
-            //Create SVG element
+            /*//Create SVG element
             svg = d3.select(this).selectAll('svg').data([counts]);
 
             svg.enter().append('svg')
@@ -102,7 +103,22 @@ angular.module('sumaAnalysis')
             svg.attr('width', w)
               .attr('height', h);
 
-            gRect = svg.select('.gRect');
+            gRect = svg.select('.gRect');*/
+
+            // Select svg container and join data
+            wrapper = d3.select(this).selectAll('svg').data([counts]);
+
+            // Append svg and groups, and save references
+            wrapper.enter().append('svg')
+              .classed('chart', true)
+              .append('g')
+              .classed('gRect', true);
+
+            svg = d3.select('.chart')
+             .attr('width', w)
+             .attr('height', h);
+
+            gRect = d3.select('.gRect');
 
             // Create x-axis
             x = gRect.selectAll('.xAxis').data([counts]);
