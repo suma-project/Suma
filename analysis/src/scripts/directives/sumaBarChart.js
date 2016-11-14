@@ -9,7 +9,6 @@ angular.module('sumaAnalysis')
 
       function chart(selection) {
         selection.each(function (data) {
-          console.log(data);
           var ann,
           gBar,
           gEnter,
@@ -19,7 +18,9 @@ angular.module('sumaAnalysis')
           rule,
           svg,
           text,
-          x;
+          x, 
+          debug;
+          debug = false;
 
           // Destroy uneeded tooltips
           $('.barLabel').tooltip('destroy');
@@ -90,7 +91,54 @@ angular.module('sumaAnalysis')
             .style('opacity', 0.000001)
             .remove();
 
-          // Append line labels
+// TESTING GROUNDS =============================================================
+          // v3 general update pattern
+          var rect = svg.selectAll("circle").data(x.ticks(3)) // UPDATE
+              .style("fill", "blue");
+
+          rect.exit().remove(); // EXIT
+
+          rect.enter().append("circle") // ENTER; modifies UPDATE! 🌶
+              .style("fill", "green");
+
+          rect // ENTER + UPDATE
+              .style("stroke", "black");
+
+
+          // v4 general update pattern
+          var circle = svg.selectAll("circle").data(x.ticks(3)) // UPDATE
+              .style("fill", "orange")
+              .attr("r" , function(d) {
+                return d+5;
+              })
+              .attr("cx" , function(d) {
+                return d+50;
+              })
+              .attr("cy" , function(d) {
+                return d+50;
+              });
+
+          circle.exit().remove(); // EXIT
+
+          circle.enter().append("circle") // ENTER
+              .style("fill", "blue")
+            .merge(circle) // ENTER + UPDATE
+              .style("stroke", "black");
+
+          if (debug) { 
+            console.log("Here is data:" ,   data);
+            console.log("Here is SVG:" ,    svg);
+            console.log("Here is gBar:" ,   gBar);
+            console.log("Here is gRule:" ,  gRule);
+            console.log("Here are ticks:" , x.ticks(3));
+            console.log("Here is circle:" , circle);
+            console.log("Here is rect:" , rect);
+            console.log("Here is line:" ,   line);
+            console.log("====================================================================================================================");
+          }
+// TESTING GROUNDS =============================================================
+
+/*          // Append line labels
           rule = gBar.selectAll('.rule').data(x.ticks(3));
 
           // ENTER
@@ -241,7 +289,7 @@ angular.module('sumaAnalysis')
             html: true,
             placement: 'auto'
           });
-
+*/
         });
       }
 
