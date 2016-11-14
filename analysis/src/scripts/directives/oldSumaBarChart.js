@@ -10,66 +10,6 @@ angular.module('sumaAnalysis')
       function chart(selection) {
         selection.each(function (data) {
           var ann,
-          bar,
-          chart,
-          g,
-          gBar,
-          gEnter,
-          gRule,
-          line,
-          rects,
-          rule,
-          svg,
-          text,
-          wrapper,
-          x,
-          debug;
-          debug = true;
-
-          // Define scales
-          x = d3.scaleLinear()
-            .domain([0, d3.max(data.map(function (d) { return +d.count; }))])
-            .range([0, 285]);
-
-          // Select svg container and join data
-          wrapper = d3.select(this).selectAll('svg').data([data]);
-
-          // Append svg and groups, and save references
-          wrapper.enter().append('svg')
-            .classed('chart', true)
-            .append('g')
-            .classed('gBar', true)
-            .append('g')
-            .classed('gRule', true);;
-
-          svg = d3.select('.chart')
-            .attr('width', width)
-            .attr('height', height);
-
-          gBar = d3.select('.gBar');
-
-          gRule = d3.select('.gRule');
-
-          // Set height (change to dynamic)
-          height = 600;
-
-          // Data Join
-          rects = gBar.selectAll("rect")
-              .data(data)
-
-          // Enter and Update
-          rects.enter().append("rect")
-              .attr("transform", function(d, i) { return "translate(0," + i * 25 + ")"; })
-              .attr("height", 25 - 1)
-              .merge(rects)
-              .attr("width", function(d) { return x(+d.count); })
-
-          // Exit
-          rects.exit().remove();
-
-
-
-/*          var ann,
           gBar,
           gEnter,
           gRule,
@@ -151,7 +91,54 @@ angular.module('sumaAnalysis')
             .style('opacity', 0.000001)
             .remove();
 
-          // Append line labels
+// TESTING GROUNDS =============================================================
+          // v3 general update pattern
+          var rect = svg.selectAll("circle").data(x.ticks(3)) // UPDATE
+              .style("fill", "blue");
+
+          rect.exit().remove(); // EXIT
+
+          rect.enter().append("circle") // ENTER; modifies UPDATE! 🌶
+              .style("fill", "green");
+
+          rect // ENTER + UPDATE
+              .style("stroke", "black");
+
+
+          // v4 general update pattern
+          var circle = svg.selectAll("circle").data(x.ticks(3)) // UPDATE
+              .style("fill", "orange")
+              .attr("r" , function(d) {
+                return d+5;
+              })
+              .attr("cx" , function(d) {
+                return d+50;
+              })
+              .attr("cy" , function(d) {
+                return d+50;
+              });
+
+          circle.exit().remove(); // EXIT
+
+          circle.enter().append("circle") // ENTER
+              .style("fill", "blue")
+            .merge(circle) // ENTER + UPDATE
+              .style("stroke", "black");
+
+          if (debug) { 
+            console.log("Here is data:" ,   data);
+            console.log("Here is SVG:" ,    svg);
+            console.log("Here is gBar:" ,   gBar);
+            console.log("Here is gRule:" ,  gRule);
+            console.log("Here are ticks:" , x.ticks(3));
+            console.log("Here is circle:" , circle);
+            console.log("Here is rect:" , rect);
+            console.log("Here is line:" ,   line);
+            console.log("====================================================================================================================");
+          }
+// TESTING GROUNDS =============================================================
+
+/*          // Append line labels
           rule = gBar.selectAll('.rule').data(x.ticks(3));
 
           // ENTER

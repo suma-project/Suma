@@ -38,7 +38,7 @@ angular.module('sumaAnalysis')
               parseDate,  // Create date object from formatted date string
               daysOfWeek, // Array of weekday names for legend
               debug;
-          debug = true;
+          debug = false;
 
           // Create scales
           x  = d3.scaleTime().range([0, width]);
