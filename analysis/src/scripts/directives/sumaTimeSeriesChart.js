@@ -54,7 +54,7 @@ angular.module('sumaAnalysis')
           // Create primary area path
           area = d3.area()
             .x(function (d) {
-              if (debug) {console.log("At area creation: x(", d.fDate, ") = ", x(d.fDate)); }
+              //if (debug) {console.log("At area creation: x(", d.fDate, ") = ", x(d.fDate)); }
               return x(d.fDate); 
             })
             .y0(height)
@@ -102,8 +102,10 @@ angular.module('sumaAnalysis')
             // Function called by brush event handler
             function chartBrush() {
               x.domain(d3.event.selection==null ? x2.domain() : brush.extent());
+              var s = d3.event.selection || x2.range();
+              x.domain(s.map(x2.invert, x2));
               if (debug) { 
-                console.log("New domain: ", (d3.event.selection==null ? x2.domain() : brush.extent()) ); 
+                console.log("x.domain(): ", x.domain());
                 console.log("x2.domain(): ", x2.domain());
                 console.log("brush.extent(): ", brush.extent());
                 console.log("d3.brushSelection(this): ", d3.brushSelection(this));
@@ -114,7 +116,7 @@ angular.module('sumaAnalysis')
               focus.select('.x.axis').call(xAxis);
               focus.selectAll('.dot')
                 .attr('cx', function (d) {
-                  if (debug) { console.log("At chartBrush: x(", d.fDate, ") = ", x(d.fDate)); }
+                  //if (debug) { console.log("At chartBrush: x(", d.fDate, ") = ", x(d.fDate)); }
                   return x(d.fDate); 
                 })
                 .attr('cy', function (d) { return y(d.count); });
