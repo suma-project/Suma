@@ -38,7 +38,7 @@ angular.module('sumaAnalysis')
               parseDate,  // Create date object from formatted date string
               daysOfWeek, // Array of weekday names for legend
               debug;
-          debug = false;
+          debug = true;
 
           // Create scales
           x  = d3.scaleTime().range([0, width]);
@@ -101,7 +101,6 @@ angular.module('sumaAnalysis')
 
             // Function called by brush event handler
             function chartBrush() {
-              x.domain(d3.event.selection==null ? x2.domain() : brush.extent());
               var s = d3.event.selection || x2.range();
               x.domain(s.map(x2.invert, x2));
               if (debug) { 
@@ -111,51 +110,38 @@ angular.module('sumaAnalysis')
                 console.log("d3.brushSelection(this): ", d3.brushSelection(this));
                 console.log("d3.event.selection: ", d3.event.selection);
               }
+              if (d3.event.selection[0]==d3.event.selection[1]) {
+                if(debug) { console.log("no selections"); }
+                x.domain(x2.domain());
+              }
 
               focus.select('path').attr('d', area);
               focus.select('.x.axis').call(xAxis);
               focus.selectAll('.dot')
                 .attr('cx', function (d) {
-                  //if (debug) { console.log("At chartBrush: x(", d.fDate, ") = ", x(d.fDate)); }
+                  return x(d.fDate); 
+                })
+                .attr('cy', function (d) { return y(d.count); });
+            }
+
+            function chartClick() {
+              if (d3.event.selection[0]==d3.event.selection[1]) {
+                if(debug) { console.log("no selections"); }
+                x.domain(x2.domain());
+              }
+
+              focus.select('path').attr('d', area);
+              focus.select('.x.axis').call(xAxis);
+              focus.selectAll('.dot')
+                .attr('cx', function (d) {
                   return x(d.fDate); 
                 })
                 .attr('cy', function (d) { return y(d.count); });
             }
 
             brush = d3.brushX()
-              .on('brush', chartBrush);
-
-/* HERE
-            var zoom = d3.zoom()
-              .scaleExtent([1, Infinity])
-              .translateExtent([[0, 0], [width, height]])
-              .extent([[0, 0], [width, height]])
-              .on("zoom", zoomed);
-
-            function zoomed() {
-              if (d3.event.sourceEvent && d3.event.sourceEvent.type === "brush") return; // ignore zoom-by-brush
-              var t = d3.event.transform;
-              x.domain(t.rescaleX(x2).domain());
-              focus.select(".area").attr("d", area);
-              focus.select(".axis--x").call(xAxis);
-              context.select(".brush").call(brush.move, x.range().map(t.invertX, t));
-            }
-
-            function brushed() {
-              if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
-              var s = d3.event.selection || x2.range();
-              x.domain(s.map(x2.invert, x2));
-              focus.select(".area").attr("d", area);
-              focus.select(".axis--x").call(xAxis);
-              svg.select(".zoom").call(zoom.transform, d3.zoomIdentity
-                  .scale(width / (s[1] - s[0]))
-                  .translate(-s[0], 0));
-            }
-
-            var brush = d3.brushX()
-              .extent([[0, 0], [width, height2]])
-              .on("brush end", brushed);
-TO HERE */
+              .on('brush', chartBrush)
+              .on('start', chartClick);
 
             data.forEach(function (d) {
               d.title = d.date;
@@ -190,15 +176,6 @@ TO HERE */
               .attr('x', -5)
               .attr('width', width + 10)
               .attr('height', height + 10);
-
-/*HERE
-            svg.append("rect")
-              .attr("class", "zoom")
-              .attr("width", width)
-              .attr("height", height)
-              .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-              .call(zoom);
-TO HERE*/
 
             // Focus is the main graph
             focus = svg.append('g')
