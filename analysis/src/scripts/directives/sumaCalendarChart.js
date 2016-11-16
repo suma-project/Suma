@@ -136,13 +136,14 @@ angular.module('sumaAnalysis')
               rect,
               wrapper;
 
+          console.log("Counts: " , counts);
           // Display data
           data = d3.nest()
             .key(function (d) { return d.date; })
             .rollup(function (d) { return d[0].count; })
-            .map(counts);
+            .object(counts);
 
-          console.log("Data",data);
+          console.log("Data: ",data);
 
           // Data range
           range = d3.range(
