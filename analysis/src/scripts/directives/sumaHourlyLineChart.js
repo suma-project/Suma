@@ -53,6 +53,7 @@ angular.module('sumaAnalysis')
                 areaChart,
                 circles,
                 legend,
+                legendWrapper,
                 circle,
                 text,
                 interaction,
@@ -192,54 +193,57 @@ angular.module('sumaAnalysis')
               .attr('width', w - (padding * 2))
             .merge(interaction) // UPDATE
               .on('mousemove', function () {
-              var xCoord      = d3.mouse(this)[0],  // X coordinate of mouse over primary graph
-                  xInvert     = xScale.invert(xCoord), // Convert xCoord to date value using x scale
-                  cut         = d3.bisectLeft(dateMap, xInvert), // Return index to right of xInvert
-                  cut2        = (cut > 0) ? cut - 1 : 0, // Return index to left of xInvert
-                  leftPoint   = counts[cut2].date, // Convert cut2 to date (milliseconds from Epoch)
-                  rightPoint  = counts[cut].date, // Convert cut to date (milliseconds from Epoch)
-                  midpoint    = (leftPoint.getTime() + rightPoint.getTime()) / 2; // Calculate midpoint
+                var xCoord      = d3.mouse(this)[0],  // X coordinate of mouse over primary graph
+                    xInvert     = xScale.invert(xCoord), // Convert xCoord to date value using x scale
+                    cut         = d3.bisectLeft(dateMap, xInvert), // Return index to right of xInvert
+                    cut2        = (cut > 0) ? cut - 1 : 0, // Return index to left of xInvert
+                    leftPoint   = counts[cut2].date, // Convert cut2 to date (milliseconds from Epoch)
+                    rightPoint  = counts[cut].date, // Convert cut to date (milliseconds from Epoch)
+                    midpoint    = (leftPoint.getTime() + rightPoint.getTime()) / 2; // Calculate midpoint
 
-              // Is current postion less than the midpoint?
-              if (xInvert.getTime() < midpoint) {
-                cut -= 1;
-              }
+                // Is current postion less than the midpoint?
+                if (xInvert.getTime() < midpoint) {
+                  cut -= 1;
+                }
 
-              // Display closest dot
-              d3.selectAll('.dot')
-                .attr('opacity', 0)
-                .filter(function (d) {return d.date === counts[cut].date; })
-                .attr('opacity', 1);
+                // Display closest dot
+                d3.selectAll('.dot')
+                  .attr('opacity', 0)
+                  .filter(function (d) {return d.date === counts[cut].date; })
+                  .attr('opacity', 1);
 
-              //Display legend
-              d3.select('#tsLegend')
-                .attr('opacity', 1);
+                //Display legend
+                d3.select('#tsLegend')
+                  .attr('opacity', 1);
 
-              // Update legend text
-              d3.select('#legendText')
-                .text(function () {
-                  return setTitle(counts[cut].date, counts[cut].value);
-                });
+                // Update legend text
+                d3.select('#legendText')
+                  .text(function () {
+                    return setTitle(counts[cut].date, counts[cut].value);
+                  });
 
-              // Update circle color
-              d3.select('#legendCircle')
-                .attr('fill', function () {return setColor(counts[cut].value); });
-            }).on('mouseout', function () {
-              d3.selectAll('.dot')
-                .attr('opacity', 0);
+                // Update circle color
+                d3.select('#legendCircle')
+                  .attr('fill', function () {return setColor(counts[cut].value); });
+              })
+              .on('mouseout', function () {
+                d3.selectAll('.dot')
+                  .attr('opacity', 0);
 
-              d3.select('#tsLegend')
-                .attr('opacity', 0);
-            });
+                d3.select('#tsLegend')
+                  .attr('opacity', 0);
+              });
 
             // Create legend wrapper
-            legend = gRect.selectAll('#tsLegend').data([counts]);
+            legendWrapper = gRect.selectAll('#tsLegend').data([counts]);
 
             // ENTER
-            legend.enter()
+            legendWrapper.enter()
               .append('g')
               .attr('id', 'tsLegend')
               .attr('opacity', 0);
+
+            legend = d3.select('#tsLegend');
 
               // Create circle in legend
             circle = legend.selectAll('#legendCircle').data([counts]);
