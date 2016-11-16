@@ -106,9 +106,10 @@ angular.module('sumaAnalysis')
           selection.each(function (counts) {
               var domain,
                   heatMap,
-                  gRect,
+                  cRect,
                   svg,
-                  svgEnter;
+                  svgEnter,
+                  wrapper;
 
               data = counts;
 
@@ -128,35 +129,51 @@ angular.module('sumaAnalysis')
               min = d3.min(domain);
               max = d3.max(domain);
 
-              // Select SVG container and join data
+              /*// Select SVG container and join data
               svg = d3.select(this).selectAll('svg').data([data]);
 
               // Append containers
               svgEnter = svg.enter().append('svg')
                           .attr('id', 'calendar')
                           .append('g')
-                          .attr('class', 'gRect');
+                          .attr('class', 'cRect');
 
               // Apply transforms to containers and save selection for future use
-              gRect = svg.select('.gRect')
+              cRect = svg.select('.cRect')
                         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
               // Set width and height of chart
               svg.attr('width', width + margin.left + margin.right)
-                .attr('height', height + margin.top + margin.bottom);
+                .attr('height', height + margin.top + margin.bottom); */
+
+              // Select svg container and join data
+              wrapper = d3.select(this).selectAll('svg').data([data]);
+
+              // Append svg and groups, and save references
+              wrapper.enter().append('svg')
+                .attr('id', 'calendar')
+                .append('g')
+                .classed('cRect', true);
+
+              svg = d3.select('#calendar')
+                .attr('width', width + margin.left + margin.right)
+                .attr('height', height + margin.top + margin.bottom);;
+
+              cRect = d3.select('.cRect')
+               .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
               // Append day labels
-              svgEnter.selectAll('.dayLabel')
+              svg.selectAll('.dayLabel')
                 .data(d3.values(days))
                 .enter().append('text')
                 .text(function (d) { return d; })
                 .attr('x', 0)
                 .attr('y', function (d, i) { return i * gridSize; })
                 .style('text-anchor', 'end')
-                .attr('transform', 'translate(-6,' + gridSize / 1.5 + ')');
+                .attr('transform', 'translate(-6,' + gridSize / 1.5 + ')'); 
 
               // Append hour labels
-              svgEnter.selectAll('.timeLabel')
+              svg.selectAll('.timeLabel')
                 .data(d3.values(times))
                 .enter().append('text')
                 .text(function (d) { return d; })
@@ -166,7 +183,7 @@ angular.module('sumaAnalysis')
                 .attr('transform', 'translate(' + gridSize / 2 + ', -6)');
 
               // Append rects
-              heatMap = gRect.selectAll('.hour').data(data);
+              heatMap = cRect.selectAll('.hour').data(data);
 
               // ENTER
               heatMap.enter()
