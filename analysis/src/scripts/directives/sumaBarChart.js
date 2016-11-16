@@ -165,18 +165,17 @@ angular.module('sumaAnalysis')
             .style('font-family', 'Verdana')
             .attr('data-toggle', 'tooltip')
           .merge(text) // UPDATE
+            .transition().duration(500)
+            .style('opacity', 0.000001)
+            .transition().delay(250).duration(500)
             .attr('title', function (d, i) {
               return d.tooltipTitle;
             })
-            .transition().duration(500)
-            .style('opacity', 0.000001)
-            .transition().delay(750).duration(500)
             .attr('x', 10)
             .attr('y', function (d, i) {return 25 * i + 30; })
             .attr('dy', -3)
             .text(function (d) {
               var text;
-
               if (d.altName) {
                 text = d.altName;
               } else {
@@ -185,6 +184,7 @@ angular.module('sumaAnalysis')
 
               return _.unescape(_.trunc(text, {length: 22, separator: ' '}));
             })
+            .transition().duration(500)
             .style('opacity', 1);
 
           // EXIT
