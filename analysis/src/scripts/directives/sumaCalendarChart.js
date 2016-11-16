@@ -132,7 +132,9 @@ angular.module('sumaAnalysis')
               svg,
               range,
               gWrap,
-              rect;
+              gInner,
+              rect,
+              wrapper;
 
           // Display data
           data = d3.nest()
@@ -162,7 +164,7 @@ angular.module('sumaAnalysis')
           min = d3.min(domain);
           max = d3.max(domain);
 
-          // Define svg wrapper
+          /*// Define svg wrapper
           svg = d3.select(this).selectAll('svg').data([data]);
 
           // Append gWrap g element
@@ -190,10 +192,43 @@ angular.module('sumaAnalysis')
               }
 
               return 'translate(' + 60 + ',' + rowHeight + ')';
-            });
+            });*/
+
+          // Select svg container and join data
+          wrapper = d3.select(this).selectAll('svg').data([data]);
+
+          // Append svg and groups, and save references
+          wrapper.enter().append('svg')
+            .attr('id', 'calendar')
+            .append('g')
+            .attr('class', 'gWrap')
+            .attr('font-size', '10px');
+
+          svg = d3.select('#calendar');
+
+          gWrap = d3.select('.gWrap').selectAll('g').data(range);
+
+          gWrap.enter().append('g')
+          .classed("gInner" , true)
+          .attr('transform', function (d, i) {
+            var rowHeight;
+
+            if (i > 0) {
+              rowHeight = ((height - cellSize * 7 - 1) + (height * i + (30 * i)));
+              totalHeight += 166;
+            } else {
+              rowHeight = (height - cellSize * 7 - 1);
+              totalHeight = 166;
+            }
+
+            return 'translate(' + 60 + ',' + rowHeight + ')';
+          });
+
+          gInner = d3.select('.gInner');
+
 
           // Create day rects
-          rect = gWrap.selectAll('.day')
+          rect = gInner.selectAll('.day')
             .data(function (d) { return d3.timeDays(new Date(d, 0, 1), new Date(d + 1, 0, 1)); });
 
           // ENTER
@@ -285,27 +320,27 @@ angular.module('sumaAnalysis')
           }
 
           // Year label
-          gWrap.append('text')
-            .attr('class', 'chartLabel')
+          gInner.append('text')
+            .classed('chartLabel' , true)
             .attr('transform', 'translate(-40,' + cellSize * 3.5 + ')rotate(-90)')
             .style('text-anchor', 'middle')
             .text(function (d) { return d; });
 
           // Month Label
-          gWrap.selectAll('monthName')
+          gInner.selectAll('monthName')
             .data(function (d) { return d3.timeMonths(new Date(d, 0, 1), new Date(d + 1, 0, 1)); })
             .enter()
             .append('text')
-            .attr('class', 'chartLabel')
+            .classed('chartLabel' , true)
             .attr('x', function (d) { return setMonthLabelPos(d); })
             .attr('y', -10)
             .text(month_name);
 
           // Day of the Week Label
-          gWrap.selectAll('dayOfWeek')
+          gInner.selectAll('dayOfWeek')
             .data(days)
             .enter().append('text')
-            .attr('class', 'chartLabel')
+            .classed('chartLabel' , true)
             .attr('x', -20)
             .attr('opacity', function (d, i) { return setDayVisibility(i); })
             .attr('y', function (d, i) { return (cellSize * i) + 12; })

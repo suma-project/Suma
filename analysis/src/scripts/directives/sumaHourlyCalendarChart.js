@@ -163,7 +163,7 @@ angular.module('sumaAnalysis')
                .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
               // Append day labels
-              svg.selectAll('.dayLabel')
+              cRect.selectAll('.dayLabel')
                 .data(d3.values(days))
                 .enter().append('text')
                 .text(function (d) { return d; })
@@ -173,7 +173,7 @@ angular.module('sumaAnalysis')
                 .attr('transform', 'translate(-6,' + gridSize / 1.5 + ')'); 
 
               // Append hour labels
-              svg.selectAll('.timeLabel')
+              cRect.selectAll('.timeLabel')
                 .data(d3.values(times))
                 .enter().append('text')
                 .text(function (d) { return d; })
