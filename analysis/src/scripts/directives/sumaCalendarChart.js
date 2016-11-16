@@ -142,6 +142,8 @@ angular.module('sumaAnalysis')
             .rollup(function (d) { return d[0].count; })
             .map(counts);
 
+          console.log("Data",data);
+
           // Data range
           range = d3.range(
             parseInt(_.first(counts).date.split('-')[0], 10),
@@ -241,10 +243,8 @@ angular.module('sumaAnalysis')
             .attr('class', 'day')
             .attr('stroke', '#fff')
             .attr('stroke-width', '2px')
-            .style('fill', '#eee');
-
-          // UPDATE
-          rect
+            .style('fill', '#eee')
+          .merge(rect)  // UPDATE
             .attr('data-original-title', function (d) { return setTitle(format(d)); })
             .transition().duration(750)
             .style('fill', function (d) { return setColor(format(d)); });
