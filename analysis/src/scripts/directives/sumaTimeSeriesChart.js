@@ -36,9 +36,7 @@ angular.module('sumaAnalysis')
               area2,      // Area setup for scroll/zoom chart
               formatDate, // Create date string with specified format
               parseDate,  // Create date object from formatted date string
-              daysOfWeek, // Array of weekday names for legend
-              debug;
-          debug = true;
+              daysOfWeek; // Array of weekday names for legend
 
           // Create scales
           x  = d3.scaleTime().range([0, width]);
@@ -54,7 +52,6 @@ angular.module('sumaAnalysis')
           // Create primary area path
           area = d3.area()
             .x(function (d) {
-              //if (debug) {console.log("At area creation: x(", d.fDate, ") = ", x(d.fDate)); }
               return x(d.fDate); 
             })
             .y0(height)
@@ -103,15 +100,7 @@ angular.module('sumaAnalysis')
             function chartBrush() {
               var s = d3.event.selection || x2.range();
               x.domain(s.map(x2.invert, x2));
-              if (debug) { 
-                console.log("x.domain(): ", x.domain());
-                console.log("x2.domain(): ", x2.domain());
-                console.log("brush.extent(): ", brush.extent());
-                console.log("d3.brushSelection(this): ", d3.brushSelection(this));
-                console.log("d3.event.selection: ", d3.event.selection);
-              }
               if (d3.event.selection[0]==d3.event.selection[1]) {
-                if(debug) { console.log("no selections"); }
                 x.domain(x2.domain());
               }
 
@@ -126,7 +115,6 @@ angular.module('sumaAnalysis')
 
             function chartClick() {
               if (d3.event.selection[0]==d3.event.selection[1]) {
-                if(debug) { console.log("no selections"); }
                 x.domain(x2.domain());
               }
 
@@ -151,7 +139,6 @@ angular.module('sumaAnalysis')
             });
 
             // Set domains and ranges
-            if (debug) { console.log("Original domain: ", d3.extent(data.map(function (d) {return d.fDate; })) ); }
             x.domain(d3.extent(data.map(function (d) {return d.fDate; })));
             y.domain([0, d3.max(data.map(function (d) {return d.count; }))]);
             x2.domain(x.domain());

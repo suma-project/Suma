@@ -22,9 +22,7 @@ angular.module('sumaAnalysis')
           svg,
           text,
           wrapper,
-          x,
-          debug;
-          debug = true;
+          x;
 
           // Define scales
           x = d3.scaleLinear()

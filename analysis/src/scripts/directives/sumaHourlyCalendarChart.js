@@ -129,23 +129,6 @@ angular.module('sumaAnalysis')
               min = d3.min(domain);
               max = d3.max(domain);
 
-              /*// Select SVG container and join data
-              svg = d3.select(this).selectAll('svg').data([data]);
-
-              // Append containers
-              svgEnter = svg.enter().append('svg')
-                          .attr('id', 'calendar')
-                          .append('g')
-                          .attr('class', 'cRect');
-
-              // Apply transforms to containers and save selection for future use
-              cRect = svg.select('.cRect')
-                        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-
-              // Set width and height of chart
-              svg.attr('width', width + margin.left + margin.right)
-                .attr('height', height + margin.top + margin.bottom); */
-
               // Select svg container and join data
               wrapper = d3.select(this).selectAll('svg').data([data]);
 

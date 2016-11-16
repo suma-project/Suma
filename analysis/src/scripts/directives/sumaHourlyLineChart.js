@@ -94,18 +94,6 @@ angular.module('sumaAnalysis')
               .y0(h - padding)
               .y1(function (d) {return yScale(d.value); });
 
-            /*//Create SVG element
-            svg = d3.select(this).selectAll('svg').data([counts]);
-
-            svg.enter().append('svg')
-              .append('g')
-              .attr('class', 'gRect');
-
-            svg.attr('width', w)
-              .attr('height', h);
-
-            gRect = svg.select('.gRect');*/
-
             // Select svg container and join data
             wrapper = d3.select(this).selectAll('svg').data([counts]);
 

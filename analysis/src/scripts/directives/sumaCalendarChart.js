@@ -167,36 +167,6 @@ angular.module('sumaAnalysis')
           min = d3.min(domain);
           max = d3.max(domain);
 
-          /*// Define svg wrapper
-          svg = d3.select(this).selectAll('svg').data([data]);
-
-          // Append gWrap g element
-          svg.enter().append('svg')
-            .append('g')
-            .attr('class', 'gWrap')
-            .attr('font-size', '10px');
-
-          // Select gWrap
-          gWrap = svg.select('.gWrap').selectAll('g').data(range);
-
-          // Append inner g elements
-          gWrap.enter()
-            .append('g')
-            .attr('class', 'gInner')
-            .attr('transform', function (d, i) {
-              var rowHeight;
-
-              if (i > 0) {
-                rowHeight = ((height - cellSize * 7 - 1) + (height * i + (30 * i)));
-                totalHeight += 166;
-              } else {
-                rowHeight = (height - cellSize * 7 - 1);
-                totalHeight = 166;
-              }
-
-              return 'translate(' + 60 + ',' + rowHeight + ')';
-            });*/
-
           // Select svg container and join data
           wrapper = d3.select(this).selectAll('svg').data([data]);
 
