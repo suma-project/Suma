@@ -29,7 +29,7 @@ if ($config['SUMA_DEBUG'] == true)
 }
 else
 {
-    $SUMA_ERROR_REPORTING  = 0;
+    $SUMA_ERROR_REPORTING  = E_ERROR | E_WARNING;
     $SUMA_DISPLAY_ERRORS   = 'off';
     $SUMA_THROW_EXCEPTIONS =  false;
 }

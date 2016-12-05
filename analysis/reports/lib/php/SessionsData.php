@@ -32,7 +32,7 @@ class SessionsData
         }
         else
         {
-           $SUMA_ERROR_REPORTING  = 0;
+           $SUMA_ERROR_REPORTING  = E_ERROR | E_WARNING;
            $SUMA_DISPLAY_ERRORS   = 'off';
         }
 
