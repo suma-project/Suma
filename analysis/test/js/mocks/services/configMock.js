@@ -386,7 +386,7 @@ angular.module('configMock', [])
         'edate': true,
         'stime': false,
         'etime': false,
-        'startHour': false,
+        'startHour': true,
         'classifyCounts': true,
         'days': true,
         'wholeSession': true,

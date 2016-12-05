@@ -95,7 +95,6 @@ angular.module('sumaAnalysis')
         if (path === '/hourly') {
           newConfig.formFields.stime = false;
           newConfig.formFields.etime = false;
-          newConfig.formFields.startHour = false;
           newConfig.dataProcessor = 'processHourlyData';
           newConfig.suppWatch = false;
 
