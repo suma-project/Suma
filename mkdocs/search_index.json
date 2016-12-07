@@ -267,7 +267,7 @@
         }, 
         {
             "location": "/troubleshooting/", 
-            "text": "Troubleshooting\n\n\nConfiguration Errors\n\n\nServer Environment\n\n\n\n\nSuma depends upon a number of PHP libraries that are often named different things in different server environments. If you are experiencing unexecpted issues after installing Suma, please check your server logs for clues to missing PHP modules.\n\n\n\n\nSuma Server Configuration\n\n\n\n\n\n\nIssues with the \nSUMA_SERVER_PATH\n will be reported as a \nPossible error in SUMA_SERVER_PATH\n.\n\n\n\n\n\n\nAn \nInvalid controller specified (error)\n may indicate an issue with the \nSUMA_CONTROLLER_PATH\n and will also be reported as a \nPossible error in SUMA_CONTROLLER_PATH\n.  \n\n\n\n\n\n\nIssues \nSUMA_BASE_URL\n will be reported as a \n404 Not Found\n error.\n\n\n\n\n\n\nGitHub Issues\n\n\nClosed Suma issues\n on Github may also be a good source of information for troubleshooting your installation.", 
+            "text": "Troubleshooting\n\n\nConfiguration Errors\n\n\nServer Environment\n\n\n\n\nSuma depends upon a number of PHP libraries that are often named different things in different server environments. If you are experiencing unexpected issues after installing Suma, please check your server logs for clues to missing PHP modules.\n\n\n\n\nSuma Server Configuration\n\n\n\n\n\n\nIssues with the \nSUMA_SERVER_PATH\n will be reported as a \nPossible error in SUMA_SERVER_PATH\n.\n\n\n\n\n\n\nAn \nInvalid controller specified (error)\n may indicate an issue with the \nSUMA_CONTROLLER_PATH\n and will also be reported as a \nPossible error in SUMA_CONTROLLER_PATH\n.  \n\n\n\n\n\n\nIssues \nSUMA_BASE_URL\n will be reported as a \n404 Not Found\n error.\n\n\n\n\n\n\nGitHub Issues\n\n\nClosed Suma issues\n on Github may also be a good source of information for troubleshooting your installation.", 
             "title": "Troubleshooting"
         }, 
         {
@@ -282,7 +282,7 @@
         }, 
         {
             "location": "/troubleshooting/#server-environment", 
-            "text": "Suma depends upon a number of PHP libraries that are often named different things in different server environments. If you are experiencing unexecpted issues after installing Suma, please check your server logs for clues to missing PHP modules.", 
+            "text": "Suma depends upon a number of PHP libraries that are often named different things in different server environments. If you are experiencing unexpected issues after installing Suma, please check your server logs for clues to missing PHP modules.", 
             "title": "Server Environment"
         }, 
         {
