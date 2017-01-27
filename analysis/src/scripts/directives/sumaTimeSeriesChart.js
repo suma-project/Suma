@@ -71,7 +71,8 @@ angular.module('sumaAnalysis')
           daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
           selection.each(function (data) {
-            var brush,          // Brush, or selector, object for controlling scroll/zoom chart
+            var brush,          // Brush, or selector, object for controlling drag functionality of domain adjustment
+                zoom,           // object for controlling zoom/scroll functionality of domain adjustment
                 context,        // SVG container for scroll/zoom chart
                 dateMap,        // Array of sorted date values, used during interaction.on()
                 focus,          // SVG container for primary area chart
@@ -96,16 +97,15 @@ angular.module('sumaAnalysis')
                 'V' + (2 * y - 8);
             }
 
-            // Function called by brush event handler
-            function chartBrush() {
+            function brushed() {
+              if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return;
               var s = d3.event.selection || x2.range();
               x.domain(s.map(x2.invert, x2));
-              if (d3.event.selection[0]==d3.event.selection[1]) {
-                x.domain(x2.domain());
-              }
-
-              focus.select('path').attr('d', area);
-              focus.select('.x.axis').call(xAxis);
+              focus.select("path").attr("d", area);
+              focus.select(".x.axis").call(xAxis);
+              svg.select(".zoom").call(zoom.transform, d3.zoomIdentity
+                  .scale(width / (s[1] - s[0]))
+                  .translate(-s[0], 0));
               focus.selectAll('.dot')
                 .attr('cx', function (d) {
                   return x(d.fDate); 
@@ -113,13 +113,13 @@ angular.module('sumaAnalysis')
                 .attr('cy', function (d) { return y(d.count); });
             }
 
-            function chartClick() {
-              if (d3.event.selection[0]==d3.event.selection[1]) {
-                x.domain(x2.domain());
-              }
-
-              focus.select('path').attr('d', area);
-              focus.select('.x.axis').call(xAxis);
+            function zoomed() {
+              if (d3.event.sourceEvent && d3.event.sourceEvent.type === "brush") return;
+              var t = d3.event.transform;
+              x.domain(t.rescaleX(x2).domain());
+              focus.select("path").attr("d", area);
+              focus.select(".x.axis").call(xAxis);
+              context.select(".brush").call(brush.move, x.range().map(t.invertX, t));
               focus.selectAll('.dot')
                 .attr('cx', function (d) {
                   return x(d.fDate); 
@@ -128,8 +128,14 @@ angular.module('sumaAnalysis')
             }
 
             brush = d3.brushX()
-              .on('brush', chartBrush)
-              .on('start', chartClick);
+              .extent([[0, 0], [width, height2]])
+              .on("brush end", brushed);
+
+            zoom = d3.zoom()
+              .scaleExtent([1, 1000])
+              .translateExtent([[0, 0], [width, height]])
+              .extent([[0, 0], [width, height]])
+              .on("zoom", zoomed);
 
             data.forEach(function (d) {
               d.title = d.date;
@@ -201,12 +207,15 @@ angular.module('sumaAnalysis')
             interaction = svg.append('g')
               .attr('id', 'interaction')
               .append('rect')
-              .attr('opacity', 0)
+              .attr("class", "zoom")
+              .style("cursor", "move")
+              .style("opacity", 0)
+              .style("pointer-events", "all")
               .attr('x', margin.left)
               .attr('y', margin.top)
               .attr('height', height)
               .attr('width', width)
-              .on('mousemove', function () {
+              .on('mouseover mousemove wheel', function () {
                   var xCoord      = d3.mouse(this)[0] - margin.left,  // X coordinate of mouse over primary graph
                       xInvert     = x.invert(xCoord),                 // Convert xCoord to date value using x scale
                       cut         = d3.bisectLeft(dateMap, xInvert),  // Return index to right of xInvert
@@ -253,7 +262,8 @@ angular.module('sumaAnalysis')
 
                 d3.select('#legend')
                   .attr('opacity', 0);
-              });
+              })
+              .call(zoom);
 
             // Legend display
             legend = svg.append('g')
@@ -286,16 +296,17 @@ angular.module('sumaAnalysis')
               .attr('transform', 'translate(0,' + height2 + ')')
               .call(xAxis2);
 
-            context.append('g')
-              .attr('class', 'x brush')
-              .call(brush)
-              .selectAll('rect')
-              .attr('y', -6)
-              .attr('height', height2 + 7);
-
             context.selectAll('.resize')
               .append('path')
               .attr('d', resizePath);
+
+            context.append('g')
+              .attr('class', 'brush')
+              .call(brush)
+              .call(brush.move, x.range())
+              .selectAll('rect')
+              .attr('y', -6)
+              .attr('height', height2 + 7);
 
             // Axis/Tick Stylings
             d3.selectAll('.axis path')
