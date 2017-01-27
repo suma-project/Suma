@@ -77,7 +77,7 @@ angular.module('sumaAnalysis')
             .attr('x1', 0)
             .attr('x2', 0)
             .style('opacity', 0.000001)
-            .transition().delay(750).duration(500)
+            .transition().delay(250).duration(500)
             .attr('x1', x)
             .attr('x2', x)
             .attr('y1', 0)
@@ -104,7 +104,7 @@ angular.module('sumaAnalysis')
             .transition().duration(500)
             .attr('x', 0)
             .style('opacity', 0.000001)
-            .transition().delay(750).duration(500)
+            .transition().delay(250).duration(500)
             .attr('x', x)
             .attr('y', -3)
             .attr('dy', -3)
@@ -133,7 +133,7 @@ angular.module('sumaAnalysis')
             .attr('y', function (d, i) {return 25 * i; })
             .attr('height', '20')
             .attr('data', function (d) {return d.count; })
-            .transition().delay(750).duration(500)
+            .transition().delay(250).duration(500)
             .attr('width', function (d) {
               var width;
               // Give really small counts a minimum width
@@ -165,7 +165,7 @@ angular.module('sumaAnalysis')
           .merge(text) // UPDATE
             .transition().duration(500)
             .style('opacity', 0.000001)
-            .transition().delay(250).duration(500)
+            .transition().delay(250).duration(5)
             .attr('title', function (d, i) {
               return d.tooltipTitle;
             })
@@ -204,7 +204,7 @@ angular.module('sumaAnalysis')
             .transition().duration(500)
             .attr('x', 0)
             .style('opacity', 0.000001)
-            .transition().delay(750).duration(500)
+            .transition().delay(250).duration(500)
             .attr('x', function (d) {
               if (x(d.count) > 40) {
                 return x(d.count) - 10;
