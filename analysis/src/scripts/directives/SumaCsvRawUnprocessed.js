@@ -20,7 +20,7 @@ angular.module('sumaAnalysis')
         };
 
         $scope.buildCSVString = function (values, itemsSrc) {
-          return d3.csv.format(_.map(values, function (val){
+          return d3.csvFormat(_.map(values, function (val){
             var items = _.cloneDeep(itemsSrc);
 
             items['Count Date']    = val.time;

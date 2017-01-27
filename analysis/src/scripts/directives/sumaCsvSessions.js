@@ -9,7 +9,7 @@ angular.module('sumaAnalysis')
       controller: ['$scope', '$location', function ($scope, $location) {
 
         $scope.buildCSVString = function (values) {
-          return d3.csv.format(_.map(values, function (val){
+          return d3.csvFormat(_.map(values, function (val){
             return {
               'ID': val.id,
               'Session Start': val.start,
