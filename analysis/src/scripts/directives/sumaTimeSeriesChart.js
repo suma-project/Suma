@@ -34,42 +34,45 @@ angular.module('sumaAnalysis')
               yAxis,      // y-axis for both charts
               area,       // Area setup for primary chart
               area2,      // Area setup for scroll/zoom chart
-              formatDate, // Create date object with specified format
+              formatDate, // Create date string with specified format
+              parseDate,  // Create date object from formatted date string
               daysOfWeek; // Array of weekday names for legend
 
           // Create scales
-          x  = d3.time.scale().range([0, width]);
-          x2 = d3.time.scale().range([0, width]);
-          y  = d3.scale.linear().range([height, 10]); // Change second value to 10 to add padding at top of chart
-          y2 = d3.scale.linear().range([height2, 0]);
+          x  = d3.scaleTime().range([0, width]);
+          x2 = d3.scaleTime().range([0, width]);
+          y  = d3.scaleLinear().range([height, 10]); // Change second value to 10 to add padding at top of chart
+          y2 = d3.scaleLinear().range([height2, 0]);
 
           // Create axes using scales
-          xAxis  = d3.svg.axis().scale(x).orient('bottom');
-          xAxis2 = d3.svg.axis().scale(x2).orient('bottom');
-          yAxis  = d3.svg.axis().scale(y).orient('left');
+          xAxis = d3.axisBottom(x);
+          xAxis2 = d3.axisBottom(x2);
+          yAxis = d3.axisLeft(y);
 
           // Create primary area path
-          area = d3.svg.area()
-            .interpolate('linear')
-            .x(function (d) {return x(d.fDate); })
+          area = d3.area()
+            .x(function (d) {
+              return x(d.fDate); 
+            })
             .y0(height)
-            .y1(function (d) {return y(d.count); });
+            .y1(function (d) { return y(d.count); });
 
           // Create scroll/zoom path
-          area2 = d3.svg.area()
-            .interpolate('linear')
+          area2 = d3.area()
             .x(function (d) {return x2(d.fDate); })
             .y0(height2)
             .y1(function (d) {return y2(d.count); });
 
           // Date formatter
-          formatDate = d3.time.format('%Y-%m-%d');
+          formatDate = d3.timeFormat('%Y-%m-%d'); // date -> string
+          parseDate  = d3.timeParse('%Y-%m-%d');  // string -> date
 
           // Days of the week for display
           daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
           selection.each(function (data) {
-            var brush,          // Brush, or selector, object for controlling scroll/zoom chart
+            var brush,          // Brush, or selector, object for controlling drag functionality of domain adjustment
+                zoom,           // object for controlling zoom/scroll functionality of domain adjustment
                 context,        // SVG container for scroll/zoom chart
                 dateMap,        // Array of sorted date values, used during interaction.on()
                 focus,          // SVG container for primary area chart
@@ -94,21 +97,50 @@ angular.module('sumaAnalysis')
                 'V' + (2 * y - 8);
             }
 
-            // Function called by brush event handler
-            function chartBrush() {
-              x.domain(brush.empty() ? x2.domain() : brush.extent());
-
-              focus.select('path').attr('d', area);
-              focus.select('.x.axis').call(xAxis);
+            function brushed() {
+              if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return;
+              var s = d3.event.selection || x2.range();
+              x.domain(s.map(x2.invert, x2));
+              focus.select("path").attr("d", area);
+              focus.select(".x.axis").call(xAxis);
+              svg.select(".zoom").call(zoom.transform, d3.zoomIdentity
+                  .scale(width / (s[1] - s[0]))
+                  .translate(-s[0], 0));
               focus.selectAll('.dot')
-                .attr('cx', function (d) {return x(d.fDate); })
-                .attr('cy', function (d) {return y(d.count); });
+                .attr('cx', function (d) {
+                  return x(d.fDate); 
+                })
+                .attr('cy', function (d) { return y(d.count); });
             }
+
+            function zoomed() {
+              if (d3.event.sourceEvent && d3.event.sourceEvent.type === "brush") return;
+              var t = d3.event.transform;
+              x.domain(t.rescaleX(x2).domain());
+              focus.select("path").attr("d", area);
+              focus.select(".x.axis").call(xAxis);
+              context.select(".brush").call(brush.move, x.range().map(t.invertX, t));
+              focus.selectAll('.dot')
+                .attr('cx', function (d) {
+                  return x(d.fDate); 
+                })
+                .attr('cy', function (d) { return y(d.count); });
+            }
+
+            brush = d3.brushX()
+              .extent([[0, 0], [width, height2]])
+              .on("brush end", brushed);
+
+            zoom = d3.zoom()
+              .scaleExtent([1, 1000])
+              .translateExtent([[0, 0], [width, height]])
+              .extent([[0, 0], [width, height]])
+              .on("zoom", zoomed);
 
             data.forEach(function (d) {
               d.title = d.date;
-              d.fDate  = formatDate.parse(d.date);
-              d.day   = daysOfWeek[d.fDate.getDay()];
+              d.fDate  = parseDate(d.date);             // parses string d.date into date d.fDate
+              d.day   = daysOfWeek[d.fDate.getDay()];   // gets day of week from date d.fDate
               d.count = d.count;
             });
 
@@ -120,10 +152,6 @@ angular.module('sumaAnalysis')
 
             // Create array of date objects using dates in dataset (used during interaction.on())
             dateMap = data.map(function (d) {return d.fDate; });
-
-            brush = d3.svg.brush()
-              .x(x2)
-              .on('brush', chartBrush);
 
             svg = d3.select(this).append('svg')
               .attr('width', width + margin.left + margin.right)
@@ -179,12 +207,15 @@ angular.module('sumaAnalysis')
             interaction = svg.append('g')
               .attr('id', 'interaction')
               .append('rect')
-              .attr('opacity', 0)
+              .attr("class", "zoom")
+              .style("cursor", "move")
+              .style("opacity", 0)
+              .style("pointer-events", "all")
               .attr('x', margin.left)
               .attr('y', margin.top)
               .attr('height', height)
               .attr('width', width)
-              .on('mousemove', function () {
+              .on('mouseover mousemove wheel', function () {
                   var xCoord      = d3.mouse(this)[0] - margin.left,  // X coordinate of mouse over primary graph
                       xInvert     = x.invert(xCoord),                 // Convert xCoord to date value using x scale
                       cut         = d3.bisectLeft(dateMap, xInvert),  // Return index to right of xInvert
@@ -231,7 +262,8 @@ angular.module('sumaAnalysis')
 
                 d3.select('#legend')
                   .attr('opacity', 0);
-              });
+              })
+              .call(zoom);
 
             // Legend display
             legend = svg.append('g')
@@ -264,16 +296,17 @@ angular.module('sumaAnalysis')
               .attr('transform', 'translate(0,' + height2 + ')')
               .call(xAxis2);
 
-            context.append('g')
-              .attr('class', 'x brush')
-              .call(brush)
-              .selectAll('rect')
-              .attr('y', -6)
-              .attr('height', height2 + 7);
-
             context.selectAll('.resize')
               .append('path')
               .attr('d', resizePath);
+
+            context.append('g')
+              .attr('class', 'brush')
+              .call(brush)
+              .call(brush.move, x.range())
+              .selectAll('rect')
+              .attr('y', -6)
+              .attr('height', height2 + 7);
 
             // Axis/Tick Stylings
             d3.selectAll('.axis path')

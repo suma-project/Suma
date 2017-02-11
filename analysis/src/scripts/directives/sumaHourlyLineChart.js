@@ -5,7 +5,7 @@ angular.module('sumaAnalysis')
     var HourlyLine = function () {
       function chart(selection) {
 
-        var displayFormat = d3.time.format('%a %I %p');
+        var displayFormat = d3.timeFormat('%a %I %p');
 
         function calcDate(day, hour) {
           var d,
@@ -53,9 +53,11 @@ angular.module('sumaAnalysis')
                 areaChart,
                 circles,
                 legend,
+                legendWrapper,
                 circle,
                 text,
-                interaction;
+                interaction,
+                wrapper;
 
             w = 960;
             h = 300;
@@ -68,46 +70,44 @@ angular.module('sumaAnalysis')
             dateMap = counts.map(function (d) {return d.date; });
 
             //Create scale functions
-            xScale = d3.time.scale()
+            xScale = d3.scaleTime()
                     .domain(d3.extent(counts.map(function (d) {return d.date; })))
                     .range([padding, w - padding]);
 
 
-            yScale = d3.scale.linear()
+            yScale = d3.scaleLinear()
                      .domain([0, d3.max(counts, function (d) { return d.value || 0; })])
                      .range([h - padding, padding]);
 
             //Define X axis
-            xAxis = d3.svg.axis()
-              .scale(xScale)
-              .orient('bottom')
-              .ticks(5)
-              .tickFormat(d3.time.format('%a %I %p'));
+            xAxis = d3.axisBottom(xScale)
+                    .ticks(5)
+                    .tickFormat(d3.timeFormat('%a %I %p'));
 
             //Define Y axis
-            yAxis = d3.svg.axis()
-              .scale(yScale)
-              .orient('left')
-              .ticks(5);
+            yAxis = d3.axisLeft(yScale)
+                    .ticks(5);
 
             // // Define area
-            area = d3.svg.area()
-              .interpolate('linear')
+            area = d3.area()
               .x(function (d) {return xScale(d.date); })
               .y0(h - padding)
               .y1(function (d) {return yScale(d.value); });
 
-            //Create SVG element
-            svg = d3.select(this).selectAll('svg').data([counts]);
+            // Select svg container and join data
+            wrapper = d3.select(this).selectAll('svg').data([counts]);
 
-            svg.enter().append('svg')
+            // Append svg and groups, and save references
+            wrapper.enter().append('svg')
+              .classed('chart', true)
               .append('g')
-              .attr('class', 'gRect');
+              .classed('gRect', true);
 
-            svg.attr('width', w)
-              .attr('height', h);
+            svg = d3.select('.chart')
+             .attr('width', w)
+             .attr('height', h);
 
-            gRect = svg.select('.gRect');
+            gRect = d3.select('.gRect');
 
             // Create x-axis
             x = gRect.selectAll('.xAxis').data([counts]);
@@ -115,10 +115,9 @@ angular.module('sumaAnalysis')
             // ENTER
             x.enter()
               .append('g')
-              .attr('class', 'xAxis');
-
-            // UPDATE
-            x.attr('transform', 'translate(0,' + (h - padding) + ')')
+              .attr('class', 'xAxis')
+            .merge(x) // UPDATE
+              .attr('transform', 'translate(0,' + (h - padding) + ')')
               .call(xAxis);
 
             // Create y-axis
@@ -127,10 +126,9 @@ angular.module('sumaAnalysis')
             // ENTER
             y.enter()
               .append('g')
-              .attr('class', 'yAxis');
-
-            // UPDATE
-            y.attr('transform', 'translate(' + padding + ',0)')
+              .attr('class', 'yAxis')
+            .merge(y) // UPDATE
+              .attr('transform', 'translate(' + padding + ',0)')
               .transition().duration(750)
               .call(yAxis);
 
@@ -147,10 +145,9 @@ angular.module('sumaAnalysis')
               .append('path')
               .attr('clip-path', 'url(#clip)')
               .attr('fill', 'steelblue')
-              .attr('class', 'mainGraph');
-
-            // UPDATE
-            areaChart.transition().duration(750)
+              .attr('class', 'mainGraph')
+            .merge(areaChart) // UPDATE
+              .transition().duration(750)
               .attr('d', area);
 
             // Create points
@@ -164,10 +161,9 @@ angular.module('sumaAnalysis')
               .attr('fill', function (d) {return setColor(d.value); })
               .attr('stroke', '#f7f7f7')
               .attr('stroke-width', 2)
-              .attr('opacity', 0);
-
-            // UPDATE
-            circles.attr('cx', function (d) {return xScale(d.date); })
+              .attr('opacity', 0)
+            .merge(circles) // UPDATE
+              .attr('cx', function (d) {return xScale(d.date); })
               .attr('cy', function (d) {return yScale(d.value); });
 
             // Create interaction layer
@@ -182,58 +178,60 @@ angular.module('sumaAnalysis')
               .attr('x', padding)
               .attr('y', padding)
               .attr('height', h - (padding * 2))
-              .attr('width', w - (padding * 2));
+              .attr('width', w - (padding * 2))
+            .merge(interaction) // UPDATE
+              .on('mousemove', function () {
+                var xCoord      = d3.mouse(this)[0],  // X coordinate of mouse over primary graph
+                    xInvert     = xScale.invert(xCoord), // Convert xCoord to date value using x scale
+                    cut         = d3.bisectLeft(dateMap, xInvert), // Return index to right of xInvert
+                    cut2        = (cut > 0) ? cut - 1 : 0, // Return index to left of xInvert
+                    leftPoint   = counts[cut2].date, // Convert cut2 to date (milliseconds from Epoch)
+                    rightPoint  = counts[cut].date, // Convert cut to date (milliseconds from Epoch)
+                    midpoint    = (leftPoint.getTime() + rightPoint.getTime()) / 2; // Calculate midpoint
 
-              // UPDATE
-            interaction.on('mousemove', function () {
-              var xCoord      = d3.mouse(this)[0],  // X coordinate of mouse over primary graph
-                  xInvert     = xScale.invert(xCoord), // Convert xCoord to date value using x scale
-                  cut         = d3.bisectLeft(dateMap, xInvert), // Return index to right of xInvert
-                  cut2        = (cut > 0) ? cut - 1 : 0, // Return index to left of xInvert
-                  leftPoint   = counts[cut2].date, // Convert cut2 to date (milliseconds from Epoch)
-                  rightPoint  = counts[cut].date, // Convert cut to date (milliseconds from Epoch)
-                  midpoint    = (leftPoint.getTime() + rightPoint.getTime()) / 2; // Calculate midpoint
+                // Is current postion less than the midpoint?
+                if (xInvert.getTime() < midpoint) {
+                  cut -= 1;
+                }
 
-              // Is current postion less than the midpoint?
-              if (xInvert.getTime() < midpoint) {
-                cut -= 1;
-              }
+                // Display closest dot
+                d3.selectAll('.dot')
+                  .attr('opacity', 0)
+                  .filter(function (d) {return d.date === counts[cut].date; })
+                  .attr('opacity', 1);
 
-              // Display closest dot
-              d3.selectAll('.dot')
-                .attr('opacity', 0)
-                .filter(function (d) {return d.date === counts[cut].date; })
-                .attr('opacity', 1);
+                //Display legend
+                d3.select('#tsLegend')
+                  .attr('opacity', 1);
 
-              //Display legend
-              d3.select('#tsLegend')
-                .attr('opacity', 1);
+                // Update legend text
+                d3.select('#legendText')
+                  .text(function () {
+                    return setTitle(counts[cut].date, counts[cut].value);
+                  });
 
-              // Update legend text
-              d3.select('#legendText')
-                .text(function () {
-                  return setTitle(counts[cut].date, counts[cut].value);
-                });
+                // Update circle color
+                d3.select('#legendCircle')
+                  .attr('fill', function () {return setColor(counts[cut].value); });
+              })
+              .on('mouseout', function () {
+                d3.selectAll('.dot')
+                  .attr('opacity', 0);
 
-              // Update circle color
-              d3.select('#legendCircle')
-                .attr('fill', function () {return setColor(counts[cut].value); });
-            }).on('mouseout', function () {
-              d3.selectAll('.dot')
-                .attr('opacity', 0);
-
-              d3.select('#tsLegend')
-                .attr('opacity', 0);
-            });
+                d3.select('#tsLegend')
+                  .attr('opacity', 0);
+              });
 
             // Create legend wrapper
-            legend = gRect.selectAll('#tsLegend').data([counts]);
+            legendWrapper = gRect.selectAll('#tsLegend').data([counts]);
 
             // ENTER
-            legend.enter()
+            legendWrapper.enter()
               .append('g')
               .attr('id', 'tsLegend')
               .attr('opacity', 0);
+
+            legend = d3.select('#tsLegend');
 
               // Create circle in legend
             circle = legend.selectAll('#legendCircle').data([counts]);

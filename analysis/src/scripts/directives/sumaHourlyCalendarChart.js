@@ -106,9 +106,10 @@ angular.module('sumaAnalysis')
           selection.each(function (counts) {
               var domain,
                   heatMap,
-                  gRect,
+                  cRect,
                   svg,
-                  svgEnter;
+                  svgEnter,
+                  wrapper;
 
               data = counts;
 
@@ -116,7 +117,7 @@ angular.module('sumaAnalysis')
               domain = _.pluck(data, 'value');
 
               // Color Scale
-              color = d3.scale.quantile()
+              color = d3.scaleQuantile()
                   .domain(domain)
                   .range(colorRange);
 
@@ -128,45 +129,46 @@ angular.module('sumaAnalysis')
               min = d3.min(domain);
               max = d3.max(domain);
 
-              // Select SVG container and join data
-              svg = d3.select(this).selectAll('svg').data([data]);
+              // Select svg container and join data
+              wrapper = d3.select(this).selectAll('svg').data([data]);
 
-              // Append containers
-              svgEnter = svg.enter().append('svg')
-                          .attr('id', 'calendar')
-                          .append('g')
-                          .attr('class', 'gRect');
+              // Append svg and groups, and save references
+              wrapper.enter().append('svg')
+                .attr('id', 'calendar')
+                .append('g')
+                .classed('cRect', true);
 
-              // Apply transforms to containers and save selection for future use
-              gRect = svg.select('.gRect')
-                        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+              svg = d3.select('#calendar')
+                .attr('width', width + margin.left + margin.right)
+                .attr('height', height + margin.top + margin.bottom);;
 
-              // Set width and height of chart
-              svg.attr('width', width + margin.left + margin.right)
-                .attr('height', height + margin.top + margin.bottom);
+              cRect = d3.select('.cRect')
+               .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
               // Append day labels
-              svgEnter.selectAll('.dayLabel')
+              cRect.selectAll('.dayLabel')
                 .data(d3.values(days))
                 .enter().append('text')
                 .text(function (d) { return d; })
+                .classed('dayLabel', true)
                 .attr('x', 0)
                 .attr('y', function (d, i) { return i * gridSize; })
                 .style('text-anchor', 'end')
-                .attr('transform', 'translate(-6,' + gridSize / 1.5 + ')');
+                .attr('transform', 'translate(-6,' + gridSize / 1.5 + ')'); 
 
               // Append hour labels
-              svgEnter.selectAll('.timeLabel')
+              cRect.selectAll('.timeLabel')
                 .data(d3.values(times))
                 .enter().append('text')
                 .text(function (d) { return d; })
+                .classed('timeLabel', true)
                 .attr('x', function (d, i) { return i * gridSize; })
                 .attr('y', 0)
                 .style('text-anchor', 'middle')
                 .attr('transform', 'translate(' + gridSize / 2 + ', -6)');
 
               // Append rects
-              heatMap = gRect.selectAll('.hour').data(data);
+              heatMap = cRect.selectAll('.hour').data(data);
 
               // ENTER
               heatMap.enter()
@@ -178,10 +180,9 @@ angular.module('sumaAnalysis')
                 .attr('stroke-width', '2px')
                 .attr('width', gridSize)
                 .attr('height', gridSize)
-                .style('fill', '#eee');
-
-              // UPDATE
-              heatMap.attr('data-toggle', 'tooltip')
+                .style('fill', '#eee')
+              .merge(heatMap) // UPDATE
+                .attr('data-toggle', 'tooltip')
                 .attr('data-original-title', function (d) { return setTitle(d); })
                 .transition().duration(750)
                 .style('fill', function (d) { return setColor(d.value); });
