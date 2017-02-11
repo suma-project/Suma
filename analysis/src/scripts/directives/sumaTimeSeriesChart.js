@@ -52,7 +52,7 @@ angular.module('sumaAnalysis')
           // Create primary area path
           area = d3.area()
             .x(function (d) {
-              return x(d.fDate); 
+              return x(d.fDate);
             })
             .y0(height)
             .y1(function (d) { return y(d.count); });
@@ -98,44 +98,48 @@ angular.module('sumaAnalysis')
             }
 
             function brushed() {
-              if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return;
+              if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'zoom') {
+                return;
+              }
               var s = d3.event.selection || x2.range();
               x.domain(s.map(x2.invert, x2));
-              focus.select("path").attr("d", area);
-              focus.select(".x.axis").call(xAxis);
-              svg.select(".zoom").call(zoom.transform, d3.zoomIdentity
+              focus.select('path').attr('d', area);
+              focus.select('.x.axis').call(xAxis);
+              svg.select('.zoom').call(zoom.transform, d3.zoomIdentity
                   .scale(width / (s[1] - s[0]))
                   .translate(-s[0], 0));
               focus.selectAll('.dot')
                 .attr('cx', function (d) {
-                  return x(d.fDate); 
+                  return x(d.fDate);
                 })
                 .attr('cy', function (d) { return y(d.count); });
             }
 
             function zoomed() {
-              if (d3.event.sourceEvent && d3.event.sourceEvent.type === "brush") return;
+              if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'brush') {
+                return;
+              }
               var t = d3.event.transform;
               x.domain(t.rescaleX(x2).domain());
-              focus.select("path").attr("d", area);
-              focus.select(".x.axis").call(xAxis);
-              context.select(".brush").call(brush.move, x.range().map(t.invertX, t));
+              focus.select('path').attr('d', area);
+              focus.select('.x.axis').call(xAxis);
+              context.select('.brush').call(brush.move, x.range().map(t.invertX, t));
               focus.selectAll('.dot')
                 .attr('cx', function (d) {
-                  return x(d.fDate); 
+                  return x(d.fDate);
                 })
                 .attr('cy', function (d) { return y(d.count); });
             }
 
             brush = d3.brushX()
               .extent([[0, 0], [width, height2]])
-              .on("brush end", brushed);
+              .on('brush end', brushed);
 
             zoom = d3.zoom()
               .scaleExtent([1, 1000])
               .translateExtent([[0, 0], [width, height]])
               .extent([[0, 0], [width, height]])
-              .on("zoom", zoomed);
+              .on('zoom', zoomed);
 
             data.forEach(function (d) {
               d.title = d.date;
@@ -207,10 +211,10 @@ angular.module('sumaAnalysis')
             interaction = svg.append('g')
               .attr('id', 'interaction')
               .append('rect')
-              .attr("class", "zoom")
-              .style("cursor", "move")
-              .style("opacity", 0)
-              .style("pointer-events", "all")
+              .attr('class', 'zoom')
+              .style('cursor', 'move')
+              .style('opacity', 0)
+              .style('pointer-events', 'all')
               .attr('x', margin.left)
               .attr('y', margin.top)
               .attr('height', height)

@@ -140,7 +140,7 @@ angular.module('sumaAnalysis')
 
               svg = d3.select('#calendar')
                 .attr('width', width + margin.left + margin.right)
-                .attr('height', height + margin.top + margin.bottom);;
+                .attr('height', height + margin.top + margin.bottom);
 
               cRect = d3.select('.cRect')
                .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
@@ -154,7 +154,7 @@ angular.module('sumaAnalysis')
                 .attr('x', 0)
                 .attr('y', function (d, i) { return i * gridSize; })
                 .style('text-anchor', 'end')
-                .attr('transform', 'translate(-6,' + gridSize / 1.5 + ')'); 
+                .attr('transform', 'translate(-6,' + gridSize / 1.5 + ')');
 
               // Append hour labels
               cRect.selectAll('.timeLabel')

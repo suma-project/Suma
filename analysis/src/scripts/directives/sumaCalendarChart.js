@@ -179,7 +179,7 @@ angular.module('sumaAnalysis')
           gWrap = d3.select('.gWrap').selectAll('g').data(range);
 
           gWrap.enter().append('g')
-          .classed("gInner" , true)
+          .classed('gInner', true)
           .attr('transform', function (d, i) {
             var rowHeight;
 

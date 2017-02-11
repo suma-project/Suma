@@ -38,7 +38,7 @@ angular.module('sumaAnalysis')
             .append('g')
             .classed('gBar', true)
             .append('g')
-            .classed('gRule', true);;
+            .classed('gRule', true);
 
           svg = d3.select('.chart')
            .attr('width', width);
@@ -54,11 +54,11 @@ angular.module('sumaAnalysis')
 
           if (!oldHeight) {
             svg.attr('height', height);
-          } 
+          }
           else {
             if (height > oldHeight) {
               svg.transition().duration(1000).attr('height', height);
-            } 
+            }
             else {
               svg.transition().duration(1000).attr('height', height);
             }
