@@ -1,6 +1,8 @@
 Suma
 =====
 
+[![Join the chat at https://gitter.im/cazzerson/Suma](https://badges.gitter.im/cazzerson/Suma.svg)](https://gitter.im/cazzerson/Suma?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![Build Status](https://travis-ci.org/cazzerson/Suma.svg?branch=travis_ci)](https://travis-ci.org/cazzerson/Suma)
 
 [![Gitter](https://badges.gitter.im/cazzerson/Suma.svg)](https://gitter.im/cazzerson/Suma?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
