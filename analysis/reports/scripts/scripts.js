@@ -73558,7 +73558,6 @@ angular.module('sumaAnalysis')
             context.append('g')
               .attr('class', 'brush')
               .call(brush)
-              .call(brush.move, x.range())
               .selectAll('rect')
               .attr('y', -6)
               .attr('height', height2 + 7);
