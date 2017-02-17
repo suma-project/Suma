@@ -1,9 +1,7 @@
 Suma
 =====
 
-[![Build Status](https://travis-ci.org/cazzerson/Suma.svg?branch=travis_ci)](https://travis-ci.org/cazzerson/Suma)
-
-[![Gitter](https://badges.gitter.im/cazzerson/Suma.svg)](https://gitter.im/cazzerson/Suma?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Build Status](https://travis-ci.org/suma-project/Suma.svg?branch=master)](https://travis-ci.org/suma-project/Suma)
 
 Suma comprises a set of tools, including a mobile tablet-based (i.e. Apple iPad) data collection application, that will allow library staff to collect, aggregate, and interactively analyze real-time data about the usage of physical space and services. This tool will support the collection of more fine-grained data about physical space usage patterns by supporting the annotation of users with "activities." The data that this tool provides will allow the libraries to build on existing assessment practices by significantly improving our ability to analyze physical space usage trends against various milestones, as well as generating more dynamic and current data visualizations. As a result, this data can be both collected and utilized more frequently and at a much wider scope than before with relative ease.
 
@@ -23,7 +21,7 @@ As a safeguard, all JSON input from the client is logged. This will lead to larg
 
 Documentation
 ==============
-* [Suma documentation site](http://cazzerson.github.io/Suma)
+* [Suma documentation site](https://github.com/suma-project/Suma/edit/master/README.md)
 * [Suma license](LICENSE)
 
 How to contribute?
@@ -33,7 +31,7 @@ You want to contribute some code? Maybe some data reports, bug fixes, new client
 Project URLs
 ============
 * Project page: http://www.lib.ncsu.edu/dli/projects/spaceassesstool/
-* Repository: https://github.com/cazzerson/suma
+* Repository: https://github.com/suma-project/Suma
 
 Suma Community
 ==============
