@@ -101,8 +101,6 @@ angular.module('sumaAnalysis')
               if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'zoom') {
                 return;
               }
-              console.log('In brushed')
-              console.log(d3.event.selection);
               var s = d3.event.selection || x2.range();
               x.domain(s.map(x2.invert, x2));
               focus.select('path').attr('d', area);
@@ -115,7 +113,7 @@ angular.module('sumaAnalysis')
                   return x(d.fDate);
                 })
                 .attr('cy', function (d) { return y(d.count); });
-              if (d3.event.selection==null || (d3.event.selection[0]==d3.event.selection[1])) {
+              if (d3.event.selection === null || (d3.event.selection[0] === d3.event.selection[1])) {
                 context.select('.brush').remove();
                 context.append('g')
                   .attr('class', 'brush')
@@ -130,8 +128,6 @@ angular.module('sumaAnalysis')
               if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'brush') {
                 return;
               }
-              console.log('In zoomed')
-              console.log(d3.event.selection);
               var t = d3.event.transform;
               x.domain(t.rescaleX(x2).domain());
               focus.select('path').attr('d', area);
