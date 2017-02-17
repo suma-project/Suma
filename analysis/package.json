@@ -5,7 +5,7 @@
   "readme": "Suma is an open-source mobile web-based assessment toolkit for collecting and analyzing observational data about the usage of physical spaces and services.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/cazzerson/Suma"
+    "url": "https://github.com/suma-project/Suma"
   },
   "dependencies": {},
   "devDependencies": {

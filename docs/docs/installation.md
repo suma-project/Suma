@@ -23,7 +23,7 @@ Additional Client Requirements:
 
 Download Suma
 --------------
-You can find the [latest Suma version](http://github.com/cazzerson/Suma/releases) on GitHub.
+You can find the [latest Suma version](http://github.com/suma-project/Suma/releases) on GitHub.
 
 Note path to suma download directory.  We will refer to this as SUMA_DOWNLOAD_DIR
 

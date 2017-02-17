@@ -100,7 +100,7 @@ try
 catch (Exception $e)
 {
     header("HTTP/1.1 500 Internal Server Error");
-    print "Trouble loading Suma server application. This is often caused by configuration issues. Please refer to the troubleshooting docs at http://cazzerson.github.io/Suma ";
+    print "Trouble loading Suma server application. This is often caused by configuration issues. Please refer to the troubleshooting docs at http://suma-project.github.io/Suma ";
     print "The raw output is below: ";
     print $e->getMessage();
     die;

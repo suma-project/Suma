@@ -30,7 +30,7 @@ You want to contribute some code? Maybe some data reports, bug fixes, new client
 Project URLs
 ============
 * Project page: http://www.lib.ncsu.edu/dli/projects/spaceassesstool/
-* Repository: https://github.com/cazzerson/suma
+* Repository: https://github.com/suma-project/suma
 
 Suma Community
 ==============

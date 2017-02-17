@@ -14,4 +14,4 @@
 
 ## GitHub Issues
 
-[Closed Suma issues](https://github.com/cazzerson/Suma/issues) on Github may also be a good source of information for troubleshooting your installation.
+[Closed Suma issues](https://github.com/suma-project/Suma/issues) on Github may also be a good source of information for troubleshooting your installation.
