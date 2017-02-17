@@ -113,6 +113,15 @@ angular.module('sumaAnalysis')
                   return x(d.fDate);
                 })
                 .attr('cy', function (d) { return y(d.count); });
+              if (d3.event.selection === null || (d3.event.selection[0] === d3.event.selection[1])) {
+                context.select('.brush').remove();
+                context.append('g')
+                  .attr('class', 'brush')
+                  .call(brush)
+                  .selectAll('rect')
+                  .attr('y', -6)
+                  .attr('height', height2 + 7);
+              }
             }
 
             function zoomed() {
@@ -307,7 +316,6 @@ angular.module('sumaAnalysis')
             context.append('g')
               .attr('class', 'brush')
               .call(brush)
-              .call(brush.move, x.range())
               .selectAll('rect')
               .attr('y', -6)
               .attr('height', height2 + 7);
