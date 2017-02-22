@@ -10,7 +10,7 @@ before_install:
   - cd analysis && bundle install
 notifications:
   email:
-    - jmcasden@ncsu.edu
+    - casden@gmail.com
     - bddavids@ncsu.edu
   webhooks:
     urls:

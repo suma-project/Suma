@@ -1,5 +1,10 @@
 # Frequently Asked Questions
 
+## Data Collection Client
+
+#### Is there a way to capture more than one count at a time?
+The Suma data collection client has a hidden 'multiCount' feature that enables the capture of multiple counts with the same activities. To access this feature, append the query string `?multiCount=true` to the URL of your instance of the Suma data collection client, e.g. YOUR_SUMA_CLIENT_URL/?multiCount=true. Please note that all counts will have the same timestamp. **We recommended that this feature be used cautiously, as it is much easier to enter large amounts of data this way. Use at your own risk!**
+
 ## Analysis Tools
 
 #### How is data captured and represented in Suma?
