@@ -21,7 +21,7 @@ As a safeguard, all JSON input from the client is logged. This will lead to larg
 
 Documentation
 ==============
-* [Suma documentation site](https://github.com/suma-project/Suma/edit/master/README.md)
+* [Suma documentation site](https://suma-project.github.io/Suma)
 * [Suma license](LICENSE)
 
 How to contribute?
