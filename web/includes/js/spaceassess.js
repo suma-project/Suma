@@ -776,25 +776,34 @@ $(function() {
                             // Start a new session as soon as a location is selected
                             startCollecting();
 
-                            // TODO: Handle count rows that represent more than 1 person
-                            Person.all().filter('session', '=', currentSession).filter('location', '=', currentLoc).count(dbTransaction, function(numCounts) {
-                                if (numCounts > 0) {
-                                    // right now, this subtracts the "zero" placeholder count
-                                    countIndicator.val(numCounts-1);
-                                    currentLocCount.text('(' + (numCounts-1) + ')');
-                                } else {
-                                    // Placeholder so that we know that this location has been visited
-                                    countIndicator.val('Count');
-                                    var countObj = new Person({timestamp:(new Date()).getTime()});
-                                    countObj.location = currentLoc;
-                                    countObj.session = currentSession;
-                                    countObj.count = 0;
-                                    persistence.add(countObj);
-                                    currentLocCount.text('(0)');
-                                }
-                                persistence.flush(dbTransaction, function() {
-                                    $("#loadingScreen").dialog('close');
-                                });
+                            // Store people associated with this location
+                            var currentPeople = Person.all().filter('session', '=', currentSession).filter('location', '=', currentLoc);
+
+                            // Then count transactions
+                            currentPeople.count(dbTransaction, function (numCounts) {
+                              if (numCounts > 0) {
+                                  // Sum 'count' field from currentPeople result objects
+                                  currentPeople.list(null, function(results) {
+                                    var total = results.reduce(function (acc, val) {
+                                      return acc + val['count'];
+                                    }, 0);
+                                    // Set display
+                                    countIndicator.val(total);
+                                    currentLocCount.text('(' + total + ')');
+                                  });
+                              } else {
+                                  // Placeholder so that we know that this location has been visited
+                                  countIndicator.val('Count');
+                                  var countObj = new Person({timestamp:(new Date()).getTime()});
+                                  countObj.location = currentLoc;
+                                  countObj.session = currentSession;
+                                  countObj.count = 0;
+                                  persistence.add(countObj);
+                                  currentLocCount.text('(0)');
+                              }
+                              persistence.flush(dbTransaction, function() {
+                                  $("#loadingScreen").dialog('close');
+                              });
                             });
                         }
                         });
