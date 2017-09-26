@@ -410,7 +410,7 @@ function syncSessions() {
                 });
             }).error(function(xhr, ajaxOptions, thrownError) {
                 currentlySyncing--;
-                alert("Error sending data to server. This may caused by issues including server outages and Wi-Fi connectivity problems. " +
+                alert("Error sending data to server. This may be caused by issues including server outages and Wi-Fi connectivity problems. " +
                     "The data will be retained by the browser. Please contact an administrator if this doesn't resolve itself soon: " + thrownError)
             });
         });
