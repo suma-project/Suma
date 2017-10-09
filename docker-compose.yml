@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+
+  db:
+    image: mysql:latest
+    volumes:
+      - ./.data/db:/var/lib/mysql
+      - ./service/config/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    environment:
+      MYSQL_ROOT_PASSWORD: suma
+      MYSQL_DATABASE: suma
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: suma
+
+  suma:
+    build: .
+    links:
+      - db
+    ports:
+      - "8081:80"
+    environment:
+      TZ: America/Los_Angeles
+      SUMA_DB_HOST: db
+      SUMA_DEBUG: 'true'
