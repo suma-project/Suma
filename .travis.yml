@@ -2,7 +2,6 @@ language: node_js
 sudo: false
 node_js:
   - "4"
-  - "0.12"
 script: npm install && npm test
 before_install:
   - npm install -g grunt-cli
@@ -12,6 +11,7 @@ notifications:
   email:
     - casden@gmail.com
     - bddavids@ncsu.edu
+    - kdbeswic@ncsu.edu
   webhooks:
     urls:
       - https://webhooks.gitter.im/e/a200c25b0cbac74e2b9e
