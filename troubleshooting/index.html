@@ -87,6 +87,8 @@
                 
                     <li><a class="toctree-l4" href="#configuration-errors">Configuration Errors</a></li>
                 
+                    <li><a class="toctree-l4" href="#suma-on-selinux">Suma on SELinux</a></li>
+                
                     <li><a class="toctree-l4" href="#github-issues">GitHub Issues</a></li>
                 
             
@@ -191,6 +193,32 @@
 <p>Issues <code>SUMA_BASE_URL</code> will be reported as a <code>404 Not Found</code> error.</p>
 </li>
 </ul>
+<h2 id="suma-on-selinux">Suma on SELinux</h2>
+<h3 id="suma-log-path">Suma Log Path</h3>
+<p>Ordinarily to set up read/write permissions on the log path, you just need to identify the group that the apache user belongs to, add the log file and its parent folders to that group, and then give the group write permissions. Something like this:</p>
+<pre><code>chgrp apache /var/www/html/suma
+chmod 775 /var/www/html/suma
+</code></pre>
+
+<pre><code>chgrp apache /var/www/html/suma/log
+chmod 775 /var/www/html/suma/log
+</code></pre>
+
+<pre><code>touch /var/www/html/suma/log/sumaserver.log
+chgrp apache /var/www/html/suma/log/sumaserver.log
+chmod 775 /var/www/html/suma/log/sumaserver.log
+</code></pre>
+
+<p>That assumes that your apache user’s group is “apache” (on Debian-based systems the default is www-data), and that the path to your Suma client installation is /var/www/html/suma (which will vary according to where you installed it). Ordinarily, that would be enough, and the file should be there and writable.</p>
+<p>But in the case of SELinux, there is a complication. SELinux is a security layer used by Red Hat Enterprise Linux and CentOS. Among other things, SELinux restricts read/write access to files by the Apache process even when the file permissions are otherwise correct, which cause Suma not to work correctly.</p>
+<p>Correcting it requires running some additional commands:</p>
+<pre><code>chcon -t httpd_sys_rw_content_t /var/www/html/suma
+chcon -t httpd_sys_rw_content_t /var/www/html/suma/log
+chcon -t httpd_sys_rw_content_t /var/www/html/suma/log/sumaserver.log
+</code></pre>
+
+<p>The command sets the “security context” of the files to designate them as files that Apache is allowed to read and write. That should persuade SELinux that yes, it really is OK for Suma to write its own log file.</p>
+<p>(Thanks to Will Martin of the University of North Dakota.)</p>
 <h2 id="github-issues">GitHub Issues</h2>
 <p><a href="https://github.com/suma-project/Suma/issues">Closed Suma issues</a> on Github may also be a good source of information for troubleshooting your installation.</p>
               
