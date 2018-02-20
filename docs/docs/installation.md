@@ -149,7 +149,7 @@ Suma Server Software Configuration
                     path: path to log directory
                     name: sumaserver.log
 
-    * Be sure that the log directory specified in `sumaserver:log:path` both exists and is **writable by the web server**.
+    * Be sure that the log directory specified in `sumaserver:log:path` both exists and is **writable by the web server**. If using SELinux, please see the [Suma Troubleshooting](https://suma-project.github.io/Suma/troubleshooting/) docs for more guidance.
 
 * services/config/session.yaml
 
