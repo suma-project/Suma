@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Http
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -24,6 +24,7 @@ if (!defined('PHPUnit_MAIN_METHOD')) {
     define('PHPUnit_MAIN_METHOD', 'Zend_Http_Client_AllTests::main');
 }
 
+require_once 'Zend/Http/Client/ClientTest.php';
 require_once 'Zend/Http/Client/StaticTest.php';
 require_once 'Zend/Http/Client/SocketTest.php';
 require_once 'Zend/Http/Client/SocketKeepaliveTest.php';
@@ -37,7 +38,7 @@ require_once 'Zend/Http/Client/CurlTest.php';
  * @category   Zend
  * @package    Zend_Http
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Http
  * @group      Zend_Http_Client
@@ -53,6 +54,7 @@ class Zend_Http_Client_AllTests
     {
         $suite = new PHPUnit_Framework_TestSuite('Zend Framework - Zend_Http_Client');
 
+        $suite->addTestSuite('Zend_Http_Client_ClientTest');
         $suite->addTestSuite('Zend_Http_Client_StaticTest');
         if (defined('TESTS_ZEND_HTTP_CLIENT_BASEURI') && Zend_Uri_Http::check(TESTS_ZEND_HTTP_CLIENT_BASEURI)) {
             $suite->addTestSuite('Zend_Http_Client_SocketTest');

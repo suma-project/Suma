@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -43,7 +43,7 @@ require_once 'Zend/View.php';
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_View
  * @group      Zend_View_Helper
@@ -542,6 +542,26 @@ class Zend_View_Helper_HeadMetaTest extends PHPUnit_Framework_TestCase
         $helper = new Zend_View_Helper_HeadMeta();
         $result = (string)$helper->headMeta()->appendName('foo','bar');
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @group GH-515
+     */
+    public function testConditionalNoIE()
+    {
+        $html = $this->helper->appendHttpEquiv('foo', 'bar', array('conditional' => '!IE'))->toString();
+        $this->assertContains('<!--[if !IE]><!--><', $html);
+        $this->assertContains('<!--<![endif]-->', $html);
+    }
+
+    /**
+     * @group GH-515
+     */
+    public function testConditionalNoIEWidthSpace()
+    {
+        $html = $this->helper->appendHttpEquiv('foo', 'bar', array('conditional' => '! IE'))->toString();
+        $this->assertContains('<!--[if ! IE]><!--><', $html);
+        $this->assertContains('<!--<![endif]-->', $html);
     }
 }
 

@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Soap
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -36,7 +36,7 @@ require_once 'Zend/Soap/AutoDiscover/OnlineTest.php';
  * @category   Zend
  * @package    Zend_Soap
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Soap
  */
@@ -50,6 +50,12 @@ class Zend_Soap_AllTests
     public static function suite()
     {
         $suite = new PHPUnit_Framework_TestSuite('Zend Framework - Zend_Soap');
+
+        //early exit because of segfault in this specific version
+        //https://github.com/zendframework/zf1/issues/650
+        if (getenv('TRAVIS') && version_compare(PHP_VERSION, '5.4.37', '=')) {
+            return $suite;
+        }
 
         $suite->addTestSuite('Zend_Soap_ClientTest');
         $suite->addTestSuite('Zend_Soap_ServerTest');

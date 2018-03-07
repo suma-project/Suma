@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -31,7 +31,7 @@ require_once 'Zend/Db/Select/TestCommon.php';
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Db
  * @group      Zend_Db_Select
@@ -834,6 +834,14 @@ class Zend_Db_Select_StaticTest extends Zend_Db_Select_TestCommon
         $select = $this->_db->select();
         $select->from(array('p' => 'products'))->order('MD5(1);drop table products; -- )');
         $this->assertEquals('SELECT "p".* FROM "products" AS "p" ORDER BY "MD5(1);drop table products; -- )" ASC', $select->assemble());
+
+        $select = $this->_db->select();
+        $select->from('p')->order("MD5(\";(\");DELETE FROM p2; SELECT 1 #)");
+        $this->assertEquals('SELECT "p".* FROM "p" ORDER BY "MD5("";("");DELETE FROM p2; SELECT 1 #)" ASC', $select->assemble());
+
+        $select = $this->_db->select();
+        $select->from('p')->order("MD5(\"a(\");DELETE FROM p2; #)");
+        $this->assertEquals('SELECT "p".* FROM "p" ORDER BY "MD5(""a("");DELETE FROM p2; #)" ASC', $select->assemble());
     }
 
     public function testSqlInjectionWithGroup()
@@ -845,6 +853,14 @@ class Zend_Db_Select_StaticTest extends Zend_Db_Select_TestCommon
         $select = $this->_db->select();
         $select->from(array('p' => 'products'))->group('MD5(1); drop table products; -- )');
         $this->assertEquals('SELECT "p".* FROM "products" AS "p" GROUP BY "MD5(1); drop table products; -- )"', $select->assemble());
+
+        $select = $this->_db->select();
+        $select->from('p')->group("MD5(\";(\");DELETE FROM p2; SELECT 1 #)");
+        $this->assertEquals('SELECT "p".* FROM "p" GROUP BY "MD5("";("");DELETE FROM p2; SELECT 1 #)"', $select->assemble());
+
+        $select = $this->_db->select();
+        $select->from('p')->group("MD5(\"a(\");DELETE FROM p2; #)");
+        $this->assertEquals('SELECT "p".* FROM "p" GROUP BY "MD5(""a("");DELETE FROM p2; #)"', $select->assemble());
     }
 
     public function testSqlInjectionInColumn()
@@ -852,6 +868,66 @@ class Zend_Db_Select_StaticTest extends Zend_Db_Select_TestCommon
         $select = $this->_db->select();
         $select->from(array('p' => 'products'), array('MD5(1); drop table products; -- )'));
         $this->assertEquals('SELECT "p"."MD5(1); drop table products; -- )" FROM "products" AS "p"', $select->assemble());
+    }
+
+    public function testIfInColumn()
+    {
+        $select = $this->_db->select();
+        $select->from('table1', '*');
+        $select->join(array('table2'),
+                      'table1.id = table2.id',
+                      array('bar' => 'IF(table2.id IS NOT NULL, 1, 0)'));
+        $this->assertEquals("SELECT \"table1\".*, IF(table2.id IS NOT NULL, 1, 0) AS \"bar\" FROM \"table1\"\n INNER JOIN \"table2\" ON table1.id = table2.id", $select->assemble());
+    }
+
+    public function testNestedIfInColumn()
+    {
+        $select = $this->_db->select();
+        $select->from('table1', '*');
+        $select->join(array('table2'),
+            'table1.id = table2.id',
+            array('bar' => 'IF(table2.id IS NOT NULL, IF(table2.id2 IS NOT NULL, 1, 2), 0)'));
+        $this->assertEquals("SELECT \"table1\".*, IF(table2.id IS NOT NULL, IF(table2.id2 IS NOT NULL, 1, 2), 0) AS \"bar\" FROM \"table1\"\n INNER JOIN \"table2\" ON table1.id = table2.id", $select->assemble());
+    }
+
+    public function testDeepNestedIfInColumn()
+    {
+        $select = $this->_db->select();
+        $select->from('table1', '*');
+        $select->join(array('table2'),
+            'table1.id = table2.id',
+            array('bar' => 'IF(table2.id IS NOT NULL, IF(table2.id2 IS NOT NULL, SUM(1), 2), 0)'));
+        $this->assertEquals("SELECT \"table1\".*, IF(table2.id IS NOT NULL, IF(table2.id2 IS NOT NULL, SUM(1), 2), 0) AS \"bar\" FROM \"table1\"\n INNER JOIN \"table2\" ON table1.id = table2.id", $select->assemble());
+    }
+
+    public function testNestedUnbalancedParenthesesInColumn()
+    {
+        $select = $this->_db->select();
+        $select->from('table1', '*');
+        $select->join(array('table2'),
+            'table1.id = table2.id',
+            array('bar' => 'IF(SUM()'));
+        $this->assertEquals("SELECT \"table1\".*, \"table2\".\"IF(SUM()\" AS \"bar\" FROM \"table1\"\n INNER JOIN \"table2\" ON table1.id = table2.id", $select->assemble());
+    }
+
+    public function testNestedIfInGroup()
+    {
+        $select = $this->_db->select();
+        $select->from(array ('p' => 'product'))
+            ->group('IF(p.id IS NOT NULL, IF(p.id2 IS NOT NULL, SUM(1), 2), 0)');
+
+        $expected = 'SELECT "p".* FROM "product" AS "p" GROUP BY IF(p.id IS NOT NULL, IF(p.id2 IS NOT NULL, SUM(1), 2), 0)';
+        $this->assertEquals($expected, $select->assemble());
+    }
+
+    public function testUnbalancedParenthesesInGroup()
+    {
+        $select = $this->_db->select();
+        $select->from(array ('p' => 'product'))
+            ->group('IF(SUM() ASC');
+
+        $expected = 'SELECT "p".* FROM "product" AS "p" GROUP BY "IF(SUM() ASC"';
+        $this->assertEquals($expected, $select->assemble());
     }
 
     /**
@@ -910,4 +986,86 @@ class Zend_Db_Select_StaticTest extends Zend_Db_Select_TestCommon
         $this->assertEquals($expected, $select->assemble(),
             'Order direction of field failed');
     }
+
+    public function testOrderOfDeepConditionalField()
+    {
+        $select = $this->_db->select();
+        $select->from(array ('p' => 'product'))
+            ->order('IF(p.id IS NOT NULL, IF(p.id2 IS NOT NULL, SUM(1), 2), 0)');
+
+        $expected = 'SELECT "p".* FROM "product" AS "p" ORDER BY IF(p.id IS NOT NULL, IF(p.id2 IS NOT NULL, SUM(1), 2), 0) ASC';
+        $this->assertEquals($expected, $select->assemble());
+    }
+
+    public function testOrderOfDeepUnbalancedConditionalField()
+    {
+        $select = $this->_db->select();
+        $select->from(array ('p' => 'product'))
+            ->order('IF(SUM()');
+
+        $expected = 'SELECT "p".* FROM "product" AS "p" ORDER BY "IF(SUM()" ASC';
+        $this->assertEquals($expected, $select->assemble());
+    }
+
+    public function testOrderOfDeepConditionalFieldWithDirection()
+    {
+        $select = $this->_db->select();
+        $select->from(array ('p' => 'product'))
+            ->order('IF(p.id IS NOT NULL, IF(p.id2 IS NOT NULL, SUM(1), 2), 0) ASC');
+
+        $expected = 'SELECT "p".* FROM "product" AS "p" ORDER BY IF(p.id IS NOT NULL, IF(p.id2 IS NOT NULL, SUM(1), 2), 0) ASC';
+        $this->assertEquals($expected, $select->assemble());
+    }
+
+    public function testOrderOfDeepUnbalancedConditionalFieldWithDirection()
+    {
+        $select = $this->_db->select();
+        $select->from(array ('p' => 'product'))
+            ->order('IF(SUM() ASC');
+
+        $expected = 'SELECT "p".* FROM "product" AS "p" ORDER BY "IF(SUM()" ASC';
+        $this->assertEquals($expected, $select->assemble());
+    }
+
+    /**
+     * Test a problem with assembling subqueries with joins in SELECT block. That problem is caused by "new line" char which brakes regexp detection of "AS"-case
+     */
+    public function testAssembleQueryWithSubqueryInSelectBlock() {
+        $subSelect = $this->_db->select();
+        $subSelect->from(array('st1' => 'subTable1'), 'col1')
+                  ->join(array('st2' => 'subTable2'), 'st1.fk_id=st2.fk_id', 'col2');
+
+        $columns[] = '('.$subSelect->assemble() . ') as subInSelect';
+        $select = $this->_db->select();
+        $select->from(array('t' => 'table1'), $columns);
+
+        $expected = 'SELECT (SELECT "st1"."col1", "st2"."col2" FROM "subTable1" AS "st1"  INNER JOIN "subTable2" AS "st2" ON st1.fk_id=st2.fk_id) AS "subInSelect" FROM "table1" AS "t"';
+
+        $this->assertEquals($expected, $select->assemble(),
+                            'Assembling query with subquery with join failed');
+    }
+
+    public function testAssembleQueryWithRawSubqueryInSelectBlock() {
+        $columns[] = '(SELECT *
+FROM tb2) as subInSelect2';
+        $select = $this->_db->select();
+        $select->from(array('t' => 'table1'), $columns);
+
+        $expected = 'SELECT (SELECT * FROM tb2) AS "subInSelect2" FROM "table1" AS "t"';
+
+        $this->assertEquals($expected, $select->assemble(),
+                            'Assembling query with raw subquery with "new line" char failed');
+    }
+
+    public function testAssembleQueryWithExpressionInSelectBlock() {
+        $columns[] = ' DISTINCT (*) as expr';
+        $select = $this->_db->select();
+        $select->from(array('t' => 'table1'), $columns);
+
+        $expected = 'SELECT DISTINCT (*) AS "expr" FROM "table1" AS "t"';
+
+        $this->assertEquals($expected, $select->assemble(),
+                            'Assembling query with raw subquery with "new line" char failed');
+    }
+
 }

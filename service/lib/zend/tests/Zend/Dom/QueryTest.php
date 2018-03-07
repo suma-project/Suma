@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Dojo
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -34,7 +34,7 @@ require_once 'Zend/Dom/Query.php';
  * @category   Zend
  * @package    Zend_Dom
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Dom
  */
@@ -143,6 +143,8 @@ class Zend_Dom_QueryTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(Zend_Dom_Query::DOC_XML, $this->query->getDocumentType());
         $this->query->setDocument('<html><body></body></html>');
         $this->assertEquals(Zend_Dom_Query::DOC_HTML, $this->query->getDocumentType());
+        $this->query->setDocument(new DOMDocument());
+        $this->assertEquals(Zend_Dom_Query::DOC_DOM, $this->query->getDocumentType());
     }
 
     public function testQueryingWithoutRegisteringDocumentShouldThrowException()
@@ -227,6 +229,24 @@ class Zend_Dom_QueryTest extends PHPUnit_Framework_TestCase
         $this->loadHtml();
         $result = $this->query->queryXpath('//li[contains(@dojotype, "bar")]');
         $this->assertEquals(2, count($result), $result->getXpathQuery());
+    }
+
+    public function testQueryOnDomDocument()
+    {
+        $xml = <<<EOF
+<?xml version="1.0" encoding="UTF-8" ?>
+<foo>
+    <bar class="baz"/>
+</foo>
+EOF;
+        $document = new DOMDocument();
+        $document->loadXML($xml, 524288 /* LIBXML_PARSEHUGE */);
+        $this->query->setDocument($document);
+        $test = $this->query->query('.baz');
+        $this->assertTrue($test instanceof Zend_Dom_Query_Result);
+        $testDocument = $test->getDocument();
+        $this->assertTrue($testDocument instanceof DOMDocument);
+        $this->assertEquals('UTF-8', $testDocument->encoding);
     }
 
     /**

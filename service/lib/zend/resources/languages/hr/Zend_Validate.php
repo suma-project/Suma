@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Translate
  * @subpackage Ressource
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -66,7 +66,7 @@ return array(
     "'%value%' does not fit the date format '%format%'" => "'%value%' ne odgovara formatu datuma '%format%'",
 
     // Zend_Validate_Db_Abstract
-    "No record matching %value% was found" => "Nije pronađen zapis koji se podudara sa %value%",
+    "No record matching '%value%' was found" => "Nije pronađen zapis koji se podudara sa %value%",
     "A record matching '%value%' was found" => "Zapis koji se podudara sa %value% je pronađen",
 
     // Zend_Validate_Digits

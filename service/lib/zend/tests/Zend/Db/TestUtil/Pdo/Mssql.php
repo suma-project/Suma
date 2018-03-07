@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -32,7 +32,7 @@ require_once 'Zend/Db/TestUtil/Pdo/Common.php';
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Db_TestUtil_Pdo_Mssql extends Zend_Db_TestUtil_Pdo_Common
@@ -45,7 +45,9 @@ class Zend_Db_TestUtil_Pdo_Mssql extends Zend_Db_TestUtil_Pdo_Common
             'username' => 'TESTS_ZEND_DB_ADAPTER_PDO_MSSQL_USERNAME',
             'password' => 'TESTS_ZEND_DB_ADAPTER_PDO_MSSQL_PASSWORD',
             'dbname'   => 'TESTS_ZEND_DB_ADAPTER_PDO_MSSQL_DATABASE',
-            'port'     => 'TESTS_ZEND_DB_ADAPTER_PDO_MSSQL_PORT'
+            'port'     => 'TESTS_ZEND_DB_ADAPTER_PDO_MSSQL_PORT',
+            'pdoType'  => 'TESTS_ZEND_DB_ADAPTER_PDO_MSSQL_PDOTYPE',
+            'charset'  => 'TESTS_ZEND_DB_ADAPTER_PDO_MSSQL_CHARSET',
         );
 
         return parent::getParams($constants);

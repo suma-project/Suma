@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -35,7 +35,7 @@ require_once 'Zend/Db/Adapter/Pdo/Mysql.php';
  * @category   Zend
  * @package    Zend_Db
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Db
  * @group      Zend_Db_Adapter
@@ -211,11 +211,13 @@ class Zend_Db_Adapter_Pdo_MssqlTest extends Zend_Db_Adapter_Pdo_TestCommon
         $bugs = $this->_db->quoteIdentifier('zfbugs');
         $bug_id = $this->_db->quoteIdentifier('bug_id');
 
-        // notice the number of rows in connection 2
+        $dbConnection1 = $this->_db;
+
+        // notice the number of rows at beginning
         $count = $this->_db->fetchOne("SELECT COUNT(*) FROM $bugs");
         $this->assertEquals(4, $count, 'Expecting to see 4 rows in bugs table (step 1)');
 
-        // start an explicit transaction in connection 1
+        // start an explicit transaction
         $this->_db->beginTransaction();
 
         // delete a row in connection 1
@@ -225,29 +227,12 @@ class Zend_Db_Adapter_Pdo_MssqlTest extends Zend_Db_Adapter_Pdo_TestCommon
         );
         $this->assertEquals(1, $rowsAffected);
 
-        // we should still see all rows in connection 2
-        // because the DELETE has not been committed yet
-        $count = $this->_db->fetchOne("SELECT COUNT(*) FROM $bugs");
-        $this->assertEquals(4, $count, 'Expecting to still see 4 rows in bugs table (step 2); perhaps Adapter is still in autocommit mode?');
-
         // commit the DELETE
         $this->_db->commit();
 
-        // now we should see one fewer rows in connection 2
+        // now we should see one fewer rows
         $count = $this->_db->fetchOne("SELECT COUNT(*) FROM $bugs");
         $this->assertEquals(3, $count, 'Expecting to see 3 rows in bugs table after DELETE (step 3)');
-
-        // delete another row in connection 1
-        $rowsAffected = $this->_db->delete(
-            'zfbugs',
-            "$bug_id = 2"
-        );
-        $this->assertEquals(1, $rowsAffected);
-
-        // we should see results immediately, because
-        // the db connection returns to auto-commit mode
-        $count = $this->_db->fetchOne("SELECT COUNT(*) FROM $bugs");
-        $this->assertEquals(2, $count);
     }
 
     public function testAdapterTransactionRollback()
@@ -255,7 +240,7 @@ class Zend_Db_Adapter_Pdo_MssqlTest extends Zend_Db_Adapter_Pdo_TestCommon
         $bugs = $this->_db->quoteIdentifier('zfbugs');
         $bug_id = $this->_db->quoteIdentifier('bug_id');
 
-        // notice the number of rows in connection 2
+        // notice the number of rows at beginning
         $count = $this->_db->fetchOne("SELECT COUNT(*) FROM $bugs");
         $this->assertEquals(4, $count, 'Expecting to see 4 rows in bugs table (step 1)');
 
@@ -269,30 +254,18 @@ class Zend_Db_Adapter_Pdo_MssqlTest extends Zend_Db_Adapter_Pdo_TestCommon
         );
         $this->assertEquals(1, $rowsAffected);
 
-        // we should still see all rows in connection 2
+        // we should still see 3 rows
         // because the DELETE has not been committed yet
         $count = $this->_db->fetchOne("SELECT COUNT(*) FROM $bugs");
-        $this->assertEquals(4, $count, 'Expecting to still see 4 rows in bugs table (step 2); perhaps Adapter is still in autocommit mode?');
+        $this->assertEquals(3, $count, 'Expecting to see 3 rows in bugs table (step 2)');
 
         // rollback the DELETE
         $this->_db->rollback();
 
-        // now we should see the same number of rows
+        // now we should see the original number of rows
         // because the DELETE was rolled back
         $count = $this->_db->fetchOne("SELECT COUNT(*) FROM $bugs");
-        $this->assertEquals(4, $count, 'Expecting to still see 4 rows in bugs table after DELETE is rolled back (step 3)');
-
-        // delete another row in connection 1
-        $rowsAffected = $this->_db->delete(
-            'zfbugs',
-            "$bug_id = 2"
-        );
-        $this->assertEquals(1, $rowsAffected);
-
-        // we should see results immediately, because
-        // the db connection returns to auto-commit mode
-        $count = $this->_db->fetchOne("SELECT COUNT(*) FROM $bugs");
-        $this->assertEquals(3, $count, 'Expecting to see 3 rows in bugs table after DELETE (step 4)');
+        $this->assertEquals(4, $count, 'Expecting to see 4 rows in bugs table after DELETE is rolled back (step 3)');
     }
 
     /**
@@ -386,6 +359,17 @@ class Zend_Db_Adapter_Pdo_MssqlTest extends Zend_Db_Adapter_Pdo_TestCommon
         $productsTableInfo = $this->_db->describeTable('zfproducts', 'dbo');
         $this->assertArrayHasKey('product_id', $productsTableInfo);
         $this->assertArrayHasKey('product_name', $productsTableInfo);
+    }
+
+    /**
+     * test that quote() escapes null byte character
+     * in a string.
+     */
+    public function testAdapterQuoteNullByteCharacter()
+    {
+        $string = "1\0";
+        $value  = $this->_db->quote($string);
+        $this->assertEquals("'1\\000'", $value);
     }
 
     public function getDriver()

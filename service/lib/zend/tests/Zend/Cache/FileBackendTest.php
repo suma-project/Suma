@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Cache
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -41,7 +41,7 @@ require_once 'CommonExtendedBackendTest.php';
  * @category   Zend
  * @package    Zend_Cache
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Cache
  */
@@ -161,6 +161,12 @@ class Zend_Cache_FileBackendTest extends Zend_Cache_CommonExtendedBackendTest {
 
     public function testSaveWithABadCacheDir()
     {
+        if (getenv('TRAVIS')) {
+            $this->markTestSkipped(
+                'Test randomly fail on Travis CI.'
+            );
+        }
+
         $this->_instance->setOption('cache_dir', '/foo/bar/lfjlqsdjfklsqd/');
         $res = $this->_instance->save('data to cache', 'foo', array('tag1', 'tag2'));
         $this->assertFalse($res);

@@ -1,0 +1,620 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+<meta charset="utf-8">
+<title>Zend Framework Extras API Documentation » \ZendX_Console_Process_Unix</title>
+<meta name="author" content="Mike van Riel">
+<meta name="description" content="">
+<link href="../css/template.css" rel="stylesheet" media="all">
+<script src="../js/jquery-1.7.1.min.js" type="text/javascript"></script><script src="../js/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script><script src="../js/jquery.mousewheel.min.js" type="text/javascript"></script><script src="../js/bootstrap.js" type="text/javascript"></script><script src="../js/template.js" type="text/javascript"></script><script src="../js/prettify/prettify.min.js" type="text/javascript"></script><link rel="shortcut icon" href="../img/favicon.ico">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="../img/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="../img/apple-touch-icon-114x114.png">
+</head>
+<body>
+<div class="navbar navbar-fixed-top">
+<div class="navbar-inner"><div class="container">
+<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a><a class="brand" href="../index.html">Zend Framework Extras API Documentation</a><div class="nav-collapse"><ul class="nav">
+<li class="dropdown">
+<a href="#api" class="dropdown-toggle" data-toggle="dropdown">
+                                    API Documentation <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a>Packages</a></li>
+<li><a href="../packages/Default.html"><i class="icon-folder-open"></i> Default</a></li>
+<li><a href="../packages/ZendX.html"><i class="icon-folder-open"></i> ZendX</a></li>
+<li><a href="../packages/ZendX_Application.html"><i class="icon-folder-open"></i> ZendX_Application</a></li>
+<li><a href="../packages/ZendX_Console.html"><i class="icon-folder-open"></i> ZendX_Console</a></li>
+<li><a href="../packages/ZendX_Db.html"><i class="icon-folder-open"></i> ZendX_Db</a></li>
+<li><a href="../packages/ZendX_JQuery.html"><i class="icon-folder-open"></i> ZendX_JQuery</a></li>
+</ul>
+</li>
+<li class="dropdown" id="reports-menu">
+<a href="#reports" class="dropdown-toggle" data-toggle="dropdown">
+                                    Reports <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a href="../errors.html"><i class="icon-remove-sign"></i> Errors 
+                <span class="label label-info">38</span></a></li>
+<li><a href="../markers.html"><i class="icon-map-marker"></i> Markers 
+                <ul></ul></a></li>
+<li><a href="../deprecated.html"><i class="icon-stop"></i> Deprecated elements 
+                <span class="label label-info">4</span></a></li>
+</ul>
+</li>
+</ul></div>
+</div></div>
+<div class="go_to_top"><a href="#___" style="color: inherit">Back to top  <i class="icon-upload icon-white"></i></a></div>
+</div>
+<div id="___" class="container">
+<noscript><div class="alert alert-warning">
+                            Javascript is disabled; several features are only available
+                            if Javascript is enabled.
+                        </div></noscript>
+<div class="row">
+<div class="span4">
+<div xmlns:php="http://php.net/xsl" class="btn-toolbar">
+<div class="btn-group visibility" data-toggle="buttons-checkbox">
+<button class="btn public active" title="Show public elements">Public</button><button class="btn protected" title="Show protected elements">Protected</button><button class="btn private" title="Show private elements">Private</button><button class="btn inherited active" title="Show inherited elements">Inherited</button>
+</div>
+<div class="btn-group view pull-right" data-toggle="buttons-radio">
+<button class="btn details" title="Show descriptions and method names"><i class="icon-list"></i></button><button class="btn simple" title="Show only method names"><i class="icon-align-justify"></i></button>
+</div>
+</div>
+<ul xmlns:php="http://php.net/xsl" class="side-nav nav nav-list">
+<li class="nav-header">
+<i title="Methods" class="icon-custom icon-method"></i> Methods
+                    <ul>
+<li class="method public "><a href="#method___construct" title="__construct() :: Constructor method"><span class="description">Constructor method</span><pre>__construct()</pre></a></li>
+<li class="method public "><a href="#method___destruct" title="__destruct() :: Stop the child on destruction"><span class="description">Stop the child on destruction</span><pre>__destruct()</pre></a></li>
+<li class="method public "><a href="#method_getLastAlive" title="getLastAlive() :: Read the time elapsed since the last child setAlive() call."><span class="description">Read the time elapsed since the last child setAlive() call.</span><pre>getLastAlive()</pre></a></li>
+<li class="method public "><a href="#method_getPid" title="getPid() :: Returns the PID of the current pseudo-thread."><span class="description">Returns the PID of the current pseudo-thread.</span><pre>getPid()</pre></a></li>
+<li class="method public "><a href="#method_getVariable" title="getVariable() :: Get a variable from the shared memory segment. Returns NULL if the
+variable doesn't exist."><span class="description">Get a variable from the shared memory segment. Returns NULL if the
+variable doesn't exist.</span><pre>getVariable()</pre></a></li>
+<li class="method public "><a href="#method_isRunning" title="isRunning() :: Test if the pseudo-thread is already started."><span class="description">Test if the pseudo-thread is already started.</span><pre>isRunning()</pre></a></li>
+<li class="method public "><a href="#method_setVariable" title="setVariable() :: Set a variable into the shared memory segment, so that it can accessed
+both from the parent and from the child process. Variable names
+beginning with underlines are only permitted to interal functions."><span class="description">Set a variable into the shared memory segment, so that it can accessed
+both from the parent and from the child process. Variable names
+beginning with underlines are only permitted to interal functions.</span><pre>setVariable()</pre></a></li>
+<li class="method public "><a href="#method_start" title="start() :: Causes this pseudo-thread to begin parallel execution."><span class="description">Causes this pseudo-thread to begin parallel execution.</span><pre>start()</pre></a></li>
+<li class="method public "><a href="#method_stop" title="stop() :: Causes the current thread to die."><span class="description">Causes the current thread to die.</span><pre>stop()</pre></a></li>
+</ul>
+</li>
+<li class="nav-header protected">» Protected
+                    <ul>
+<li class="method protected "><a href="#method__callCallbackMethod" title="_callCallbackMethod() :: This is called from within the parent; all the communication stuff
+is done here."><span class="description">This is called from within the parent; all the communication stuff
+is done here.</span><pre>_callCallbackMethod()</pre></a></li>
+<li class="method protected "><a href="#method__run" title="_run() :: This method actually implements the pseudo-thread logic."><span class="description">This method actually implements the pseudo-thread logic.</span><pre>_run()</pre></a></li>
+<li class="method protected "><a href="#method__setAlive" title="_setAlive() :: Set a pseudo-thread property that can be read from parent process
+in order to know the child activity."><span class="description">Set a pseudo-thread property that can be read from parent process
+in order to know the child activity.</span><pre>_setAlive()</pre></a></li>
+</ul>
+</li>
+<li class="nav-header private">» Private
+                    <ul>
+<li class="method private "><a href="#method__cleanProcessContext" title="_cleanProcessContext() :: Destroy thread context and free relative resources."><span class="description">Destroy thread context and free relative resources.</span><pre>_cleanProcessContext()</pre></a></li>
+<li class="method private "><a href="#method__createIpcSegment" title="_createIpcSegment() :: Create an IPC segment"><span class="description">Create an IPC segment</span><pre>_createIpcSegment()</pre></a></li>
+<li class="method private "><a href="#method__createIpcSemaphore" title="_createIpcSemaphore() :: Create IPC semaphore"><span class="description">Create IPC semaphore</span><pre>_createIpcSemaphore()</pre></a></li>
+<li class="method private "><a href="#method__readFromIpcSegment" title="_readFromIpcSegment() :: Read data from IPC segment"><span class="description">Read data from IPC segment</span><pre>_readFromIpcSegment()</pre></a></li>
+<li class="method private "><a href="#method__sendSigUsr1" title="_sendSigUsr1() :: Sends signal to the child process"><span class="description">Sends signal to the child process</span><pre>_sendSigUsr1()</pre></a></li>
+<li class="method private "><a href="#method__sigHandler" title="_sigHandler() :: This is the signal handler that makes the communications between client
+and server possible."><span class="description">This is the signal handler that makes the communications between client
+and server possible.</span><pre>_sigHandler()</pre></a></li>
+<li class="method private "><a href="#method__waitForIpcSemaphore" title="_waitForIpcSemaphore() :: Wait for IPC Semaphore"><span class="description">Wait for IPC Semaphore</span><pre>_waitForIpcSemaphore()</pre></a></li>
+<li class="method private "><a href="#method__writeToIpcSegment" title="_writeToIpcSegment() :: Write data to IPC segment"><span class="description">Write data to IPC segment</span><pre>_writeToIpcSegment()</pre></a></li>
+<li class="method private "><a href="#method__writeVariable" title="_writeVariable() :: Acutally Write a variable to the shared memory segment"><span class="description">Acutally Write a variable to the shared memory segment</span><pre>_writeVariable()</pre></a></li>
+</ul>
+</li>
+<li class="nav-header">
+<i title="Properties" class="icon-custom icon-property"></i> Properties
+                    <ul></ul>
+</li>
+<li class="nav-header private">» Private
+                    <ul>
+<li class="property private "><a href="#property__guid" title="$_guid() :: GUID of the child process owner"><span class="description"></span><pre>$_guid</pre></a></li>
+<li class="property private "><a href="#property__internalIpcData" title="$_internalIpcData() :: A data structure to hold data for Inter Process Communications"><span class="description"></span><pre>$_internalIpcData</pre></a></li>
+<li class="property private "><a href="#property__internalIpcKey" title="$_internalIpcKey() :: Key to access to Shared Memory Area."><span class="description"></span><pre>$_internalIpcKey</pre></a></li>
+<li class="property private "><a href="#property__internalSemKey" title="$_internalSemKey() :: Key to access to Sync Semaphore."><span class="description"></span><pre>$_internalSemKey</pre></a></li>
+<li class="property private "><a href="#property__ipcIsOkay" title="$_ipcIsOkay() :: Is Shared Memory Area OK? If not, the start() method will block."><span class="description"></span><pre>$_ipcIsOkay</pre></a></li>
+<li class="property private "><a href="#property__ipcSegFile" title="$_ipcSegFile() :: Filename of the IPC segment file"><span class="description"></span><pre>$_ipcSegFile</pre></a></li>
+<li class="property private "><a href="#property__ipcSemFile" title="$_ipcSemFile() :: Filename of the semaphor file"><span class="description"></span><pre>$_ipcSemFile</pre></a></li>
+<li class="property private "><a href="#property__isChild" title="$_isChild() :: Wether we are into child process or not"><span class="description"></span><pre>$_isChild</pre></a></li>
+<li class="property private "><a href="#property__isRunning" title="$_isRunning() :: Whether the process is yet forked or not"><span class="description"></span><pre>$_isRunning</pre></a></li>
+<li class="property private "><a href="#property__name" title="$_name() :: Unique thread name"><span class="description"></span><pre>$_name</pre></a></li>
+<li class="property private "><a href="#property__pid" title="$_pid() :: PID of the child process"><span class="description"></span><pre>$_pid</pre></a></li>
+<li class="property private "><a href="#property__puid" title="$_puid() :: UID of the child process owner"><span class="description"></span><pre>$_puid</pre></a></li>
+</ul>
+</li>
+<li class="nav-header">
+<i title="Constants" class="icon-custom icon-constant"></i> Constants
+                    <ul>
+<li class="constant  "><a href="#constant_RETURN_METHOD" title="RETURN_METHOD() :: Return method"><span class="description">Return method</span><pre>RETURN_METHOD</pre></a></li>
+<li class="constant  "><a href="#constant_VOID_METHOD" title="VOID_METHOD() :: Void method"><span class="description">Void method</span><pre>VOID_METHOD</pre></a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="span8">
+<a xmlns:php="http://php.net/xsl" id="\ZendX_Console_Process_Unix"></a><ul xmlns:php="http://php.net/xsl" class="breadcrumb">
+<li>
+<a href="../index.html"><i title="Classes" class="icon-custom icon-class"></i></a><span class="divider">\</span>
+</li>
+<li class="active">
+<span class="divider">\</span><a href="../classes/ZendX_Console_Process_Unix.html">ZendX_Console_Process_Unix</a>
+</li>
+</ul>
+<div xmlns:php="http://php.net/xsl" class="element class">
+<p class="short_description">ZendX_Console_Process_Unix allows you to spawn a class as a separated process</p>
+<div class="details">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>category</th>
+<td>ZendX</td>
+</tr>
+<tr>
+<th>package</th>
+<td><a href="../packages/ZendX_Console.html">ZendX_Console</a></td>
+</tr>
+<tr>
+<th>copyright</th>
+<td>Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)</td>
+</tr>
+<tr>
+<th>license</th>
+<td><a href="http://framework.zend.com/license/new-bsd">New BSD License</a></td>
+</tr>
+</table>
+<h3>
+<i title="Methods" class="icon-custom icon-method"></i> Methods</h3>
+<a id="method___construct"></a><div class="element clickable method public method___construct " data-toggle="collapse" data-target=".method___construct .collapse" title="public">
+<h2>Constructor method</h2>
+<pre>__construct(integer $puid<code> = null</code>, integer $guid<code> = null</code>, integer $umask<code> = null</code>) </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Allocates a new pseudo-thread object. Optionally, set a PUID, a GUID and
+a UMASK for the child process. This also initialize Shared Memory
+Segments for process communications.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$puid</h4>
+<code>integer</code>
+</div>
+<div class="subelement argument">
+<h4>$guid</h4>
+<code>integer</code>
+</div>
+<div class="subelement argument">
+<h4>$umask</h4>
+<code>integer</code>
+</div>
+<h3>Exceptions</h3>
+<table class="table table-bordered">
+<tr>
+<th><code>\ZendX_Console_Process_Exception</code></th>
+<td>When running on windows</td>
+</tr>
+<tr>
+<th><code>\ZendX_Console_Process_Exception</code></th>
+<td>When running in web enviroment</td>
+</tr>
+<tr>
+<th><code>\ZendX_Console_Process_Exception</code></th>
+<td>When shmop_* functions don't exist</td>
+</tr>
+<tr>
+<th><code>\ZendX_Console_Process_Exception</code></th>
+<td>When pcntl_* functions don't exist</td>
+</tr>
+<tr>
+<th><code>\ZendX_Console_Process_Exception</code></th>
+<td>When posix_* functions don't exist</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method___destruct"></a><div class="element clickable method public method___destruct " data-toggle="collapse" data-target=".method___destruct .collapse" title="public">
+<h2>Stop the child on destruction</h2>
+<pre>__destruct() </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_getLastAlive"></a><div class="element clickable method public method_getLastAlive " data-toggle="collapse" data-target=".method_getLastAlive .collapse" title="public">
+<h2>Read the time elapsed since the last child setAlive() call.</h2>
+<pre>getLastAlive() : integer</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>This method is useful because often we have a pseudo-thread pool and we
+need to know each pseudo-thread status. If the child executes the
+setAlive() method, the parent with getLastAlive() can know that child is
+alive.</p></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>integer</code></div>
+</div></div>
+</div>
+<a id="method_getPid"></a><div class="element clickable method public method_getPid " data-toggle="collapse" data-target=".method_getPid .collapse" title="public">
+<h2>Returns the PID of the current pseudo-thread.</h2>
+<pre>getPid() : integer</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>integer</code></div>
+</div></div>
+</div>
+<a id="method_getVariable"></a><div class="element clickable method public method_getVariable " data-toggle="collapse" data-target=".method_getVariable .collapse" title="public">
+<h2>Get a variable from the shared memory segment. Returns NULL if the
+variable doesn't exist.</h2>
+<pre>getVariable(string $name) : mixed</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$name</h4>
+<code>string</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>mixed</code></div>
+</div></div>
+</div>
+<a id="method_isRunning"></a><div class="element clickable method public method_isRunning " data-toggle="collapse" data-target=".method_isRunning .collapse" title="public">
+<h2>Test if the pseudo-thread is already started.</h2>
+<pre>isRunning() : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>boolean</code></div>
+</div></div>
+</div>
+<a id="method_setVariable"></a><div class="element clickable method public method_setVariable " data-toggle="collapse" data-target=".method_setVariable .collapse" title="public">
+<h2>Set a variable into the shared memory segment, so that it can accessed
+both from the parent and from the child process. Variable names
+beginning with underlines are only permitted to interal functions.</h2>
+<pre>setVariable(string $name, mixed $value) : void</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$name</h4>
+<code>string</code>
+</div>
+<div class="subelement argument">
+<h4>$value</h4>
+<code>mixed</code>
+</div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code>\ZendX_Console_Process_Exception</code></th>
+<td>When an invalid variable name is supplied</td>
+</tr></table>
+</div></div>
+</div>
+<a id="method_start"></a><div class="element clickable method public method_start " data-toggle="collapse" data-target=".method_start .collapse" title="public">
+<h2>Causes this pseudo-thread to begin parallel execution.</h2>
+<pre>start() : void</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>This method first checks of all the Shared Memory Segment. If okay, it
+forks the child process, attaches signal handler and returns immediatly.
+The status is set to running, and a PID is assigned. The result is that
+two pseudo-threads are running concurrently: the current thread (which
+returns from the call to the start() method) and the other thread (which
+executes its run() method).</p></div>
+<h3>Exceptions</h3>
+<table class="table table-bordered">
+<tr>
+<th><code>\ZendX_Console_Process_Exception</code></th>
+<td>When SHM segments can't be created</td>
+</tr>
+<tr>
+<th><code>\ZendX_Console_Process_Exception</code></th>
+<td>When process forking fails</td>
+</tr>
+</table>
+</div></div>
+</div>
+<a id="method_stop"></a><div class="element clickable method public method_stop " data-toggle="collapse" data-target=".method_stop .collapse" title="public">
+<h2>Causes the current thread to die.</h2>
+<pre>stop() : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>The relative process is killed and disappears immediately from the
+processes list.</p></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>boolean</code></div>
+</div></div>
+</div>
+<a id="method__callCallbackMethod"></a><div class="element clickable method protected method__callCallbackMethod " data-toggle="collapse" data-target=".method__callCallbackMethod .collapse" title="protected">
+<h2>This is called from within the parent; all the communication stuff
+is done here.</h2>
+<pre>_callCallbackMethod(string $methodName, array $argList<code> = array()</code>, string $type<code> = self::VOID_METHOD</code>) : mixed</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$methodName</h4>
+<code>string</code>
+</div>
+<div class="subelement argument">
+<h4>$argList</h4>
+<code>array</code>
+</div>
+<div class="subelement argument">
+<h4>$type</h4>
+<code>string</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>mixed</code></div>
+</div></div>
+</div>
+<a id="method__run"></a><div class="element clickable method protected method__run " data-toggle="collapse" data-target=".method__run .collapse" title="protected">
+<h2>This method actually implements the pseudo-thread logic.</h2>
+<pre>_run() : void</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method__setAlive"></a><div class="element clickable method protected method__setAlive " data-toggle="collapse" data-target=".method__setAlive .collapse" title="protected">
+<h2>Set a pseudo-thread property that can be read from parent process
+in order to know the child activity.</h2>
+<pre>_setAlive() : void</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"><p>Practical usage requires that child process calls this method at regular
+time intervals; parent will use the getLastAlive() method to know
+the elapsed time since the last pseudo-thread life signals...</p></div></div></div>
+</div>
+<a id="method__cleanProcessContext"></a><div class="element clickable method private method__cleanProcessContext " data-toggle="collapse" data-target=".method__cleanProcessContext .collapse" title="private">
+<h2>Destroy thread context and free relative resources.</h2>
+<pre>_cleanProcessContext() : void</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method__createIpcSegment"></a><div class="element clickable method private method__createIpcSegment " data-toggle="collapse" data-target=".method__createIpcSegment .collapse" title="private">
+<h2>Create an IPC segment</h2>
+<pre>_createIpcSegment() : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code>\ZendX_Console_Process_Exception</code></th>
+<td>When SHM segment can't be created</td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response"><code>boolean</code></div>
+</div></div>
+</div>
+<a id="method__createIpcSemaphore"></a><div class="element clickable method private method__createIpcSemaphore " data-toggle="collapse" data-target=".method__createIpcSemaphore .collapse" title="private">
+<h2>Create IPC semaphore</h2>
+<pre>_createIpcSemaphore() : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code>\ZendX_Console_Process_Exception</code></th>
+<td>When semaphore can't be created</td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response"><code>boolean</code></div>
+</div></div>
+</div>
+<a id="method__readFromIpcSegment"></a><div class="element clickable method private method__readFromIpcSegment " data-toggle="collapse" data-target=".method__readFromIpcSegment .collapse" title="private">
+<h2>Read data from IPC segment</h2>
+<pre>_readFromIpcSegment() : void</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code>\ZendX_Console_Process_Exception</code></th>
+<td>When writing of SHM segment fails</td>
+</tr></table>
+</div></div>
+</div>
+<a id="method__sendSigUsr1"></a><div class="element clickable method private method__sendSigUsr1 " data-toggle="collapse" data-target=".method__sendSigUsr1 .collapse" title="private">
+<h2>Sends signal to the child process</h2>
+<pre>_sendSigUsr1() : void</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method__sigHandler"></a><div class="element clickable method private method__sigHandler " data-toggle="collapse" data-target=".method__sigHandler .collapse" title="private">
+<h2>This is the signal handler that makes the communications between client
+and server possible.</h2>
+<pre>_sigHandler(integer $signo) : void</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$signo</h4>
+<code>integer</code>
+</div>
+</div></div>
+</div>
+<a id="method__waitForIpcSemaphore"></a><div class="element clickable method private method__waitForIpcSemaphore " data-toggle="collapse" data-target=".method__waitForIpcSemaphore .collapse" title="private">
+<h2>Wait for IPC Semaphore</h2>
+<pre>_waitForIpcSemaphore() : void</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method__writeToIpcSegment"></a><div class="element clickable method private method__writeToIpcSegment " data-toggle="collapse" data-target=".method__writeToIpcSegment .collapse" title="private">
+<h2>Write data to IPC segment</h2>
+<pre>_writeToIpcSegment() : void</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code>\ZendX_Console_Process_Exception</code></th>
+<td>When writing of SHM segment fails</td>
+</tr></table>
+</div></div>
+</div>
+<a id="method__writeVariable"></a><div class="element clickable method private method__writeVariable " data-toggle="collapse" data-target=".method__writeVariable .collapse" title="private">
+<h2>Acutally Write a variable to the shared memory segment</h2>
+<pre>_writeVariable(string $name, mixed $value) : void</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$name</h4>
+<code>string</code>
+</div>
+<div class="subelement argument">
+<h4>$value</h4>
+<code>mixed</code>
+</div>
+</div></div>
+</div>
+<h3>
+<i title="Properties" class="icon-custom icon-property"></i> Properties</h3>
+<a id="property__guid"> </a><div class="element clickable property private property__guid" data-toggle="collapse" data-target=".property__guid .collapse" title="private">
+<h2>GUID of the child process owner</h2>
+<pre>$_guid : integer</pre>
+<div class="row collapse"><div class="detail-description">
+<h3>Default</h3>
+<div class="subelement argument"><code>null</code></div>
+</div></div>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property__internalIpcData"> </a><div class="element clickable property private property__internalIpcData" data-toggle="collapse" data-target=".property__internalIpcData .collapse" title="private">
+<h2>A data structure to hold data for Inter Process Communications</h2>
+<pre>$_internalIpcData : array</pre>
+<div class="row collapse"><div class="detail-description">
+<h3>Default</h3>
+<div class="subelement argument"><code>array()</code></div>
+</div></div>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property__internalIpcKey"> </a><div class="element clickable property private property__internalIpcKey" data-toggle="collapse" data-target=".property__internalIpcKey .collapse" title="private">
+<h2>Key to access to Shared Memory Area.</h2>
+<pre>$_internalIpcKey : integer</pre>
+<div class="row collapse"><div class="detail-description">
+<h3>Default</h3>
+<div class="subelement argument"></div>
+</div></div>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property__internalSemKey"> </a><div class="element clickable property private property__internalSemKey" data-toggle="collapse" data-target=".property__internalSemKey .collapse" title="private">
+<h2>Key to access to Sync Semaphore.</h2>
+<pre>$_internalSemKey : integer</pre>
+<div class="row collapse"><div class="detail-description">
+<h3>Default</h3>
+<div class="subelement argument"></div>
+</div></div>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property__ipcIsOkay"> </a><div class="element clickable property private property__ipcIsOkay" data-toggle="collapse" data-target=".property__ipcIsOkay .collapse" title="private">
+<h2>Is Shared Memory Area OK? If not, the start() method will block.</h2>
+<pre>$_ipcIsOkay : boolean</pre>
+<div class="row collapse"><div class="detail-description">
+<h3>Default</h3>
+<div class="subelement argument"></div>
+</div></div>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"><p>Otherwise we'll have a running child without any communication channel.</p></div></div></div>
+</div>
+<a id="property__ipcSegFile"> </a><div class="element clickable property private property__ipcSegFile" data-toggle="collapse" data-target=".property__ipcSegFile .collapse" title="private">
+<h2>Filename of the IPC segment file</h2>
+<pre>$_ipcSegFile : string</pre>
+<div class="row collapse"><div class="detail-description">
+<h3>Default</h3>
+<div class="subelement argument"></div>
+</div></div>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property__ipcSemFile"> </a><div class="element clickable property private property__ipcSemFile" data-toggle="collapse" data-target=".property__ipcSemFile .collapse" title="private">
+<h2>Filename of the semaphor file</h2>
+<pre>$_ipcSemFile : string</pre>
+<div class="row collapse"><div class="detail-description">
+<h3>Default</h3>
+<div class="subelement argument"></div>
+</div></div>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property__isChild"> </a><div class="element clickable property private property__isChild" data-toggle="collapse" data-target=".property__isChild .collapse" title="private">
+<h2>Wether we are into child process or not</h2>
+<pre>$_isChild : boolean</pre>
+<div class="row collapse"><div class="detail-description">
+<h3>Default</h3>
+<div class="subelement argument"><code>false</code></div>
+</div></div>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property__isRunning"> </a><div class="element clickable property private property__isRunning" data-toggle="collapse" data-target=".property__isRunning .collapse" title="private">
+<h2>Whether the process is yet forked or not</h2>
+<pre>$_isRunning : boolean</pre>
+<div class="row collapse"><div class="detail-description">
+<h3>Default</h3>
+<div class="subelement argument"><code>false</code></div>
+</div></div>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property__name"> </a><div class="element clickable property private property__name" data-toggle="collapse" data-target=".property__name .collapse" title="private">
+<h2>Unique thread name</h2>
+<pre>$_name : string</pre>
+<div class="row collapse"><div class="detail-description">
+<h3>Default</h3>
+<div class="subelement argument"></div>
+</div></div>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property__pid"> </a><div class="element clickable property private property__pid" data-toggle="collapse" data-target=".property__pid .collapse" title="private">
+<h2>PID of the child process</h2>
+<pre>$_pid : integer</pre>
+<div class="row collapse"><div class="detail-description">
+<h3>Default</h3>
+<div class="subelement argument"><code>null</code></div>
+</div></div>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property__puid"> </a><div class="element clickable property private property__puid" data-toggle="collapse" data-target=".property__puid .collapse" title="private">
+<h2>UID of the child process owner</h2>
+<pre>$_puid : integer</pre>
+<div class="row collapse"><div class="detail-description">
+<h3>Default</h3>
+<div class="subelement argument"><code>null</code></div>
+</div></div>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<h3>
+<i title="Constants" class="icon-custom icon-constant"></i> Constants</h3>
+<a id="constant_RETURN_METHOD"> </a><div class="element clickable constant  constant_RETURN_METHOD" data-toggle="collapse" data-target=".constant_RETURN_METHOD .collapse" title="">
+<h2>Return method</h2>
+<pre>RETURN_METHOD = 'void_method' </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="constant_VOID_METHOD"> </a><div class="element clickable constant  constant_VOID_METHOD" data-toggle="collapse" data-target=".constant_VOID_METHOD .collapse" title="">
+<h2>Void method</h2>
+<pre>VOID_METHOD = 'void_method' </pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row"><footer class="span12">
+            Template is built using <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap 2</a> and icons provided by <a href="http://glyphicons.com/">Glyphicons</a>.<br>
+            Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor 2.8.5</a> and<br>
+            generated on 2016-09-08T10:35:38-05:00.<br></footer></div>
+</div>
+</body>
+</html>

@@ -16,7 +16,7 @@
  * @package    Zend_Http_Header
  * @subpackage UnitTests
 
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -37,7 +37,7 @@ require_once 'Zend/Controller/Response/HttpTestCase.php';
  * @category   Zend
  * @package    Zend_Http_Cookie
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Http
  * @group      Zend_Http_Header
@@ -237,6 +237,21 @@ class Zend_Http_Header_SetCookieTest extends PHPUnit_Framework_TestCase
         $response->setRawHeader($cookie);
         $this->assertContains((string)$cookie, $response->sendHeaders());
     }
+
+    /**
+     * @group GH-295
+     */
+    public function testMultipleCookies()
+    {
+        $setCookieHeader = new Zend_Http_Header_SetCookie('othername1', 'othervalue1');
+        $appendCookie    = new Zend_Http_Header_SetCookie('othername2', 'othervalue2');
+        $headerLine      = $setCookieHeader->toStringMultipleHeaders(array($appendCookie));
+
+        $response = new Zend_Controller_Response_HttpTestCase();
+        $response->setRawHeader($headerLine);
+
+        $this->assertEquals((array)$headerLine, $response->sendHeaders());
+    }
     
     /**
      * Provide valid cookie strings with information about them
@@ -356,5 +371,25 @@ class Zend_Http_Header_SetCookieTest extends PHPUnit_Framework_TestCase
             ),
         );
     }
-}
 
+    public function invalidCookieComponentValues()
+    {
+        return array(
+            'setName'   => array('setName', "This\r\nis\nan\revil\r\n\r\nvalue"),
+            'setValue'  => array('setValue', "This\r\nis\nan\revil\r\n\r\nvalue"),
+            'setDomain' => array('setDomain', "This\r\nis\nan\revil\r\n\r\nvalue"),
+            'setPath'   => array('setPath', "This\r\nis\nan\revil\r\n\r\nvalue"),
+        );
+    }
+
+    /**
+     * @group ZF2015-04
+     * @dataProvider invalidCookieComponentValues
+     */
+    public function testDoesNotAllowCRLFAttackVectorsViaSetters($setter, $value)
+    {
+        $cookie = new Zend_Http_Header_SetCookie();
+        $this->setExpectedException('Zend_Http_Header_Exception_InvalidArgumentException');
+        $cookie->{$setter}($value);
+    }
+}

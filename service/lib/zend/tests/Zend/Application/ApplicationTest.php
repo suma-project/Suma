@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Application
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -34,7 +34,7 @@ require_once 'Zend/Application.php';
  * @category   Zend
  * @package    Zend_Application
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Application
  */
@@ -106,6 +106,33 @@ class Zend_Application_ApplicationTest extends PHPUnit_Framework_TestCase
         );
         $application = new Zend_Application('testing', $options);
         $this->assertEquals($options, $application->getOptions());
+    }
+
+    /**
+     * @group GH-564
+     * @depends testConstructorInstantiatesAutoloader
+     */
+    public function testConstructorRespectsSuppressFileNotFoundWarningFlag()
+    {
+        $application = new Zend_Application('testing');
+        $this->assertFalse($application->getAutoloader()->suppressNotFoundWarnings()); //Default value
+
+        $application = new Zend_Application('testing', null, $suppressNotFoundWarnings = true);
+        $this->assertTrue($application->getAutoloader()->suppressNotFoundWarnings());
+
+        $application = new Zend_Application('testing', null, $suppressNotFoundWarnings = false);
+        $this->assertFalse($application->getAutoloader()->suppressNotFoundWarnings());
+
+        $options = array(
+            'foo' => 'bar',
+            'bar' => 'baz',
+        );
+
+        $application = new Zend_Application('testing', $options, $suppressNotFoundWarnings = true);
+        $this->assertTrue($application->getAutoloader()->suppressNotFoundWarnings());
+
+        $application = new Zend_Application('testing', $options, $suppressNotFoundWarnings = false);
+        $this->assertFalse($application->getAutoloader()->suppressNotFoundWarnings());
     }
 
     public function testHasOptionShouldReturnFalseWhenOptionNotPresent()
