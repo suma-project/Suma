@@ -7,6 +7,7 @@ require_once 'NightlyData.php';
    --hours-across
    --html
    --hide-zeros
+   --omit-header
    --start-hour=****
    --report-inits="****","****" //use initiative names e.g. "Head Counts"
    --report-date=**** //any date forma; enclose in quotes if includes spaces 
@@ -15,6 +16,7 @@ $locationBreakdown = (array_search("locations", $argv) ? (array_search("location
 $hoursAcross = (array_search("--hours-across", $argv) ? (array_search("--hours-across", $argv) > 0 ? true : "") : false);
 $outputHtml = (array_search("--html", $argv) ? (array_search("--html", $argv) > 0 ? true : "") : false);
 $hideZeroHours = (array_search("--hide-zeros", $argv) ? (array_search("--hide-zeros", $argv) > 0 ? true : "") : false);
+$omitHeader = (array_search("--omit-header", $argv) ? (array_search("--omit-header", $argv) > 0 ? true: "") : false);
 
 $findStartHour = preg_grep('/start-hour=\d{4}$/', $argv);
 $findReportInits = preg_grep('/report-inits=.+/', $argv);
@@ -72,8 +74,11 @@ if (isset($config['nightly']))
             print '<style>';
             print 'table { border-collapse: collapse;}';
             print 'td,th { border: 1px solid black; text-align: center;}';
-            print 'tr:first-child { font-weight: bold }';
-            print 'td:first-child { font-weight: bold }';
+            if (! $omitHeader) 
+            {
+                print 'tr:first-child { font-weight: bold }';
+                print 'td:first-child { font-weight: bold }';
+            }
             print '</style>';
         }
 
@@ -98,6 +103,11 @@ if (isset($config['nightly']))
                     $table = $data->hideZeroHours($table);
                     $table = $data->hideZeroColumns($table);
                 }
+
+                if ($omitHeader)
+                {
+                    $table = $data->omitHeader($table);
+                }
                 
                 if ($hoursAcross)
                 {
@@ -106,7 +116,10 @@ if (isset($config['nightly']))
                 
                 if ($outputHtml)
                 {
-                    print "<h2>" . $key . "</h2>\n";
+                    if (! $omitHeader)
+                    {
+                        print "<h2>" . $key . "</h2>\n";
+                    }
                     # print link to timeseries report only if analysisBaseUrl is set and there is data
                     if (isset($config['analysisBaseUrl']))
                     {
@@ -116,7 +129,10 @@ if (isset($config['nightly']))
                 }
                 else
                 {
-                    print "\n" . $key . "\n";
+                    if (! $omitHeader)
+                    {
+                        print "\n" . $key . "\n";
+                    }
                     # print link to timeseries report only if analysisBaseUrl is set there is data
                     if (isset($config['analysisBaseUrl']))
                     {
