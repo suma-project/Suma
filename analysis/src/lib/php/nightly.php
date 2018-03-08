@@ -9,6 +9,7 @@ require_once 'NightlyData.php';
    --hide-zeros
    --start-hour=****
    --report-inits="****","****" //use initiative names e.g. "Head Counts"
+   --report-date=**** //any date forma; enclose in quotes if includes spaces 
 */
 $locationBreakdown = (array_search("locations", $argv) ? (array_search("locations", $argv) > 0 ? true : "") : false);
 $hoursAcross = (array_search("--hours-across", $argv) ? (array_search("--hours-across", $argv) > 0 ? true : "") : false);
@@ -17,6 +18,7 @@ $hideZeroHours = (array_search("--hide-zeros", $argv) ? (array_search("--hide-ze
 
 $findStartHour = preg_grep('/start-hour=\d{4}$/', $argv);
 $findReportInits = preg_grep('/report-inits=.+/', $argv);
+$findReportDate = preg_grep('/report-date=.+/', $argv);
 
 if ($findStartHour)
 {
@@ -28,12 +30,25 @@ else
 {
     $startHour = "0000";
 }
+
 if ($findReportInits)
 {
     $inits = array_values($findReportInits);
     $pieces = explode("=", $inits[0]);
     $reportInits = explode(",", $pieces[1]);    
 }
+
+if ($findReportDate)
+{ 
+    $date = array_values($findReportDate);
+    $pieces = explode("=", $date[0]);
+    $reportDate = $pieces[1];
+}
+else
+{
+    $reportDate = 'yesterday';
+}
+
 $config = Spyc::YAMLLoad(realpath(dirname(__FILE__)) . '/../../../config/config.yaml');
 
 if (isset($config['nightly']))
@@ -43,7 +58,7 @@ if (isset($config['nightly']))
     date_default_timezone_set($DEFAULT_TIMEZONE);
 
     // Which day to retrieve hourly report
-    $DAY_PROCESS = date('Ymd', strtotime('yesterday'));
+    $DAY_PROCESS = date('Ymd', strtotime($reportDate));
 
     // Initialize class and retrieve data
     try
