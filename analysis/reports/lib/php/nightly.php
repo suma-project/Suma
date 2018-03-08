@@ -5,7 +5,8 @@ require_once 'NightlyData.php';
 /* get command-line arguments if present. allowed values:
    locations
    --hours-across
-   --html
+   --html //if both --html and --tab are set, will default to --tab
+   --tab  //if both --html and --tab are set, will default to --tab
    --hide-zeros
    --omit-header
    --prepend-date
@@ -16,9 +17,14 @@ require_once 'NightlyData.php';
 $locationBreakdown = (array_search("locations", $argv) ? (array_search("locations", $argv) > 0 ? true : "") : false);
 $hoursAcross = (array_search("--hours-across", $argv) ? (array_search("--hours-across", $argv) > 0 ? true : "") : false);
 $outputHtml = (array_search("--html", $argv) ? (array_search("--html", $argv) > 0 ? true : "") : false);
+$outputTab = (array_search("--tab", $argv) ? (array_search("--tab", $argv) > 0 ? true : "") : false); 
 $hideZeroHours = (array_search("--hide-zeros", $argv) ? (array_search("--hide-zeros", $argv) > 0 ? true : "") : false);
 $omitHeader = (array_search("--omit-header", $argv) ? (array_search("--omit-header", $argv) > 0 ? true: "") : false);
 $prependDate = (array_search("--prepend-date", $argv) ? (array_search("--prepend-date", $argv) > 0 ? true: "") : false); 
+
+if ($outputTab && $outputHtml) 
+{
+    unset($outputHtml);} 
 
 $findStartHour = preg_grep('/start-hour=\d{4}$/', $argv);
 $findReportInits = preg_grep('/report-inits=.+/', $argv);
@@ -145,7 +151,15 @@ if (isset($config['nightly']))
                     {
                         print $config['analysisBaseUrl'] . $nightlyData[$key]['url'] . "\n\n";
                     }
-                    print($data->formatTable($table));
+                    if ($outputTab)
+                    {
+                        $textFormat = 'tab';
+                    }
+                    else 
+                    {
+                        $textFormat = 'text';
+                    }
+                    print($data->formatTable($table,$textFormat));
                 }
             }
         }

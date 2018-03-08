@@ -459,10 +459,14 @@ class NightlyData
                 if ($printFormat == "html")
                 {
                     $output .= "<tr><td>" . join("</td>\n<td>", $row) . "</td></tr>" . PHP_EOL;
-                    }
+                }
+                elseif ($printFormat == "tab")
+                {
+                    $output .= join("\t",$row).PHP_EOL;
+                }
                 else
                 {
-                    $output .= vsprintf($format, $row) . "\n";
+                    $output .= vsprintf($format, $row) . PHP_EOL;
                 }
             }
         if ($printFormat == "html")
