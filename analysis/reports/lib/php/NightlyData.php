@@ -292,6 +292,17 @@ class NightlyData
         }
         return $newTable;
     }
+    /** Remove table header from the report table
+     * @param array table 
+     * @return array newTable
+     * @access public
+     */
+    public function omitHeader($table) 
+    {
+        $newTable = $table;
+        array_shift($newTable);
+        return $newTable;
+    }
     /** Delete a column from a multidimensional array
      * @param table (passed by reference), offset of row to delete
      * @return array (passed by reference, so inherently returned
