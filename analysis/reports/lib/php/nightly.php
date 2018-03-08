@@ -24,8 +24,8 @@ $prependDate = (array_search("--prepend-date", $argv) ? (array_search("--prepend
 
 if ($outputTab && $outputHtml) 
 {
-    unset($outputHtml);} 
-
+    $outputHtml = false; 
+}
 $findStartHour = preg_grep('/start-hour=\d{4}$/', $argv);
 $findReportInits = preg_grep('/report-inits=.+/', $argv);
 $findReportDate = preg_grep('/report-date=.+/', $argv);

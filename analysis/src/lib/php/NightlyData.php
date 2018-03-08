@@ -1,4 +1,4 @@
- <?php
+<?php
  require_once 'ServerIO.php';
 /**
  * Class to create an hourly report on previous
@@ -391,7 +391,7 @@ class NightlyData
             foreach ($rows as $key => $value) {
                 if (is_numeric($value))
                 {
-                    if (is_null($columnCounts[$key]))
+                    if (! array_key_exists($key, $columnCounts))
                     {
                         $columnCounts[$key] = $value;
                     }
