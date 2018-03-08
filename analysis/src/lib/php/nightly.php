@@ -8,6 +8,7 @@ require_once 'NightlyData.php';
    --html
    --hide-zeros
    --omit-header
+   --prepend-date
    --start-hour=****
    --report-inits="****","****" //use initiative names e.g. "Head Counts"
    --report-date=**** //any date forma; enclose in quotes if includes spaces 
@@ -17,6 +18,7 @@ $hoursAcross = (array_search("--hours-across", $argv) ? (array_search("--hours-a
 $outputHtml = (array_search("--html", $argv) ? (array_search("--html", $argv) > 0 ? true : "") : false);
 $hideZeroHours = (array_search("--hide-zeros", $argv) ? (array_search("--hide-zeros", $argv) > 0 ? true : "") : false);
 $omitHeader = (array_search("--omit-header", $argv) ? (array_search("--omit-header", $argv) > 0 ? true: "") : false);
+$prependDate = (array_search("--prepend-date", $argv) ? (array_search("--prepend-date", $argv) > 0 ? true: "") : false); 
 
 $findStartHour = preg_grep('/start-hour=\d{4}$/', $argv);
 $findReportInits = preg_grep('/report-inits=.+/', $argv);
@@ -96,6 +98,11 @@ if (isset($config['nightly']))
                 if (!$locationBreakdown)
                 {
                     $table = $data->eliminateLocations($table);
+                }
+
+                if ($prependDate)
+                {
+                    $table = $data->prependDate($table, $DAY_PROCESS);
                 }
                 
                 if ($hideZeroHours)

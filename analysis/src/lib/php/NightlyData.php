@@ -292,6 +292,45 @@ class NightlyData
         }
         return $newTable;
     }
+    /**
+     * Prepend date to each line of table; early morning hours will have a different date than the pre-midnight hours that immediate precede thm
+     *
+     * @param array of table rows, date format optional (default yyyy-mm-dd)
+     * @return array newTable
+     * @access public
+     */
+    public function prependDate($table, $date, $format="Y-m-d") 
+    {
+        $newTable = array();
+        $year = substr($date,0,4);
+        $month = substr($date,4,2);
+        $day = substr($date,6,2);
+        $use_date = strtotime($year.'-'.$month.'-'.$day);
+        $display_date = date($format, $use_date);
+
+        $i = 0;
+        $previous_hour = 0;
+        foreach ($table as $row)
+        {
+            $newRow = $row;
+            if ($i==0)
+            {
+                array_unshift($newRow, 'Date');
+            }
+            else 
+            {
+                $hour = strtotime($newRow[0]);
+                if ($previous_hour > $hour) {
+                    $display_date = date($format, strtotime("+1 day",$use_date));
+                }
+                array_unshift($newRow, $display_date);
+                $previous_hour = $hour;
+            }
+            array_push($newTable, $newRow);
+            $i++;
+        }
+        return $newTable;
+    }
     /** Remove table header from the report table
      * @param array table 
      * @return array newTable
