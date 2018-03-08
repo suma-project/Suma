@@ -8,6 +8,7 @@ require_once 'NightlyData.php';
    --html
    --hide-zeros
    --start-hour=****
+   --report-inits="****","****" //use initiative names e.g. "Head Counts"
 */
 $locationBreakdown = (array_search("locations", $argv) ? (array_search("locations", $argv) > 0 ? true : "") : false);
 $hoursAcross = (array_search("--hours-across", $argv) ? (array_search("--hours-across", $argv) > 0 ? true : "") : false);
@@ -15,6 +16,7 @@ $outputHtml = (array_search("--html", $argv) ? (array_search("--html", $argv) > 
 $hideZeroHours = (array_search("--hide-zeros", $argv) ? (array_search("--hide-zeros", $argv) > 0 ? true : "") : false);
 
 $findStartHour = preg_grep('/start-hour=\d{4}$/', $argv);
+$findReportInits = preg_grep('/report-inits=.+/', $argv);
 
 if ($findStartHour)
 {
@@ -26,7 +28,12 @@ else
 {
     $startHour = "0000";
 }
-
+if ($findReportInits)
+{
+    $inits = array_values($findReportInits);
+    $pieces = explode("=", $inits[0]);
+    $reportInits = explode(",", $pieces[1]);    
+}
 $config = Spyc::YAMLLoad(realpath(dirname(__FILE__)) . '/../../../config/config.yaml');
 
 if (isset($config['nightly']))
@@ -62,43 +69,46 @@ if (isset($config['nightly']))
 
         foreach ($nightlyData as $key => $init)
         {
-            $table = ($data->buildLocationStatsTable($nightlyData[$key]['counts'], $key));
-
-            if (!$locationBreakdown)
+            if (! isset ($reportInits) || in_array($key, $reportInits))
             {
-                $table = $data->eliminateLocations($table);
-            }
-
-            if ($hideZeroHours)
-            {
-                $table = $data->hideZeroHours($table);
-                $table = $data->hideZeroColumns($table);
-            }
-
-            if ($hoursAcross)
-            {
-                $table = $data->sideways($table);
-            }
-
-            if ($outputHtml)
-            {
-                print "<h2>" . $key . "</h2>\n";
-                # print link to timeseries report only if analysisBaseUrl is set and there is data
-                if (isset($config['analysisBaseUrl']))
+                $table = ($data->buildLocationStatsTable($nightlyData[$key]['counts'], $key));
+                
+                if (!$locationBreakdown)
                 {
-                    print "<a href='" . $config['analysisBaseUrl'] . $nightlyData[$key]['url'] . "'>Time Series Report</a>\n";
+                    $table = $data->eliminateLocations($table);
                 }
-                print($data->formatTable($table, "html"));
-            }
-            else
-            {
-                print "\n" . $key . "\n";
-                # print link to timeseries report only if analysisBaseUrl is set there is data
-                if (isset($config['analysisBaseUrl']))
+                
+                if ($hideZeroHours)
                 {
-                    print $config['analysisBaseUrl'] . $nightlyData[$key]['url'] . "\n\n";
+                    $table = $data->hideZeroHours($table);
+                    $table = $data->hideZeroColumns($table);
                 }
-                print($data->formatTable($table));
+                
+                if ($hoursAcross)
+                {
+                    $table = $data->sideways($table);
+                }
+                
+                if ($outputHtml)
+                {
+                    print "<h2>" . $key . "</h2>\n";
+                    # print link to timeseries report only if analysisBaseUrl is set and there is data
+                    if (isset($config['analysisBaseUrl']))
+                    {
+                        print "<a href='" . $config['analysisBaseUrl'] . $nightlyData[$key]['url'] . "'>Time Series Report</a>\n";
+                    }
+                    print($data->formatTable($table, "html"));
+                }
+                else
+                {
+                    print "\n" . $key . "\n";
+                    # print link to timeseries report only if analysisBaseUrl is set there is data
+                    if (isset($config['analysisBaseUrl']))
+                    {
+                        print $config['analysisBaseUrl'] . $nightlyData[$key]['url'] . "\n\n";
+                    }
+                    print($data->formatTable($table));
+                }
             }
         }
     }
