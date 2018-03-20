@@ -38,7 +38,7 @@ else
 ini_set('display_errors', $SUMA_DISPLAY_ERRORS);
 
 // Set paths
-ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR . $SUMA_SERVER_PATH . PATH_SEPARATOR . $SUMA_SERVER_PATH . '/lib/zend/library');
+ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR . $SUMA_SERVER_PATH . '/service' . PATH_SEPARATOR . $SUMA_SERVER_PATH . '/service/lib/zend/library');
 
 try
 {
@@ -105,3 +105,5 @@ catch (Exception $e)
     print $e->getMessage();
     die;
 }
+
+?>
