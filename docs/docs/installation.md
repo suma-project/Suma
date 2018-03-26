@@ -185,6 +185,12 @@ Suma Analysis Tools Configuration
  * **--hide-zeros**: do not display data for hours or locations with no activity
  * **--hours-across**: display hours from left-to-right instead of the default top-to-bottom in the report
  * **--html**: formats the report as in HTML rather than plain text (strongly recommended for use when using the 'hours-across' and/or 'locations' options
+ * **--tab**: formats the report as tab-delimited text. If both --html and --tab flags are set, the --html flag will be ignored and the --tab flag will be respected
+ * **--omit-header**: do not display column or section headers in report; only display hourly counts; best when used for only one initiative at a time, to avoid confusion
+* **--prepend-date**: include a column giving the report date at the beginning of each line; ideal for use with the --omit-header flag
+* **--report-inits**: limit reporting to one or more initiative(s); identify the initiative(s) by name, comma separated, e.g.: **--report-inits="Head Counts"*** or **--report-inits="Reference Transactions","Head Counts"**
+* **--report-date**: select the date for which to report; default is "yesterday"; any machine readable date format is acceptable, e.g. **--report-date=2018-03-11** or **--report-date="March 11, 2018"**
+* **--start-hour**: choose the hour with which a reporting period starts. Default is 0000 hours.
 
 Examples of nightlyEmail.php configuration include:
 
@@ -194,9 +200,12 @@ Examples of nightlyEmail.php configuration include:
 
 `YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightlyEmail.php --hide-zeros`
 
-`YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightlyEmail.php --hours-across --hide-zeros --html`
+`YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightlyEmail.php --hours-across --hide-zeros --html --start-hour=0400`
 
-Alternatively, `YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightly.php` may be run from the command line for quick reporting through stdout.
+`YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightlyEmail.php --tab --omit-header --prepend-date --report-date=2018-03-11 --report-inits="Head Counts"`
+
+Alternatively, `YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightly.php` may be run from the command line for quick reporting through stdout, using the same flags, e.g.:
+`php YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightly.php --tab --omit-header --prepend-date --report-date=2018-03-11 --report-inits="Head Counts"`
 
 Other Things You Can Configure
 -------------------------------
