@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Currency
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -31,7 +31,7 @@ require_once 'Zend/Currency.php';
  * @category   Zend
  * @package    Zend_Currency
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Currency
  */
@@ -851,5 +851,14 @@ class Zend_CurrencyTest extends PHPUnit_Framework_TestCase
             array(Zend_Currency::USE_SHORTNAME, 'USD100.00'),
             array(Zend_Currency::USE_NAME, 'US Dollar100.00')
         );
+    }
+
+    /**
+     * @group GH-516
+     */
+    public function testToCurrencyWithLocaleWhichHasParentLocale()
+    {
+        $currency = new Zend_Currency(null, 'es_AR');
+        $this->assertEquals('$10,00', $currency->toCurrency(10));
     }
 }

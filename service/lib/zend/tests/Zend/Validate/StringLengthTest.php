@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -29,7 +29,7 @@ require_once 'Zend/Validate/StringLength.php';
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Validate
  */
@@ -176,6 +176,15 @@ class Zend_Validate_StringLengthTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('UTF-8', $validator->getEncoding());
         $validator->setEncoding('ISO-8859-1');
         $this->assertEquals('ISO-8859-1', $validator->getEncoding());
+    }
+
+    /**
+     * @expectedException Zend_Validate_Exception
+     * @group GH-634
+     */
+    public function testWrongEncoding()
+    {
+        $this->_validator->setEncoding('');
     }
 
     /**

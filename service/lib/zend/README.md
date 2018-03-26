@@ -1,5 +1,16 @@
 ![Logo](http://framework.zend.com/images/logos/ZendFramework-logo.png)
 
+> ## End-of-Life occurs 28 Sep 2016
+>
+> Between now and 28 Sep 2016, we will only be accepting security patches to
+> this repository; after that date, we will issue no more releases.
+>
+> For more information:
+>
+> - https://framework.zend.com/blog/2016-06-28-zf1-eol.html
+
+---
+
 Welcome to the Zend Framework 1.12 Release! 
 
 Master: [![Build Status](https://api.travis-ci.org/zendframework/zf1.png?branch=master)](https://travis-ci.org/zendframework/zf1)
@@ -7,26 +18,21 @@ Master: [![Build Status](https://api.travis-ci.org/zendframework/zf1.png?branch=
 RELEASE INFORMATION
 ===================
 
-Zend Framework 1.12.9Release.
-Released on September 17, 2014.
+Zend Framework 1.12.20 Release.
+Released on September 08, 2016.
 
-IMPORTANT FIXES FOR 1.12.9
---------------------------
+IMPORTANT FIXES FOR 1.12.20
+---------------------------
 
 **This release contains security updates:**
 
-- **ZF2014-05:** Due to an issue that existed in PHP's LDAP extension, it is
-  possible to perform an unauthenticated simple bind against a LDAP server by
-  using a null byte for the password, regardless of whether or not the user
-  normally requires a password. We have provided a patch in order to protect
-  users of unpatched PHP versions (PHP 5.5 <= 5.5.11, PHP 5.4 <= 5.4.27, all
-  versions of PHP 5.3 and below). If you use `Zend_Ldap` and are on an affected
-  version of PHP, we recommend upgrading immediately.
-- **ZF2014-06** `Zend_Db_Adapter_Sqlsrv` had a potential SQL injection
-  vulnerability via improperly quoted null bytes. The code has been updated to
-  ensure proper quoting and thus remove the security vector. If you are using
-  `Zend_Db_Adapter_Sqlsrv` and manually quoting values via the adapter, we
-  encourage you to upgrade immediately.
+- **ZF2016-03:** The implementation of `ORDER BY` and `GROUP BY` in
+  `Zend_Db_Select` remained prone to SQL injection when a combination of SQL
+  expressions and comments were used. This release provides a comprehensive
+  solution that identifies and removes comments prior to checking validity of
+  the statement to ensure no SQLi vectors occur. We advise always filtering user
+  input prior to invoking these methods, however, to further protect your
+  applications.
 
 See http://framework.zend.com/changelog for full details.
 

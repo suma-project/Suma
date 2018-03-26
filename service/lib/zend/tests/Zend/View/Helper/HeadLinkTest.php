@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -43,7 +43,7 @@ require_once 'Zend/View.php';
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_View
  * @group      Zend_View_Helper
@@ -495,6 +495,36 @@ class Zend_View_Helper_HeadLinkTest extends PHPUnit_Framework_TestCase
         $expected = '<link href="favicon.png" rel="icon" type="image/png" sizes="16x16" >';
 
         $this->assertEquals($expected, $this->helper->toString());
+    }
+
+    /**
+     * @group GH-515
+     */
+    public function testConditionalStylesheetCreationNoIE()
+    {
+        $this->helper->setStylesheet('/styles.css', 'screen', '!IE');
+        $item = $this->helper->getValue();
+        $this->assertObjectHasAttribute('conditionalStylesheet', $item);
+        $this->assertEquals('!IE', $item->conditionalStylesheet);
+        $string = $this->helper->toString();
+        $this->assertContains('/styles.css', $string);
+        $this->assertContains('<!--[if !IE]><!--><', $string);
+        $this->assertContains('<!--<![endif]-->', $string);
+    }
+
+    /**
+     * @group GH-515
+     */
+    public function testConditionalStylesheetCreationNoIEWidthSpaces()
+    {
+        $this->helper->setStylesheet('/styles.css', 'screen', '! IE');
+        $item = $this->helper->getValue();
+        $this->assertObjectHasAttribute('conditionalStylesheet', $item);
+        $this->assertEquals('! IE', $item->conditionalStylesheet);
+        $string = $this->helper->toString();
+        $this->assertContains('/styles.css', $string);
+        $this->assertContains('<!--[if ! IE]><!--><', $string);
+        $this->assertContains('<!--<![endif]-->', $string);
     }
 }
 

@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Http_CookieJar
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -28,13 +28,23 @@ require_once 'Zend/Http/CookieJar.php';
  * @category   Zend
  * @package    Zend_Http_CookieJar
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Http
  * @group      Zend_Http_CookieJar
  */
 class Zend_Http_CookieJarTest extends PHPUnit_Framework_TestCase
 {
+    public function loadResponse($filename)
+    {
+        $message = file_get_contents($filename);
+        // Line endings are sometimes an issue inside the canned responses; the
+        // following is a negative lookbehind assertion, and replaces any \n
+        // not preceded by \r with the sequence \r\n, ensuring that the message
+        // is well-formed.
+        return preg_replace("#(?<!\r)\n#", "\r\n", $message);
+    }
+
     /**
      * Test we can add cookies to the jar
      *
@@ -83,8 +93,9 @@ class Zend_Http_CookieJarTest extends PHPUnit_Framework_TestCase
     public function testAddCookiesFromResponse()
     {
         $jar = new Zend_Http_Cookiejar();
-        $res_str = file_get_contents(dirname(realpath(__FILE__)) .
-            DIRECTORY_SEPARATOR . '_files'  . DIRECTORY_SEPARATOR . 'response_with_cookies');
+        $res_str = $this->loadResponse(
+            dirname(realpath(__FILE__)) . '/_files/response_with_cookies'
+        );
         $response = Zend_Http_Response::fromString($res_str);
 
         $jar->addCookiesFromResponse($response, 'http://www.example.com');
@@ -442,8 +453,9 @@ class Zend_Http_CookieJarTest extends PHPUnit_Framework_TestCase
      */
     public function testFromResponse()
     {
-        $res_str = file_get_contents(dirname(realpath(__FILE__)) .
-            DIRECTORY_SEPARATOR . '_files'  . DIRECTORY_SEPARATOR . 'response_with_single_cookie');
+        $res_str = $this->loadResponse(
+            dirname(realpath(__FILE__)) . '/_files/response_with_single_cookie'
+        );
         $response = Zend_Http_Response::fromString($res_str);
 
         $jar = Zend_Http_CookieJar::fromResponse($response, 'http://www.example.com');
@@ -457,8 +469,9 @@ class Zend_Http_CookieJarTest extends PHPUnit_Framework_TestCase
      */
     public function testFromResponseMultiHeader()
     {
-        $res_str = file_get_contents(dirname(realpath(__FILE__)) .
-            DIRECTORY_SEPARATOR . '_files'  . DIRECTORY_SEPARATOR . 'response_with_cookies');
+        $res_str = $this->loadResponse(
+            dirname(realpath(__FILE__)) . '/_files/response_with_cookies'
+        );
         $response = Zend_Http_Response::fromString($res_str);
 
         $jar = Zend_Http_CookieJar::fromResponse($response, 'http://www.example.com');

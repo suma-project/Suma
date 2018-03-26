@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -40,7 +40,7 @@ require_once 'Zend/Registry.php';
  * @category   Zend
  * @package    Zend_View
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_View
  * @group      Zend_View_Helper
@@ -519,6 +519,20 @@ document.write(bar.strlen());');
 
         $this->assertNotContains('//<!--', $test);
         $this->assertNotContains('//-->', $test);
+    }
+
+    /**
+     * @group GH-515
+     */
+    public function testConditionalScriptNoIE()
+    {
+        $this->helper->setAllowArbitraryAttributes(true);
+        $this->helper->appendFile(
+            '/js/foo.js', 'text/javascript', array('conditional' => '!IE')
+        );
+        $test = $this->helper->toString();
+        $this->assertContains('<!--[if !IE]><!--><', $test);
+        $this->assertContains('<!--<![endif]-->', $test);
     }
 }
 

@@ -1,0 +1,971 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+<meta charset="utf-8">
+<title>Zend Framework Extras API Documentation » \ZendX_JQuery_View_Helper_JQuery_Container</title>
+<meta name="author" content="Mike van Riel">
+<meta name="description" content="">
+<link href="../css/template.css" rel="stylesheet" media="all">
+<script src="../js/jquery-1.7.1.min.js" type="text/javascript"></script><script src="../js/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script><script src="../js/jquery.mousewheel.min.js" type="text/javascript"></script><script src="../js/bootstrap.js" type="text/javascript"></script><script src="../js/template.js" type="text/javascript"></script><script src="../js/prettify/prettify.min.js" type="text/javascript"></script><link rel="shortcut icon" href="../img/favicon.ico">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="../img/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="../img/apple-touch-icon-114x114.png">
+</head>
+<body>
+<div class="navbar navbar-fixed-top">
+<div class="navbar-inner"><div class="container">
+<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a><a class="brand" href="../index.html">Zend Framework Extras API Documentation</a><div class="nav-collapse"><ul class="nav">
+<li class="dropdown">
+<a href="#api" class="dropdown-toggle" data-toggle="dropdown">
+                                    API Documentation <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a>Packages</a></li>
+<li><a href="../packages/Default.html"><i class="icon-folder-open"></i> Default</a></li>
+<li><a href="../packages/ZendX.html"><i class="icon-folder-open"></i> ZendX</a></li>
+<li><a href="../packages/ZendX_Application.html"><i class="icon-folder-open"></i> ZendX_Application</a></li>
+<li><a href="../packages/ZendX_Console.html"><i class="icon-folder-open"></i> ZendX_Console</a></li>
+<li><a href="../packages/ZendX_Db.html"><i class="icon-folder-open"></i> ZendX_Db</a></li>
+<li><a href="../packages/ZendX_JQuery.html"><i class="icon-folder-open"></i> ZendX_JQuery</a></li>
+</ul>
+</li>
+<li class="dropdown" id="reports-menu">
+<a href="#reports" class="dropdown-toggle" data-toggle="dropdown">
+                                    Reports <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a href="../errors.html"><i class="icon-remove-sign"></i> Errors 
+                <span class="label label-info">38</span></a></li>
+<li><a href="../markers.html"><i class="icon-map-marker"></i> Markers 
+                <ul></ul></a></li>
+<li><a href="../deprecated.html"><i class="icon-stop"></i> Deprecated elements 
+                <span class="label label-info">4</span></a></li>
+</ul>
+</li>
+</ul></div>
+</div></div>
+<div class="go_to_top"><a href="#___" style="color: inherit">Back to top  <i class="icon-upload icon-white"></i></a></div>
+</div>
+<div id="___" class="container">
+<noscript><div class="alert alert-warning">
+                            Javascript is disabled; several features are only available
+                            if Javascript is enabled.
+                        </div></noscript>
+<div class="row">
+<div class="span4">
+<div xmlns:php="http://php.net/xsl" class="btn-toolbar">
+<div class="btn-group visibility" data-toggle="buttons-checkbox">
+<button class="btn public active" title="Show public elements">Public</button><button class="btn protected" title="Show protected elements">Protected</button><button class="btn private" title="Show private elements">Private</button><button class="btn inherited active" title="Show inherited elements">Inherited</button>
+</div>
+<div class="btn-group view pull-right" data-toggle="buttons-radio">
+<button class="btn details" title="Show descriptions and method names"><i class="icon-list"></i></button><button class="btn simple" title="Show only method names"><i class="icon-align-justify"></i></button>
+</div>
+</div>
+<ul xmlns:php="http://php.net/xsl" class="side-nav nav nav-list">
+<li class="nav-header">
+<i title="Methods" class="icon-custom icon-method"></i> Methods
+                    <ul>
+<li class="method public "><a href="#method___toString" title="__toString() :: String representation of jQuery environment"><span class="description">String representation of jQuery environment</span><pre>__toString()</pre></a></li>
+<li class="method public "><a href="#method_addJavascript" title="addJavascript() :: Add arbitrary javascript to execute in jQuery JS container"><span class="description">Add arbitrary javascript to execute in jQuery JS container</span><pre>addJavascript()</pre></a></li>
+<li class="method public "><a href="#method_addJavascriptFile" title="addJavascriptFile() :: Add a Javascript File to the include stack."><span class="description">Add a Javascript File to the include stack.</span><pre>addJavascriptFile()</pre></a></li>
+<li class="method public "><a href="#method_addOnLoad" title="addOnLoad() :: Add a script to execute onLoad"><span class="description">Add a script to execute onLoad</span><pre>addOnLoad()</pre></a></li>
+<li class="method public "><a href="#method_addStylesheet" title="addStylesheet() :: Add a stylesheet"><span class="description">Add a stylesheet</span><pre>addStylesheet()</pre></a></li>
+<li class="method public "><a href="#method_clearJavascript" title="clearJavascript() :: Clear arbitrary javascript stack"><span class="description">Clear arbitrary javascript stack</span><pre>clearJavascript()</pre></a></li>
+<li class="method public "><a href="#method_clearJavascriptFiles" title="clearJavascriptFiles() :: Clear all currently registered Javascript files."><span class="description">Clear all currently registered Javascript files.</span><pre>clearJavascriptFiles()</pre></a></li>
+<li class="method public "><a href="#method_clearOnLoadActions" title="clearOnLoadActions() :: Clear the onLoadActions stack."><span class="description">Clear the onLoadActions stack.</span><pre>clearOnLoadActions()</pre></a></li>
+<li class="method public "><a href="#method_clearStylesheets" title="clearStylesheets() :: Clear all currently registered stylesheets files"><span class="description">Clear all currently registered stylesheets files</span><pre>clearStylesheets()</pre></a></li>
+<li class="method public "><a href="#method_disable" title="disable() :: Disable jQuery"><span class="description">Disable jQuery</span><pre>disable()</pre></a></li>
+<li class="method public "><a href="#method_enable" title="enable() :: Enable jQuery"><span class="description">Enable jQuery</span><pre>enable()</pre></a></li>
+<li class="method public "><a href="#method_getCdnSsl" title="getCdnSsl() :: Get Flag of SSL on CDN"><span class="description">Get Flag of SSL on CDN</span><pre>getCdnSsl()</pre></a></li>
+<li class="method public "><a href="#method_getCdnVersion" title="getCdnVersion() :: Get CDN version"><span class="description">Get CDN version</span><pre>getCdnVersion()</pre></a></li>
+<li class="method public "><a href="#method_getJavascript" title="getJavascript() :: Return all registered javascript statements"><span class="description">Return all registered javascript statements</span><pre>getJavascript()</pre></a></li>
+<li class="method public "><a href="#method_getJavascriptFiles" title="getJavascriptFiles() :: Return all currently registered Javascript files."><span class="description">Return all currently registered Javascript files.</span><pre>getJavascriptFiles()</pre></a></li>
+<li class="method public "><a href="#method_getLocalPath" title="getLocalPath() :: Get local path to jQuery"><span class="description">Get local path to jQuery</span><pre>getLocalPath()</pre></a></li>
+<li class="method public "><a href="#method_getOnLoadActions" title="getOnLoadActions() :: Retrieve all registered onLoad actions"><span class="description">Retrieve all registered onLoad actions</span><pre>getOnLoadActions()</pre></a></li>
+<li class="method public "><a href="#method_getRenderMode" title="getRenderMode() :: Return bitmask of the current Render Mode"><span class="description">Return bitmask of the current Render Mode</span><pre>getRenderMode()</pre></a></li>
+<li class="method public "><a href="#method_getStylesheets" title="getStylesheets() :: Retrieve registered stylesheets"><span class="description">Retrieve registered stylesheets</span><pre>getStylesheets()</pre></a></li>
+<li class="method public "><a href="#method_getUiCdnVersion" title="getUiCdnVersion() :: Return jQuery UI CDN Version"><span class="description">Return jQuery UI CDN Version</span><pre>getUiCdnVersion()</pre></a></li>
+<li class="method public "><a href="#method_getUiLocalPath" title="getUiLocalPath() :: Proxies to getUiPath() for consistency in function naming."><span class="description">Proxies to getUiPath() for consistency in function naming.</span><pre>getUiLocalPath()</pre></a></li>
+<li class="method public "><a href="#method_getUiPath" title="getUiPath() :: Return the local jQuery UI Path if set."><span class="description">Return the local jQuery UI Path if set.</span><pre>getUiPath()</pre></a></li>
+<li class="method public "><a href="#method_getUiVersion" title="getUiVersion() :: Get jQuery UI Version used."><span class="description">Get jQuery UI Version used.</span><pre>getUiVersion()</pre></a></li>
+<li class="method public "><a href="#method_getVersion" title="getVersion() :: Get the version used with the jQuery library"><span class="description">Get the version used with the jQuery library</span><pre>getVersion()</pre></a></li>
+<li class="method public "><a href="#method_isEnabled" title="isEnabled() :: Is jQuery enabled?"><span class="description">Is jQuery enabled?</span><pre>isEnabled()</pre></a></li>
+<li class="method public "><a href="#method_javascriptCaptureEnd" title="javascriptCaptureEnd() :: Finish capturing arbitrary javascript to include in jQuery script"><span class="description">Finish capturing arbitrary javascript to include in jQuery script</span><pre>javascriptCaptureEnd()</pre></a></li>
+<li class="method public "><a href="#method_javascriptCaptureStart" title="javascriptCaptureStart() :: Capture arbitrary javascript to include in jQuery script"><span class="description">Capture arbitrary javascript to include in jQuery script</span><pre>javascriptCaptureStart()</pre></a></li>
+<li class="method public "><a href="#method_onLoadCaptureEnd" title="onLoadCaptureEnd() :: Stop capturing routines to run onLoad"><span class="description">Stop capturing routines to run onLoad</span><pre>onLoadCaptureEnd()</pre></a></li>
+<li class="method public "><a href="#method_onLoadCaptureStart" title="onLoadCaptureStart() :: Start capturing routines to run onLoad"><span class="description">Start capturing routines to run onLoad</span><pre>onLoadCaptureStart()</pre></a></li>
+<li class="method public "><a href="#method_setCdnSsl" title="setCdnSsl() :: Set Use SSL on CDN Flag"><span class="description">Set Use SSL on CDN Flag</span><pre>setCdnSsl()</pre></a></li>
+<li class="method public "><a href="#method_setCdnVersion" title="setCdnVersion() :: Use CDN, using version specified. Currently supported
+by Googles Ajax Library API are: 1.2.3, 1.2.6"><span class="description">Use CDN, using version specified. Currently supported
+by Googles Ajax Library API are: 1.2.3, 1.2.6</span><pre>setCdnVersion()</pre></a></li>
+<li class="method public "><a href="#method_setLocalPath" title="setLocalPath() :: Set path to local jQuery library"><span class="description">Set path to local jQuery library</span><pre>setLocalPath()</pre></a></li>
+<li class="method public "><a href="#method_setRenderMode" title="setRenderMode() :: Set which parts of the jQuery enviroment should be rendered."><span class="description">Set which parts of the jQuery enviroment should be rendered.</span><pre>setRenderMode()</pre></a></li>
+<li class="method public "><a href="#method_setUiCdnVersion" title="setUiCdnVersion() :: Set jQuery UI CDN Version"><span class="description">Set jQuery UI CDN Version</span><pre>setUiCdnVersion()</pre></a></li>
+<li class="method public "><a href="#method_setUiLocalPath" title="setUiLocalPath() :: Set local path to jQuery UI library"><span class="description">Set local path to jQuery UI library</span><pre>setUiLocalPath()</pre></a></li>
+<li class="method public "><a href="#method_setUiVersion" title="setUiVersion() :: Set jQuery UI version used."><span class="description">Set jQuery UI version used.</span><pre>setUiVersion()</pre></a></li>
+<li class="method public "><a href="#method_setVersion" title="setVersion() :: Set the version of the jQuery library used."><span class="description">Set the version of the jQuery library used.</span><pre>setVersion()</pre></a></li>
+<li class="method public "><a href="#method_setView" title="setView() :: Set view object"><span class="description">Set view object</span><pre>setView()</pre></a></li>
+<li class="method public "><a href="#method_uiDisable" title="uiDisable() :: Disable jQuery UI Library Rendering"><span class="description">Disable jQuery UI Library Rendering</span><pre>uiDisable()</pre></a></li>
+<li class="method public "><a href="#method_uiEnable" title="uiEnable() :: Enable jQuery UI Library Rendering"><span class="description">Enable jQuery UI Library Rendering</span><pre>uiEnable()</pre></a></li>
+<li class="method public "><a href="#method_uiIsEnabled" title="uiIsEnabled() :: Check wheater currently the jQuery UI library is enabled."><span class="description">Check wheater currently the jQuery UI library is enabled.</span><pre>uiIsEnabled()</pre></a></li>
+<li class="method public "><a href="#method_useCdn" title="useCdn() :: Are we using the CDN?"><span class="description">Are we using the CDN?</span><pre>useCdn()</pre></a></li>
+<li class="method public "><a href="#method_useLocalPath" title="useLocalPath() :: Are we using a local path?"><span class="description">Are we using a local path?</span><pre>useLocalPath()</pre></a></li>
+<li class="method public "><a href="#method_useUiCdn" title="useUiCdn() :: Is the jQuery Ui enabled and loaded from CDN?"><span class="description">Is the jQuery Ui enabled and loaded from CDN?</span><pre>useUiCdn()</pre></a></li>
+<li class="method public "><a href="#method_useUiLocal" title="useUiLocal() :: Is the jQuery Ui loaded from local scope?"><span class="description">Is the jQuery Ui loaded from local scope?</span><pre>useUiLocal()</pre></a></li>
+</ul>
+</li>
+<li class="nav-header protected">» Protected
+                    <ul>
+<li class="method protected "><a href="#method__getJQueryLibraryBaseCdnUri" title="_getJQueryLibraryBaseCdnUri() :: "><span class="description">_getJQueryLibraryBaseCdnUri()
+        </span><pre>_getJQueryLibraryBaseCdnUri()</pre></a></li>
+<li class="method protected "><a href="#method__getJQueryLibraryPath" title="_getJQueryLibraryPath() :: Internal function that constructs the include path of the jQuery library."><span class="description">Internal function that constructs the include path of the jQuery library.</span><pre>_getJQueryLibraryPath()</pre></a></li>
+<li class="method protected "><a href="#method__getJQueryUiLibraryBaseCdnUri" title="_getJQueryUiLibraryBaseCdnUri() :: "><span class="description">_getJQueryUiLibraryBaseCdnUri()
+        </span><pre>_getJQueryUiLibraryBaseCdnUri()</pre></a></li>
+<li class="method protected "><a href="#method__getJQueryUiLibraryPath" title="_getJQueryUiLibraryPath() :: Internal function that constructs the include path of the jQueryUI library."><span class="description">Internal function that constructs the include path of the jQueryUI library.</span><pre>_getJQueryUiLibraryPath()</pre></a></li>
+<li class="method protected "><a href="#method__renderExtras" title="_renderExtras() :: Renders all javascript code related stuff of the jQuery enviroment."><span class="description">Renders all javascript code related stuff of the jQuery enviroment.</span><pre>_renderExtras()</pre></a></li>
+<li class="method protected "><a href="#method__renderScriptTags" title="_renderScriptTags() :: Renders all javascript file related stuff of the jQuery enviroment."><span class="description">Renders all javascript file related stuff of the jQuery enviroment.</span><pre>_renderScriptTags()</pre></a></li>
+<li class="method protected "><a href="#method__renderStylesheets" title="_renderStylesheets() :: Render jQuery stylesheets"><span class="description">Render jQuery stylesheets</span><pre>_renderStylesheets()</pre></a></li>
+</ul>
+</li>
+<li class="nav-header">
+<i title="Properties" class="icon-custom icon-property"></i> Properties
+                    <ul><li class="property public "><a href="#property_view" title="$view() :: View Instance"><span class="description"></span><pre>$view</pre></a></li></ul>
+</li>
+<li class="nav-header protected">» Protected
+                    <ul>
+<li class="property protected "><a href="#property__captureLock" title="$_captureLock() :: Indicates if a capture start method for javascript or onLoad has been called."><span class="description"></span><pre>$_captureLock</pre></a></li>
+<li class="property protected "><a href="#property__enabled" title="$_enabled() :: Indicates wheater the jQuery View Helper is enabled."><span class="description"></span><pre>$_enabled</pre></a></li>
+<li class="property protected "><a href="#property__isXhtml" title="$_isXhtml() :: View is rendered in XHTML or not."><span class="description"></span><pre>$_isXhtml</pre></a></li>
+<li class="property protected "><a href="#property__javascriptSources" title="$_javascriptSources() :: Additional javascript files that for jQuery Helper components."><span class="description"></span><pre>$_javascriptSources</pre></a></li>
+<li class="property protected "><a href="#property__javascriptStatements" title="$_javascriptStatements() :: Additional javascript statements that need to be executed after jQuery lib."><span class="description"></span><pre>$_javascriptStatements</pre></a></li>
+<li class="property protected "><a href="#property__jqueryLibraryPath" title="$_jqueryLibraryPath() :: Path to local webserver jQuery library"><span class="description"></span><pre>$_jqueryLibraryPath</pre></a></li>
+<li class="property protected "><a href="#property__loadSslCdnPath" title="$_loadSslCdnPath() :: Load CDN Path from SSL or Non-SSL?"><span class="description"></span><pre>$_loadSslCdnPath</pre></a></li>
+<li class="property protected "><a href="#property__onLoadActions" title="$_onLoadActions() :: jQuery onLoad statements Stack"><span class="description"></span><pre>$_onLoadActions</pre></a></li>
+<li class="property protected "><a href="#property__renderMode" title="$_renderMode() :: Default Render Mode (all parts)"><span class="description"></span><pre>$_renderMode</pre></a></li>
+<li class="property protected "><a href="#property__stylesheets" title="$_stylesheets() :: Additional stylesheet files for jQuery related components."><span class="description"></span><pre>$_stylesheets</pre></a></li>
+<li class="property protected "><a href="#property__uiEnabled" title="$_uiEnabled() :: jQuery UI Library Enabled"><span class="description"></span><pre>$_uiEnabled</pre></a></li>
+<li class="property protected "><a href="#property__uiPath" title="$_uiPath() :: Local jQuery UI Path. Use Google CDN if
+variable is null"><span class="description"></span><pre>$_uiPath</pre></a></li>
+<li class="property protected "><a href="#property__uiVersion" title="$_uiVersion() :: jQuery UI Google CDN Version"><span class="description"></span><pre>$_uiVersion</pre></a></li>
+<li class="property protected "><a href="#property__version" title="$_version() :: Default CDN jQuery Library version"><span class="description"></span><pre>$_version</pre></a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="span8">
+<a xmlns:php="http://php.net/xsl" id="\ZendX_JQuery_View_Helper_JQuery_Container"></a><ul xmlns:php="http://php.net/xsl" class="breadcrumb">
+<li>
+<a href="../index.html"><i title="Classes" class="icon-custom icon-class"></i></a><span class="divider">\</span>
+</li>
+<li class="active">
+<span class="divider">\</span><a href="../classes/ZendX_JQuery_View_Helper_JQuery_Container.html">ZendX_JQuery_View_Helper_JQuery_Container</a>
+</li>
+</ul>
+<div xmlns:php="http://php.net/xsl" class="element class">
+<p class="short_description">jQuery View Helper. Transports all jQuery stack and render information across all views.</p>
+<div class="details">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>uses</th>
+<td><a href="ZendX_JQuery_View_Helper_JQuery_Container"></a></td>
+</tr>
+<tr>
+<th>package</th>
+<td><a href="../packages/ZendX_JQuery.View.html">ZendX_JQuery</a></td>
+</tr>
+<tr>
+<th>subpackage</th>
+<td>View</td>
+</tr>
+<tr>
+<th>copyright</th>
+<td>Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)</td>
+</tr>
+<tr>
+<th>license</th>
+<td><a href="http://framework.zend.com/license/new-bsd">New BSD License</a></td>
+</tr>
+</table>
+<h3>
+<i title="Methods" class="icon-custom icon-method"></i> Methods</h3>
+<a id="method___toString"></a><div class="element clickable method public method___toString " data-toggle="collapse" data-target=".method___toString .collapse" title="public">
+<h2>String representation of jQuery environment</h2>
+<pre>__toString() : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>string</code></div>
+</div></div>
+</div>
+<a id="method_addJavascript"></a><div class="element clickable method public method_addJavascript " data-toggle="collapse" data-target=".method_addJavascript .collapse" title="public">
+<h2>Add arbitrary javascript to execute in jQuery JS container</h2>
+<pre>addJavascript(string $js) : \ZendX_JQuery_View_Helper_JQuery_Container</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$js</h4>
+<code>string</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>\ZendX_JQuery_View_Helper_JQuery_Container</code></div>
+</div></div>
+</div>
+<a id="method_addJavascriptFile"></a><div class="element clickable method public method_addJavascriptFile " data-toggle="collapse" data-target=".method_addJavascriptFile .collapse" title="public">
+<h2>Add a Javascript File to the include stack.</h2>
+<pre>addJavascriptFile(string $path) : \ZendX_JQuery_View_Helper_JQuery_Container</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$path</h4>
+<code>string</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>\ZendX_JQuery_View_Helper_JQuery_Container</code></div>
+</div></div>
+</div>
+<a id="method_addOnLoad"></a><div class="element clickable method public method_addOnLoad " data-toggle="collapse" data-target=".method_addOnLoad .collapse" title="public">
+<h2>Add a script to execute onLoad</h2>
+<pre>addOnLoad(string $callback) : \ZendX_JQuery_View_Helper_JQuery_Container</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$callback</h4>
+<code>string</code><p>Lambda</p></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>\ZendX_JQuery_View_Helper_JQuery_Container</code></div>
+</div></div>
+</div>
+<a id="method_addStylesheet"></a><div class="element clickable method public method_addStylesheet " data-toggle="collapse" data-target=".method_addStylesheet .collapse" title="public">
+<h2>Add a stylesheet</h2>
+<pre>addStylesheet(string $path) : \ZendX_JQuery_View_Helper_JQuery_Container</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$path</h4>
+<code>string</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>\ZendX_JQuery_View_Helper_JQuery_Container</code></div>
+</div></div>
+</div>
+<a id="method_clearJavascript"></a><div class="element clickable method public method_clearJavascript " data-toggle="collapse" data-target=".method_clearJavascript .collapse" title="public">
+<h2>Clear arbitrary javascript stack</h2>
+<pre>clearJavascript() : \ZendX_JQuery_View_Helper_JQuery_Container</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>\ZendX_JQuery_View_Helper_JQuery_Container</code></div>
+</div></div>
+</div>
+<a id="method_clearJavascriptFiles"></a><div class="element clickable method public method_clearJavascriptFiles " data-toggle="collapse" data-target=".method_clearJavascriptFiles .collapse" title="public">
+<h2>Clear all currently registered Javascript files.</h2>
+<pre>clearJavascriptFiles() : \ZendX_JQuery_View_Helper_JQuery_Container</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>\ZendX_JQuery_View_Helper_JQuery_Container</code></div>
+</div></div>
+</div>
+<a id="method_clearOnLoadActions"></a><div class="element clickable method public method_clearOnLoadActions " data-toggle="collapse" data-target=".method_clearOnLoadActions .collapse" title="public">
+<h2>Clear the onLoadActions stack.</h2>
+<pre>clearOnLoadActions() : \ZendX_JQuery_View_Helper_JQuery_Container</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>\ZendX_JQuery_View_Helper_JQuery_Container</code></div>
+</div></div>
+</div>
+<a id="method_clearStylesheets"></a><div class="element clickable method public method_clearStylesheets " data-toggle="collapse" data-target=".method_clearStylesheets .collapse" title="public">
+<h2>Clear all currently registered stylesheets files</h2>
+<pre>clearStylesheets() : \ZendX_JQuery_View_Helper_JQuery_Container</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>\ZendX_JQuery_View_Helper_JQuery_Container</code></div>
+</div></div>
+</div>
+<a id="method_disable"></a><div class="element clickable method public method_disable " data-toggle="collapse" data-target=".method_disable .collapse" title="public">
+<h2>Disable jQuery</h2>
+<pre>disable() : \ZendX_JQuery_View_Helper_JQuery_Container</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>\ZendX_JQuery_View_Helper_JQuery_Container</code></div>
+</div></div>
+</div>
+<a id="method_enable"></a><div class="element clickable method public method_enable " data-toggle="collapse" data-target=".method_enable .collapse" title="public">
+<h2>Enable jQuery</h2>
+<pre>enable() : \ZendX_JQuery_View_Helper_JQuery_Container</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>\ZendX_JQuery_View_Helper_JQuery_Container</code></div>
+</div></div>
+</div>
+<a id="method_getCdnSsl"></a><div class="element clickable method public method_getCdnSsl " data-toggle="collapse" data-target=".method_getCdnSsl .collapse" title="public">
+<h2>Get Flag of SSL on CDN</h2>
+<pre>getCdnSsl() : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>boolean</code>True if SSL is used on CDN</div>
+</div></div>
+</div>
+<a id="method_getCdnVersion"></a><div class="element clickable method public method_getCdnVersion " data-toggle="collapse" data-target=".method_getCdnVersion .collapse" title="public">
+<h2>Get CDN version</h2>
+<pre>getCdnVersion() : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>deprecated</th>
+<td>As of version 1.8, use {@link getVersion()} instead.</td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response"><code>string</code></div>
+</div></div>
+</div>
+<a id="method_getJavascript"></a><div class="element clickable method public method_getJavascript " data-toggle="collapse" data-target=".method_getJavascript .collapse" title="public">
+<h2>Return all registered javascript statements</h2>
+<pre>getJavascript() : array</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>array</code></div>
+</div></div>
+</div>
+<a id="method_getJavascriptFiles"></a><div class="element clickable method public method_getJavascriptFiles " data-toggle="collapse" data-target=".method_getJavascriptFiles .collapse" title="public">
+<h2>Return all currently registered Javascript files.</h2>
+<pre>getJavascriptFiles() : array</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>This does not include the jQuery library, which is handled by another retrieval
+strategy.</p></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>array</code></div>
+</div></div>
+</div>
+<a id="method_getLocalPath"></a><div class="element clickable method public method_getLocalPath " data-toggle="collapse" data-target=".method_getLocalPath .collapse" title="public">
+<h2>Get local path to jQuery</h2>
+<pre>getLocalPath() : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>string</code></div>
+</div></div>
+</div>
+<a id="method_getOnLoadActions"></a><div class="element clickable method public method_getOnLoadActions " data-toggle="collapse" data-target=".method_getOnLoadActions .collapse" title="public">
+<h2>Retrieve all registered onLoad actions</h2>
+<pre>getOnLoadActions() : array</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>array</code></div>
+</div></div>
+</div>
+<a id="method_getRenderMode"></a><div class="element clickable method public method_getRenderMode " data-toggle="collapse" data-target=".method_getRenderMode .collapse" title="public">
+<h2>Return bitmask of the current Render Mode</h2>
+<pre>getRenderMode() : integer</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>integer</code></div>
+</div></div>
+</div>
+<a id="method_getStylesheets"></a><div class="element clickable method public method_getStylesheets " data-toggle="collapse" data-target=".method_getStylesheets .collapse" title="public">
+<h2>Retrieve registered stylesheets</h2>
+<pre>getStylesheets() : array</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>array</code></div>
+</div></div>
+</div>
+<a id="method_getUiCdnVersion"></a><div class="element clickable method public method_getUiCdnVersion " data-toggle="collapse" data-target=".method_getUiCdnVersion .collapse" title="public">
+<h2>Return jQuery UI CDN Version</h2>
+<pre>getUiCdnVersion() : String</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>deprecated</th>
+<td>As of 1.8 use {@link getUiVersion()}</td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response"><code>String</code></div>
+</div></div>
+</div>
+<a id="method_getUiLocalPath"></a><div class="element clickable method public method_getUiLocalPath " data-toggle="collapse" data-target=".method_getUiLocalPath .collapse" title="public">
+<h2>Proxies to getUiPath() for consistency in function naming.</h2>
+<pre>getUiLocalPath() : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>string</code></div>
+</div></div>
+</div>
+<a id="method_getUiPath"></a><div class="element clickable method public method_getUiPath " data-toggle="collapse" data-target=".method_getUiPath .collapse" title="public">
+<h2>Return the local jQuery UI Path if set.</h2>
+<pre>getUiPath() : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>string</code></div>
+</div></div>
+</div>
+<a id="method_getUiVersion"></a><div class="element clickable method public method_getUiVersion " data-toggle="collapse" data-target=".method_getUiVersion .collapse" title="public">
+<h2>Get jQuery UI Version used.</h2>
+<pre>getUiVersion() : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>string</code></div>
+</div></div>
+</div>
+<a id="method_getVersion"></a><div class="element clickable method public method_getVersion " data-toggle="collapse" data-target=".method_getVersion .collapse" title="public">
+<h2>Get the version used with the jQuery library</h2>
+<pre>getVersion() : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>string</code></div>
+</div></div>
+</div>
+<a id="method_isEnabled"></a><div class="element clickable method public method_isEnabled " data-toggle="collapse" data-target=".method_isEnabled .collapse" title="public">
+<h2>Is jQuery enabled?</h2>
+<pre>isEnabled() : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>boolean</code></div>
+</div></div>
+</div>
+<a id="method_javascriptCaptureEnd"></a><div class="element clickable method public method_javascriptCaptureEnd " data-toggle="collapse" data-target=".method_javascriptCaptureEnd .collapse" title="public">
+<h2>Finish capturing arbitrary javascript to include in jQuery script</h2>
+<pre>javascriptCaptureEnd() : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>boolean</code></div>
+</div></div>
+</div>
+<a id="method_javascriptCaptureStart"></a><div class="element clickable method public method_javascriptCaptureStart " data-toggle="collapse" data-target=".method_javascriptCaptureStart .collapse" title="public">
+<h2>Capture arbitrary javascript to include in jQuery script</h2>
+<pre>javascriptCaptureStart() : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code>\Zend_Exception</code></th>
+<td></td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response"><code>boolean</code></div>
+</div></div>
+</div>
+<a id="method_onLoadCaptureEnd"></a><div class="element clickable method public method_onLoadCaptureEnd " data-toggle="collapse" data-target=".method_onLoadCaptureEnd .collapse" title="public">
+<h2>Stop capturing routines to run onLoad</h2>
+<pre>onLoadCaptureEnd() : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>boolean</code></div>
+</div></div>
+</div>
+<a id="method_onLoadCaptureStart"></a><div class="element clickable method public method_onLoadCaptureStart " data-toggle="collapse" data-target=".method_onLoadCaptureStart .collapse" title="public">
+<h2>Start capturing routines to run onLoad</h2>
+<pre>onLoadCaptureStart() : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code>\Zend_Exception</code></th>
+<td></td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response"><code>boolean</code></div>
+</div></div>
+</div>
+<a id="method_setCdnSsl"></a><div class="element clickable method public method_setCdnSsl " data-toggle="collapse" data-target=".method_setCdnSsl .collapse" title="public">
+<h2>Set Use SSL on CDN Flag</h2>
+<pre>setCdnSsl(boolean $flag) : \ZendX_JQuery_View_Helper_JQuery_Container</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$flag</h4>
+<code>boolean</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>\ZendX_JQuery_View_Helper_JQuery_Container</code></div>
+</div></div>
+</div>
+<a id="method_setCdnVersion"></a><div class="element clickable method public method_setCdnVersion " data-toggle="collapse" data-target=".method_setCdnVersion .collapse" title="public">
+<h2>Use CDN, using version specified. Currently supported
+by Googles Ajax Library API are: 1.2.3, 1.2.6</h2>
+<pre>setCdnVersion(string $version<code> = null</code>) : \ZendX_JQuery_View_Helper_JQuery_Container</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>deprecated</th>
+<td>As of version 1.8, use {@link setVersion()} instead.</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$version</h4>
+<code>string</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>\ZendX_JQuery_View_Helper_JQuery_Container</code></div>
+</div></div>
+</div>
+<a id="method_setLocalPath"></a><div class="element clickable method public method_setLocalPath " data-toggle="collapse" data-target=".method_setLocalPath .collapse" title="public">
+<h2>Set path to local jQuery library</h2>
+<pre>setLocalPath(string $path) : \ZendX_JQuery_View_Helper_JQuery_Container</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$path</h4>
+<code>string</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>\ZendX_JQuery_View_Helper_JQuery_Container</code></div>
+</div></div>
+</div>
+<a id="method_setRenderMode"></a><div class="element clickable method public method_setRenderMode " data-toggle="collapse" data-target=".method_setRenderMode .collapse" title="public">
+<h2>Set which parts of the jQuery enviroment should be rendered.</h2>
+<pre>setRenderMode(integer $mask) : \ZendX_JQuery_View_Helper_JQuery_Container</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>This function allows for a gradual refactoring of the jQuery code
+rendered by calling __toString(). Use ZendX<em>JQuery::RENDER</em>*
+constants. By default all parts of the enviroment are rendered.</p></div>
+<table class="table table-bordered"><tr>
+<th>see</th>
+<td><a href="%5CZendX_JQuery::RENDER_ALL"></a></td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$mask</h4>
+<code>integer</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>\ZendX_JQuery_View_Helper_JQuery_Container</code></div>
+</div></div>
+</div>
+<a id="method_setUiCdnVersion"></a><div class="element clickable method public method_setUiCdnVersion " data-toggle="collapse" data-target=".method_setUiCdnVersion .collapse" title="public">
+<h2>Set jQuery UI CDN Version</h2>
+<pre>setUiCdnVersion(string $version<code> = '1.5.2'</code>) : \ZendX_JQuery_View_Helper_JQuery_Container</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<table class="table table-bordered"><tr>
+<th>deprecated</th>
+<td>As of 1.8 use {@link setUiVersion()}</td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$version</h4>
+<code>string</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>\ZendX_JQuery_View_Helper_JQuery_Container</code></div>
+</div></div>
+</div>
+<a id="method_setUiLocalPath"></a><div class="element clickable method public method_setUiLocalPath " data-toggle="collapse" data-target=".method_setUiLocalPath .collapse" title="public">
+<h2>Set local path to jQuery UI library</h2>
+<pre>setUiLocalPath(String $path) : \ZendX_JQuery_View_Helper_JQuery_Container</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$path</h4>
+<code>String</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>\ZendX_JQuery_View_Helper_JQuery_Container</code></div>
+</div></div>
+</div>
+<a id="method_setUiVersion"></a><div class="element clickable method public method_setUiVersion " data-toggle="collapse" data-target=".method_setUiVersion .collapse" title="public">
+<h2>Set jQuery UI version used.</h2>
+<pre>setUiVersion(string $version) : \ZendX_JQuery_View_Helper_JQuery_Container</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$version</h4>
+<code>string</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>\ZendX_JQuery_View_Helper_JQuery_Container</code></div>
+</div></div>
+</div>
+<a id="method_setVersion"></a><div class="element clickable method public method_setVersion " data-toggle="collapse" data-target=".method_setVersion .collapse" title="public">
+<h2>Set the version of the jQuery library used.</h2>
+<pre>setVersion(string $version) : \ZendX_JQuery_View_Helper_JQuery_Container</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$version</h4>
+<code>string</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>\ZendX_JQuery_View_Helper_JQuery_Container</code></div>
+</div></div>
+</div>
+<a id="method_setView"></a><div class="element clickable method public method_setView " data-toggle="collapse" data-target=".method_setView .collapse" title="public">
+<h2>Set view object</h2>
+<pre>setView(\Zend_View_Interface $view) : void</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$view</h4>
+<code>\Zend_View_Interface</code>
+</div>
+</div></div>
+</div>
+<a id="method_uiDisable"></a><div class="element clickable method public method_uiDisable " data-toggle="collapse" data-target=".method_uiDisable .collapse" title="public">
+<h2>Disable jQuery UI Library Rendering</h2>
+<pre>uiDisable() : \ZendX_JQuery_View_Helper_JQuery_Container</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>\ZendX_JQuery_View_Helper_JQuery_Container</code></div>
+</div></div>
+</div>
+<a id="method_uiEnable"></a><div class="element clickable method public method_uiEnable " data-toggle="collapse" data-target=".method_uiEnable .collapse" title="public">
+<h2>Enable jQuery UI Library Rendering</h2>
+<pre>uiEnable() : \ZendX_JQuery_View_Helper_JQuery_Container</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>\ZendX_JQuery_View_Helper_JQuery_Container</code></div>
+</div></div>
+</div>
+<a id="method_uiIsEnabled"></a><div class="element clickable method public method_uiIsEnabled " data-toggle="collapse" data-target=".method_uiIsEnabled .collapse" title="public">
+<h2>Check wheater currently the jQuery UI library is enabled.</h2>
+<pre>uiIsEnabled() : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>boolean</code></div>
+</div></div>
+</div>
+<a id="method_useCdn"></a><div class="element clickable method public method_useCdn " data-toggle="collapse" data-target=".method_useCdn .collapse" title="public">
+<h2>Are we using the CDN?</h2>
+<pre>useCdn() : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>boolean</code></div>
+</div></div>
+</div>
+<a id="method_useLocalPath"></a><div class="element clickable method public method_useLocalPath " data-toggle="collapse" data-target=".method_useLocalPath .collapse" title="public">
+<h2>Are we using a local path?</h2>
+<pre>useLocalPath() : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>boolean</code></div>
+</div></div>
+</div>
+<a id="method_useUiCdn"></a><div class="element clickable method public method_useUiCdn " data-toggle="collapse" data-target=".method_useUiCdn .collapse" title="public">
+<h2>Is the jQuery Ui enabled and loaded from CDN?</h2>
+<pre>useUiCdn() : \ZendX_JQuery_View_Helper_JQuery_Container</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>\ZendX_JQuery_View_Helper_JQuery_Container</code></div>
+</div></div>
+</div>
+<a id="method_useUiLocal"></a><div class="element clickable method public method_useUiLocal " data-toggle="collapse" data-target=".method_useUiLocal .collapse" title="public">
+<h2>Is the jQuery Ui loaded from local scope?</h2>
+<pre>useUiLocal() : boolean</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>boolean</code></div>
+</div></div>
+</div>
+<a id="method__getJQueryLibraryBaseCdnUri"></a><div class="element clickable method protected method__getJQueryLibraryBaseCdnUri " data-toggle="collapse" data-target=".method__getJQueryLibraryBaseCdnUri .collapse" title="protected">
+<h2>_getJQueryLibraryBaseCdnUri()
+        </h2>
+<pre>_getJQueryLibraryBaseCdnUri() : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>string</code></div>
+</div></div>
+</div>
+<a id="method__getJQueryLibraryPath"></a><div class="element clickable method protected method__getJQueryLibraryPath " data-toggle="collapse" data-target=".method__getJQueryLibraryPath .collapse" title="protected">
+<h2>Internal function that constructs the include path of the jQuery library.</h2>
+<pre>_getJQueryLibraryPath() : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>string</code></div>
+</div></div>
+</div>
+<a id="method__getJQueryUiLibraryBaseCdnUri"></a><div class="element clickable method protected method__getJQueryUiLibraryBaseCdnUri " data-toggle="collapse" data-target=".method__getJQueryUiLibraryBaseCdnUri .collapse" title="protected">
+<h2>_getJQueryUiLibraryBaseCdnUri()
+        </h2>
+<pre>_getJQueryUiLibraryBaseCdnUri() : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>string</code></div>
+</div></div>
+</div>
+<a id="method__getJQueryUiLibraryPath"></a><div class="element clickable method protected method__getJQueryUiLibraryPath " data-toggle="collapse" data-target=".method__getJQueryUiLibraryPath .collapse" title="protected">
+<h2>Internal function that constructs the include path of the jQueryUI library.</h2>
+<pre>_getJQueryUiLibraryPath() : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>string</code></div>
+</div></div>
+</div>
+<a id="method__renderExtras"></a><div class="element clickable method protected method__renderExtras " data-toggle="collapse" data-target=".method__renderExtras .collapse" title="protected">
+<h2>Renders all javascript code related stuff of the jQuery enviroment.</h2>
+<pre>_renderExtras() : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>string</code></div>
+</div></div>
+</div>
+<a id="method__renderScriptTags"></a><div class="element clickable method protected method__renderScriptTags " data-toggle="collapse" data-target=".method__renderScriptTags .collapse" title="protected">
+<h2>Renders all javascript file related stuff of the jQuery enviroment.</h2>
+<pre>_renderScriptTags() : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>string</code></div>
+</div></div>
+</div>
+<a id="method__renderStylesheets"></a><div class="element clickable method protected method__renderStylesheets " data-toggle="collapse" data-target=".method__renderStylesheets .collapse" title="protected">
+<h2>Render jQuery stylesheets</h2>
+<pre>_renderStylesheets() : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>string</code></div>
+</div></div>
+</div>
+<h3>
+<i title="Properties" class="icon-custom icon-property"></i> Properties</h3>
+<a id="property_view"> </a><div class="element clickable property public property_view" data-toggle="collapse" data-target=".property_view .collapse" title="public">
+<h2>View Instance</h2>
+<pre>$view : \Zend_View_Interface</pre>
+<div class="row collapse"><div class="detail-description">
+<h3>Default</h3>
+<div class="subelement argument"><code>null</code></div>
+</div></div>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property__captureLock"> </a><div class="element clickable property protected property__captureLock" data-toggle="collapse" data-target=".property__captureLock .collapse" title="protected">
+<h2>Indicates if a capture start method for javascript or onLoad has been called.</h2>
+<pre>$_captureLock : Boolean</pre>
+<div class="row collapse"><div class="detail-description">
+<h3>Default</h3>
+<div class="subelement argument"><code>false</code></div>
+</div></div>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property__enabled"> </a><div class="element clickable property protected property__enabled" data-toggle="collapse" data-target=".property__enabled .collapse" title="protected">
+<h2>Indicates wheater the jQuery View Helper is enabled.</h2>
+<pre>$_enabled : Boolean</pre>
+<div class="row collapse"><div class="detail-description">
+<h3>Default</h3>
+<div class="subelement argument"><code>false</code></div>
+</div></div>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property__isXhtml"> </a><div class="element clickable property protected property__isXhtml" data-toggle="collapse" data-target=".property__isXhtml .collapse" title="protected">
+<h2>View is rendered in XHTML or not.</h2>
+<pre>$_isXhtml : Boolean</pre>
+<div class="row collapse"><div class="detail-description">
+<h3>Default</h3>
+<div class="subelement argument"><code>false</code></div>
+</div></div>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property__javascriptSources"> </a><div class="element clickable property protected property__javascriptSources" data-toggle="collapse" data-target=".property__javascriptSources .collapse" title="protected">
+<h2>Additional javascript files that for jQuery Helper components.</h2>
+<pre>$_javascriptSources : Array</pre>
+<div class="row collapse"><div class="detail-description">
+<h3>Default</h3>
+<div class="subelement argument"><code>array()</code></div>
+</div></div>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property__javascriptStatements"> </a><div class="element clickable property protected property__javascriptStatements" data-toggle="collapse" data-target=".property__javascriptStatements .collapse" title="protected">
+<h2>Additional javascript statements that need to be executed after jQuery lib.</h2>
+<pre>$_javascriptStatements : Array</pre>
+<div class="row collapse"><div class="detail-description">
+<h3>Default</h3>
+<div class="subelement argument"><code>array()</code></div>
+</div></div>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property__jqueryLibraryPath"> </a><div class="element clickable property protected property__jqueryLibraryPath" data-toggle="collapse" data-target=".property__jqueryLibraryPath .collapse" title="protected">
+<h2>Path to local webserver jQuery library</h2>
+<pre>$_jqueryLibraryPath : String</pre>
+<div class="row collapse"><div class="detail-description">
+<h3>Default</h3>
+<div class="subelement argument"><code>null</code></div>
+</div></div>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property__loadSslCdnPath"> </a><div class="element clickable property protected property__loadSslCdnPath" data-toggle="collapse" data-target=".property__loadSslCdnPath .collapse" title="protected">
+<h2>Load CDN Path from SSL or Non-SSL?</h2>
+<pre>$_loadSslCdnPath : boolean</pre>
+<div class="row collapse"><div class="detail-description">
+<h3>Default</h3>
+<div class="subelement argument"><code>false</code></div>
+</div></div>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property__onLoadActions"> </a><div class="element clickable property protected property__onLoadActions" data-toggle="collapse" data-target=".property__onLoadActions .collapse" title="protected">
+<h2>jQuery onLoad statements Stack</h2>
+<pre>$_onLoadActions : Array</pre>
+<div class="row collapse"><div class="detail-description">
+<h3>Default</h3>
+<div class="subelement argument"><code>array()</code></div>
+</div></div>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property__renderMode"> </a><div class="element clickable property protected property__renderMode" data-toggle="collapse" data-target=".property__renderMode .collapse" title="protected">
+<h2>Default Render Mode (all parts)</h2>
+<pre>$_renderMode : Integer</pre>
+<div class="row collapse"><div class="detail-description">
+<h3>Default</h3>
+<div class="subelement argument"><code>\ZendX_JQuery::RENDER_ALL</code></div>
+</div></div>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property__stylesheets"> </a><div class="element clickable property protected property__stylesheets" data-toggle="collapse" data-target=".property__stylesheets .collapse" title="protected">
+<h2>Additional stylesheet files for jQuery related components.</h2>
+<pre>$_stylesheets : Array</pre>
+<div class="row collapse"><div class="detail-description">
+<h3>Default</h3>
+<div class="subelement argument"><code>array()</code></div>
+</div></div>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property__uiEnabled"> </a><div class="element clickable property protected property__uiEnabled" data-toggle="collapse" data-target=".property__uiEnabled .collapse" title="protected">
+<h2>jQuery UI Library Enabled</h2>
+<pre>$_uiEnabled : Boolean</pre>
+<div class="row collapse"><div class="detail-description">
+<h3>Default</h3>
+<div class="subelement argument"><code>false</code></div>
+</div></div>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property__uiPath"> </a><div class="element clickable property protected property__uiPath" data-toggle="collapse" data-target=".property__uiPath .collapse" title="protected">
+<h2>Local jQuery UI Path. Use Google CDN if
+variable is null</h2>
+<pre>$_uiPath : String</pre>
+<div class="row collapse"><div class="detail-description">
+<h3>Default</h3>
+<div class="subelement argument"><code>null</code></div>
+</div></div>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property__uiVersion"> </a><div class="element clickable property protected property__uiVersion" data-toggle="collapse" data-target=".property__uiVersion .collapse" title="protected">
+<h2>jQuery UI Google CDN Version</h2>
+<pre>$_uiVersion : String</pre>
+<div class="row collapse"><div class="detail-description">
+<h3>Default</h3>
+<div class="subelement argument"><code>\ZendX_JQuery::DEFAULT_UI_VERSION</code></div>
+</div></div>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property__version"> </a><div class="element clickable property protected property__version" data-toggle="collapse" data-target=".property__version .collapse" title="protected">
+<h2>Default CDN jQuery Library version</h2>
+<pre>$_version : String</pre>
+<div class="row collapse"><div class="detail-description">
+<h3>Default</h3>
+<div class="subelement argument"><code>\ZendX_JQuery::DEFAULT_JQUERY_VERSION</code></div>
+</div></div>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row"><footer class="span12">
+            Template is built using <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap 2</a> and icons provided by <a href="http://glyphicons.com/">Glyphicons</a>.<br>
+            Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor 2.8.5</a> and<br>
+            generated on 2016-09-08T10:35:38-05:00.<br></footer></div>
+</div>
+</body>
+</html>

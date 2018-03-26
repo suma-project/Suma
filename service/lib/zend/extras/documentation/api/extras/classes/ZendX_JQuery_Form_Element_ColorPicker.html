@@ -1,0 +1,276 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+<meta charset="utf-8">
+<title>Zend Framework Extras API Documentation » \ZendX_JQuery_Form_Element_ColorPicker</title>
+<meta name="author" content="Mike van Riel">
+<meta name="description" content="">
+<link href="../css/template.css" rel="stylesheet" media="all">
+<script src="../js/jquery-1.7.1.min.js" type="text/javascript"></script><script src="../js/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script><script src="../js/jquery.mousewheel.min.js" type="text/javascript"></script><script src="../js/bootstrap.js" type="text/javascript"></script><script src="../js/template.js" type="text/javascript"></script><script src="../js/prettify/prettify.min.js" type="text/javascript"></script><link rel="shortcut icon" href="../img/favicon.ico">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="../img/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="../img/apple-touch-icon-114x114.png">
+</head>
+<body>
+<div class="navbar navbar-fixed-top">
+<div class="navbar-inner"><div class="container">
+<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a><a class="brand" href="../index.html">Zend Framework Extras API Documentation</a><div class="nav-collapse"><ul class="nav">
+<li class="dropdown">
+<a href="#api" class="dropdown-toggle" data-toggle="dropdown">
+                                    API Documentation <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a>Packages</a></li>
+<li><a href="../packages/Default.html"><i class="icon-folder-open"></i> Default</a></li>
+<li><a href="../packages/ZendX.html"><i class="icon-folder-open"></i> ZendX</a></li>
+<li><a href="../packages/ZendX_Application.html"><i class="icon-folder-open"></i> ZendX_Application</a></li>
+<li><a href="../packages/ZendX_Console.html"><i class="icon-folder-open"></i> ZendX_Console</a></li>
+<li><a href="../packages/ZendX_Db.html"><i class="icon-folder-open"></i> ZendX_Db</a></li>
+<li><a href="../packages/ZendX_JQuery.html"><i class="icon-folder-open"></i> ZendX_JQuery</a></li>
+</ul>
+</li>
+<li class="dropdown" id="reports-menu">
+<a href="#reports" class="dropdown-toggle" data-toggle="dropdown">
+                                    Reports <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a href="../errors.html"><i class="icon-remove-sign"></i> Errors 
+                <span class="label label-info">38</span></a></li>
+<li><a href="../markers.html"><i class="icon-map-marker"></i> Markers 
+                <ul></ul></a></li>
+<li><a href="../deprecated.html"><i class="icon-stop"></i> Deprecated elements 
+                <span class="label label-info">4</span></a></li>
+</ul>
+</li>
+</ul></div>
+</div></div>
+<div class="go_to_top"><a href="#___" style="color: inherit">Back to top  <i class="icon-upload icon-white"></i></a></div>
+</div>
+<div id="___" class="container">
+<noscript><div class="alert alert-warning">
+                            Javascript is disabled; several features are only available
+                            if Javascript is enabled.
+                        </div></noscript>
+<div class="row">
+<div class="span4">
+<div xmlns:php="http://php.net/xsl" class="btn-toolbar">
+<div class="btn-group visibility" data-toggle="buttons-checkbox">
+<button class="btn public active" title="Show public elements">Public</button><button class="btn protected" title="Show protected elements">Protected</button><button class="btn private" title="Show private elements">Private</button><button class="btn inherited active" title="Show inherited elements">Inherited</button>
+</div>
+<div class="btn-group view pull-right" data-toggle="buttons-radio">
+<button class="btn details" title="Show descriptions and method names"><i class="icon-list"></i></button><button class="btn simple" title="Show only method names"><i class="icon-align-justify"></i></button>
+</div>
+</div>
+<ul xmlns:php="http://php.net/xsl" class="side-nav nav nav-list">
+<li class="nav-header">
+<i title="Methods" class="icon-custom icon-method"></i> Methods
+                    <ul>
+<li class="method public inherited"><a href="#method___construct" title="__construct() :: Constructor"><span class="description">Constructor</span><pre>__construct()</pre></a></li>
+<li class="method public inherited"><a href="#method_getDecorators" title="getDecorators() :: Retrieve all decorators"><span class="description">Retrieve all decorators</span><pre>getDecorators()</pre></a></li>
+<li class="method public inherited"><a href="#method_getJQueryParam" title="getJQueryParam() :: Get jQuery related parameter of this form element"><span class="description">Get jQuery related parameter of this form element</span><pre>getJQueryParam()</pre></a></li>
+<li class="method public inherited"><a href="#method_getJQueryParams" title="getJQueryParams() :: Get all currently known jQuery related parameters of this element"><span class="description">Get all currently known jQuery related parameters of this element</span><pre>getJQueryParams()</pre></a></li>
+<li class="method public inherited"><a href="#method_loadDefaultDecorators" title="loadDefaultDecorators() :: Load default decorators"><span class="description">Load default decorators</span><pre>loadDefaultDecorators()</pre></a></li>
+<li class="method public inherited"><a href="#method_setJQueryParam" title="setJQueryParam() :: Set a jQuery related parameter of this form element."><span class="description">Set a jQuery related parameter of this form element.</span><pre>setJQueryParam()</pre></a></li>
+<li class="method public inherited"><a href="#method_setJQueryParams" title="setJQueryParams() :: Set an array of jQuery related options for this element (merging with old options)."><span class="description">Set an array of jQuery related options for this element (merging with old options).</span><pre>setJQueryParams()</pre></a></li>
+<li class="method public inherited"><a href="#method_setView" title="setView() :: Set the view object"><span class="description">Set the view object</span><pre>setView()</pre></a></li>
+</ul>
+</li>
+<li class="nav-header">
+<i title="Properties" class="icon-custom icon-property"></i> Properties
+                    <ul>
+<li class="property public "><a href="#property_helper" title="$helper() :: "><span class="description"></span><pre>$helper</pre></a></li>
+<li class="property public "><a href="#property_jQueryParams" title="$jQueryParams() :: jQuery related parameters of this form element."><span class="description"></span><pre>$jQueryParams</pre></a></li>
+<li class="property public "><a href="#property_options" title="$options() :: Just here to prevent errors."><span class="description"></span><pre>$options</pre></a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="span8">
+<a xmlns:php="http://php.net/xsl" id="\ZendX_JQuery_Form_Element_ColorPicker"></a><ul xmlns:php="http://php.net/xsl" class="breadcrumb">
+<li>
+<a href="../index.html"><i title="Classes" class="icon-custom icon-class"></i></a><span class="divider">\</span>
+</li>
+<li class="active">
+<span class="divider">\</span><a href="../classes/ZendX_JQuery_Form_Element_ColorPicker.html">ZendX_JQuery_Form_Element_ColorPicker</a>
+</li>
+</ul>
+<div xmlns:php="http://php.net/xsl" class="element class">
+<p class="short_description">Form Element for jQuery ColorPicker View Helper</p>
+<div class="details">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>package</th>
+<td><a href="../packages/ZendX_JQuery.Form.html">ZendX_JQuery</a></td>
+</tr>
+<tr>
+<th>subpackage</th>
+<td>Form</td>
+</tr>
+<tr>
+<th>copyright</th>
+<td>Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)</td>
+</tr>
+<tr>
+<th>license</th>
+<td><a href="http://framework.zend.com/license/new-bsd">New BSD License</a></td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\ZendX_JQuery_Form_Element_UiWidget</td>
+</tr>
+</table>
+<h3>
+<i title="Methods" class="icon-custom icon-method"></i> Methods</h3>
+<a id="method___construct"></a><div class="element clickable method public method___construct inherited" data-toggle="collapse" data-target=".method___construct .collapse" title="public">
+<h2>Constructor</h2>
+<pre>__construct(mixed $spec, mixed $options<code> = null</code>) </pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$spec</h4>
+<code>mixed</code>
+</div>
+<div class="subelement argument">
+<h4>$options</h4>
+<code>mixed</code>
+</div>
+</div></div>
+</div>
+<a id="method_getDecorators"></a><div class="element clickable method public method_getDecorators inherited" data-toggle="collapse" data-target=".method_getDecorators .collapse" title="public">
+<h2>Retrieve all decorators</h2>
+<pre>getDecorators() : array</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code>\ZendX_JQuery_Form_Exception</code></th>
+<td></td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response"><code>array</code></div>
+</div></div>
+</div>
+<a id="method_getJQueryParam"></a><div class="element clickable method public method_getJQueryParam inherited" data-toggle="collapse" data-target=".method_getJQueryParam .collapse" title="public">
+<h2>Get jQuery related parameter of this form element</h2>
+<pre>getJQueryParam(string $key) : string</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$key</h4>
+<code>string</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>string</code></div>
+</div></div>
+</div>
+<a id="method_getJQueryParams"></a><div class="element clickable method public method_getJQueryParams inherited" data-toggle="collapse" data-target=".method_getJQueryParams .collapse" title="public">
+<h2>Get all currently known jQuery related parameters of this element</h2>
+<pre>getJQueryParams() : array</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>array</code></div>
+</div></div>
+</div>
+<a id="method_loadDefaultDecorators"></a><div class="element clickable method public method_loadDefaultDecorators inherited" data-toggle="collapse" data-target=".method_loadDefaultDecorators .collapse" title="public">
+<h2>Load default decorators</h2>
+<pre>loadDefaultDecorators() : void</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="method_setJQueryParam"></a><div class="element clickable method public method_setJQueryParam inherited" data-toggle="collapse" data-target=".method_setJQueryParam .collapse" title="public">
+<h2>Set a jQuery related parameter of this form element.</h2>
+<pre>setJQueryParam(string $key, string $value) : \ZendX_JQuery_Form_Element_UiWidget</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$key</h4>
+<code>string</code>
+</div>
+<div class="subelement argument">
+<h4>$value</h4>
+<code>string</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>\ZendX_JQuery_Form_Element_UiWidget</code></div>
+</div></div>
+</div>
+<a id="method_setJQueryParams"></a><div class="element clickable method public method_setJQueryParams inherited" data-toggle="collapse" data-target=".method_setJQueryParams .collapse" title="public">
+<h2>Set an array of jQuery related options for this element (merging with old options).</h2>
+<pre>setJQueryParams(Array $params) : \ZendX_JQuery_Form_Element_UiWidget</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$params</h4>
+<code>Array</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>\ZendX_JQuery_Form_Element_UiWidget</code></div>
+</div></div>
+</div>
+<a id="method_setView"></a><div class="element clickable method public method_setView inherited" data-toggle="collapse" data-target=".method_setView .collapse" title="public">
+<h2>Set the view object</h2>
+<pre>setView(\Zend_View_Interface $view<code> = null</code>) : \ZendX_JQuery_Form_Element_UiWidget</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>Ensures that the view object has the jQuery view helper path set.</p></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$view</h4>
+<code>\Zend_View_Interface</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>\ZendX_JQuery_Form_Element_UiWidget</code></div>
+</div></div>
+</div>
+<h3>
+<i title="Properties" class="icon-custom icon-property"></i> Properties</h3>
+<a id="property_helper"> </a><div class="element clickable property public property_helper" data-toggle="collapse" data-target=".property_helper .collapse" title="public">
+<h2>$helper</h2>
+<pre>$helper </pre>
+<div class="row collapse"><div class="detail-description">
+<h3>Default</h3>
+<div class="subelement argument"><code>"colorPicker"</code></div>
+</div></div>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_jQueryParams"> </a><div class="element clickable property public property_jQueryParams" data-toggle="collapse" data-target=".property_jQueryParams .collapse" title="public">
+<h2>jQuery related parameters of this form element.</h2>
+<pre>$jQueryParams : array</pre>
+<div class="row collapse"><div class="detail-description">
+<h3>Default</h3>
+<div class="subelement argument"><code>array()</code></div>
+</div></div>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_options"> </a><div class="element clickable property public property_options" data-toggle="collapse" data-target=".property_options .collapse" title="public">
+<h2>Just here to prevent errors.</h2>
+<pre>$options : array</pre>
+<div class="row collapse"><div class="detail-description">
+<h3>Default</h3>
+<div class="subelement argument"><code>array()</code></div>
+</div></div>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row"><footer class="span12">
+            Template is built using <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap 2</a> and icons provided by <a href="http://glyphicons.com/">Glyphicons</a>.<br>
+            Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor 2.8.5</a> and<br>
+            generated on 2016-09-08T10:35:38-05:00.<br></footer></div>
+</div>
+</body>
+</html>

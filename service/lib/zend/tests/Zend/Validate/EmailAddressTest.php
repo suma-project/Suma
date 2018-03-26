@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -33,7 +33,7 @@ require_once 'Zend/Validate/EmailAddress.php';
  * @category   Zend
  * @package    Zend_Validate
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Validate
  */
@@ -554,7 +554,7 @@ class Zend_Validate_EmailAddressTest extends PHPUnit_Framework_TestCase
         $messages = $this->_validator->getMessageTemplates();
         $this->assertEquals('TestMessage', $messages[Zend_Validate_EmailAddress::INVALID]);
     }
-    
+
     /**
      * Testing setMessage for all messages
      *
@@ -613,7 +613,7 @@ class Zend_Validate_EmailAddressTest extends PHPUnit_Framework_TestCase
             $this->multipleOptionsDetected = true;
         }
     }
-    
+
     /**
      * @group ZF-11239
      */
@@ -621,6 +621,28 @@ class Zend_Validate_EmailAddressTest extends PHPUnit_Framework_TestCase
     {
         $hostname = $this->_validator->getHostnameValidator();
         $this->assertTrue($hostname instanceof Zend_Validate_Hostname);
+    }
+
+    /**
+     * @group GH-62
+     */
+    public function testIdnHostnameInEmaillAddress()
+    {
+        if (version_compare(PHP_VERSION, '5.3.0', '<')) {
+            $this->markTestSkipped('idn_to_ascii() is available in intl in PHP 5.3.0+');
+        }
+        $validator = new Zend_Validate_EmailAddress();
+        $validator->setValidateMx(true);
+        $this->assertTrue($validator->isValid('testmail@faß.de'));
+    }
+
+    /**
+     * @group GH-517
+     */
+    public function testNonReservedIp()
+    {
+        $validator = new Zend_Validate_EmailAddress(Zend_Validate_Hostname::ALLOW_IP);
+        $this->assertTrue($validator->isValid('bob@192.162.33.24'));
     }
 }
 

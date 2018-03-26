@@ -15,7 +15,7 @@
  *
  * @category   Zend
  * @package    Zend_OpenId
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -24,6 +24,9 @@
  * @see Zend_Controller_Response_Abstract
  */
 require_once "Zend/Controller/Response/Abstract.php";
+
+/** @see Zend_Crypt_Math */
+require_once 'Zend/Crypt/Math.php';
 
 /**
  * Static class that contains common utility functions for
@@ -35,7 +38,7 @@ require_once "Zend/Controller/Response/Abstract.php";
  *
  * @category   Zend
  * @package    Zend_OpenId
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_OpenId
@@ -474,11 +477,7 @@ class Zend_OpenId
      */
     static public function randomBytes($len)
     {
-        $key = '';
-        for($i=0; $i < $len; $i++) {
-            $key .= chr(mt_rand(0, 255));
-        }
-        return $key;
+        return (string) Zend_Crypt_Math::randBytes($len);
     }
 
     /**

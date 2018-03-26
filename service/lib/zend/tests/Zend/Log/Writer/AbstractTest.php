@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Log
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -31,12 +31,15 @@ require_once 'Zend/Log/Writer/Abstract.php';
  * @category   Zend
  * @package    Zend_Log
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Log
  */
 class Zend_Log_Writer_AbstractTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @var Zend_Log_Writer_Abstract
+     */
     protected $_writer;
 
     public static function main()
@@ -55,6 +58,10 @@ class Zend_Log_Writer_AbstractTest extends PHPUnit_Framework_TestCase
      */
     public function testSetFormatter()
     {
+        if (version_compare(phpversion(), '7', '>=')) {
+            $this->markTestSkipped('Invalid typehinting is PHP Fatal error in PHP7+');
+        }
+
         require_once 'Zend/Log/Formatter/Simple.php';
         $this->_writer->setFormatter(new Zend_Log_Formatter_Simple());
         $this->setExpectedException('PHPUnit_Framework_Error');

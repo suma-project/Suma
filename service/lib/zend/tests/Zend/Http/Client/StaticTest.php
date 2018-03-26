@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Http_Client
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -33,7 +33,7 @@ require_once 'Zend/Http/Client/Adapter/Test.php';
  * @category   Zend
  * @package    Zend_Http_Client
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Http
  * @group      Zend_Http_Client
@@ -689,15 +689,14 @@ class Zend_Http_Client_StaticTest extends PHPUnit_Framework_TestCase
 
         $adapter = $this->_client->getAdapter(); /* @var $adapter Zend_Http_Client_Adapter_Test */
 
-        $adapter->setResponse(<<<RESPONSE
-HTTP/1.1 302 Redirect
-Content-Type: text/html; charset=UTF-8
-Location: /test
-Server: Microsoft-IIS/7.0
-Date: Tue, 19 Apr 2011 11:23:48 GMT
+        $response = "HTTP/1.1 302 Redirect\r\n"
+            . "Content-Type: text/html; charset=UTF-8\r\n"
+            . "Location: /test\r\n"
+            . "Server: Microsoft-IIS/7.0\r\n"
+            . "Date: Tue, 19 Apr 2011 11:23:48 GMT\r\n\r\n"
+            . "RESPONSE";
 
-RESPONSE
-        );
+        $adapter->setResponse($response);
 
         $res = $this->_client->request('GET');
 

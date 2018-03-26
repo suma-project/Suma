@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Date
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id $
  */
@@ -49,7 +49,7 @@ require_once 'Zend/TimeSync.php';
  * @category   Zend
  * @package    Zend_Date
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Date
  */
@@ -1954,6 +1954,15 @@ class Zend_DateTest extends PHPUnit_Framework_TestCase
         $date->set(1234567890);
         $date->set('20071020T20:10:30', Zend_Date::ISO_8601);
         $this->assertSame('2007-10-20T20:10:30+05:00', $date->get(Zend_Date::W3C));
+        $date->set(1234567890);
+        $date->set('20071020T10:30', Zend_Date::ISO_8601);
+        $this->assertSame('2007-10-20T10:30:00+05:00', $date->get(Zend_Date::W3C));
+        $date->set(1234567890);
+        $date->set('20071020T103000', Zend_Date::ISO_8601);
+        $this->assertSame('2007-10-20T10:30:00+05:00', $date->get(Zend_Date::W3C));
+        $date->set(1234567890);
+        $date->set('20071020T1020', Zend_Date::ISO_8601);
+        $this->assertSame('2007-10-20T10:20:00+05:00', $date->get(Zend_Date::W3C));
         $date->set(1234567890);
         $date->set('-00071020T20:10:30', Zend_Date::ISO_8601);
         $this->assertSame('-7-10-20T20:10:30+00:00', $date->get(Zend_Date::W3C));
@@ -5513,7 +5522,7 @@ class Zend_DateTest extends PHPUnit_Framework_TestCase
         Zend_Date::setOptions(array('format_type' => 'php'));
 
         date_default_timezone_set('GMT');
-        $date = new Zend_Date(mktime(20,10,0,09,20,2009));
+        $date = new Zend_Date(mktime(20,10,0,9,20,2009));
         $this->assertSame(gmdate('w',$date->getTimestamp()), $date->toString(      'w'));
         $this->assertSame(gmdate('d',$date->getTimestamp()), $date->toString(      'd'));
         $this->assertSame(gmdate('D',$date->getTimestamp()), $date->toString('D', 'en'));
@@ -5552,7 +5561,7 @@ class Zend_DateTest extends PHPUnit_Framework_TestCase
         $this->assertSame(gmdate('U',$date->getTimestamp()), $date->toString(      'U'));
 
         date_default_timezone_set('Indian/Maldives');
-        $date = new Zend_Date(mktime(20,10,0,09,20,2009));
+        $date = new Zend_Date(mktime(20,10,0,9,20,2009));
         $this->assertSame(date('w',$date->getTimestamp()), $date->toString(      'w'));
         $this->assertSame(date('d',$date->getTimestamp()), $date->toString(      'd'));
         $this->assertSame(date('D',$date->getTimestamp()), $date->toString('D', 'en'));
@@ -5715,6 +5724,18 @@ class Zend_DateTest extends PHPUnit_Framework_TestCase
             'America/New_York',
             $date->getTimezoneFromString('America/New_York')
         );
+    }
+
+    /**
+     * @group GH-561
+     */
+    public function testGetYearAndMonthWithoutDot()
+    {
+        $date = new Zend_Date('2014.12.29');
+
+        $this->assertEquals('29.12.2014', $date->get(Zend_Date::DATE_MEDIUM));
+        $this->assertEquals('2014.12', $date->get('Y.M'));
+        $this->assertEquals('201412', $date->get('YM'));
     }
 }
 

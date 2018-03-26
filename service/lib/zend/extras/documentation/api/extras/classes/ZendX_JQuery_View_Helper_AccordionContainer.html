@@ -1,0 +1,324 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+<meta charset="utf-8">
+<title>Zend Framework Extras API Documentation » \ZendX_JQuery_View_Helper_AccordionContainer</title>
+<meta name="author" content="Mike van Riel">
+<meta name="description" content="">
+<link href="../css/template.css" rel="stylesheet" media="all">
+<script src="../js/jquery-1.7.1.min.js" type="text/javascript"></script><script src="../js/jquery-ui-1.8.2.custom.min.js" type="text/javascript"></script><script src="../js/jquery.mousewheel.min.js" type="text/javascript"></script><script src="../js/bootstrap.js" type="text/javascript"></script><script src="../js/template.js" type="text/javascript"></script><script src="../js/prettify/prettify.min.js" type="text/javascript"></script><link rel="shortcut icon" href="../img/favicon.ico">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="72x72" href="../img/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="114x114" href="../img/apple-touch-icon-114x114.png">
+</head>
+<body>
+<div class="navbar navbar-fixed-top">
+<div class="navbar-inner"><div class="container">
+<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></a><a class="brand" href="../index.html">Zend Framework Extras API Documentation</a><div class="nav-collapse"><ul class="nav">
+<li class="dropdown">
+<a href="#api" class="dropdown-toggle" data-toggle="dropdown">
+                                    API Documentation <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a>Packages</a></li>
+<li><a href="../packages/Default.html"><i class="icon-folder-open"></i> Default</a></li>
+<li><a href="../packages/ZendX.html"><i class="icon-folder-open"></i> ZendX</a></li>
+<li><a href="../packages/ZendX_Application.html"><i class="icon-folder-open"></i> ZendX_Application</a></li>
+<li><a href="../packages/ZendX_Console.html"><i class="icon-folder-open"></i> ZendX_Console</a></li>
+<li><a href="../packages/ZendX_Db.html"><i class="icon-folder-open"></i> ZendX_Db</a></li>
+<li><a href="../packages/ZendX_JQuery.html"><i class="icon-folder-open"></i> ZendX_JQuery</a></li>
+</ul>
+</li>
+<li class="dropdown" id="reports-menu">
+<a href="#reports" class="dropdown-toggle" data-toggle="dropdown">
+                                    Reports <b class="caret"></b></a><ul class="dropdown-menu">
+<li><a href="../errors.html"><i class="icon-remove-sign"></i> Errors 
+                <span class="label label-info">38</span></a></li>
+<li><a href="../markers.html"><i class="icon-map-marker"></i> Markers 
+                <ul></ul></a></li>
+<li><a href="../deprecated.html"><i class="icon-stop"></i> Deprecated elements 
+                <span class="label label-info">4</span></a></li>
+</ul>
+</li>
+</ul></div>
+</div></div>
+<div class="go_to_top"><a href="#___" style="color: inherit">Back to top  <i class="icon-upload icon-white"></i></a></div>
+</div>
+<div id="___" class="container">
+<noscript><div class="alert alert-warning">
+                            Javascript is disabled; several features are only available
+                            if Javascript is enabled.
+                        </div></noscript>
+<div class="row">
+<div class="span4">
+<div xmlns:php="http://php.net/xsl" class="btn-toolbar">
+<div class="btn-group visibility" data-toggle="buttons-checkbox">
+<button class="btn public active" title="Show public elements">Public</button><button class="btn protected" title="Show protected elements">Protected</button><button class="btn private" title="Show private elements">Private</button><button class="btn inherited active" title="Show inherited elements">Inherited</button>
+</div>
+<div class="btn-group view pull-right" data-toggle="buttons-radio">
+<button class="btn details" title="Show descriptions and method names"><i class="icon-list"></i></button><button class="btn simple" title="Show only method names"><i class="icon-align-justify"></i></button>
+</div>
+</div>
+<ul xmlns:php="http://php.net/xsl" class="side-nav nav nav-list">
+<li class="nav-header">
+<i title="Methods" class="icon-custom icon-method"></i> Methods
+                    <ul>
+<li class="method public "><a href="#method_accordionContainer" title="accordionContainer() :: Render Accordion with the currently registered elements."><span class="description">Render Accordion with the currently registered elements.</span><pre>accordionContainer()</pre></a></li>
+<li class="method public "><a href="#method_addPane" title="addPane() :: Add Accordion Pane for the Accordion-Id"><span class="description">Add Accordion Pane for the Accordion-Id</span><pre>addPane()</pre></a></li>
+<li class="method public "><a href="#method_setElementHtmlTemplate" title="setElementHtmlTemplate() :: Set the accordion element template"><span class="description">Set the accordion element template</span><pre>setElementHtmlTemplate()</pre></a></li>
+<li class="method public inherited"><a href="#method_setView" title="setView() :: Set view and enable jQuery Core and UI libraries"><span class="description">Set view and enable jQuery Core and UI libraries</span><pre>setView()</pre></a></li>
+</ul>
+</li>
+<li class="nav-header protected">» Protected
+                    <ul>
+<li class="method protected inherited"><a href="#method__prepareAttributes" title="_prepareAttributes() :: Helps with building the correct Attributes Array structure."><span class="description">Helps with building the correct Attributes Array structure.</span><pre>_prepareAttributes()</pre></a></li>
+<li class="method protected "><a href="#method_getAccordionTemplate" title="getAccordionTemplate() :: "><span class="description">getAccordionTemplate()
+        </span><pre>getAccordionTemplate()</pre></a></li>
+<li class="method protected "><a href="#method_getElementHtmlTemplate" title="getElementHtmlTemplate() :: "><span class="description">getElementHtmlTemplate()
+        </span><pre>getElementHtmlTemplate()</pre></a></li>
+</ul>
+</li>
+<li class="nav-header">
+<i title="Properties" class="icon-custom icon-property"></i> Properties
+                    <ul></ul>
+</li>
+<li class="nav-header protected">» Protected
+                    <ul>
+<li class="property protected "><a href="#property__elementHtmlTemplate" title="$_elementHtmlTemplate() :: "><span class="description"></span><pre>$_elementHtmlTemplate</pre></a></li>
+<li class="property protected "><a href="#property__panes" title="$_panes() :: "><span class="description"></span><pre>$_panes</pre></a></li>
+<li class="property protected "><a href="#property_jquery" title="$jquery() :: Contains reference to the jQuery view helper"><span class="description"></span><pre>$jquery</pre></a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="span8">
+<a xmlns:php="http://php.net/xsl" id="\ZendX_JQuery_View_Helper_AccordionContainer"></a><ul xmlns:php="http://php.net/xsl" class="breadcrumb">
+<li>
+<a href="../index.html"><i title="Classes" class="icon-custom icon-class"></i></a><span class="divider">\</span>
+</li>
+<li class="active">
+<span class="divider">\</span><a href="../classes/ZendX_JQuery_View_Helper_AccordionContainer.html">ZendX_JQuery_View_Helper_AccordionContainer</a>
+</li>
+</ul>
+<div xmlns:php="http://php.net/xsl" class="element class">
+<p class="short_description">jQuery Accordion View Helper</p>
+<div class="details">
+<div class="long_description"></div>
+<table class="table table-bordered">
+<tr>
+<th>uses</th>
+<td><a href="Zend_Json"></a></td>
+</tr>
+<tr>
+<th>package</th>
+<td><a href="../packages/ZendX_JQuery.View.html">ZendX_JQuery</a></td>
+</tr>
+<tr>
+<th>subpackage</th>
+<td>View</td>
+</tr>
+<tr>
+<th>copyright</th>
+<td>Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)</td>
+</tr>
+<tr>
+<th>license</th>
+<td><a href="http://framework.zend.com/license/new-bsd">New BSD License</a></td>
+</tr>
+<tr>
+<th>inherited_from</th>
+<td>\ZendX_JQuery_View_Helper_UiWidget</td>
+</tr>
+</table>
+<h3>
+<i title="Methods" class="icon-custom icon-method"></i> Methods</h3>
+<a id="method_accordionContainer"></a><div class="element clickable method public method_accordionContainer " data-toggle="collapse" data-target=".method_accordionContainer .collapse" title="public">
+<h2>Render Accordion with the currently registered elements.</h2>
+<pre>accordionContainer(string $id<code> = null</code>, array $params<code> = array()</code>, array $attribs<code> = array()</code>) : string | \ZendX_JQuery_View_Helper_AccordionContainer</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"><p>If no arguments are given, the accordion object is returned so that
+chaining the \addPane() function allows to register new elements
+for an accordion.</p></div>
+<table class="table table-bordered"><tr>
+<th>link</th>
+<td><a href="http://docs.jquery.com/UI/Accordion">http://docs.jquery.com/UI/Accordion</a></td>
+</tr></table>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$id</h4>
+<code>string</code>
+</div>
+<div class="subelement argument">
+<h4>$params</h4>
+<code>array</code>
+</div>
+<div class="subelement argument">
+<h4>$attribs</h4>
+<code>array</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>string</code><code>\ZendX_JQuery_View_Helper_AccordionContainer</code>
+</div>
+</div></div>
+</div>
+<a id="method_addPane"></a><div class="element clickable method public method_addPane " data-toggle="collapse" data-target=".method_addPane .collapse" title="public">
+<h2>Add Accordion Pane for the Accordion-Id</h2>
+<pre>addPane(string $id, string $name, string $content, array $options<code> = array()</code>) : \ZendX_JQuery_View_Helper_AccordionContainer</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$id</h4>
+<code>string</code>
+</div>
+<div class="subelement argument">
+<h4>$name</h4>
+<code>string</code>
+</div>
+<div class="subelement argument">
+<h4>$content</h4>
+<code>string</code>
+</div>
+<div class="subelement argument">
+<h4>$options</h4>
+<code>array</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>\ZendX_JQuery_View_Helper_AccordionContainer</code></div>
+</div></div>
+</div>
+<a id="method_setElementHtmlTemplate"></a><div class="element clickable method public method_setElementHtmlTemplate " data-toggle="collapse" data-target=".method_setElementHtmlTemplate .collapse" title="public">
+<h2>Set the accordion element template</h2>
+<pre>setElementHtmlTemplate(string $htmlTemplate) : \ZendX_JQuery_View_Helper_AccordionContainer</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$htmlTemplate</h4>
+<code>string</code>
+</div>
+<h3>Exceptions</h3>
+<table class="table table-bordered"><tr>
+<th><code>\ZendX_JQuery_View_Exception</code></th>
+<td></td>
+</tr></table>
+<h3>Returns</h3>
+<div class="subelement response"><code>\ZendX_JQuery_View_Helper_AccordionContainer</code></div>
+</div></div>
+</div>
+<a id="method_setView"></a><div class="element clickable method public method_setView inherited" data-toggle="collapse" data-target=".method_setView .collapse" title="public">
+<h2>Set view and enable jQuery Core and UI libraries</h2>
+<pre>setView(\Zend_View_Interface $view) : \ZendX_JQuery_View_Helper_Widget</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$view</h4>
+<code>\Zend_View_Interface</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>\ZendX_JQuery_View_Helper_Widget</code></div>
+</div></div>
+</div>
+<a id="method__prepareAttributes"></a><div class="element clickable method protected method__prepareAttributes inherited" data-toggle="collapse" data-target=".method__prepareAttributes .collapse" title="protected">
+<h2>Helps with building the correct Attributes Array structure.</h2>
+<pre>_prepareAttributes(String $id, String $value, Array $attribs) : Array</pre>
+<div class="labels"><span class="label">Inherited</span></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$id</h4>
+<code>String</code>
+</div>
+<div class="subelement argument">
+<h4>$value</h4>
+<code>String</code>
+</div>
+<div class="subelement argument">
+<h4>$attribs</h4>
+<code>Array</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response">
+<code>Array</code>$attribs</div>
+</div></div>
+</div>
+<a id="method_getAccordionTemplate"></a><div class="element clickable method protected method_getAccordionTemplate " data-toggle="collapse" data-target=".method_getAccordionTemplate .collapse" title="protected">
+<h2>getAccordionTemplate()
+        </h2>
+<pre>getAccordionTemplate(array $attribs, string $html) : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Parameters</h3>
+<div class="subelement argument">
+<h4>$attribs</h4>
+<code>array</code>
+</div>
+<div class="subelement argument">
+<h4>$html</h4>
+<code>string</code>
+</div>
+<h3>Returns</h3>
+<div class="subelement response"><code>string</code></div>
+</div></div>
+</div>
+<a id="method_getElementHtmlTemplate"></a><div class="element clickable method protected method_getElementHtmlTemplate " data-toggle="collapse" data-target=".method_getElementHtmlTemplate .collapse" title="protected">
+<h2>getElementHtmlTemplate()
+        </h2>
+<pre>getElementHtmlTemplate() : string</pre>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description">
+<div class="long_description"></div>
+<h3>Returns</h3>
+<div class="subelement response"><code>string</code></div>
+</div></div>
+</div>
+<h3>
+<i title="Properties" class="icon-custom icon-property"></i> Properties</h3>
+<a id="property__elementHtmlTemplate"> </a><div class="element clickable property protected property__elementHtmlTemplate" data-toggle="collapse" data-target=".property__elementHtmlTemplate .collapse" title="protected">
+<h2>$_elementHtmlTemplate</h2>
+<pre>$_elementHtmlTemplate : string</pre>
+<div class="row collapse"><div class="detail-description">
+<h3>Default</h3>
+<div class="subelement argument"><code>null</code></div>
+</div></div>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property__panes"> </a><div class="element clickable property protected property__panes" data-toggle="collapse" data-target=".property__panes .collapse" title="protected">
+<h2>$_panes</h2>
+<pre>$_panes : array</pre>
+<div class="row collapse"><div class="detail-description">
+<h3>Default</h3>
+<div class="subelement argument"><code>array()</code></div>
+</div></div>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+<a id="property_jquery"> </a><div class="element clickable property protected property_jquery" data-toggle="collapse" data-target=".property_jquery .collapse" title="protected">
+<h2>Contains reference to the jQuery view helper</h2>
+<pre>$jquery : \ZendX_JQuery_View_Helper_JQuery_Container</pre>
+<div class="row collapse"><div class="detail-description">
+<h3>Default</h3>
+<div class="subelement argument"></div>
+</div></div>
+<div class="labels"></div>
+<div class="row collapse"><div class="detail-description"><div class="long_description"></div></div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row"><footer class="span12">
+            Template is built using <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap 2</a> and icons provided by <a href="http://glyphicons.com/">Glyphicons</a>.<br>
+            Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor 2.8.5</a> and<br>
+            generated on 2016-09-08T10:35:38-05:00.<br></footer></div>
+</div>
+</body>
+</html>

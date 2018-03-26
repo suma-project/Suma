@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Locale
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -30,7 +30,7 @@ require_once 'Zend/Locale/Data.php';
  * @category   Zend
  * @package    Zend_Locale
  * @subpackage UnitTests
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @group      Zend_Locale
  */
@@ -7229,5 +7229,66 @@ class Zend_Locale_DataTest extends PHPUnit_Framework_TestCase
         $result = Zend_Locale_Data::getList('de_AT', 'type', '');
         $this->assertTrue(is_array($result));
         $this->assertTrue(count($result) > 0);
+    }
+
+    /**
+     * @group GH-465
+     */
+    public function testCreateValidCacheIdsInGetContentMethod()
+    {
+        try {
+            $content = Zend_Locale_Data::getContent('de_DE', 'language', 1234.56);
+        } catch (Zend_Cache_Exception $e) {
+            $this->fail($e->getMessage());
+        }
+    }
+
+    /**
+     * @group GH-465
+     */
+    public function testCreateValidCacheIdsInGetListMethod()
+    {
+        try {
+            $list = Zend_Locale_Data::getList('de_DE', 'language', 1234.56);
+        } catch (Zend_Cache_Exception $e) {
+            $this->fail($e->getMessage());
+        }
+    }
+
+    /**
+     * @group GH-516
+     */
+    public function testGetParentLocale()
+    {
+        // Tests only with locale
+        $result = Zend_Locale_Data::getContent('pa_Arab', 'parentlocale');
+        $this->assertEquals('root', $result);
+        $result = Zend_Locale_Data::getContent('en_CK', 'parentlocale');
+        $this->assertEquals('en_001', $result);
+        $result = Zend_Locale_Data::getContent('en_JE', 'parentlocale');
+        $this->assertEquals('en_GB', $result);
+        $result = Zend_Locale_Data::getContent('es_AR', 'parentlocale');
+        $this->assertEquals('es_419', $result);
+        $result = Zend_Locale_Data::getContent('pt_CV', 'parentlocale');
+        $this->assertEquals('pt_PT', $result);
+        $result = Zend_Locale_Data::getContent('zh_Hant_MO', 'parentlocale');
+        $this->assertEquals('zh_Hant_HK', $result);
+
+        // Test with value
+        $result = Zend_Locale_Data::getContent('de_DE', 'parentlocale', 'zh_Hant_MO');
+        $this->assertEquals('zh_Hant_HK', $result);
+
+        // Test without parent locale
+        $result = Zend_Locale_Data::getContent('de_DE', 'parentlocale');
+        $this->assertFalse($result);
+    }
+
+    /**
+     * @group GH-516
+     */
+    public function testLocaleWhichHasParentLocale()
+    {
+        $result = Zend_Locale_Data::getContent('en_HK', 'nametocurrency', 'XAF');
+        $this->assertEquals('Central African CFA Franc', $result);
     }
 }

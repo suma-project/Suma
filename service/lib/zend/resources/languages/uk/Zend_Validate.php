@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Translate
  * @subpackage Ressource
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id:$
  */
@@ -67,7 +67,7 @@ return array(
     "'%value%' does not fit the date format '%format%'" => "'%value%' не відповідає формату дати '%format%'",
 
     // Zend_Validate_Db_Abstract
-    "No record matching %value% was found" => "Не знайдено записів, що відповідають '%value%'",
+    "No record matching '%value%' was found" => "Не знайдено записів, що відповідають '%value%'",
     "A record matching '%value%' was found" => "Знайдено запис, що відповідає '%value%'",
 
     // Zend_Validate_Digits

@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Translate
  * @subpackage Ressource
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id:$
  */
@@ -67,7 +67,7 @@ return array(
     "'%value%' does not fit the date format '%format%'" => "'%value%' não se encaixa no formato de data '%format%'",
 
     // Zend_Validate_Db_Abstract
-    "No record matching %value% was found" => "Não foram encontrados registros para %value%",
+    "No record matching '%value%' was found" => "Não foram encontrados registros para %value%",
     "A record matching '%value%' was found" => "Um registro foi encontrado para %value%",
 
     // Zend_Validate_Digits
