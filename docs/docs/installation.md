@@ -206,6 +206,7 @@ Examples of nightlyEmail.php configuration include:
 
 Alternatively, `YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightly.php` may be run from the command line for quick reporting through stdout, using the same flags, e.g.:
 `php YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightly.php --tab --omit-header --prepend-date --report-date=2018-03-11 --report-inits="Head Counts"`
+This approach is especially useful if you want to use a shell script to report on multiple consecutive dates.
 
 Other Things You Can Configure
 -------------------------------
