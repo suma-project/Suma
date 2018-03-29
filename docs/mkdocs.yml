@@ -4,13 +4,13 @@ theme: readthedocs
 repo_url: https://github.com/suma-project/Suma
 include_next_prev: false
 pages:
-- [index.md, Overview]
-- [quickstart.md, Quickstart]
-- [installation.md, Installation]
-- [troubleshooting.md, Troubleshooting]
-- [faq.md, Frequently Asked Questions]
-- [logs.md, Logs]
-- [queryserver.md, Queryserver]
-- [developer.md, Developer]
-- [upgrade_1.0.md, Upgrade 1.0]
-- [upgrade_2.0.md, Upgrade 2.0]
+- Overview: index.md
+- Quickstart: quickstart.md
+- Installation: installation.md
+- Troubleshooting: troubleshooting.md
+- Frequently Asked Questions: faq.md
+- Logs: logs.md
+- Queryserver: queryserver.md
+- Developer: developer.md
+- Upgrade 1.0: upgrade_1.0.md
+- Upgrade 2.0: upgrade_2.0.md
