@@ -16,6 +16,10 @@ These requirements are based on our local testing. Earlier versions may also wor
 * PHP required version of at least 5.3.3 (including cURL, mbstring, PDO, and DOM). ** Please note that different server operating systems may use different module names. If you are experiencing unexpected issues with Suma after installation, check your server logs for missing PHP modules.** See the development environment for Suma, [Suma-Vagrant](https://github.com/suma-project/Suma-Vagrant/blob/master/ansible/roles/demo/tasks/server.yml#L23-L57), for a full list of required PHP modules.
 * Zend Framework 1.12 - required for Suma server, included with Suma code
 * Various Javascript Libraries - all included with Suma code
+* For Apache, enable the following modules:
+    * `a2enmod phpXXX`, where XXX is the installed PHP version (e.g., `php7.0`).
+    * `a2enmod rewrite`
+    * `phpenmod pdo_mysql`
 
 Additional Client Requirements:
 
