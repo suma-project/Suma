@@ -7,21 +7,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   
-  
-  <title>Installation - Suma</title>
-  
-
   <link rel="shortcut icon" href="../img/favicon.ico">
-
-  
+  <title>Installation - Suma</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
   <link rel="stylesheet" href="../css/highlight.css">
-  <link href="../css/gh-fork-ribbon.css" rel="stylesheet">
-  <link href="../css/gh-fork-ribbon.ie.css" rel="stylesheet">
-
   
   <script>
     // Current page data
@@ -32,9 +24,7 @@
   
   <script src="../js/jquery-2.1.1.min.js"></script>
   <script src="../js/modernizr-2.8.3.min.js"></script>
-  <script type="text/javascript" src="../js/highlight.pack.js"></script>
-  <script src="../js/theme.js"></script> 
-
+  <script type="text/javascript" src="../js/highlight.pack.js"></script> 
   
 </head>
 
@@ -54,110 +44,94 @@
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-        <ul class="current">
+	<ul class="current">
+	  
           
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="..">Overview</a>
-        
-    </li>
-<li>
+            <li class="toctree-l1">
+		
+    <a class="" href="..">Overview</a>
+	    </li>
           
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../quickstart/">Quickstart</a>
-        
-    </li>
-<li>
+            <li class="toctree-l1">
+		
+    <a class="" href="../quickstart/">Quickstart</a>
+	    </li>
           
-            <li>
-    <li class="toctree-l1 current">
-        <a class="current" href="./">Installation</a>
-        
-            <ul>
+            <li class="toctree-l1 current">
+		
+    <a class="current" href="./">Installation</a>
+    <ul class="subnav">
             
-                <li class="toctree-l3"><a href="#suma-install-instructions">Suma Install Instructions</a></li>
-                
-                    <li><a class="toctree-l4" href="#experimental-virtual-machine">Experimental Virtual Machine</a></li>
-                
-                    <li><a class="toctree-l4" href="#requirements">Requirements</a></li>
-                
-                    <li><a class="toctree-l4" href="#download-suma">Download Suma</a></li>
-                
-                    <li><a class="toctree-l4" href="#suma-software-installation-symbolic-links-recommended">Suma Software Installation (symbolic links, RECOMMENDED)</a></li>
-                
-                    <li><a class="toctree-l4" href="#suma-software-installation-file-copying">Suma Software Installation (file copying)</a></li>
-                
-                    <li><a class="toctree-l4" href="#apache-configuration">Apache Configuration</a></li>
-                
-                    <li><a class="toctree-l4" href="#database-setup">Database Setup</a></li>
-                
-                    <li><a class="toctree-l4" href="#suma-server-software-configuration">Suma Server Software Configuration</a></li>
-                
-                    <li><a class="toctree-l4" href="#suma-client-configuration">Suma Client Configuration</a></li>
-                
-                    <li><a class="toctree-l4" href="#suma-analysis-tools-configuration">Suma Analysis Tools Configuration</a></li>
-                
-                    <li><a class="toctree-l4" href="#other-things-you-can-configure">Other Things You Can Configure</a></li>
-                
-                    <li><a class="toctree-l4" href="#how-to-create-your-first-initiative">How to create your first initiative</a></li>
-                
-                    <li><a class="toctree-l4" href="#overview-of-administrative-tools">Overview of administrative tools</a></li>
-                
-            
-            </ul>
+    <li class="toctree-l2"><a href="#suma-install-instructions">Suma Install Instructions</a></li>
+    
+        <ul>
         
-    </li>
-<li>
+            <li><a class="toctree-l3" href="#experimental-virtual-machine">Experimental Virtual Machine</a></li>
+        
+            <li><a class="toctree-l3" href="#requirements">Requirements</a></li>
+        
+            <li><a class="toctree-l3" href="#download-suma">Download Suma</a></li>
+        
+            <li><a class="toctree-l3" href="#suma-software-installation-symbolic-links-recommended">Suma Software Installation (symbolic links, RECOMMENDED)</a></li>
+        
+            <li><a class="toctree-l3" href="#suma-software-installation-file-copying">Suma Software Installation (file copying)</a></li>
+        
+            <li><a class="toctree-l3" href="#apache-configuration">Apache Configuration</a></li>
+        
+            <li><a class="toctree-l3" href="#database-setup">Database Setup</a></li>
+        
+            <li><a class="toctree-l3" href="#suma-server-software-configuration">Suma Server Software Configuration</a></li>
+        
+            <li><a class="toctree-l3" href="#suma-client-configuration">Suma Client Configuration</a></li>
+        
+            <li><a class="toctree-l3" href="#suma-analysis-tools-configuration">Suma Analysis Tools Configuration</a></li>
+        
+            <li><a class="toctree-l3" href="#other-things-you-can-configure">Other Things You Can Configure</a></li>
+        
+            <li><a class="toctree-l3" href="#how-to-create-your-first-initiative">How to create your first initiative</a></li>
+        
+            <li><a class="toctree-l3" href="#overview-of-administrative-tools">Overview of administrative tools</a></li>
+        
+        </ul>
+    
+
+    </ul>
+	    </li>
           
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../troubleshooting/">Troubleshooting</a>
-        
-    </li>
-<li>
+            <li class="toctree-l1">
+		
+    <a class="" href="../troubleshooting/">Troubleshooting</a>
+	    </li>
           
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../faq/">Frequently Asked Questions</a>
-        
-    </li>
-<li>
+            <li class="toctree-l1">
+		
+    <a class="" href="../faq/">Frequently Asked Questions</a>
+	    </li>
           
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../logs/">Logs</a>
-        
-    </li>
-<li>
+            <li class="toctree-l1">
+		
+    <a class="" href="../logs/">Logs</a>
+	    </li>
           
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../queryserver/">Queryserver</a>
-        
-    </li>
-<li>
+            <li class="toctree-l1">
+		
+    <a class="" href="../queryserver/">Queryserver</a>
+	    </li>
           
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../developer/">Developer</a>
-        
-    </li>
-<li>
+            <li class="toctree-l1">
+		
+    <a class="" href="../developer/">Developer</a>
+	    </li>
           
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../upgrade_1.0/">Upgrade 1.0</a>
-        
-    </li>
-<li>
+            <li class="toctree-l1">
+		
+    <a class="" href="../upgrade_1.0/">Upgrade 1.0</a>
+	    </li>
           
-            <li>
-    <li class="toctree-l1 ">
-        <a class="" href="../upgrade_2.0/">Upgrade 2.0</a>
-        
-    </li>
-<li>
+            <li class="toctree-l1">
+		
+    <a class="" href="../upgrade_2.0/">Upgrade 2.0</a>
+	    </li>
           
         </ul>
       </div>
@@ -184,9 +158,8 @@
     <li>Installation</li>
     <li class="wy-breadcrumbs-aside">
       
-        
-          <a href="https://github.com/suma-project/Suma" class="icon icon-github"> Edit on GitHub</a>
-        
+        <a href="https://github.com/suma-project/Suma/edit/master/docs/installation.md"
+          class="icon icon-github"> Edit on GitHub</a>
       
     </li>
   </ul>
@@ -355,13 +328,22 @@ RewriteRule ^.*$ index.php [NC,L]
 </li>
 <li><strong>--hours-across</strong>: display hours from left-to-right instead of the default top-to-bottom in the report</li>
 <li><strong>--html</strong>: formats the report as in HTML rather than plain text (strongly recommended for use when using the 'hours-across' and/or 'locations' options</li>
+<li><strong>--tab</strong>: formats the report as tab-delimited text. If both --html and --tab flags are set, the --html flag will be ignored and the --tab flag will be respected</li>
+<li><strong>--omit-header</strong>: do not display column or section headers in report; only display hourly counts; best when used for only one initiative at a time, to avoid confusion</li>
+<li><strong>--prepend-date</strong>: include a column giving the report date at the beginning of each line; ideal for use with the --omit-header flag</li>
+<li><strong>--report-inits</strong>: limit reporting to one or more initiative(s); identify the initiative(s) by name, comma separated, e.g.: **--report-inits="Head Counts"<strong><em> or </em>*--report-inits="Reference Transactions","Head Counts"</strong></li>
+<li><strong>--report-date</strong>: select the date for which to report; default is "yesterday"; any machine readable date format is acceptable, e.g. <strong>--report-date=2018-03-11</strong> or <strong>--report-date="March 11, 2018"</strong></li>
+<li><strong>--start-hour</strong>: choose the hour with which a reporting period starts. Default is 0000 hours.</li>
 </ul>
 <p>Examples of nightlyEmail.php configuration include:</p>
 <p><code>YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightlyEmail.php</code></p>
 <p><code>YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightlyEmail.php locations --html</code></p>
 <p><code>YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightlyEmail.php --hide-zeros</code></p>
-<p><code>YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightlyEmail.php --hours-across --hide-zeros --html</code></p>
-<p>Alternatively, <code>YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightly.php</code> may be run from the command line for quick reporting through stdout.</p>
+<p><code>YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightlyEmail.php --hours-across --hide-zeros --html --start-hour=0400</code></p>
+<p><code>YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightlyEmail.php --tab --omit-header --prepend-date --report-date=2018-03-11 --report-inits="Head Counts"</code></p>
+<p>Alternatively, <code>YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightly.php</code> may be run from the command line for quick reporting through stdout, using the same flags, e.g.:
+<code>php YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightly.php --tab --omit-header --prepend-date --report-date=2018-03-11 --report-inits="Head Counts"</code>
+This approach is especially useful if you want to use a shell script to report on multiple consecutive dates.</p>
 <h2 id="other-things-you-can-configure">Other Things You Can Configure</h2>
 <ul>
 <li>The configuration protocol allows for development/testing settings that can override the production settings.  To switch from using production settings to dev/testing settings, on the line in <code>/SUMA_SERVER_INSTALL_DIR/config/Globals.php</code></li>
@@ -427,7 +409,7 @@ RewriteRule ^.*$ index.php [NC,L]
 
   Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
 </footer>
-	  
+      
         </div>
       </div>
 
@@ -435,10 +417,10 @@ RewriteRule ^.*$ index.php [NC,L]
 
   </div>
 
-<div class="rst-versions" role="note" style="cursor: pointer">
+  <div class="rst-versions" role="note" style="cursor: pointer">
     <span class="rst-current-version" data-toggle="rst-current-version">
       
-          <a href="https://github.com/suma-project/Suma" class="icon icon-github" style="float: left; color: #fcfcfc"> GitHub</a>
+          <a href="https://github.com/suma-project/Suma/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
       
       
         <span><a href="../quickstart/" style="color: #fcfcfc;">&laquo; Previous</a></span>
@@ -448,6 +430,10 @@ RewriteRule ^.*$ index.php [NC,L]
       
     </span>
 </div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/require.js"></script>
+      <script src="../search/search.js"></script>
 
 </body>
 </html>
