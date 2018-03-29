@@ -1,4 +1,4 @@
- <?php
+<?php
  require_once 'ServerIO.php';
 /**
  * Class to create an hourly report on previous
@@ -292,6 +292,56 @@ class NightlyData
         }
         return $newTable;
     }
+    /**
+     * Prepend date to each line of table; early morning hours will have a different date than the pre-midnight hours that immediate precede thm
+     *
+     * @param array of table rows, date format optional (default yyyy-mm-dd)
+     * @return array newTable
+     * @access public
+     */
+    public function prependDate($table, $date, $format="Y-m-d") 
+    {
+        $newTable = array();
+        $year = substr($date,0,4);
+        $month = substr($date,4,2);
+        $day = substr($date,6,2);
+        $use_date = strtotime($year.'-'.$month.'-'.$day);
+        $display_date = date($format, $use_date);
+
+        $i = 0;
+        $previous_hour = 0;
+        foreach ($table as $row)
+        {
+            $newRow = $row;
+            if ($i==0)
+            {
+                array_unshift($newRow, 'Date');
+            }
+            else 
+            {
+                $hour = strtotime($newRow[0]);
+                if ($previous_hour > $hour) {
+                    $display_date = date($format, strtotime("+1 day",$use_date));
+                }
+                array_unshift($newRow, $display_date);
+                $previous_hour = $hour;
+            }
+            array_push($newTable, $newRow);
+            $i++;
+        }
+        return $newTable;
+    }
+    /** Remove table header from the report table
+     * @param array table 
+     * @return array newTable
+     * @access public
+     */
+    public function omitHeader($table) 
+    {
+        $newTable = $table;
+        array_shift($newTable);
+        return $newTable;
+    }
     /** Delete a column from a multidimensional array
      * @param table (passed by reference), offset of row to delete
      * @return array (passed by reference, so inherently returned
@@ -341,7 +391,7 @@ class NightlyData
             foreach ($rows as $key => $value) {
                 if (is_numeric($value))
                 {
-                    if (is_null($columnCounts[$key]))
+                    if (! array_key_exists($key, $columnCounts))
                     {
                         $columnCounts[$key] = $value;
                     }
@@ -409,10 +459,14 @@ class NightlyData
                 if ($printFormat == "html")
                 {
                     $output .= "<tr><td>" . join("</td>\n<td>", $row) . "</td></tr>" . PHP_EOL;
-                    }
+                }
+                elseif ($printFormat == "tab")
+                {
+                    $output .= join("\t",$row).PHP_EOL;
+                }
                 else
                 {
-                    $output .= vsprintf($format, $row) . "\n";
+                    $output .= vsprintf($format, $row) . PHP_EOL;
                 }
             }
         if ($printFormat == "html")

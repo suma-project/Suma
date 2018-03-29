@@ -5,16 +5,30 @@ require_once 'NightlyData.php';
 /* get command-line arguments if present. allowed values:
    locations
    --hours-across
-   --html
+   --html //if both --html and --tab are set, will default to --tab
+   --tab  //if both --html and --tab are set, will default to --tab
    --hide-zeros
+   --omit-header
+   --prepend-date
    --start-hour=****
+   --report-inits="****","****" //use initiative names e.g. "Head Counts"
+   --report-date=**** //any date forma; enclose in quotes if includes spaces 
 */
 $locationBreakdown = (array_search("locations", $argv) ? (array_search("locations", $argv) > 0 ? true : "") : false);
 $hoursAcross = (array_search("--hours-across", $argv) ? (array_search("--hours-across", $argv) > 0 ? true : "") : false);
 $outputHtml = (array_search("--html", $argv) ? (array_search("--html", $argv) > 0 ? true : "") : false);
+$outputTab = (array_search("--tab", $argv) ? (array_search("--tab", $argv) > 0 ? true : "") : false); 
 $hideZeroHours = (array_search("--hide-zeros", $argv) ? (array_search("--hide-zeros", $argv) > 0 ? true : "") : false);
+$omitHeader = (array_search("--omit-header", $argv) ? (array_search("--omit-header", $argv) > 0 ? true: "") : false);
+$prependDate = (array_search("--prepend-date", $argv) ? (array_search("--prepend-date", $argv) > 0 ? true: "") : false); 
 
+if ($outputTab && $outputHtml) 
+{
+    $outputHtml = false; 
+}
 $findStartHour = preg_grep('/start-hour=\d{4}$/', $argv);
+$findReportInits = preg_grep('/report-inits=.+/', $argv);
+$findReportDate = preg_grep('/report-date=.+/', $argv);
 
 if ($findStartHour)
 {
@@ -27,6 +41,24 @@ else
     $startHour = "0000";
 }
 
+if ($findReportInits)
+{
+    $inits = array_values($findReportInits);
+    $pieces = explode("=", $inits[0]);
+    $reportInits = explode(",", $pieces[1]);    
+}
+
+if ($findReportDate)
+{ 
+    $date = array_values($findReportDate);
+    $pieces = explode("=", $date[0]);
+    $reportDate = $pieces[1];
+}
+else
+{
+    $reportDate = 'yesterday';
+}
+
 $config = Spyc::YAMLLoad(realpath(dirname(__FILE__)) . '/../../../config/config.yaml');
 
 if (isset($config['nightly']))
@@ -36,7 +68,7 @@ if (isset($config['nightly']))
     date_default_timezone_set($DEFAULT_TIMEZONE);
 
     // Which day to retrieve hourly report
-    $DAY_PROCESS = date('Ymd', strtotime('yesterday'));
+    $DAY_PROCESS = date('Ymd', strtotime($reportDate));
 
     // Initialize class and retrieve data
     try
@@ -50,8 +82,11 @@ if (isset($config['nightly']))
             print '<style>';
             print 'table { border-collapse: collapse;}';
             print 'td,th { border: 1px solid black; text-align: center;}';
-            print 'tr:first-child { font-weight: bold }';
-            print 'td:first-child { font-weight: bold }';
+            if (! $omitHeader) 
+            {
+                print 'tr:first-child { font-weight: bold }';
+                print 'td:first-child { font-weight: bold }';
+            }
             print '</style>';
         }
 
@@ -62,43 +97,70 @@ if (isset($config['nightly']))
 
         foreach ($nightlyData as $key => $init)
         {
-            $table = ($data->buildLocationStatsTable($nightlyData[$key]['counts'], $key));
-
-            if (!$locationBreakdown)
+            if (! isset ($reportInits) || in_array($key, $reportInits))
             {
-                $table = $data->eliminateLocations($table);
-            }
-
-            if ($hideZeroHours)
-            {
-                $table = $data->hideZeroHours($table);
-                $table = $data->hideZeroColumns($table);
-            }
-
-            if ($hoursAcross)
-            {
-                $table = $data->sideways($table);
-            }
-
-            if ($outputHtml)
-            {
-                print "<h2>" . $key . "</h2>\n";
-                # print link to timeseries report only if analysisBaseUrl is set and there is data
-                if (isset($config['analysisBaseUrl']))
+                $table = ($data->buildLocationStatsTable($nightlyData[$key]['counts'], $key));
+                
+                if (!$locationBreakdown)
                 {
-                    print "<a href='" . $config['analysisBaseUrl'] . $nightlyData[$key]['url'] . "'>Time Series Report</a>\n";
+                    $table = $data->eliminateLocations($table);
                 }
-                print($data->formatTable($table, "html"));
-            }
-            else
-            {
-                print "\n" . $key . "\n";
-                # print link to timeseries report only if analysisBaseUrl is set there is data
-                if (isset($config['analysisBaseUrl']))
+
+                if ($prependDate)
                 {
-                    print $config['analysisBaseUrl'] . $nightlyData[$key]['url'] . "\n\n";
+                    $table = $data->prependDate($table, $DAY_PROCESS);
                 }
-                print($data->formatTable($table));
+                
+                if ($hideZeroHours)
+                {
+                    $table = $data->hideZeroHours($table);
+                    $table = $data->hideZeroColumns($table);
+                }
+
+                if ($omitHeader)
+                {
+                    $table = $data->omitHeader($table);
+                }
+                
+                if ($hoursAcross)
+                {
+                    $table = $data->sideways($table);
+                }
+                
+                if ($outputHtml)
+                {
+                    if (! $omitHeader)
+                    {
+                        print "<h2>" . $key . "</h2>\n";
+                    }
+                    # print link to timeseries report only if analysisBaseUrl is set and there is data
+                    if (isset($config['analysisBaseUrl']))
+                    {
+                        print "<a href='" . $config['analysisBaseUrl'] . $nightlyData[$key]['url'] . "'>Time Series Report</a>\n";
+                    }
+                    print($data->formatTable($table, "html"));
+                }
+                else
+                {
+                    if (! $omitHeader)
+                    {
+                        print "\n" . $key . "\n";
+                    }
+                    # print link to timeseries report only if analysisBaseUrl is set there is data
+                    if (isset($config['analysisBaseUrl']))
+                    {
+                        print $config['analysisBaseUrl'] . $nightlyData[$key]['url'] . "\n\n";
+                    }
+                    if ($outputTab)
+                    {
+                        $textFormat = 'tab';
+                    }
+                    else 
+                    {
+                        $textFormat = 'text';
+                    }
+                    print($data->formatTable($table,$textFormat));
+                }
             }
         }
     }
