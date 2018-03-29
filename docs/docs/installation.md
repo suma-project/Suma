@@ -34,13 +34,13 @@ Suma Software Installation (symbolic links, **RECOMMENDED**)
 If your Apache configuration has the `FollowSymLinks` directive enabled, there is a simpler way to deploy Suma that also improves the update process.
 
 * Clone the GitHub repository to a directory outside of your web space (e.g. `/var/www/app/suma`)
+* Create `/var/www/html/suma` (e.g., `mkdir /var/www/html/suma`)
 * Create the following symbolic links from your web space to the local suma repository (these instructions make several assumptions about paths and directory names--please change as needed, noting the configuration directions later in this document):
 
-
-        /var/www/htdocs/sumaserver/      =>  /var/www/app/suma/service/web/
-        /var/www/htdocs/suma/client/        =>  /var/www/app/suma/web/
-        /var/www/htdocs/suma/analysis/   =>  /var/www/app/suma/analysis/
-
+        ln -s /var/www/app/suma/service /var/www/app/sumaserver
+        ln -s /var/www/app/suma/service/web /var/www/html/sumaserver
+        ln -s /var/www/app/suma/web /var/www/html/suma/web
+        ln -s /var/www/app/suma/analysis /var/www/html/suma/analysis
 
 Now all of your code is in one place, allowing you to update Suma by running `git pull --rebase origin master`. There is a chance this could result in merge conflicts with your local changes, so please allow for time to resolve these before updating.
 
