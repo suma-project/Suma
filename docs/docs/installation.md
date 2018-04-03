@@ -17,7 +17,7 @@ These requirements are based on our local testing. Earlier versions may also wor
 * Zend Framework 1.12 - required for Suma server, included with Suma code
 * Various Javascript Libraries - all included with Suma code
 * For Apache, enable the following modules:
-    * `a2enmod phpXXX`, where XXX is the installed PHP version (e.g., `php7.0`).
+    * `a2enmod phpXXX`, where XXX is the installed PHP version (e.g., `php5.0`).
     * `a2enmod rewrite`
     * `phpenmod pdo_mysql`
 
