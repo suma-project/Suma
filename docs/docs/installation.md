@@ -17,7 +17,7 @@ These requirements are based on our local testing. Earlier versions may also wor
 * Zend Framework 1.12 - required for Suma server, included with Suma code
 * Various Javascript Libraries - all included with Suma code
 * For Apache, enable the following modules:
-    * `a2enmod phpXXX`, where XXX is the installed PHP version (e.g., `php5.0`).
+    * `a2enmod phpXXX`, where XXX is the installed PHP version (e.g., `php7.0`).
     * `a2enmod rewrite`
     * `phpenmod pdo_mysql`
 
@@ -38,13 +38,13 @@ Suma Software Installation (symbolic links, **RECOMMENDED**)
 If your Apache configuration has the `FollowSymLinks` directive enabled, there is a simpler way to deploy Suma that also improves the update process.
 
 * Clone the GitHub repository to a directory outside of your web space (e.g. `/var/www/app/suma`)
-* Create `/var/www/html/suma` (e.g., `mkdir /var/www/html/suma`)
+* Create `/var/www/htdocs/suma` (e.g., `mkdir /var/www/htdocs/suma`)
 * Create the following symbolic links from your web space to the local suma repository (these instructions make several assumptions about paths and directory names--please change as needed, noting the configuration directions later in this document):
 
         ln -s /var/www/app/suma/service /var/www/app/sumaserver
-        ln -s /var/www/app/suma/service/web /var/www/html/sumaserver
-        ln -s /var/www/app/suma/web /var/www/html/suma/web
-        ln -s /var/www/app/suma/analysis /var/www/html/suma/analysis
+        ln -s /var/www/app/suma/service/web /var/www/htdocs/sumaserver
+        ln -s /var/www/app/suma/web /var/www/htdocs/suma/web
+        ln -s /var/www/app/suma/analysis /var/www/htdocs/suma/analysis
 
 Now all of your code is in one place, allowing you to update Suma by running `git pull --rebase origin master`. There is a chance this could result in merge conflicts with your local changes, so please allow for time to resolve these before updating.
 
