@@ -41,7 +41,6 @@ If your Apache configuration has the `FollowSymLinks` directive enabled, there i
 * Create `/var/www/htdocs/suma` (e.g., `mkdir /var/www/htdocs/suma`)
 * Create the following symbolic links from your web space to the local suma repository (these instructions make several assumptions about paths and directory names--please change as needed, noting the configuration directions later in this document):
 
-        ln -s /var/www/app/suma/service /var/www/app/sumaserver
         ln -s /var/www/app/suma/service/web /var/www/htdocs/sumaserver
         ln -s /var/www/app/suma/web /var/www/htdocs/suma/web
         ln -s /var/www/app/suma/analysis /var/www/htdocs/suma/analysis
@@ -61,7 +60,7 @@ For Suma Client Installation:
 
 For Suma Server Installation:
 
-* Copy contents of `/SUMA_DOWNLOAD_DIR/service` to a location outside your web directory. For example, if your web directory is `/var/www/htdocs` you could copy the contents of the `/SUMA_DOWNLOAD_DIR/service` to `/var/www/app/sumaserver`.
+* Copy contents of `/SUMA_DOWNLOAD_DIR/service` to a location outside your web directory. For example, if your web directory is `/var/www/htdocs` you could copy the contents of the `/SUMA_DOWNLOAD_DIR/service` to `/var/www/app/suma/service`.
 
     Note this location, we will refer to it later as `SUMA_SERVER_INSTALL_DIR`
 
@@ -129,9 +128,9 @@ Suma Server Software Configuration
 
     In the `/SUMA_SERVER_INSTALL_DIR/web/config/` directory, copy `config_example.yaml` to a new file `config.yaml`. You must set some path variables in the `config.yaml` file for the Suma server to function correctly.
 
-    `SUMA_SERVER_PATH` must be set to the `SUMA_SERVER_INSTALL_DIR` where the Suma server was installed earlier in these instructions (e.g. `/var/www/app/sumaserver`).
+    `SUMA_SERVER_PATH` must be set to the `SUMA_SERVER_INSTALL_DIR` where the Suma server was installed earlier in these instructions (e.g. `/var/www/app/suma/service`).
 
-    `SUMA_CONTROLLER_PATH` must be set to `SUMA_SERVER_INSTALL_DIR/controllers` (e.g. `/var/www/app/sumaserver/controllers`).
+    `SUMA_CONTROLLER_PATH` must be set to `SUMA_SERVER_INSTALL_DIR/controllers` (e.g. `/var/www/app/suma/service/controllers`).
 
     `SUMA_BASE_URL` must be set to the URL path for the Suma server. For example, if the URL is `http://YOUR_HOST/sumaserver`, set this to `/sumaserver`.
 
