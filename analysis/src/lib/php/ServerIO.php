@@ -167,13 +167,12 @@ class ServerIO
     {
         if (empty($this->_client))
         {
-            $this->_client = new Guzzle\Service\Client($this->_baseUrl);
+            $this->_client = new GuzzleHttp\Client(['base_url' => $this->_baseUrl]);
         }
 
         try
         {
-            $request  = $this->_client->get($url);
-            $response = $request->send();
+            $response = $this->_client->request('GET', $url);
         }
         // Guzzle Exceptions
         catch (Guzzle\Http\Exception\BadResponseException $e)
