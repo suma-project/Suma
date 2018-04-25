@@ -167,9 +167,8 @@ class ServerIO
     {
         if (empty($this->_client))
         {
-            $this->_client = new GuzzleHttp\Client(['base_url' => $this->_baseUrl]);
+            $this->_client = new GuzzleHttp\Client(['base_uri' => $this->_baseUrl]);
         }
-
         try
         {
             $response = $this->_client->request('GET', $url);
