@@ -294,17 +294,17 @@
         "source": {
             "type": "git",
             "url": "https://github.com/Wixel/GUMP.git",
-            "reference": "b16d1e40c4ff0d67522601c5f0b39b10cbb5b35a"
+            "reference": "6452af9980a708e6a8ab2b6b912222a23c22949b"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/Wixel/GUMP/zipball/b16d1e40c4ff0d67522601c5f0b39b10cbb5b35a",
-            "reference": "b16d1e40c4ff0d67522601c5f0b39b10cbb5b35a",
+            "url": "https://api.github.com/repos/Wixel/GUMP/zipball/6452af9980a708e6a8ab2b6b912222a23c22949b",
+            "reference": "6452af9980a708e6a8ab2b6b912222a23c22949b",
             "shasum": ""
         },
-        "time": "2014-03-24T08:18:12+00:00",
+        "time": "2018-02-28T12:59:41+00:00",
         "type": "library",
-        "installation-source": "dist",
+        "installation-source": "source",
         "autoload": {
             "files": [
                 "gump.class.php"
@@ -316,32 +316,15 @@
         ],
         "authors": [
             {
-                "name": "Rob Crowe",
-                "email": "hello@vivalacrowe.com",
-                "homepage": "http://vivalacrowe.com"
+                "name": "Sean Nieuwoudt",
+                "homepage": "https://wixelhq.com"
             },
             {
-                "name": "Colleen Emryss",
-                "homepage": "http://skitter.tv"
-            },
-            {
-                "name": "Mark Slingsby",
-                "homepage": "http://www.rsaweb.co.za"
-            },
-            {
-                "name": "Roy de Kleijn",
-                "homepage": "http://roydekleijn.com"
-            },
-            {
-                "name": "Christian Klisch",
-                "homepage": "http://www.christian-klisch.de/"
-            },
-            {
-                "name": "Inge Brattaas",
-                "homepage": "http://res.no/"
+                "name": "Filis Futsarov",
+                "homepage": "https://filis.me"
             }
         ],
         "description": "A fast, extensible & stand-alone PHP input validation class that allows you to validate any data",
-        "homepage": "http://wixelhq.com/"
+        "homepage": "https://wixelhq.com/"
     }
 ]

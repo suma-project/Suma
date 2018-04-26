@@ -8,15 +8,17 @@ ini_set('display_errors', 1);
 require "../gump.class.php";
 
 $data = array(
-	'street' => '6 Avondans Road'
+	'one' => 'Freiheit, Mobilität und Unabhängigkeit lebt. ö, Ä, é, or ß',
+	'two' => 'ß'
 );
 
 $validated = GUMP::is_valid($data, array(
-	'street' => 'required|street_address'
+	'one' => 'required|min_len,10',
+	'two' => 'required|min_len,1',
 ));
 
 if($validated === true) {
-	echo "Valid Street Address\n";
+	echo "Valid Text\n";
 } else {
 	print_r($validated);
 }

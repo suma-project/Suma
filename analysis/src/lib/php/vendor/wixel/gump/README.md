@@ -1,6 +1,12 @@
 # Getting started
 
-GUMP is a standalone PHP input validation and filtering class.
+GUMP is a standalone PHP data validation and filtering class that makes validating any data easy and painless without the reliance on a framework.
+
+Follow along on the project board: http://d.monsterboards.co/project/LSCPVmHUxQ-gump
+
+#### There are 2 ways to install GUMP
+
+###### Install Manually
 
 1. Download GUMP
 2. Unzip it and copy the directory into your PHP project directory.
@@ -22,21 +28,61 @@ if($is_valid === true) {
 }
 ```
 
-Methods available:
+###### Install with composer
+
+Add the following to your composer.json file:
+
+```json
+{
+    "require": {
+        "wixel/gump": "dev-master"
+    }
+}
+```
+Then open your terminal in your project directory and run:
+
+`composer install`
+
+
+#### Available Methods
 
 ```php
-is_valid(array $data, array $rules) // Shorthand validation
-validation_rules(array $rules); // Get or set the validation rules
-filter_rules(array $rules); // Get or set the filtering rules
-run(array $data); // Runs the filter and validation routines
-xss_clean(array $data); // Strips and encodes unwanted characters
-sanitize(array $input, $fields = NULL); // Sanitizes data and converts strings to UTF-8 (if available)
-validate(array $input, array $ruleset); // Validates input data according to the provided ruleset (see example)
-filter(array $input, array $filterset); // Filters input data according to the provided filterset (see example)
-get_readable_errors($convert_to_string = false); // Returns human readable error text in an array or string
+// Shorthand validation
+is_valid(array $data, array $rules)
+
+// Get or set the validation rules
+validation_rules(array $rules);
+
+// Get or set the filtering rules
+filter_rules(array $rules);
+
+// Runs the filter and validation routines
+run(array $data);
+
+// Strips and encodes unwanted characters
+xss_clean(array $data);
+
+// Sanitizes data and converts strings to UTF-8 (if available),
+// optionally according to the provided field whitelist
+sanitize(array $input, $whitelist = NULL);
+
+// Validates input data according to the provided ruleset (see example)
+validate(array $input, array $ruleset);
+
+// Filters input data according to the provided filterset (see example)
+filter(array $input, array $filterset);
+
+// Returns human readable error text in an array or string
+get_readable_errors($convert_to_string = false);
+
+// Fetch an array of validation errors indexed by the field names
+get_errors_array();
+
+// Override field names with readable ones for errors
+set_field_name($field, $readable_name);
 ```
 
-#  Complete Working Example (Long format)
+# Example (Long format)
 
 The following example is part of a registration form, the flow should be pretty standard
 
@@ -54,15 +100,15 @@ $gump->validation_rules(array(
 	'password'    => 'required|max_len,100|min_len,6',
 	'email'       => 'required|valid_email',
 	'gender'      => 'required|exact_len,1|contains,m f',
-	'credit_card' => 'required|trim|valid_cc'
+	'credit_card' => 'required|valid_cc'
 ));
 
 $gump->filter_rules(array(
-	'username' 	  => 'trim|sanitize_string|mysql_escape',
-	'password'	  => 'trim|base64',
-	'email'    	  => 'trim|sanitize_email',
-	'gender'   	  => 'trim',
-	'bio'		  => 'noise_words'
+	'username' => 'trim|sanitize_string',
+	'password' => 'trim',
+	'email'    => 'trim|sanitize_email',
+	'gender'   => 'trim',
+	'bio'	   => 'noise_words'
 ));
 
 $validated_data = $gump->run($_POST);
@@ -74,9 +120,30 @@ if($validated_data === false) {
 }
 ```
 
+# Example (Short format)
+
+The short format is an alternative way to run the validation.
+
+```php
+$data = array(
+	'street' => '6 Avondans Road'
+);
+
+$validated = GUMP::is_valid($data, array(
+	'street' => 'required|street_address'
+));
+
+if($validated === true) {
+	echo "Valid Street Address!";
+} else {
+	print_r($validated);
+}
+```
+
+
 Match data-keys against rules-keys
 -------------
-We can check if there is a rules specified for every data-key, by adding an extra parameter to the run method.
+We can check if there is a rule specified for every data-key, by adding an extra parameter to the run method.
 
 ```
 $gump->run($_POST, true);
@@ -92,15 +159,16 @@ Return Values
 `run()` returns one of two types:
 
 *ARRAY* containing the successfully validated and filtered data when the validation is successful
-*FALSE* when the validation has failed
+
+*BOOLEAN* False when the validation has failed
 
 `validate()` returns one of two types:
 
-*AN ARRAY* containing key names and validator names when data does not pass the validation.
+*ARRAY* containing key names and validator names when data does not pass the validation.
 
 You can use this array along with your language helpers to determine what error message to show.
 
-*A BOOLEAN* value of TRUE if the validation was successful.
+*BOOLEAN* value of TRUE if the validation was successful.
 
 `filter()` returns the exact array structure that was parsed as the `$input` parameter, the only difference would be the filtered data.
 
@@ -115,6 +183,7 @@ Available Validators
 * alpha `Ensure only alpha characters are present in the key value (a-z, A-Z)`
 * alpha_numeric `Ensure only alpha-numeric characters are present in the key value (a-z, A-Z, 0-9)`
 * alpha_dash `Ensure only alpha-numeric characters + dashes and underscores are present in the key value (a-z, A-Z, 0-9, _-)`
+* alpha_space `Ensure only alpha-numeric characters + spaces are present in the key value (a-z, A-Z, 0-9, \s)`
 * numeric `Ensure only numeric key values`
 * integer `Ensure only integer key values`
 * boolean `Checks for PHP accepted boolean values, returns TRUE for "1", "true", "on" and "yes"`
@@ -127,8 +196,17 @@ Available Validators
 * valid_cc `Check for a valid credit card number (Uses the MOD10 Checksum Algorithm)`
 * valid_name `Check for a valid format human name`
 * contains,n `Verify that a value is contained within the pre-defined value set`
+* contains_list,n `Verify that a value is contained within the pre-defined value set. The list of valid values must be provided in semicolon-separated list format (like so: value1;value2;value3;..;valuen). If a validation error occurs, the list of valid values is not revelead (this means, the error will just say the input is invalid, but it won't reveal the valid set to the user.`
+* doesnt_contain_list,n `Verify that a value is not contained within the pre-defined value set. Semicolon (;) separated, list not outputted. See the rule above for more info.`
 * street_address `Checks that the provided string is a likely street address. 1 number, 1 or more space, 1 or more letters`
 * iban `Check for a valid IBAN`
+* min_numeric `Determine if the provided numeric value is higher or equal to a specific value`
+* max_numeric `Determine if the provided numeric value is lower or equal to a specific value`
+* date `Determine if the provided input is a valid date (ISO 8601)`
+* starts `Ensures the value starts with a certain character / set of character`
+* phone_number `Validate phone numbers that match the following examples: 555-555-5555 , 5555425555, 555 555 5555, 1(519) 555-4444, 1 (519) 555-4422, 1-555-555-5555`
+* regex `You can pass a custom regex using the following format: 'regex,/your-regex/'`
+* valid_json_string `validate string to check if it's a valid json format`
 
 Available Filters
 -----------------
@@ -139,7 +217,8 @@ Filters can be any PHP function that returns a string. You don't need to create 
 * htmlencode `Encode HTML entities`
 * sanitize_email `Remove illegal characters from email addresses`
 * sanitize_numbers `Remove any non-numeric characters`
-* trim `Remove spaces from the beginning or end of strings`
+* sanitize_floats `Remove any non-float characters`
+* trim `Remove spaces from the beginning and end of strings`
 * base64_encode `Base64 encode the input`
 * base64_decode `Base64 decode the input`
 * sha1 `Encrypt the input with the secure sha1 algorithm`
@@ -149,6 +228,8 @@ Filters can be any PHP function that returns a string. You don't need to create 
 * json_decode `Decode a json string`
 * rmpunctuation `Remove all known punctuation characters from a string`
 * basic_tags `Remove all layout orientated HTML tags from text. Leaving only basic tags`
+* whole_number `Ensure that the provided numeric value is represented as a whole number`
+* ms_word_characters `Converts MS Word special characters [“”‘’–…] to web safe characters`
 
 #  Creating your own validators and filters
 
@@ -157,17 +238,21 @@ Adding custom validators and filters is made easy by using callback functions.
 ```php
 require("gump.class.php");
 
-// Create a custom validation rule named "is_object".
-// The callback function receives three arguments:
-// The field to validate, the values being validated, and any parameters used in the validation rule.
-// It should return a boolean value indicating whether the value is valid.
+/*
+   Create a custom validation rule named "is_object".
+   The callback receives 3 arguments:
+   The field to validate, the values being validated, and any parameters used in the validation rule.
+   It should return a boolean value indicating whether the value is valid.
+*/
 GUMP::add_validator("is_object", function($field, $input, $param = NULL) {
     return is_object($input[$field]);
 });
 
-// Create a custom filter named "upper".
-// The callback function receives two arguments:
-// The value to filter, and any parameters used in the filter rule. It should returned the filtered value.
+/*
+   Create a custom filter named "upper".
+   The callback function receives two arguments:
+   The value to filter, and any parameters used in the filter rule. It should returned the filtered value.
+*/
 GUMP::add_filter("upper", function($value, $params = NULL) {
     return strtoupper($value);
 });
@@ -200,10 +285,53 @@ $validated = $validator->validate($_POST, $rules);
 
 ```
 
-Remember to create a public methods with the correct parameter types and counts.
+Please see `examples/custom_validator.php` for further information.
 
-For filter methods, prepend the method name with "filter_".
-For validator methods, prepend the method name with "validate_".
+Remember to create a public methods with the correct parameter types and parameter counts.
+
+* For filter methods, prepend the method name with "filter_".
+* For validator methods, prepend the method name with "validate_".
+
+# Set Custom Field Names
+
+You can easily override your form field names for improved readability in errors using the `GUMP::set_field_name($field, $readable_name)` method as follows:
+
+```php
+$data = array(
+	'str' => null
+);
+
+$rules = array(
+	'str' => 'required'
+);
+
+GUMP::set_field_name("str", "Street");
+
+$validated = GUMP::is_valid($data, $rules);
+
+if($validated === true) {
+	echo "Valid Street Address\n";
+} else {
+	print_r($validated);
+}
+```
+
+# validating file fields
+
+```php
+require "gump.class.php";
+
+$is_valid = GUMP::is_valid(array_merge($_POST,$_FILES), array(
+	'title' => 'required|alpha_numeric',
+	'image' => 'required_file|extension,png;jpg'
+));
+
+if($is_valid === true) {
+	// continue
+} else {
+	print_r($is_valid);
+}
+```
 
 Running the examples:
 ------------------
@@ -247,4 +375,3 @@ The output will depend on the input data.
 * Add an 'is empty' validator check
 * Check that arrays have a positive count (if type is array)
 * A secure password validator
-* Custom regex validator
