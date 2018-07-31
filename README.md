@@ -42,9 +42,10 @@ If you would like to be invited to a google group for the Suma users community, 
 Credits and contacts
 =====================
 
-* Bret Davidson (bddavids AT ncsu DOT edu)- Project lead.
+* Bret Davidson (bddavids AT ncsu DOT edu – Project lead.
 * Jason Casden (casden AT gmail DOT com) – Project founder.
 * Joyce Chapman (joyce DOT chapman AT gmail DOT com) – Community development and data analysis specialist.
 * Rob Rucker – Project team member and our first stakeholder. Research Information Services department head responsible for NCSU D. H. Hill Libraries head counts and reference desk transactions.
-* Eric McEachern – Backend developer, responsible for much of the development of the server-side components.
-* Rusty Earl – Backend developer and technical consultant.
+* Luke Aeschleman – Developer.
+* Eric McEachern –  Developer, responsible for much of the development of the server-side components.
+* Rusty Earl – Developer and technical consultant.
