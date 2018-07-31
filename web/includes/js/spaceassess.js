@@ -384,7 +384,7 @@ function syncSessions() {
                     return count.number;
                 }).reduce(function (a, b) {
                     return parseInt(a, 10) + parseInt(b, 10);
-                });
+                }, 0);
             });
 
             $.ajax({
