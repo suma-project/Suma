@@ -167,16 +167,16 @@ class ServerIO
     {
         if (empty($this->_client))
         {
-            $this->_client = new Guzzle\Service\Client($this->_baseUrl);
+            // Guzzle uses RFC 3986 standard for its uri, meaning the baseUrl should end with a slash. Add if not there.
+            $baseUri = substr($this->_baseUrl, -1) === '/' ? $this->_baseUrl : "$this->_baseUrl/";
+            $this->_client = new GuzzleHttp\Client(['base_uri' => $baseUri]);
         }
-
         try
         {
-            $request  = $this->_client->get($url);
-            $response = $request->send();
+            $response = $this->_client->request('GET', $url);
         }
         // Guzzle Exceptions
-        catch (Guzzle\Http\Exception\BadResponseException $e)
+        catch (GuzzleHttp\Exception\BadResponseException $e)
         {
             $badResponse = $e->getResponse();
 

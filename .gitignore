@@ -5,6 +5,7 @@
 *.swp
 tmp/**/*
 .DS_Store
+.idea
 ._*
 .htaccess
 .htpasswd
