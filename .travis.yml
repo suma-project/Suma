@@ -12,6 +12,7 @@ notifications:
     - casden@gmail.com
     - bddavids@ncsu.edu
     - kdbeswic@ncsu.edu
+    - lmaeschl@ncsu.edu
   webhooks:
     urls:
       - https://webhooks.gitter.im/e/a200c25b0cbac74e2b9e
