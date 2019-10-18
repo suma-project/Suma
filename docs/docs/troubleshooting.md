@@ -1,5 +1,16 @@
 # Troubleshooting
 
+## Client Errors
+
+### iOS WebSQL error
+
+* The latest iOS version deprecates WebSQL which the Suma client depends on to
+  work. If you are using iOS version 13 or above, and are running into an error in the
+  Suma collection client that says "Error in browser (Web SQL) database
+  setup..." see the bottom of this page for a workaround to turn WebSQL back on: <https://blog.appstudio.dev/2019/09/the-future-of-sqlite/>
+    * See this GitHub issue for more information and discussion on steps
+      forward for the client: <https://github.com/suma-project/Suma/issues/88>
+
 ## Configuration Errors
 
 ### Server Environment
