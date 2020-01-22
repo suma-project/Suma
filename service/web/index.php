@@ -38,7 +38,7 @@ else
 ini_set('display_errors', $SUMA_DISPLAY_ERRORS);
 
 // Set paths
-ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR . $SUMA_SERVER_PATH . PATH_SEPARATOR . $SUMA_SERVER_PATH . '/lib/zend/library');
+ini_set('include_path', ini_get('include_path') . PATH_SEPARATOR . $SUMA_SERVER_PATH . PATH_SEPARATOR . $SUMA_SERVER_PATH . '/vendor/shardj/zf1-future/library');
 
 try
 {

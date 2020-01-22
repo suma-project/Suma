@@ -1,0 +1,68 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "fbcd3a27e0328c805cf486adb4ad0a45",
+    "packages": [
+        {
+            "name": "shardj/zf1-future",
+            "version": "1.16.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Shardj/zf1-future.git",
+                "reference": "5621e192aaad3191bb7bf0b3921d69e95837330c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Shardj/zf1-future/zipball/5621e192aaad3191bb7bf0b3921d69e95837330c",
+                "reference": "5621e192aaad3191bb7bf0b3921d69e95837330c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4"
+            },
+            "replace": {
+                "zendframework/zendframework1": "1.*"
+            },
+            "require-dev": {
+                "phpunit/dbunit": "1.3.*",
+                "phpunit/phpunit": "3.7.*"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.12.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Zend_": "library/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "include-path": [
+                "library/"
+            ],
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "Zend Framework 1 PHP 5.4+ compatible. The aim is to keep ZF1 working with the latest PHP versions",
+            "homepage": "http://framework.zend.com/",
+            "keywords": [
+                "ZF1",
+                "framework"
+            ],
+            "time": "2020-01-13T11:29:24+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}
