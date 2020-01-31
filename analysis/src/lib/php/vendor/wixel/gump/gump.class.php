@@ -630,7 +630,7 @@ class GUMP
                     $param = self::$fields[$e['param']];
                 }
             }
-            
+
             // Messages
             if (isset($messages[$e['rule']])) {
                 // Show first validation error and don't allow to be overwritten
@@ -894,11 +894,56 @@ class GUMP
         $value = str_replace($word_em, $web_safe_em, $value);
 
         $word_ellipsis = '…';
-        $web_safe_em   = '...';
+        $web_ellipsis  = '...';
 
-        $value = str_replace($word_ellipsis, $web_safe_em, $value);
+        $value = str_replace($word_ellipsis, $web_ellipsis, $value);
 
         return $value;
+    }
+
+    /**
+     * Converts to lowercase.
+     *
+     * @param string $value
+     * @param array  $params
+     *
+     * @return string
+     */
+    protected function filter_lower_case($value, $params = null)
+    {
+        return strtolower($value);
+    }
+
+    /**
+     * Converts to uppercase.
+     *
+     * @param string $value
+     * @param array  $params
+     *
+     * @return string
+     */
+    protected function filter_upper_case($value, $params = null)
+    {
+        return strtoupper($value);
+    }
+
+    /**
+     * Converts value to url-web-slugs. 
+     * 
+     * Credit: 
+     * https://stackoverflow.com/questions/40641973/php-to-convert-string-to-slug
+     * http://cubiq.org/the-perfect-php-clean-url-generator
+     *
+     * @param string $value
+     * @param array  $params
+     *
+     * @return string
+     */
+    protected function filter_slug($value, $params = null)
+    {
+        $delimiter = '-';
+        $slug = strtolower(trim(preg_replace('/[\s-]+/', $delimiter, preg_replace('/[^A-Za-z0-9-]+/', $delimiter, preg_replace('/[&]/', 'and', preg_replace('/[\']/', '', iconv('UTF-8', 'ASCII//TRANSLIT', $str))))), $delimiter));
+        return $slug;
     }
 
     // ** ------------------------- Validators ------------------------------------ ** //
@@ -1243,7 +1288,7 @@ class GUMP
             return;
         }
 
-        if (!preg_match('/^([a-z0-9ÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÒÓÔÕÖßÙÚÛÜÝàáâãäåçèéêëìíîïðòóôõöùúûüýÿ_-])+$/i', $input[$field]) !== false) {
+        if (!preg_match('/^([a-zÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÒÓÔÕÖßÙÚÛÜÝàáâãäåçèéêëìíîïðòóôõöùúûüýÿ_-])+$/i', $input[$field]) !== false) {
             return array(
                 'field' => $field,
                 'value' => $input[$field],
@@ -1468,7 +1513,7 @@ class GUMP
             $url = $url['host'];
         }
 
-        if (function_exists('checkdnsrr')) {
+        if (function_exists('checkdnsrr')  && function_exists('idn_to_ascii')) {
             if (checkdnsrr(idn_to_ascii($url), 'A') === false) {
                 return array(
                     'field' => $field,
@@ -1601,6 +1646,23 @@ class GUMP
             $number_length = strlen($number);
         }
 
+
+        /**
+         * Bail out if $number_length is 0. 
+         * This can be the case if a user has entered only alphabets
+         * 
+         * @since 1.5
+         */
+        if( $number_length == 0 ) {
+            return array(
+                'field' => $field,
+                'value' => $input[$field],
+                'rule' => __FUNCTION__,
+                'param' => $param,
+            );
+        }
+
+
         $parity = $number_length % 2;
 
         $total = 0;
@@ -1648,7 +1710,7 @@ class GUMP
             return;
         }
 
-        if (!preg_match("/^([a-zÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÒÓÔÕÖßÙÚÛÜÝàáâãäåçèéêëìíîïñðòóôõöùúûüýÿ '-])+$/i", $input[$field]) !== false) {
+        if (!preg_match("/^([a-z \p{L} '-])+$/i", $input[$field]) !== false) {
             return array(
                 'field' => $field,
                 'value' => $input[$field],
@@ -1741,7 +1803,7 @@ class GUMP
     /**
      * Determine if the provided input is a valid date (ISO 8601)
      * or specify a custom format.
-     * 
+     *
      * Usage: '<index>' => 'date'
      *
      * @param string $field
@@ -1954,7 +2016,7 @@ class GUMP
             $path_info = pathinfo($input[$field]['name']);
             $extension = isset($path_info['extension']) ? $path_info['extension'] : false;
 
-            if ($extension && in_array($extension, $allowed_extensions)) {
+            if ($extension && in_array(strtolower($extension), $allowed_extensions)) {
                 return;
             }
 
@@ -2208,4 +2270,165 @@ class GUMP
             );
         }
     }
+
+
+
+    /**
+     * Determine if the input is a valid person name in Persian/Dari or Arabic mainly in Afghanistan and Iran.
+     *
+     * Usage: '<index>' => 'valid_persian_name'
+     *
+     * @param string $field
+     * @param array  $input
+     *
+     * @return mixed
+     */
+    protected function validate_valid_persian_name($field, $input, $param = null)
+    {
+        if (!isset($input[$field]) || empty($input[$field])) {
+            return;
+        }
+
+        if (!preg_match("/^([ا آ أ إ ب پ ت ث ج چ ح خ د ذ ر ز ژ س ش ص ض ط ظ ع غ ف ق ک ك گ ل م ن و ؤ ه ة ی ي ئ ء ّ َ ِ ُ ً ٍ ٌ ْ\x{200B}-\x{200D}])+$/u", $input[$field]) !== false) {
+            return array(
+                'field' => $field,
+                'value' => $input[$field],
+                'rule' => __FUNCTION__,
+                'param' => $param,
+            );
+        }
+    }
+	
+	/**
+     * Determine if the input is a valid person name in English, Persian/Dari/Pashtu or Arabic mainly in Afghanistan and Iran.
+     *
+     * Usage: '<index>' => 'valid_eng_per_pas_name'
+     *
+     * @param string $field
+     * @param array  $input
+     *
+     * @return mixed
+     */
+    protected function validate_valid_eng_per_pas_name($field, $input, $param = null)
+    {
+        if (!isset($input[$field]) || empty($input[$field])) {
+            return;
+        }
+
+        if (!preg_match("/^([A-Za-zÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÒÓÔÕÖßÙÚÛÜÝàáâãäåçèéêëìíîïñðòóôõöùúûüýÿ'\- ا آ أ إ ب پ ت ټ ث څ ج چ ح ځ خ د ډ ذ ر ړ ز ږ ژ س ش ښ ص ض ط ظ ع غ ف ق ک ګ ك گ ل م ن ڼ و ؤ ه ة ی ي ې ۍ ئ ؋ ء ّ َ ِ ُ ً ٍ ٌ ْ \x{200B}-\x{200D} \s])+$/u", $input[$field]) !== false) {
+            return array(
+                'field' => $field,
+                'value' => $input[$field],
+                'rule' => __FUNCTION__,
+                'param' => $param,
+            );
+        }
+    }
+	
+	/**
+     * Determine if the input is valid digits in Persian/Dari, Pashtu or Arabic format.
+     *
+     * Usage: '<index>' => 'valid_persian_digit'
+     *
+     * @param string $field
+     * @param array  $input
+     *
+     * @return mixed
+     */
+    protected function validate_valid_persian_digit($field, $input, $param = null)
+    {
+        if (!isset($input[$field]) || empty($input[$field])) {
+            return;
+        }
+
+        if (!preg_match("/^([۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩])+$/u", $input[$field]) !== false) {
+            return array(
+                'field' => $field,
+                'value' => $input[$field],
+                'rule' => __FUNCTION__,
+                'param' => $param,
+            );
+        }
+    }
+	
+	
+	/**
+     * Determine if the input is a valid text in Persian/Dari or Arabic mainly in Afghanistan and Iran.
+     *
+     * Usage: '<index>' => 'valid_persian_text'
+     *
+     * @param string $field
+     * @param array  $input
+     *
+     * @return mixed
+     */
+    protected function validate_valid_persian_text($field, $input, $param = null)
+    {
+        if (!isset($input[$field]) || empty($input[$field])) {
+            return;
+        }
+		
+        if (!preg_match("/^([ا آ أ إ ب پ ت ث ج چ ح خ د ذ ر ز ژ س ش ص ض ط ظ ع غ ف ق ک ك گ ل م ن و ؤ ه ة ی ي ئ ء ّ َ ِ ُ ً ٍ ٌ \. \/ \\ = \- \| \{ \} \[ \] ؛ : « » ؟ > < \+ \( \) \* ، × ٪ ٫ ٬ ! ۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩\x{200B}-\x{200D} \x{FEFF} \x{22} \x{27} \x{60} \x{B4} \x{2018} \x{2019} \x{201C} \x{201D} \s])+$/u", $input[$field]) !== false) {
+            return array(
+                'field' => $field,
+                'value' => $input[$field],
+                'rule' => __FUNCTION__,
+                'param' => $param,
+            );
+        }
+    }
+	
+	/**
+     * Determine if the input is a valid text in Pashtu mainly in Afghanistan.
+     *
+     * Usage: '<index>' => 'valid_pashtu_text'
+     *
+     * @param string $field
+     * @param array  $input
+     *
+     * @return mixed
+     */
+    protected function validate_valid_pashtu_text($field, $input, $param = null)
+    {
+        if (!isset($input[$field]) || empty($input[$field])) {
+            return;
+        }
+
+        if (!preg_match("/^([ا آ أ ب پ ت ټ ث څ ج چ ح ځ خ د ډ ذ ر ړ ز ږ ژ س ش ښ ص ض ط ظ ع غ ف ق ک ګ ل م ن ڼ و ؤ ه ة ی ې ۍ ي ئ ء ْ ٌ ٍ ً ُ ِ َ ّ ؋ \. \/ \\ = \- \| \{ \} \[ \] ؛ : « » ؟ > < \+ \( \) \* ، × ٪ ٫ ٬ ! ۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩ \x{200B}-\x{200D} \x{FEFF} \x{22} \x{27} \x{60} \x{B4} \x{2018} \x{2019} \x{201C} \x{201D} \s])+$/u", $input[$field]) !== false) {
+            return array(
+                'field' => $field,
+                'value' => $input[$field],
+                'rule' => __FUNCTION__,
+                'param' => $param,
+            );
+        }
+    }
+    
+    /**
+     * Determine if the provided value is a valid twitter handle.
+     *
+     * @access protected
+     * @param  string $field
+     * @param  array $input
+     * @return mixed
+     */
+    protected function validate_valid_twitter($field, $input, $param = NULL)
+    {
+        if(!isset($input[$field]) || empty($input[$field]))
+        {
+            return;
+        }
+        $json_twitter = file_get_contents("http://twitter.com/users/username_available?username=".$input[$field]);
+        
+        $twitter_response = json_decode($json_twitter);
+        if($twitter_response->reason != "taken"){
+            return array(
+                'field' => $field,
+                'value' => $input[$field],
+                'rule' => __FUNCTION__,
+                'param' => $param
+            );
+        }
+    }
+    
 }
