@@ -6,5 +6,13 @@ module.exports = {
     output: {
   	  filename: 'js/sumaClient.js'
   	}
-  }  
+  },
+  devServer: {
+    proxy: {
+      "/sumaserver/*": {
+        target: "http://localhost:19679",
+        secure: false
+      }
+    }
+  }
 }
