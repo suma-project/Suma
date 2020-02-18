@@ -13,7 +13,6 @@
         <span class="buttontext">Undo Last Count</span>
         <i class="fas fa-undo toolbar-icons"></i>
       </button>
-      <button v-on:click="toggleDebugWindow" v-if="debug" class="headerbuttons rightalign">show debug</button>
       <button v-on:click="submitCounts()" class="headerbuttons rightalign" aria-label="finish collecting">
         <span class="buttontext">Finish collecting</span>
         <i class="fas fa-check-circle toolbar-icons"></i>
@@ -65,12 +64,6 @@
     <div v-else>
       No current location
     </div>
-      <div id='debugger' class='debug' v-if="debug" hidden style="position: fixed;
-    bottom: 0;
-    margin-left: 25%;">
-        <p>If we finish now, this is sent to the sumaserver:</p>
-        <p>{{ syncCountDict }}</p>
-      </div>
   </div>
 </template>
 
@@ -108,8 +101,7 @@ export default {
       showcounts: false,
       locationtitle: '',
       buttonClickable: false,
-      menuShown: true,
-      debug: process.env.NODE_ENV === 'development'
+      menuShown: true
     }
   },
   created() {
@@ -138,17 +130,16 @@ export default {
     children: {
       handler: function() {
         if (this.showcounts) {
-          this.addToCount(0)
+          var addto = this.counts[this.currentinit] ? this.counts[this.currentinit].counts.filter(elem => elem.location == this.location).length == 0 : true;
+          if (addto){
+            this.addToCount(0)
+          }
         }
       },
       deep: true
     } 
   },
   methods: {
-    toggleDebugWindow: function() {
-      let debugview = document.getElementById('debugger');
-      debugview.hidden = !debugview.hidden;
-    },
     getDeviceData: function() {
       // Get device type (Mac, iPad, etc.)
       const deviceDetector = new DeviceDetector();
@@ -285,12 +276,7 @@ export default {
       document.documentElement.scrollTop = 0;
       this.requiredFieldsCheck();
     },
-    submitCounts: function(){
-      //get data
-      let syncObj = this.syncCountDict;
-      if (syncObj === ''){
-        return null;
-      }
+    sendCounts: function(syncObj, totals) {
       axios({
         method: 'POST',
         url: this.syncurl,
@@ -304,12 +290,7 @@ export default {
           //notify user of the response
           //tell them what was sent? if so, parse syncObject for relevant info
           var parsedObject = JSON.parse(syncObj);
-          const sessions = parsedObject.sessions.length;
-          var totals = _.reduce(parsedObject.sessions, function(total, session) {
-            total['counts'] += session.counts.length;
-            total['locations'].push(session.counts.map(count => count.location))
-            return total;
-          }, {'counts': 0, 'locations': []})
+          const sessions = parsedObject.sessions.length; 
           const locations = _.uniq(_.flatten(totals['locations'])).length;
           const total = totals['counts'];
           swal({
@@ -317,26 +298,50 @@ export default {
             text: `${total} ${pluralize('counts',total)} (including "zero" counts) covering ${locations} ${pluralize('locations', locations)} in ${sessions} ${pluralize('initiatives',sessions)} has been sent to the server`,
             icon: "success"
           })
-          this.clearCounts();
+          this.clearCounts(true);
         }
       })
       .catch(error => {
         this.syncError();
         console.log(error);
       });
-
+    },
+    submitCounts: function(){
+      //get data    
+      localforage.getItem('queuedcounts').then((counts) => {
+        var currentcounts = Object.values(this.counts);
+        var allcounts = counts ? counts.concat(currentcounts) : currentcounts;
+        localforage.setItem('queuedcounts', allcounts);
+        var totals = _.reduce(allcounts, function(total, session) {
+            total['counts'] += session.counts.length;
+            total['locations'].push(session.counts.map(count => count.location))
+            return total;
+          }, {'counts': 0, 'locations': []})
+        if (allcounts.length !== 0 && totals['counts'] !== 0){
+          let syncObj = this.syncCountDict(allcounts);
+          this.sendCounts(syncObj, totals);
+        }
+      })
+      .then(() => { })
+      .catch(function(err){
+        console.error('There was an error '+err);
+      });
     },
     syncError: function(){
+      this.clearCounts()
       swal(`Sync error`,`Error sending data to server. This may be caused by issues including server outages and Wi-Fi \
             connectivity problems. The data will be retained by the browser. Please contact an administrator if \
             this doesn't resolve itself soon.`, "error");
     },
-    clearCounts: function() {
+    clearCounts: function(clearqueue=false) {
       var initresults = this.initresults;
       var cachedinitdata = this.cachedinitdata;
       Object.assign(this.$data, this.$options.data.call(this));
       this.initresults = initresults;   
-      this.cachedinitdata = cachedinitdata;  
+      this.cachedinitdata = cachedinitdata; 
+      if (clearqueue){
+        localforage.setItem('queuedcounts', []);
+      }
     },
     resetCounts: function(){
       swal({
@@ -353,7 +358,10 @@ export default {
     },
     undoLastCount: function(){
       if (this.counts[this.currentinit] && this.counts[this.currentinit]['counts'].length > 0){
-        this.counts[this.currentinit]['counts'].pop();
+        var removeitem = this.counts[this.currentinit]['counts'].filter(elem => elem.location == this.location).pop()
+        if (removeitem){
+          this.counts[this.currentinit]['counts'] = _.without(this.counts[this.currentinit]['counts'], removeitem)
+        }
       }
       this.resetActivityChecks();
     },
@@ -390,19 +398,15 @@ export default {
         this.activityvalues[key] = '';
       }
       this.requiredFieldsCheck();
-    }
-  },
-  computed:  {
-    syncCountDict: function() {
-      var counts = Object.values(this.counts);
+    },
+    syncCountDict: function(counts) {
       var buildDict = JSON.stringify({
         'version': this.appVersion, 'device': this.device, 
         'sessions': counts
       });
-      return counts.length > 0 ? buildDict : '';
+      return buildDict;
     }
   }
-    
 }
 </script>
 
