@@ -38,7 +38,7 @@
         </div>
       </div>
     </transition>
-    <div v-bind:class="[menuShown ? 'counts' : 'fullpagecounts']" v-if="showcounts">
+    <div id="countsform" v-bind:class="[menuShown ? 'sidebarcounts' : 'fullpagecounts']" v-if="showcounts">
       <h3 v-html="this.locationtitle" id="current_loc_label"></h3>
       <form @submit.prevent="addToCount(1)">
         <div v-if="Object.keys(activities).length > 0" class="activities">
@@ -561,9 +561,14 @@ body {
   max-width: 90%;
   width: auto;
 }
-.counts {
+
+#countsform {
   width: 100%;
   margin-top: calc(#{$header_height} + #{$select_padding}px);
+  transition: 1s;
+}
+
+.sidebarcounts {
   padding: 0px 0px 20px #{$sidebar_width};
   box-sizing: border-box;
 }
@@ -579,9 +584,6 @@ body {
   margin: 20px 0px 20px 0px;
 }
 
-.counts, .fullpagecounts {
-  transition: 1s;
-}
 .sidebar-leave-active,
 .sidebar-enter-active {
   transition: 1s;
