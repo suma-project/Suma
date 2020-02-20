@@ -243,8 +243,14 @@ export default {
           this.childinit[key] = undefined
         }
       }
-      //Add any children of new location to childinit list
-      childchild && childchild.length == 1 ? this.childinit[index+1] = childchild[0].id : '';
+      //Add any children of new location to childinit list if there is only one child location
+      if (childchild && childchild.length == 1){
+        var firstchild = childchild[0]; 
+        this.childinit[index+1] = firstchild.id;
+        if (firstchild.children){
+          this.updateChild(index+1)
+        }
+      }
       //find largest key with a value
       var activekeys = Object.keys(this.childinit).filter(element => !_.isUndefined(this.childinit[element]))
       var maxKey = _.max(activekeys);
@@ -417,6 +423,7 @@ $header_padding: 10;
 $select_padding: $header_padding*2;
 $sidebar_width: 25%;
 $button_fontsize: 1em;
+$header_height: 3em;
 
 .activities {
   display: flex;
@@ -529,23 +536,24 @@ body {
   width: 100%;
   margin-left: 0%;
   margin-right: 0%;
+  right: 0;
   top: 0;
-  position: sticky;
+  position: fixed;
   z-index: 3;
   display: inline-block;
   padding: #{$header_padding}px 0px #{$header_padding}px;
+  height: #{$header_height};
 }
 
 .selectbuttons {
-  height: calc(100% - #{$select_padding}px); /* Full-height: remove this if you want "auto" height */
-  width: #{$sidebar_width}; /* Set the width of the sidebar */
-  position: fixed; /* Fixed Sidebar (stay in place on scroll) */
-  z-index: 1; /* Stay on top */
-  top: calc(#{$button_fontsize} + #{$select_padding}px); /* Stay at the top */
+  height: 100vh;
+  width: #{$sidebar_width}; 
+  position: fixed; 
+  z-index: 1; 
+  top: calc(#{$header_height} + #{$select_padding}px);
   left: 0;
   background-color: #D9E2E1; /* Black */
   overflow-x: hidden; /* Disable horizontal scroll */
-  margin-top: #{$select_padding}px;
   transition-timing-function: ease;
 }
 
@@ -555,7 +563,8 @@ body {
 }
 .counts {
   width: 100%;
-  padding-left: #{$sidebar_width};
+  margin-top: calc(#{$header_height} + #{$select_padding}px);
+  padding: 0px 0px 20px #{$sidebar_width};
   box-sizing: border-box;
 }
 
