@@ -546,7 +546,7 @@ body {
 }
 
 .selectbuttons {
-  height: 100vh;
+  height: calc(100% - #{$header_height} - #{$select_padding}px);
   width: #{$sidebar_width}; 
   position: fixed; 
   z-index: 1; 
@@ -576,7 +576,7 @@ body {
 }
 
 .alldropdowns {
-  margin-top: 20px;
+  margin: 20px 0px 20px 0px;
 }
 
 .counts, .fullpagecounts {
