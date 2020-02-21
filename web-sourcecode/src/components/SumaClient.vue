@@ -26,15 +26,10 @@
             <option v-bind:value="item.initiativeId" v-for="item in initresults" v-bind:key="item.initiativeId" v-html="item.initiativeTitle">
             </option>
           </select>
-          <span v-for="(childlist, index) in children" v-bind:key="index" v-bind:id="'locationtree-' + index">
-            <select aria-label="tree element dropdown" v-model="childinit[index]" v-on:change="updateChild(index)">
-              <option disabled :value="undefined">Please select one</option>
-              <option v-bind:value="child.id" v-for="child in childlist" v-bind:key="child.id">
-                <span v-html="child.title"></span>
-                <span v-if="!child.children">{{ getCounts(child.id) }}</span>
-              </option>
-            </select>
-          </span>
+          <tree-menu :key="currentinit" v-if="children.length > 0" @updatechildinit="updatechildinit"
+          @addtocounts="addToCount(0)"
+          :parentdata="$data"
+          :nodes="children" :depth="0"></tree-menu>
         </div>
       </div>
     </transition>
@@ -75,11 +70,13 @@ import localforage from 'localforage';
 import DeviceDetector from "device-detector-js";
 import swal from 'sweetalert';
 import pluralize from 'pluralize';
+import treeMenu from './tree'
 
 var _ = require('lodash');
 
 export default {
   name: 'SumaClient',
+  components: {treeMenu},
   data: function() {
     return {
       initresults: '',
@@ -91,7 +88,7 @@ export default {
       syncurl: syncUrl,
       appVersion: process.env.VUE_APP_VERSION,
       device: '',
-      children: [],
+      children: {},
       activities: {},
       childinit: {},
       counts: {},
@@ -126,20 +123,16 @@ export default {
         localforage.setItem('counts', this.counts);
       },
       deep: true
-    },
-    children: {
-      handler: function() {
-        if (this.showcounts) {
-          var addto = this.counts[this.currentinit] ? this.counts[this.currentinit].counts.filter(elem => elem.location == this.location).length == 0 : true;
-          if (addto){
-            this.addToCount(0)
-          }
-        }
-      },
-      deep: true
-    } 
+    }
   },
   methods: {
+    updatechildinit: function(data){
+      this.childinit[data.index] = {'id': data.id, 'title': data.title}
+      //get children at location index (locations are in tree format)
+      //i.e. {'id': 340, 'title':'Location title', 'children': [{'id': 341, 'title': 'location area 1', 'children': []}]}
+      this.showcounts = !data.nodes ? true : false;
+      this.cleanValues(data.index);
+    },
     getDeviceData: function() {
       // Get device type (Mac, iPad, etc.)
       const deviceDetector = new DeviceDetector();
@@ -209,8 +202,8 @@ export default {
     },
     populateInitData:function(data){
       this.initdata = data;
-      this.children = [this.initdata.locations.children];
-      this.cleanValues(-1, this.children[0], data)
+      this.children = this.initdata.locations.children;
+      this.cleanValues(-1)
 
       //combine activityGroup data and initdata.activities in a object so the data is all together
       var activitykeys = this.initdata.activityGroups;
@@ -226,53 +219,22 @@ export default {
       //Check to see if any required fields in the activies 
       this.buttonClickable = Object.keys(this.activities).map(elem => this.activities[elem].required).indexOf(true) == -1;
     },
-    updateChild: function(index) {
-      //get children at location index (locations are in tree format)
-      //i.e. {'id': 340, 'title':'Location title', 'children': [{'id': 341, 'title': 'location area 1', 'children': []}]}
-      var childchild = this.children[index].filter(element => element.id == this.childinit[index])[0].children;
-      // Used to remove child elements not having to do with the newly selected child
-      this.children = this.children.splice(0, index+1);
-      childchild ? this.children[index+1] = childchild : ''
-      this.cleanValues(index, childchild);
-    },
-    cleanValues: function(index, childchild, data=false){
+    cleanValues: function(index){
       //If the changed child had children, remove those children
       //childinit is a object populated by the dropdowns, its keys are the index in the location tree and the value is the identifier
       for (var key in this.childinit){
         if (key > index){
-          this.childinit[key] = undefined
+          delete this.childinit[key]
         }
       }
-      //Add any children of new location to childinit list if there is only one child location
-      if (childchild && childchild.length == 1){
-        var firstchild = childchild[0]; 
-        this.childinit[index+1] = firstchild.id;
-        if (firstchild.children){
-          this.updateChild(index+1)
-        }
-      }
-      //find largest key with a value
-      var activekeys = Object.keys(this.childinit).filter(element => !_.isUndefined(this.childinit[element]))
-      var maxKey = _.max(activekeys);
+      var maxKey = _.max(Object.keys(this.childinit));
       //set location to lowest location in hierarchy
-      this.location = this.childinit[maxKey];
-      this.createLocationTitle(data, activekeys);
-      this.showCounts();
+      this.location = maxKey ? this.childinit[maxKey].id : '';
+      this.createLocationTitle();
       this.resetActivityChecks();
     },
-    createLocationTitle: function(data, activekeys) {
-      var initData = data ? data : this.cachedinitdata[this.currentinit];
-      this.locationtitle = initData.initiativeTitle;
-      for (var i=0; i<activekeys.length; i++){
-        var key = activekeys[i];
-        //get titles from children list that populates dropdowns using the childinit which is the model and stores selected dropdowns.
-        var nexttitle = this.children[key].filter(element => element.id == this.childinit[key])[0].title
-        this.locationtitle += ' | ' + nexttitle
-      }
-    },
-    showCounts: function(){
-      //Show counts if selected dropdowns (childinit) equals the length of the children list
-      this.showcounts = _.reject(Object.values(this.childinit), _.isUndefined).length == this.children.length;
+    createLocationTitle: function() {
+      this.locationtitle = Object.values(this.childinit).map(elem => elem.title).join(" | ")
     },
     resetActivityChecks: function() {
       //unchecks all activities
@@ -529,6 +491,7 @@ select {
 
 body {
   margin: 0px;
+  font-family: "Helvetica Neue", Arial, "Liberation Sans", FreeSans, sans-serif;
 }
 
 .header_content {
@@ -624,6 +587,15 @@ body {
   .buttontext {
     display: none;
   }
+  li {
+    font-size: .5em!important;
+  }
+  ul {
+    transform: scale(1);
+  }
+  ul:not(.toplevel) {
+    padding: 0px 10px 0px 10px!important;
+  }
 }
 
 @media (max-width: 240px) {
@@ -634,5 +606,25 @@ body {
   .menubutton {
     font-size: 1.5em;
   }
+  ul {
+    transform: scale(1);
+  }
+  ul:not(.toplevel) {
+    padding: 0px 10px 0px 10px!important;
+  }
+}
+
+ul:not(.toplevel) {
+  padding: 0px 20px 0px 20px;
+}
+
+.selected {
+  font-weight: bold;
+}
+
+li {
+  color: blue;
+  margin-bottom: .1em;
+  font-size: 19.5px;
 }
 </style>

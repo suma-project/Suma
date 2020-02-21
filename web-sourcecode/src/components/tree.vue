@@ -1,0 +1,112 @@
+<template>
+  <ul class="tree-menu" v-bind:class="{toplevel: depth == 0}">
+    <li v-if="label" @click="toggleChildren" v-bind:class="{selected: selected}">
+      <span v-html="label"></span>
+      <span v-if="nodes" v-bind:class="[showChildren ? 'toggleup' : 'toggledown']" class="toggle"></span>
+      <span v-if="currentcount">{{currentcount}}</span>
+    </li>  
+    <span v-if="showChildren || depth == 0">
+      <tree-menu 
+        v-for="node in nodes" v-bind:key="node.title" 
+        :nodes="node.children"
+        :parentdata="parentdata" 
+        :label="node.title"
+        :id="node.id"
+        :depth="depth + 1"
+        @addtocounts="addToCount(0)"
+        @updatechildinit="updatechildinit"
+        ></tree-menu>
+    </span>
+  </ul>
+</template>
+<script>
+/* eslint-disable no-console */
+  export default { 
+    props: [ 'label', 'nodes', 'depth', 'id', 'parentdata'],
+    data() {
+      return {
+        showChildren: false,
+        currentcount: '',
+        selected: false,
+        caretdirection: this.showChildren ? 'down' : 'up'
+      }
+    },
+    name: 'tree-menu',
+    watch: {
+      'parentdata.counts': {
+        handler: function() {
+          this.getCounts(this.id);
+        },
+        deep: true
+      },
+      'parentdata.location': {
+        handler: function(data) {
+          if (!this.nodes){
+            this.selected = this.id == data;
+          }
+        },
+        deep: true
+      },
+    },
+    created() {      
+      this.getCounts(this.id);
+    },
+    methods: {
+      addToCount: function(){
+        this.$emit('addtocounts', 0)
+      },
+      updatechildinit: function(data){
+        this.$emit('updatechildinit', data)
+      },
+      getCounts: function(location) {
+        var currentcount = "";
+        var init = this.parentdata.currentinit;
+        if (this.parentdata.counts[init]){
+          var allcounts = this.parentdata.counts[init]['counts'].filter(element => element.location == location);
+          var computecounts = allcounts.filter(elem => elem.number != "0").length;
+          if (computecounts > 0){
+            currentcount = ` (${computecounts}) `;
+          } else if(allcounts.filter(elem => elem.number == "0").length > 0){
+            currentcount = " (0) ";
+          }
+        }
+        this.currentcount = currentcount;
+      },
+      toggleChildren() {
+        this.showChildren = !this.showChildren;
+        this.$emit('updatechildinit', {'index':this.depth, 'id': this.id, 'title': this.label, 'nodes': this.nodes})
+        if (!this.nodes){
+          this.addToCount();
+        }
+      }
+    }
+  }
+</script>
+<style>
+.toplevel {
+  padding: 0;
+}
+.tree-menu {
+  list-style-type: none;
+  text-align: left;
+}
+
+.toggle {
+  font-family: "Font Awesome 5 Free";
+  display: inline-block;
+  padding-left: 3px;
+  vertical-align: initial;
+  font-weight: 900;
+}
+
+.toggleup:after { 
+  content: "\f0d8"; 
+}
+.toggledown:after {
+  content: "\f0d7";
+}
+
+li {
+  word-wrap: break-word;
+}
+</style>
