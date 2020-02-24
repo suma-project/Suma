@@ -5,15 +5,15 @@
         <i class="fas fa-bars" v-if="!menuShown"></i>
         <i class="fas fa-times" v-else></i>
       </button>
-      <button v-on:click="resetCounts()" class="headerbuttons leftalign" aria-label="Abandon all counts">
+      <button v-on:click="resetCounts()" class="headerbuttons leftalign" aria-label="Abandon all counts" v-bind:disabled="hasNoCounts">
         <span class="buttontext">Abandon All Counts</span>
         <i class="fas fa-trash-alt toolbar-icons"></i>
       </button>
-      <button v-on:click="undoLastCount()" class="headerbuttons leftalign" aria-label="Undo last count">
+      <button v-on:click="undoLastCount()" class="headerbuttons leftalign" aria-label="Undo last count" v-bind:disabled="getCounts===''">
         <span class="buttontext">Undo Last Count</span>
         <i class="fas fa-undo toolbar-icons"></i>
       </button>
-      <button v-on:click="submitCounts()" class="headerbuttons rightalign" aria-label="finish collecting">
+      <button v-on:click="submitCounts()" class="headerbuttons rightalign" aria-label="finish collecting" v-bind:disabled="hasNoCounts">
         <span class="buttontext">Finish collecting</span>
         <i class="fas fa-check-circle toolbar-icons"></i>
       </button>
@@ -387,6 +387,9 @@ export default {
         }
       } 
       return currentcount;
+    }, 
+    hasNoCounts: function() {
+      return Object.keys(this.counts).length === 0 && this.counts.constructor === Object;
     }
   }
 }
@@ -434,9 +437,12 @@ $header_height: 3em;
   display:inline-block;
   border-radius:4px;
   background: #D7EBF9;
-  color: #184A67;
   font-weight: bold;
   border: 1px solid #aed0ea;
+
+  button:not([disabled]) {
+    color: #184A67;
+  }
 }
 
 .headerbuttons {
