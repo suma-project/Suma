@@ -19,7 +19,7 @@
       </button>
     </div>
     <transition name="sidebar">
-      <div class="selectbuttons" v-if="menuShown">
+      <div class="selectbuttons" v-show="menuShown">
         <div class="alldropdowns">
           <select aria-label="initiative dropdown" id="initiativeDropdown" v-model="currentinit" v-on:change="updateInit()">
             <option disabled value="">Select an initiative</option>
@@ -33,31 +33,33 @@
         </div>
       </div>
     </transition>
-    <div id="countsform" v-bind:class="[menuShown ? 'sidebarcounts' : 'fullpagecounts']" v-if="showcounts">
-      <h3 v-html="this.locationtitle" id="current_loc_label"></h3>
-      <form @submit.prevent="addToCount(1)">
-        <div v-if="Object.keys(activities).length > 0" class="activities">
-          <div v-for="(value, key) in activities" v-bind:key="key" class="activityGroup" v-bind:class="{required: value.required}">
-            <h3 class="activityTitle">
-              <span v-html="value.title"></span>
-              <span v-if="value.required" class="requiredicon">*</span>
-              <span v-if="value.allowMulti" class="instructions"> (Choose one or more)</span>
-              <span v-else class="instructions"> (Select one)</span>
-            </h3>
-            <div id="activityButton" v-for="activitygroup in value.options" v-bind:key="activitygroup.id">
-              <label>
-                <input type="checkbox" v-bind:name="value.id" v-on:click="requiredFieldsCheck()" class="button" v-if="value.allowMulti" v-bind:id="activitygroup.id" v-bind:value="activitygroup.id" v-model="activityvaluesmulti">
-                <input type="radio" v-bind:name="value.id" v-on:click="deselect(activitygroup.id, key)" v-else-if="!value.allowMulti" v-bind:id="activitygroup.id" v-bind:value="activitygroup.id" v-model="activityvalues[key]">
-                <span v-html="activitygroup.title"></span>
-              </label>
+    <div id="countsform" v-bind:class="[menuShown ? 'sidebarcounts' : 'fullpagecounts']">
+      <div v-if="showcounts">
+        <h3 v-html="this.locationtitle" id="current_loc_label"></h3>
+        <form @submit.prevent="addToCount(1)">
+          <div v-if="Object.keys(activities).length > 0" class="activities">
+            <div v-for="(value, key) in activities" v-bind:key="key" class="activityGroup" v-bind:class="{required: value.required}">
+              <h3 class="activityTitle">
+                <span v-html="value.title"></span>
+                <span v-if="value.required" class="requiredicon">*</span>
+                <span v-if="value.allowMulti" class="instructions"> (Choose one or more)</span>
+                <span v-else class="instructions"> (Select one)</span>
+              </h3>
+              <div id="activityButton" v-for="activitygroup in value.options" v-bind:key="activitygroup.id">
+                <label>
+                  <input type="checkbox" v-bind:name="value.id" v-on:click="requiredFieldsCheck()" class="button" v-if="value.allowMulti" v-bind:id="activitygroup.id" v-bind:value="activitygroup.id" v-model="activityvaluesmulti">
+                  <input type="radio" v-bind:name="value.id" v-on:click="deselect(activitygroup.id, key)" v-else-if="!value.allowMulti" v-bind:id="activitygroup.id" v-bind:value="activitygroup.id" v-model="activityvalues[key]">
+                  <span v-html="activitygroup.title"></span>
+                </label>
+              </div>
             </div>
           </div>
-        </div>
-        <button type="submit" v-bind:disabled="!buttonClickable" v-bind:enabled="buttonClickable" class="countButton">Count{{ getCounts(location) }}</button>
-      </form>
-    </div>
-    <div v-else>
-      No current location
+          <button type="submit" v-bind:disabled="!buttonClickable" v-bind:enabled="buttonClickable" class="countButton">Count{{ getCounts(location) }}</button>
+        </form>
+      </div>
+      <div v-else class="noloc">
+        No current location
+      </div>
     </div>
   </div>
 </template>
@@ -392,7 +394,7 @@ export default {
 <style lang="scss">
 $header_padding: 10;
 $select_padding: $header_padding*2;
-$sidebar_width: 30%;
+$sidebar_width: 35%;
 $button_fontsize: 1em;
 $header_height: 3em;
 
@@ -530,7 +532,7 @@ body {
 }
 
 .selectbuttons select {
-  max-width: 90%;
+  max-width: 98%;
   width: auto;
 }
 
@@ -635,5 +637,10 @@ li {
   color: blue;
   margin-bottom: .1em;
   font-size: 19.5px;
+}
+
+.noloc {
+  padding-top: 20px;
+  font-size: 2em;
 }
 </style>
