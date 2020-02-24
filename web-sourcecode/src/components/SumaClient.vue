@@ -541,6 +541,9 @@ body {
   width: 100%;
   margin-top: calc(#{$header_height} + #{$select_padding}px);
   transition: 1s;
+  overflow: auto;
+  height: calc(100% - #{$header_height} - #{$select_padding}px);
+  position: fixed;
 }
 
 .sidebarcounts {
