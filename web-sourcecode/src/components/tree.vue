@@ -14,7 +14,7 @@
         :id="node.id"
         :depth="depth + 1"
         @addtocounts="addToCount(0)"
-        @updatechildinit="updatechildinit"
+        @clickLocation="clickLocation"
         ></tree-menu>
     </span>
   </ul>
@@ -56,8 +56,8 @@
       addToCount: function(){
         this.$emit('addtocounts', 0)
       },
-      updatechildinit: function(data){
-        this.$emit('updatechildinit', data)
+      clickLocation: function(data){
+        this.$emit('clickLocation', data)
       },
       getCounts: function(location) {
         var currentcount = "";
@@ -75,7 +75,7 @@
       },
       toggleChildren() {
         this.showChildren = !this.showChildren;
-        this.$emit('updatechildinit', {'id': this.id, 'title': this.label, 'nodes': this.nodes, 'index': this.depth})
+        this.$emit('clickLocation', {'id': this.id, 'title': this.label, 'nodes': this.nodes, 'index': this.depth})
         if (!this.nodes){
           this.addToCount();
         }
@@ -87,6 +87,7 @@
 .toplevel {
   padding: 0;
 }
+
 .tree-menu {
   list-style-type: none;
   text-align: left;
@@ -104,6 +105,7 @@
   content: "\f146"; 
   background: none;
 }
+
 .toggledown:after {
   content: "\f0fe";
 }

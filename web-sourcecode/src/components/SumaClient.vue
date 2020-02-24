@@ -26,7 +26,7 @@
             <option v-bind:value="item.initiativeId" v-for="item in initresults" v-bind:key="item.initiativeId" v-html="item.initiativeTitle">
             </option>
           </select>
-          <tree-menu :key="currentinit" v-if="children.length > 0" @updatechildinit="updatechildinit"
+          <tree-menu :key="currentinit" v-if="children.length > 0" @clickLocation="clickLocation"
           @addtocounts="addToCount(0)"
           :parentdata="$data"
           :nodes="children" :depth="0"></tree-menu>
@@ -54,7 +54,7 @@
               </div>
             </div>
           </div>
-          <button type="submit" v-bind:disabled="!buttonClickable" v-bind:enabled="buttonClickable" class="countButton">Count{{ getCounts(location) }}</button>
+          <button type="submit" v-bind:disabled="!buttonClickable" v-bind:enabled="buttonClickable" class="countButton">Count{{ getCounts }}</button>
         </form>
       </div>
       <div v-else class="noloc">
@@ -92,7 +92,6 @@ export default {
       device: '',
       children: {},
       activities: {},
-      childinit: {},
       counts: {},
       location: '',
       activityvalues: {},
@@ -128,13 +127,14 @@ export default {
     }
   },
   methods: {
-    updatechildinit: function(data){
+    clickLocation: function(data){
       if (!data.nodes){
         this.location = data.id;
         this.showcounts = true;
       }
       this.singleLocation(data.nodes);
-      this.cleanValues();
+      this.resetActivityChecks();
+      this.createLocationTitle();
     },
     getDeviceData: function() {
       // Get device type (Mac, iPad, etc.)
@@ -206,6 +206,7 @@ export default {
     populateInitData:function(data){
       this.initdata = data;
       this.children = this.initdata.locations.children;
+      
       //combine activityGroup data and initdata.activities in a object so the data is all together
       var activitykeys = this.initdata.activityGroups;
       var activities = _.groupBy(this.initdata.activities, 'groupId');
@@ -224,29 +225,27 @@ export default {
       this.singleLocation(this.children)
     },
     singleLocation: function(children) {
+      //check to see if there is only one location. 
+      //if there is only one location click on that location.
       if (children && children.length == 1) {
         this.$nextTick(() => {
           document.getElementById(children[0].id).click();
         })
       }
     },
-    cleanValues: function(){
-      this.resetActivityChecks();
-      this.createLocationTitle();
-    },
     createLocationTitle: function() {
       this.$nextTick(() => {
-      var ullist = document.querySelector("ul > .selected");
-      var titleposition = {}
-      if (ullist) {
-        var classposition = parseInt(ullist.closest("ul").className.replace("tree-menu", "").replace("level-", "").trim());
-        while (classposition > 0){
-          var title = ullist.closest(`ul.level-${classposition}`).getAttribute('data-label');
-          titleposition[classposition] = title;
-          classposition -= 1
+        var ullist = document.querySelector("ul > .selected");
+        var titleposition = {}
+        if (ullist) {
+          var classposition = parseInt(ullist.closest("ul").className.replace("tree-menu", "").replace("level-", "").trim());
+          while (classposition > 0){
+            var title = ullist.closest(`ul.level-${classposition}`).getAttribute('data-label');
+            titleposition[classposition] = title;
+            classposition -= 1
+          }
         }
-      }
-      this.locationtitle = Object.values(titleposition).join(" | ")
+        this.locationtitle = Object.values(titleposition).join(" | ")
       })
     },
     resetActivityChecks: function() {
@@ -346,19 +345,6 @@ export default {
       }
       this.resetActivityChecks();
     },
-    getCounts: function(location) {
-      var currentcount = "";
-      if (this.counts[this.currentinit]){
-        var allcounts = this.counts[this.currentinit]['counts'].filter(element => element.location == location);
-        var computecounts = allcounts.filter(elem => elem.number != "0").length;
-        if (computecounts > 0){
-          currentcount = ` (${computecounts}) `;
-        } else if(allcounts.filter(elem => elem.number == "0").length > 0){
-          currentcount = " (0) ";
-        }
-      } 
-      return currentcount;
-    },
     addToCount: function(number){
       //called when count button pressed; adds new counts for each initiative
       var timestamp = Math.round(Date.now() / 1000);
@@ -386,6 +372,21 @@ export default {
         'sessions': counts
       });
       return buildDict;
+    }
+  },
+  computed: {
+    getCounts: function() {
+      var currentcount = "";
+      if (this.counts[this.currentinit]){
+        var allcounts = this.counts[this.currentinit]['counts'].filter(element => element.location == this.location);
+        var computecounts = allcounts.filter(elem => elem.number != "0").length;
+        if (computecounts > 0){
+          currentcount = ` (${computecounts}) `;
+        } else if(allcounts.filter(elem => elem.number == "0").length > 0){
+          currentcount = " (0) ";
+        }
+      } 
+      return currentcount;
     }
   }
 }
