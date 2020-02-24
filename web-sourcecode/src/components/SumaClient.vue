@@ -639,8 +639,9 @@ ul:not(.toplevel) {
 
 li {
   color: blue;
-  margin-bottom: .1em;
   font-size: 19.5px;
+  padding-top: .25em;
+  padding-bottom: .25em;
 }
 
 .noloc {
