@@ -603,7 +603,7 @@ body {
     display: none;
   }
   li {
-    font-size: .5em!important;
+    font-size: 1em!important;
   }
   ul {
     transform: scale(1);

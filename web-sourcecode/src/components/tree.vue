@@ -109,7 +109,7 @@
 }
 
 li {
-  word-wrap: break-word;
+  word-break: break-all;
   cursor: pointer;
 }
 </style>
