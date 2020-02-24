@@ -1,11 +1,11 @@
 <template>
-  <ul class="tree-menu" v-bind:class="{toplevel: depth == 0}">
-    <li v-if="label" @click="toggleChildren" v-bind:class="{selected: selected}">
-      <span v-html="label"></span>
+  <ul class="tree-menu" v-bind:class="[{toplevel: depth == 0}, 'level-'+depth]" :data-label="label">
+    <li v-if="label" @click="toggleChildren" v-bind:class="{selected: selected}" v-bind:id="id">
       <span v-if="nodes" v-bind:class="[showChildren ? 'toggleup' : 'toggledown']" class="toggle"></span>
+      <span v-html="label"></span>
       <span v-if="currentcount">{{currentcount}}</span>
     </li>  
-    <span v-if="showChildren || depth == 0">
+    <span v-show="showChildren || depth == 0">
       <tree-menu 
         v-for="node in nodes" v-bind:key="node.title" 
         :nodes="node.children"
@@ -50,6 +50,7 @@
     },
     created() {      
       this.getCounts(this.id);
+      this.selected = this.id == this.parentdata.location;
     },
     methods: {
       addToCount: function(){
@@ -74,7 +75,7 @@
       },
       toggleChildren() {
         this.showChildren = !this.showChildren;
-        this.$emit('updatechildinit', {'index':this.depth, 'id': this.id, 'title': this.label, 'nodes': this.nodes})
+        this.$emit('updatechildinit', {'id': this.id, 'title': this.label, 'nodes': this.nodes, 'index': this.depth})
         if (!this.nodes){
           this.addToCount();
         }
@@ -94,16 +95,17 @@
 .toggle {
   font-family: "Font Awesome 5 Free";
   display: inline-block;
-  padding-left: 3px;
+  padding-right: 5px;
   vertical-align: initial;
-  font-weight: 900;
+  font-weight: 400;
 }
 
 .toggleup:after { 
-  content: "\f0d8"; 
+  content: "\f146"; 
+  background: none;
 }
 .toggledown:after {
-  content: "\f0d7";
+  content: "\f0fe";
 }
 
 li {

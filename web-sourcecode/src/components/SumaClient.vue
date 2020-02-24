@@ -127,11 +127,12 @@ export default {
   },
   methods: {
     updatechildinit: function(data){
-      this.childinit[data.index] = {'id': data.id, 'title': data.title}
-      //get children at location index (locations are in tree format)
-      //i.e. {'id': 340, 'title':'Location title', 'children': [{'id': 341, 'title': 'location area 1', 'children': []}]}
-      this.showcounts = !data.nodes ? true : false;
-      this.cleanValues(data.index);
+      if (!data.nodes){
+        this.location = data.id;
+        this.showcounts = true;
+      }
+      this.singleLocation(data.nodes);
+      this.cleanValues();
     },
     getDeviceData: function() {
       // Get device type (Mac, iPad, etc.)
@@ -203,13 +204,13 @@ export default {
     populateInitData:function(data){
       this.initdata = data;
       this.children = this.initdata.locations.children;
-      this.cleanValues(-1)
-
       //combine activityGroup data and initdata.activities in a object so the data is all together
       var activitykeys = this.initdata.activityGroups;
       var activities = _.groupBy(this.initdata.activities, 'groupId');
 
-      this.activities = {}
+      this.location = '';
+      this.showcounts = false;
+      this.activities = {};
       for (var key in activities){
         var dictvalue = activitykeys.filter(elem => elem.id == key)[0];
         dictvalue['options'] = activities[key];
@@ -218,23 +219,33 @@ export default {
 
       //Check to see if any required fields in the activies 
       this.buttonClickable = Object.keys(this.activities).map(elem => this.activities[elem].required).indexOf(true) == -1;
+      this.singleLocation(this.children)
     },
-    cleanValues: function(index){
-      //If the changed child had children, remove those children
-      //childinit is a object populated by the dropdowns, its keys are the index in the location tree and the value is the identifier
-      for (var key in this.childinit){
-        if (key > index){
-          delete this.childinit[key]
-        }
+    singleLocation: function(children) {
+      if (children && children.length == 1) {
+        this.$nextTick(() => {
+          document.getElementById(children[0].id).click();
+        })
       }
-      var maxKey = _.max(Object.keys(this.childinit));
-      //set location to lowest location in hierarchy
-      this.location = maxKey ? this.childinit[maxKey].id : '';
-      this.createLocationTitle();
+    },
+    cleanValues: function(){
       this.resetActivityChecks();
+      this.createLocationTitle();
     },
     createLocationTitle: function() {
-      this.locationtitle = Object.values(this.childinit).map(elem => elem.title).join(" | ")
+      this.$nextTick(() => {
+      var ullist = document.querySelector("ul > .selected");
+      var titleposition = {}
+      if (ullist) {
+        var classposition = parseInt(ullist.closest("ul").className.replace("tree-menu", "").replace("level-", "").trim());
+        while (classposition > 0){
+          var title = ullist.closest(`ul.level-${classposition}`).getAttribute('data-label');
+          titleposition[classposition] = title;
+          classposition -= 1
+        }
+      }
+      this.locationtitle = Object.values(titleposition).join(" | ")
+      })
     },
     resetActivityChecks: function() {
       //unchecks all activities
@@ -379,11 +390,9 @@ export default {
 </script>
 
 <style lang="scss">
-@import url('https://use.fontawesome.com/releases/v5.5.0/css/all.css');
-
 $header_padding: 10;
 $select_padding: $header_padding*2;
-$sidebar_width: 25%;
+$sidebar_width: 30%;
 $button_fontsize: 1em;
 $header_height: 3em;
 
