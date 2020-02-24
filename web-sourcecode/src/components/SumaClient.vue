@@ -194,6 +194,7 @@ export default {
       });
     },
     updateInit: function() {
+      this.children = {};
       if (Object.keys(this.cachedinitdata).indexOf(this.currentinit) > -1){
         this.populateInitData(this.cachedinitdata[this.currentinit])
       } else {
