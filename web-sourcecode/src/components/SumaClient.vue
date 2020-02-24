@@ -606,7 +606,7 @@ body {
     transform: scale(1);
   }
   ul:not(.toplevel) {
-    padding: 0px 10px 0px 10px!important;
+    padding: 1px 5px 1px 10px!important;
   }
 }
 
@@ -622,12 +622,12 @@ body {
     transform: scale(1);
   }
   ul:not(.toplevel) {
-    padding: 0px 10px 0px 10px!important;
+    padding: 1px 5px 1px 10px!important;
   }
 }
 
 ul:not(.toplevel) {
-  padding: 0px 20px 0px 20px;
+  padding: 1px 5px 1px 20px;
 }
 
 .selected {
