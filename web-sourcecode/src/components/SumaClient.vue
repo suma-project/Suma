@@ -19,50 +19,47 @@
       </button>
     </div>
     <transition name="sidebar">
-      <div class="selectbuttons" v-if="menuShown">
+      <div class="selectbuttons" v-show="menuShown">
         <div class="alldropdowns">
           <select aria-label="initiative dropdown" id="initiativeDropdown" v-model="currentinit" v-on:change="updateInit()">
             <option disabled value="">Select an initiative</option>
             <option v-bind:value="item.initiativeId" v-for="item in initresults" v-bind:key="item.initiativeId" v-html="item.initiativeTitle">
             </option>
           </select>
-          <span v-for="(childlist, index) in children" v-bind:key="index" v-bind:id="'locationtree-' + index">
-            <select aria-label="tree element dropdown" v-model="childinit[index]" v-on:change="updateChild(index)">
-              <option disabled :value="undefined">Please select one</option>
-              <option v-bind:value="child.id" v-for="child in childlist" v-bind:key="child.id">
-                <span v-html="child.title"></span>
-                <span v-if="!child.children">{{ getCounts(child.id) }}</span>
-              </option>
-            </select>
-          </span>
+          <tree-menu :key="currentinit" v-if="children.length > 0" @clickLocation="clickLocation"
+          @addtocounts="addToCount(0)"
+          :parentdata="$data"
+          :nodes="children" :depth="0"></tree-menu>
         </div>
       </div>
     </transition>
-    <div id="countsform" v-bind:class="[menuShown ? 'sidebarcounts' : 'fullpagecounts']" v-if="showcounts">
-      <h3 v-html="this.locationtitle" id="current_loc_label"></h3>
-      <form @submit.prevent="addToCount(1)">
-        <div v-if="Object.keys(activities).length > 0" class="activities">
-          <div v-for="(value, key) in activities" v-bind:key="key" class="activityGroup" v-bind:class="{required: value.required}">
-            <h3 class="activityTitle">
-              <span v-html="value.title"></span>
-              <span v-if="value.required" class="requiredicon">*</span>
-              <span v-if="value.allowMulti" class="instructions"> (Choose one or more)</span>
-              <span v-else class="instructions"> (Select one)</span>
-            </h3>
-            <div id="activityButton" v-for="activitygroup in value.options" v-bind:key="activitygroup.id">
-              <label>
-                <input type="checkbox" v-bind:name="value.id" v-on:click="requiredFieldsCheck()" class="button" v-if="value.allowMulti" v-bind:id="activitygroup.id" v-bind:value="activitygroup.id" v-model="activityvaluesmulti">
-                <input type="radio" v-bind:name="value.id" v-on:click="deselect(activitygroup.id, key)" v-else-if="!value.allowMulti" v-bind:id="activitygroup.id" v-bind:value="activitygroup.id" v-model="activityvalues[key]">
-                <span v-html="activitygroup.title"></span>
-              </label>
+    <div id="countsform" v-bind:class="[menuShown ? 'sidebarcounts' : 'fullpagecounts']">
+      <div v-if="showcounts">
+        <h3 v-html="this.locationtitle" id="current_loc_label"></h3>
+        <form @submit.prevent="addToCount(1)">
+          <div v-if="Object.keys(activities).length > 0" class="activities">
+            <div v-for="(value, key) in activities" v-bind:key="key" class="activityGroup" v-bind:class="{required: value.required}">
+              <h3 class="activityTitle">
+                <span v-html="value.title"></span>
+                <span v-if="value.required" class="requiredicon">*</span>
+                <span v-if="value.allowMulti" class="instructions"> (Choose one or more)</span>
+                <span v-else class="instructions"> (Select one)</span>
+              </h3>
+              <div id="activityButton" v-for="activitygroup in value.options" v-bind:key="activitygroup.id">
+                <label>
+                  <input type="checkbox" v-bind:name="value.id" v-on:click="requiredFieldsCheck()" class="button" v-if="value.allowMulti" v-bind:id="activitygroup.id" v-bind:value="activitygroup.id" v-model="activityvaluesmulti">
+                  <input type="radio" v-bind:name="value.id" v-on:click="deselect(activitygroup.id, key)" v-else-if="!value.allowMulti" v-bind:id="activitygroup.id" v-bind:value="activitygroup.id" v-model="activityvalues[key]">
+                  <span v-html="activitygroup.title"></span>
+                </label>
+              </div>
             </div>
           </div>
-        </div>
-        <button type="submit" v-bind:disabled="!buttonClickable" v-bind:enabled="buttonClickable" class="countButton">Count{{ getCounts(location) }}</button>
-      </form>
-    </div>
-    <div v-else>
-      No current location
+          <button type="submit" v-bind:disabled="!buttonClickable" v-bind:enabled="buttonClickable" class="countButton">Count{{ getCounts }}</button>
+        </form>
+      </div>
+      <div v-else class="noloc">
+        No current location
+      </div>
     </div>
   </div>
 </template>
@@ -75,11 +72,13 @@ import localforage from 'localforage';
 import DeviceDetector from "device-detector-js";
 import swal from 'sweetalert';
 import pluralize from 'pluralize';
+import treeMenu from './tree'
 
 var _ = require('lodash');
 
 export default {
   name: 'SumaClient',
+  components: {treeMenu},
   data: function() {
     return {
       initresults: '',
@@ -91,9 +90,8 @@ export default {
       syncurl: syncUrl,
       appVersion: process.env.VUE_APP_VERSION,
       device: '',
-      children: [],
+      children: {},
       activities: {},
-      childinit: {},
       counts: {},
       location: '',
       activityvalues: {},
@@ -126,20 +124,18 @@ export default {
         localforage.setItem('counts', this.counts);
       },
       deep: true
-    },
-    children: {
-      handler: function() {
-        if (this.showcounts) {
-          var addto = this.counts[this.currentinit] ? this.counts[this.currentinit].counts.filter(elem => elem.location == this.location).length == 0 : true;
-          if (addto){
-            this.addToCount(0)
-          }
-        }
-      },
-      deep: true
-    } 
+    }
   },
   methods: {
+    clickLocation: function(data){
+      if (!data.nodes){
+        this.location = data.id;
+        this.showcounts = true;
+      }
+      this.singleLocation(data.nodes);
+      this.resetActivityChecks();
+      this.createLocationTitle();
+    },
     getDeviceData: function() {
       // Get device type (Mac, iPad, etc.)
       const deviceDetector = new DeviceDetector();
@@ -209,14 +205,15 @@ export default {
     },
     populateInitData:function(data){
       this.initdata = data;
-      this.children = [this.initdata.locations.children];
-      this.cleanValues(-1, this.children[0], data)
-
+      this.children = this.initdata.locations.children;
+      
       //combine activityGroup data and initdata.activities in a object so the data is all together
       var activitykeys = this.initdata.activityGroups;
       var activities = _.groupBy(this.initdata.activities, 'groupId');
 
-      this.activities = {}
+      this.location = '';
+      this.showcounts = false;
+      this.activities = {};
       for (var key in activities){
         var dictvalue = activitykeys.filter(elem => elem.id == key)[0];
         dictvalue['options'] = activities[key];
@@ -225,54 +222,31 @@ export default {
 
       //Check to see if any required fields in the activies 
       this.buttonClickable = Object.keys(this.activities).map(elem => this.activities[elem].required).indexOf(true) == -1;
+      this.singleLocation(this.children)
     },
-    updateChild: function(index) {
-      //get children at location index (locations are in tree format)
-      //i.e. {'id': 340, 'title':'Location title', 'children': [{'id': 341, 'title': 'location area 1', 'children': []}]}
-      var childchild = this.children[index].filter(element => element.id == this.childinit[index])[0].children;
-      // Used to remove child elements not having to do with the newly selected child
-      this.children = this.children.splice(0, index+1);
-      childchild ? this.children[index+1] = childchild : ''
-      this.cleanValues(index, childchild);
+    singleLocation: function(children) {
+      //check to see if there is only one location. 
+      //if there is only one location click on that location.
+      if (children && children.length == 1) {
+        this.$nextTick(() => {
+          document.getElementById(children[0].id).click();
+        })
+      }
     },
-    cleanValues: function(index, childchild, data=false){
-      //If the changed child had children, remove those children
-      //childinit is a object populated by the dropdowns, its keys are the index in the location tree and the value is the identifier
-      for (var key in this.childinit){
-        if (key > index){
-          this.childinit[key] = undefined
+    createLocationTitle: function() {
+      this.$nextTick(() => {
+        var ullist = document.querySelector("ul > .selected");
+        var titleposition = {}
+        if (ullist) {
+          var classposition = parseInt(ullist.closest("ul").className.replace("tree-menu", "").replace("level-", "").trim());
+          while (classposition > 0){
+            var title = ullist.closest(`ul.level-${classposition}`).getAttribute('data-label');
+            titleposition[classposition] = title;
+            classposition -= 1
+          }
         }
-      }
-      //Add any children of new location to childinit list if there is only one child location
-      if (childchild && childchild.length == 1){
-        var firstchild = childchild[0]; 
-        this.childinit[index+1] = firstchild.id;
-        if (firstchild.children){
-          this.updateChild(index+1)
-        }
-      }
-      //find largest key with a value
-      var activekeys = Object.keys(this.childinit).filter(element => !_.isUndefined(this.childinit[element]))
-      var maxKey = _.max(activekeys);
-      //set location to lowest location in hierarchy
-      this.location = this.childinit[maxKey];
-      this.createLocationTitle(data, activekeys);
-      this.showCounts();
-      this.resetActivityChecks();
-    },
-    createLocationTitle: function(data, activekeys) {
-      var initData = data ? data : this.cachedinitdata[this.currentinit];
-      this.locationtitle = initData.initiativeTitle;
-      for (var i=0; i<activekeys.length; i++){
-        var key = activekeys[i];
-        //get titles from children list that populates dropdowns using the childinit which is the model and stores selected dropdowns.
-        var nexttitle = this.children[key].filter(element => element.id == this.childinit[key])[0].title
-        this.locationtitle += ' | ' + nexttitle
-      }
-    },
-    showCounts: function(){
-      //Show counts if selected dropdowns (childinit) equals the length of the children list
-      this.showcounts = _.reject(Object.values(this.childinit), _.isUndefined).length == this.children.length;
+        this.locationtitle = Object.values(titleposition).join(" | ")
+      })
     },
     resetActivityChecks: function() {
       //unchecks all activities
@@ -371,19 +345,6 @@ export default {
       }
       this.resetActivityChecks();
     },
-    getCounts: function(location) {
-      var currentcount = "";
-      if (this.counts[this.currentinit]){
-        var allcounts = this.counts[this.currentinit]['counts'].filter(element => element.location == location);
-        var computecounts = allcounts.filter(elem => elem.number != "0").length;
-        if (computecounts > 0){
-          currentcount = ` (${computecounts}) `;
-        } else if(allcounts.filter(elem => elem.number == "0").length > 0){
-          currentcount = " (0) ";
-        }
-      } 
-      return currentcount;
-    },
     addToCount: function(number){
       //called when count button pressed; adds new counts for each initiative
       var timestamp = Math.round(Date.now() / 1000);
@@ -412,16 +373,29 @@ export default {
       });
       return buildDict;
     }
+  },
+  computed: {
+    getCounts: function() {
+      var currentcount = "";
+      if (this.counts[this.currentinit]){
+        var allcounts = this.counts[this.currentinit]['counts'].filter(element => element.location == this.location);
+        var computecounts = allcounts.filter(elem => elem.number != "0").length;
+        if (computecounts > 0){
+          currentcount = ` (${computecounts}) `;
+        } else if(allcounts.filter(elem => elem.number == "0").length > 0){
+          currentcount = " (0) ";
+        }
+      } 
+      return currentcount;
+    }
   }
 }
 </script>
 
 <style lang="scss">
-@import url('https://use.fontawesome.com/releases/v5.5.0/css/all.css');
-
 $header_padding: 10;
 $select_padding: $header_padding*2;
-$sidebar_width: 25%;
+$sidebar_width: 35%;
 $button_fontsize: 1em;
 $header_height: 3em;
 
@@ -529,6 +503,7 @@ select {
 
 body {
   margin: 0px;
+  font-family: "Helvetica Neue", Arial, "Liberation Sans", FreeSans, sans-serif;
 }
 
 .header_content {
@@ -558,7 +533,7 @@ body {
 }
 
 .selectbuttons select {
-  max-width: 90%;
+  max-width: 98%;
   width: auto;
 }
 
@@ -566,6 +541,9 @@ body {
   width: 100%;
   margin-top: calc(#{$header_height} + #{$select_padding}px);
   transition: 1s;
+  overflow: auto;
+  height: calc(100% - #{$header_height} - #{$select_padding}px);
+  position: fixed;
 }
 
 .sidebarcounts {
@@ -624,6 +602,15 @@ body {
   .buttontext {
     display: none;
   }
+  li {
+    font-size: .5em!important;
+  }
+  ul {
+    transform: scale(1);
+  }
+  ul:not(.toplevel) {
+    padding: 1px 5px 1px 10px!important;
+  }
 }
 
 @media (max-width: 240px) {
@@ -634,5 +621,30 @@ body {
   .menubutton {
     font-size: 1.5em;
   }
+  ul {
+    transform: scale(1);
+  }
+  ul:not(.toplevel) {
+    padding: 1px 5px 1px 10px!important;
+  }
+}
+
+ul:not(.toplevel) {
+  padding: 1px 5px 1px 20px;
+}
+
+.selected {
+  font-weight: bold;
+}
+
+li {
+  color: blue;
+  margin-bottom: .1em;
+  font-size: 19.5px;
+}
+
+.noloc {
+  padding-top: 20px;
+  font-size: 2em;
 }
 </style>
