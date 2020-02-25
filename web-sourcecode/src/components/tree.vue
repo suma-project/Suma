@@ -1,22 +1,20 @@
 <template>
   <ul class="tree-menu" v-bind:class="[{toplevel: depth == 0}, 'level-'+depth]" :data-label="label">
-    <li v-if="label" @click="toggleChildren" v-bind:class="{selected: selected}" v-bind:id="id">
+    <li v-if="label" v-bind:class="{selected: selected}" v-bind:id="id" @click="toggleChildren">
       <span v-if="nodes" v-bind:class="[showChildren ? 'toggleup' : 'toggledown']" class="toggle"></span>
       <span v-html="label"></span>
       <span v-if="currentcount">{{currentcount}}</span>
     </li>  
-    <span v-show="showChildren || depth == 0">
-      <tree-menu 
-        v-for="node in nodes" v-bind:key="node.title" 
-        :nodes="node.children"
-        :parentdata="parentdata" 
-        :label="node.title"
-        :id="node.id"
-        :depth="depth + 1"
-        @addtocounts="addToCount(0)"
-        @clickLocation="clickLocation"
-        ></tree-menu>
-    </span>
+    <tree-menu v-show="showChildren || depth == 0"
+      v-for="node in nodes" v-bind:key="node.title" 
+      :nodes="node.children"
+      :parentdata="parentdata" 
+      :label="node.title"
+      :id="node.id"
+      :depth="depth + 1"
+      @addtocounts="addToCount(0)"
+      @clickLocation="clickLocation"
+    ></tree-menu>   
   </ul>
 </template>
 <script>
@@ -111,6 +109,7 @@
 }
 
 li {
-  word-wrap: break-word;
+  word-break: break-all;
+  cursor: pointer;
 }
 </style>
