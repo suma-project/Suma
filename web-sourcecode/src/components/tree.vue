@@ -19,6 +19,8 @@
 </template>
 <script>
 /* eslint-disable no-console */
+import shared from './compontentFunctions'
+
   export default { 
     props: [ 'label', 'nodes', 'depth', 'id', 'parentdata'],
     data() {
@@ -32,8 +34,8 @@
     name: 'tree-menu',
     watch: {
       'parentdata.counts': {
-        handler: function() {
-          this.getCounts(this.id);
+        handler: function(data) {
+          this.currentcount = shared.getCounts(data[this.parentdata.currentinit], this.id);
         },
         deep: true
       },
@@ -47,7 +49,7 @@
       },
     },
     created() {      
-      this.getCounts(this.id);
+      this.currentcount = shared.getCounts(this.parentdata.counts[this.parentdata.currentinit], this.id);
       this.selected = this.id == this.parentdata.location;
     },
     methods: {
@@ -56,20 +58,6 @@
       },
       clickLocation: function(data){
         this.$emit('clickLocation', data)
-      },
-      getCounts: function(location) {
-        var currentcount = "";
-        var init = this.parentdata.currentinit;
-        if (this.parentdata.counts[init]){
-          var allcounts = this.parentdata.counts[init]['counts'].filter(element => element.location == location);
-          var computecounts = allcounts.filter(elem => elem.number != "0").length;
-          if (computecounts > 0){
-            currentcount = ` (${computecounts}) `;
-          } else if(allcounts.filter(elem => elem.number == "0").length > 0){
-            currentcount = " (0) ";
-          }
-        }
-        this.currentcount = currentcount;
       },
       toggleChildren() {
         this.showChildren = !this.showChildren;
