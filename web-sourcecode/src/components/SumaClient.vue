@@ -194,6 +194,7 @@ export default {
       });
     },
     updateInit: function() {
+      this.children = {};
       if (Object.keys(this.cachedinitdata).indexOf(this.currentinit) > -1){
         this.populateInitData(this.cachedinitdata[this.currentinit])
       } else {
@@ -603,7 +604,7 @@ body {
     display: none;
   }
   li {
-    font-size: .5em!important;
+    font-size: 1em!important;
   }
   ul {
     transform: scale(1);
@@ -639,8 +640,9 @@ ul:not(.toplevel) {
 
 li {
   color: blue;
-  margin-bottom: .1em;
   font-size: 19.5px;
+  padding-top: .25em;
+  padding-bottom: .25em;
 }
 
 .noloc {
