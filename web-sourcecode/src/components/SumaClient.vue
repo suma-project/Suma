@@ -339,7 +339,17 @@ export default {
     },
     undoLastCount: function(){
       if (this.counts[this.currentinit] && this.counts[this.currentinit]['counts'].length > 0){
+      // if (_.get(this.counts,`${this.currentinit}['counts']`,[]).length > 0){
+        //case 1 count of zero
+        //    remove count, then if no counts in currentinit, remove this.counts[currentinit]
+
+        //case 1 count of 1
+        //    remove count, then add count of zero with current timestamp
+
+        //case multiple counts of
+
         var removeitem = this.counts[this.currentinit]['counts'].filter(elem => elem.location == this.location).pop()
+        // console.log(removeitem);
         if (removeitem){
           this.counts[this.currentinit]['counts'] = _.without(this.counts[this.currentinit]['counts'], removeitem)
         }
