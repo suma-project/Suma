@@ -35,7 +35,7 @@
     </transition>
     <div id="countsform" v-bind:class="[menuShown ? 'sidebarcounts' : 'fullpagecounts']">
       <div v-if="showcounts">
-        <h3 v-html="this.locationtitle" id="current_loc_label"></h3>
+        <button v-if="getCounts" v-on:click="resetInitCountsByLocation(location)">reset location counts</button><h3 v-html="this.locationtitle" id="current_loc_label"></h3>
         <form @submit.prevent="addToCount(1)">
           <div v-if="Object.keys(activities).length > 0" class="activities">
             <div v-for="(value, key) in activities" v-bind:key="key" class="activityGroup" v-bind:class="{required: value.required}">
@@ -337,23 +337,31 @@ export default {
       console.log(err)
       });
     },
+    cleanEmptyInitCounts: function(){
+      this.counts = _.omitBy(this.counts, v => _.get(v,'counts',[]).length===0);
+    },
+    resetInitCountsByLocation: function(locationID){
+      _.remove(this.counts[this.currentinit]['counts'], v => v.location === locationID);
+      this.cleanEmptyInitCounts();
+    },
     undoLastCount: function(){
       if (this.counts[this.currentinit] && this.counts[this.currentinit]['counts'].length > 0){
-      // if (_.get(this.counts,`${this.currentinit}['counts']`,[]).length > 0){
-        //case 1 count of zero
-        //    remove count, then if no counts in currentinit, remove this.counts[currentinit]
-
-        //case 1 count of 1
-        //    remove count, then add count of zero with current timestamp
-
-        //case multiple counts of
-
-        var removeitem = this.counts[this.currentinit]['counts'].filter(elem => elem.location == this.location).pop()
-        // console.log(removeitem);
-        if (removeitem){
-          this.counts[this.currentinit]['counts'] = _.without(this.counts[this.currentinit]['counts'], removeitem)
+          let localCounts = this.counts[this.currentinit]['counts'].filter(elem => elem.location == this.location);
+          var removeitem = localCounts.pop();
+          if (removeitem){
+            this.counts[this.currentinit]['counts'] = _.without(this.counts[this.currentinit]['counts'], removeitem)
+              if(localCounts.length ===0){
+                switch(removeitem.number) {
+                  case 0:
+                    this.cleanEmptyInitCounts();
+                    break;
+                  case 1:
+                    this.addToCount(0);
+                    break;
+                }
+              }
+          }
         }
-      }
       this.resetActivityChecks();
     },
     addToCount: function(number){
@@ -363,11 +371,14 @@ export default {
       var countDict = this.counts[this.currentinit] ? this.counts[this.currentinit] : {'counts':[], 'initiativeID': this.currentinit, 'startTime': timestamp}; 
       var location = this.location;
       _.remove(countDict['counts'], function(elem) {
-        return elem.location == location && elem.number == "0";
+        return elem.location == location && elem.number == 0;
       });
-      countDict['counts'].push({'timestamp': timestamp,'location': this.location, 'activities': activities, 'number': number});
-      countDict['endTime'] = timestamp;
-      this.$set(this.counts,this.currentinit, countDict);
+      let check = number==0 ? countDict['counts'].filter(count => count.location == this.location ).length  == 0 : true;
+      if(check) {
+        countDict['counts'].push({'timestamp': timestamp,'location': this.location, 'activities': activities, 'number': number});
+        countDict['endTime'] = timestamp;
+        this.$set(this.counts,this.currentinit, countDict);
+      }
       this.resetActivityChecks();
     },
     deselect: function(id, key){
