@@ -21,7 +21,7 @@
     <transition name="sidebar">
       <div class="selectbuttons" v-show="menuShown">
         <div class="alldropdowns">
-          <select v-bind:disabled="!requiredLocationsCheck.passed" aria-label="initiative dropdown" id="initiativeDropdown" v-model="currentinit" v-on:change="updateInit()">
+          <select aria-label="initiative dropdown" id="initiativeDropdown" v-model="currentinit" v-on:change="updateInit()">
             <option disabled value="">Select an initiative</option>
             <option v-bind:value="item.initiativeId" v-for="item in initresults" v-bind:key="item.initiativeId" v-html="item.initiativeTitle">
             </option>
@@ -302,17 +302,9 @@ export default {
             total['locations'].push(session.counts.map(count => count.location))
             return total;
           }, {'counts': 0, 'locations': []})
-        var locationscheck = this.requiredLocationsCheck;
-        if (allcounts.length !== 0 && totals['counts'] !== 0 && locationscheck.passed){
+        if (allcounts.length !== 0 && totals['counts'] !== 0){
           let syncObj = this.syncCountDict(allcounts);
           this.sendCounts(syncObj, totals);
-        } else if(!locationscheck.passed) {
-          swal({
-            title: "Missing Locations!",
-            text: `${locationscheck.text} is missing a count.
-            Make sure all locations have at least a zero count.`,
-            icon: "warning"
-          })
         }
       })
       .then(() => { })
@@ -390,24 +382,6 @@ export default {
   computed: {
     compCounts: function() {
       return shared.getCounts(this.counts[this.currentinit], this.location)
-    },
-    requiredLocationsCheck: function() {
-      if (this.settings.requireLocations) {
-        var lowestlevel = Array.from(document.getElementsByClassName('lowestlocation'));
-        var requiredlocations = lowestlevel.map(lle => parseInt(lle.id));
-        var currentlocations = [] 
-        if (this.counts[this.currentinit]){
-          currentlocations = this.counts[this.currentinit]['counts'].map(count => count.location)
-        }
-        var passedCheck = _.difference(requiredlocations, currentlocations);
-        if (passedCheck.length == 0 || passedCheck.length == requiredlocations.length) {
-          return {'passed': true}
-        } else {
-          return {'text':document.getElementById(passedCheck[0]).innerText, 'passed': false};
-        }
-      } else {
-        return {'passed':true};
-      }
     }
   }
 }
