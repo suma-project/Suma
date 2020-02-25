@@ -1,6 +1,6 @@
 <template>
   <ul class="tree-menu" v-bind:class="[{toplevel: depth == 0}, 'level-'+depth]" :data-label="label">
-    <li v-if="label" v-bind:class="{selected: selected}" v-bind:id="id" @click="toggleChildren">
+    <li v-if="label" v-bind:class="[{selected: selected}, {lowestlocation:!nodes}]" v-bind:id="id" @click="toggleChildren">
       <span v-if="nodes" v-bind:class="[showChildren ? 'toggleup' : 'toggledown']" class="toggle"></span>
       <span v-html="label"></span>
       <span v-if="currentcount">{{currentcount}}</span>
