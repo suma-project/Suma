@@ -5,15 +5,15 @@
         <i class="fas fa-bars" v-if="!menuShown"></i>
         <i class="fas fa-times" v-else></i>
       </button>
-      <button v-on:click="resetCounts()" class="headerbuttons leftalign" aria-label="Abandon all counts">
+      <button v-on:click="resetCounts()" class="headerbuttons leftalign" aria-label="Abandon all counts" v-bind:disabled="hasNoCounts">
         <span class="buttontext">Abandon All Counts</span>
         <i class="fas fa-trash-alt toolbar-icons"></i>
       </button>
-      <button v-on:click="undoLastCount()" class="headerbuttons leftalign" aria-label="Undo last count">
+      <button v-on:click="undoLastCount()" class="headerbuttons leftalign" aria-label="Undo last count" v-bind:disabled="getCounts===''">
         <span class="buttontext">Undo Last Count</span>
         <i class="fas fa-undo toolbar-icons"></i>
       </button>
-      <button v-on:click="submitCounts()" class="headerbuttons rightalign" aria-label="finish collecting">
+      <button v-on:click="submitCounts()" class="headerbuttons rightalign" aria-label="finish collecting" v-bind:disabled="hasNoCounts">
         <span class="buttontext">Finish collecting</span>
         <i class="fas fa-check-circle toolbar-icons"></i>
       </button>
@@ -35,7 +35,7 @@
     </transition>
     <div id="countsform" v-bind:class="[menuShown ? 'sidebarcounts' : 'fullpagecounts']">
       <div v-if="showcounts">
-        <h3 v-html="this.locationtitle" id="current_loc_label"></h3>
+        <button v-if="getCounts" v-on:click="resetInitCountsByLocation(location)">reset location counts</button><h3 v-html="this.locationtitle" id="current_loc_label"></h3>
         <form @submit.prevent="addToCount(1)">
           <div v-if="Object.keys(activities).length > 0" class="activities">
             <div v-for="(value, key) in activities" v-bind:key="key" class="activityGroup" v-bind:class="{required: value.required}">
@@ -337,13 +337,31 @@ export default {
       console.log(err)
       });
     },
+    cleanEmptyInitCounts: function(){
+      this.counts = _.omitBy(this.counts, v => _.get(v,'counts',[]).length===0);
+    },
+    resetInitCountsByLocation: function(locationID){
+      _.remove(this.counts[this.currentinit]['counts'], v => v.location === locationID);
+      this.cleanEmptyInitCounts();
+    },
     undoLastCount: function(){
       if (this.counts[this.currentinit] && this.counts[this.currentinit]['counts'].length > 0){
-        var removeitem = this.counts[this.currentinit]['counts'].filter(elem => elem.location == this.location).pop()
-        if (removeitem){
-          this.counts[this.currentinit]['counts'] = _.without(this.counts[this.currentinit]['counts'], removeitem)
+          let localCounts = this.counts[this.currentinit]['counts'].filter(elem => elem.location == this.location);
+          var removeitem = localCounts.pop();
+          if (removeitem){
+            this.counts[this.currentinit]['counts'] = _.without(this.counts[this.currentinit]['counts'], removeitem)
+              if(localCounts.length ===0){
+                switch(removeitem.number) {
+                  case 0:
+                    this.cleanEmptyInitCounts();
+                    break;
+                  case 1:
+                    this.addToCount(0);
+                    break;
+                }
+              }
+          }
         }
-      }
       this.resetActivityChecks();
     },
     addToCount: function(number){
@@ -353,11 +371,14 @@ export default {
       var countDict = this.counts[this.currentinit] ? this.counts[this.currentinit] : {'counts':[], 'initiativeID': this.currentinit, 'startTime': timestamp}; 
       var location = this.location;
       _.remove(countDict['counts'], function(elem) {
-        return elem.location == location && elem.number == "0";
+        return elem.location == location && elem.number == 0;
       });
-      countDict['counts'].push({'timestamp': timestamp,'location': this.location, 'activities': activities, 'number': number});
-      countDict['endTime'] = timestamp;
-      this.$set(this.counts,this.currentinit, countDict);
+      let check = number==0 ? countDict['counts'].filter(count => count.location == this.location ).length  == 0 : true;
+      if(check) {
+        countDict['counts'].push({'timestamp': timestamp,'location': this.location, 'activities': activities, 'number': number});
+        countDict['endTime'] = timestamp;
+        this.$set(this.counts,this.currentinit, countDict);
+      }
       this.resetActivityChecks();
     },
     deselect: function(id, key){
@@ -388,6 +409,9 @@ export default {
         }
       } 
       return currentcount;
+    }, 
+    hasNoCounts: function() {
+      return Object.keys(this.counts).length === 0 && this.counts.constructor === Object;
     }
   }
 }
@@ -435,9 +459,12 @@ $header_height: 3em;
   display:inline-block;
   border-radius:4px;
   background: #D7EBF9;
-  color: #184A67;
   font-weight: bold;
   border: 1px solid #aed0ea;
+
+  button:not([disabled]) {
+    color: #184A67;
+  }
 }
 
 .headerbuttons {
