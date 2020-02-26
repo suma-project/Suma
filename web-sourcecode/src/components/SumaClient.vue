@@ -354,13 +354,7 @@ export default {
           let localCounts = this.counts[this.currentinit]['counts'].filter(elem => elem.location == this.location);
           var removeitem = localCounts.pop();          
           if (removeitem){
-            var index = this.counts[this.currentinit]['counts'].lastIndexOf(removeitem);
-            if (removeitem.number == 1 || removeitem.number == 0) {
-              this.counts[this.currentinit]['counts'] = _.without(this.counts[this.currentinit]['counts'], removeitem);
-            } else {
-              removeitem.number -= 1;
-              this.counts[this.currentinit]['counts'][index] = removeitem;
-            } 
+            this.counts[this.currentinit]['counts'] = _.without(this.counts[this.currentinit]['counts'], removeitem);
             if(localCounts.length ===0){
              switch(removeitem.number) {
                case 0:
