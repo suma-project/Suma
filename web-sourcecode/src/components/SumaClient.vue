@@ -55,7 +55,7 @@
               </div>
             </div>
           </div>
-          <input type="number" v-if="settings['mulitCount']" id="inputCount" value="1" min="0" v-model="countNumber"/>
+          <input type="number" v-if="settings.multiCount" id="inputCount" value="1" min="0" v-model="countNumber"/>
           <button type="submit" v-bind:disabled="!buttonClickable" v-bind:enabled="buttonClickable" class="countButton">Count{{ compCounts }}</button>
         </form>
       </div>
