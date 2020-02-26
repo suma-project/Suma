@@ -3,10 +3,8 @@ module.exports = {
   publicPath: './',
   configureWebpack: {
     devtool: 'source-map',
-    output: {
-  	  filename: 'js/sumaClient.js'
-  	}
   },
+  filenameHashing: false,
   devServer: {
     proxy: {
       "/sumaserver/*": {

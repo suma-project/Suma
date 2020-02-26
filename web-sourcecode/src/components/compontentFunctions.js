@@ -12,7 +12,7 @@ export default {
             var nonzerocounts = zerocountssort['nonzerocounts'];
             if (nonzerocounts.length > 0){
                 var computecounts = nonzerocounts.reduce(function(total, elem){
-                    return total + elem['number']
+                    return total + parseInt(elem['number'])
                 }, 0);
                 currentcount = computecounts;
             } else if (zerocounts > 0){
