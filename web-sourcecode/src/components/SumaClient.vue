@@ -53,7 +53,7 @@
                 <span v-if="value.required" class="requiredicon">*</span>
                 <span v-if="value.allowMulti" class="instructions"> (Choose one or more)</span>
                 <span v-else class="instructions"> (Select one)</span> 
-                <i class="fas fa-info-circle " :content='value.description' v-if="value.description" v-tippy="{ theme : 'info' }"></i>
+                <i class="fas fa-info-circle " :content='value.description' v-if="value.description" v-tippy="{ theme : 'info', arrow: true, interactive : true, placement : 'top' }"></i>
               </h3>
               <div id="activityButton" v-for="activitygroup in value.options" v-bind:key="activitygroup.id">
                 <label>
@@ -463,6 +463,8 @@ $select_padding: $header_padding*2;
 $sidebar_width: 35%;
 $button_fontsize: 1em;
 $header_height: 3em;
+$tippy_backgroundcolor: #2c3e50;
+$tippy_textcolor: white;
 
 .activities {
   display: flex;
@@ -559,7 +561,7 @@ $header_height: 3em;
   margin-bottom: 0px;
 }
 i.fa-info-circle {
-  padding-left: 10px;
+  margin-left: 10px;
   color: #2c3e50;
 }
 .countButton {
@@ -768,10 +770,13 @@ li {
   text-align: center;
 }
 .tippy-tooltip.info-theme {
-    background-color: #2c3e50;
-    color: white;
-    .tippy-backdrop {
-      background-color: #2c3e50;
-    }
+  background-color: #{$tippy_backgroundcolor};
+  color: #{$tippy_textcolor};
+  .tippy-backdrop {
+    background-color: #{$tippy_backgroundcolor};
   }
+  .tippy-arrow {
+    border-top-color: #{$tippy_backgroundcolor};
+  }
+}
 </style>
