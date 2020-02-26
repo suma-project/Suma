@@ -9,12 +9,12 @@
         <span class="buttontext">Abandon All Counts</span>
         <i class="fas fa-trash-alt toolbar-icons"></i>
       </button>
-      <div v-if="settings.dateTime" v-html="datetime" class="datetime filler"></div>
-      <div v-if="!settings.dateTime" class="filler"></div>
       <button v-on:click="undoLastCount()" class="headerbuttons leftalign" aria-label="Undo last count" v-bind:disabled="compCounts===''">
         <span class="buttontext">Undo Last Count</span>
         <i class="fas fa-undo toolbar-icons"></i>
       </button>
+      <div v-if="settings.dateTime" v-html="datetime" class="datetime filler"></div>
+      <div v-if="!settings.dateTime" class="filler"></div>
       <button v-on:click="submitCounts()" class="headerbuttons rightalign" aria-label="finish collecting" v-bind:disabled="hasNoCounts">
         <span class="buttontext">Finish collecting</span>
         <i class="fas fa-check-circle toolbar-icons"></i>
@@ -37,8 +37,13 @@
     </transition>
     <div id="countsform" v-bind:class="[menuShown ? 'sidebarcounts' : 'fullpagecounts']">
       <div v-if="showcounts">
-        <button v-if="compCounts" v-on:click="resetInitCountsByLocation(location)">reset location counts</button>
-        <h3 v-html="this.locationtitle" id="current_loc_label"></h3>
+        <h3 id="current_loc_label">
+          <span v-html="this.locationtitle"></span> 
+          <button v-if="compCounts" v-on:click="resetInitCountsByLocation(location)" class="resetloccounts">
+            <span class="buttontext">Reset location counts</span>
+            <i class="fas fa-ban toolbar-icons"></i>
+          </button>
+        </h3>
         <form @submit.prevent="addToCount(countNumber)">
           <div v-if="Object.keys(activities).length > 0" class="activities">
             <div v-for="(value, key) in activities" v-bind:key="key" class="activityGroup" v-bind:class="{required: value.required}">
@@ -470,7 +475,7 @@ $header_height: 3em;
   width:auto;
 }
 
-#activityButton span, .headerbuttons {
+#activityButton span, .headerbuttons, .resetloccounts{
   text-align:center;
   padding:13px 10px;
   display:inline-block;
@@ -482,6 +487,14 @@ $header_height: 3em;
   button:not([disabled]) {
     color: #184A67;
   }
+}
+
+.resetloccounts {
+  margin-left: 6px;
+}
+
+#current_loc_label span {
+  align-self: center;
 }
 
 .filler{
@@ -537,6 +550,9 @@ $header_height: 3em;
   display: inline-block;
   cursor: pointer;
   margin-top: 20px;
+  max-width: 100%;
+  display: inline-flex;
+  justify-content: center;
 }
 
 #current_loc_label {
@@ -545,6 +561,8 @@ $header_height: 3em;
   text-align: center;
   margin: 0px;
   padding: .5em;
+  display: flex;
+  justify-content: center;
 }
 
 select {
