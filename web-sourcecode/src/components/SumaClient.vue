@@ -55,7 +55,7 @@
               </div>
             </div>
           </div>
-          <input type="number" v-if="settings.multiCount" id="inputCount" value="1" min="0" v-model="countNumber"/>
+          <input type="number" v-if="settings['mulitCount']" id="inputCount" value="1" min="0" v-model="countNumber"/>
           <button type="submit" v-bind:disabled="!buttonClickable" v-bind:enabled="buttonClickable" class="countButton">Count{{ compCounts }}</button>
         </form>
       </div>
@@ -355,13 +355,22 @@ export default {
           var removeitem = localCounts.pop();          
           if (removeitem){
             var index = this.counts[this.currentinit]['counts'].lastIndexOf(removeitem);
-            if (removeitem.number == 0) {
-              this.counts[this.currentinit]['counts'] = _.without(this.counts[this.currentinit]['counts'], removeitem)
+            if (removeitem.number == 1 || removeitem.number == 0) {
+              this.counts[this.currentinit]['counts'] = _.without(this.counts[this.currentinit]['counts'], removeitem);
             } else {
               removeitem.number -= 1;
               this.counts[this.currentinit]['counts'][index] = removeitem;
             } 
-            this.cleanEmptyInitCounts();
+            if(localCounts.length ===0){
+             switch(removeitem.number) {
+               case 0:
+                 this.cleanEmptyInitCounts();
+                 break;
+               case 1:
+                 this.addToCount(0);
+                 break;
+              }
+            }
           }
         }
       this.resetActivityChecks();
