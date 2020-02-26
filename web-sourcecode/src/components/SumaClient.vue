@@ -275,8 +275,8 @@ export default {
       this.activityvalues = {};
       this.activityvaluesmulti = [];
       this.countNumber = 1;
-      document.body.scrollTop = 0;
-      document.documentElement.scrollTop = 0;
+      document.getElementById('countsform').scrollTop = 0;
+      document.getElementById('countsform').documentElement.scrollTop = 0;
       this.requiredFieldsCheck();
     },
     sendCounts: function(syncObj, totals) {
