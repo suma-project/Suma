@@ -101,7 +101,7 @@ export default {
       syncurl: syncUrl,
       appVersion: process.env.VUE_APP_VERSION,
       device: '',
-      children: {},
+      children: [],
       activities: {},
       counts: {},
       location: '',
@@ -214,7 +214,7 @@ export default {
       });
     },
     updateInit: function() {
-      this.children = {};
+      this.children = [];
       if (Object.keys(this.cachedinitdata).indexOf(this.currentinit) > -1){
         this.populateInitData(this.cachedinitdata[this.currentinit])
       } else {
