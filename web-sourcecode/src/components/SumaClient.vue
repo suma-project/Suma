@@ -9,7 +9,7 @@
         <span class="buttontext">Abandon All Counts</span>
         <i class="fas fa-trash-alt toolbar-icons"></i>
       </button>
-      <button v-on:click="undoLastCount()" class="headerbuttons leftalign" aria-label="Undo last count" v-bind:disabled="getCounts===''">
+      <button v-on:click="undoLastCount()" class="headerbuttons leftalign" aria-label="Undo last count" v-bind:disabled="compCounts===''">
         <span class="buttontext">Undo Last Count</span>
         <i class="fas fa-undo toolbar-icons"></i>
       </button>
@@ -35,8 +35,9 @@
     </transition>
     <div id="countsform" v-bind:class="[menuShown ? 'sidebarcounts' : 'fullpagecounts']">
       <div v-if="showcounts">
-        <button v-if="getCounts" v-on:click="resetInitCountsByLocation(location)">reset location counts</button><h3 v-html="this.locationtitle" id="current_loc_label"></h3>
-        <form @submit.prevent="addToCount(1)">
+        <button v-if="compCounts" v-on:click="resetInitCountsByLocation(location)">reset location counts</button>
+        <h3 v-html="this.locationtitle" id="current_loc_label"></h3>
+        <form @submit.prevent="addToCount(countNumber)">
           <div v-if="Object.keys(activities).length > 0" class="activities">
             <div v-for="(value, key) in activities" v-bind:key="key" class="activityGroup" v-bind:class="{required: value.required}">
               <h3 class="activityTitle">
@@ -54,7 +55,8 @@
               </div>
             </div>
           </div>
-          <button type="submit" v-bind:disabled="!buttonClickable" v-bind:enabled="buttonClickable" class="countButton">Count{{ getCounts }}</button>
+          <input type="number" v-if="settings.multiCount" id="inputCount" value="1" min="0" v-model="countNumber"/>
+          <button type="submit" v-bind:disabled="!buttonClickable" v-bind:enabled="buttonClickable" class="countButton">Count{{ compCounts }}</button>
         </form>
       </div>
       <div v-else class="noloc">
@@ -73,6 +75,7 @@ import DeviceDetector from "device-detector-js";
 import swal from 'sweetalert';
 import pluralize from 'pluralize';
 import treeMenu from './tree'
+import shared from './compontentFunctions'
 
 var _ = require('lodash');
 
@@ -99,12 +102,13 @@ export default {
       showcounts: false,
       locationtitle: '',
       buttonClickable: false,
-      menuShown: true
+      menuShown: true,
+      settings: this.$route.query,
+      countNumber: 1
     }
   },
   created() {
     this.getDeviceData();
-
     //load and submit any old counts
     this.loadCounts();
 
@@ -253,6 +257,7 @@ export default {
       //unchecks all activities
       this.activityvalues = {};
       this.activityvaluesmulti = [];
+      this.countNumber = 1;
       document.body.scrollTop = 0;
       document.documentElement.scrollTop = 0;
       this.requiredFieldsCheck();
@@ -284,7 +289,7 @@ export default {
       })
       .catch(error => {
         this.syncError();
-        console.log(error);
+        console.log(error.response);
       });
     },
     submitCounts: function(){
@@ -293,8 +298,8 @@ export default {
         var currentcounts = Object.values(this.counts);
         var allcounts = counts ? counts.concat(currentcounts) : currentcounts;
         localforage.setItem('queuedcounts', allcounts);
-        var totals = _.reduce(allcounts, function(total, session) {
-            total['counts'] += session.counts.length;
+        var totals = allcounts.reduce(function(total, session) {
+            total['counts'] += shared.getCounts(session, false, false);
             total['locations'].push(session.counts.map(count => count.location))
             return total;
           }, {'counts': 0, 'locations': []})
@@ -334,11 +339,11 @@ export default {
           this.clearCounts();    
         } 
       }).catch(err => {
-      console.log(err)
+        console.log(err)
       });
     },
     cleanEmptyInitCounts: function(){
-      this.counts = _.omitBy(this.counts, v => _.get(v,'counts',[]).length===0);
+      this.counts = _.omitBy(this.counts, v => v['counts'].length===0);
     },
     resetInitCountsByLocation: function(locationID){
       _.remove(this.counts[this.currentinit]['counts'], v => v.location === locationID);
@@ -347,19 +352,19 @@ export default {
     undoLastCount: function(){
       if (this.counts[this.currentinit] && this.counts[this.currentinit]['counts'].length > 0){
           let localCounts = this.counts[this.currentinit]['counts'].filter(elem => elem.location == this.location);
-          var removeitem = localCounts.pop();
+          var removeitem = localCounts.pop();          
           if (removeitem){
-            this.counts[this.currentinit]['counts'] = _.without(this.counts[this.currentinit]['counts'], removeitem)
-              if(localCounts.length ===0){
-                switch(removeitem.number) {
-                  case 0:
-                    this.cleanEmptyInitCounts();
-                    break;
-                  case 1:
-                    this.addToCount(0);
-                    break;
-                }
+            this.counts[this.currentinit]['counts'] = _.without(this.counts[this.currentinit]['counts'], removeitem);
+            if(localCounts.length ===0){
+             switch(removeitem.number) {
+               case 0:
+                 this.cleanEmptyInitCounts();
+                 break;
+               case 1:
+                 this.addToCount(0);
+                 break;
               }
+            }
           }
         }
       this.resetActivityChecks();
@@ -375,7 +380,7 @@ export default {
       });
       let check = number==0 ? countDict['counts'].filter(count => count.location == this.location ).length  == 0 : true;
       if(check) {
-        countDict['counts'].push({'timestamp': timestamp,'location': this.location, 'activities': activities, 'number': number});
+        countDict['counts'].push({'timestamp': timestamp,'location': this.location, 'activities': activities, 'number': parseInt(number)});
         countDict['endTime'] = timestamp;
         this.$set(this.counts,this.currentinit, countDict);
       }
@@ -397,19 +402,9 @@ export default {
     }
   },
   computed: {
-    getCounts: function() {
-      var currentcount = "";
-      if (this.counts[this.currentinit]){
-        var allcounts = this.counts[this.currentinit]['counts'].filter(element => element.location == this.location);
-        var computecounts = allcounts.filter(elem => elem.number != "0").length;
-        if (computecounts > 0){
-          currentcount = ` (${computecounts}) `;
-        } else if(allcounts.filter(elem => elem.number == "0").length > 0){
-          currentcount = " (0) ";
-        }
-      } 
-      return currentcount;
-    }, 
+    compCounts: function() {
+      return shared.getCounts(this.counts[this.currentinit], this.location)
+    },
     hasNoCounts: function() {
       return Object.keys(this.counts).length === 0 && this.counts.constructor === Object;
     }
@@ -675,5 +670,14 @@ li {
 .noloc {
   padding-top: 20px;
   font-size: 2em;
+}
+
+#inputCount {
+  width: 10%;
+  float: right;
+  height: 50px;
+  font-size: 2em;
+  margin-bottom: 30px;
+  text-align: center;
 }
 </style>
