@@ -9,6 +9,8 @@
         <span class="buttontext">Abandon All Counts</span>
         <i class="fas fa-trash-alt toolbar-icons"></i>
       </button>
+      <div v-if="settings.dateTime" v-html="datetime" class="datetime filler"></div>
+      <div v-if="!settings.dateTime" class="filler"></div>
       <button v-on:click="undoLastCount()" class="headerbuttons leftalign" aria-label="Undo last count" v-bind:disabled="compCounts===''">
         <span class="buttontext">Undo Last Count</span>
         <i class="fas fa-undo toolbar-icons"></i>
@@ -104,7 +106,8 @@ export default {
       buttonClickable: false,
       menuShown: true,
       settings: this.$route.query,
-      countNumber: 1
+      countNumber: 1,
+      datetime: ''
     }
   },
   created() {
@@ -116,8 +119,15 @@ export default {
 
     this.loadInitData();
   },
-  updated() {
-
+  mounted() {
+    if (this.settings.dateTime){
+      this.interval = setInterval(() => {
+        this.datetime = this.getDateTime();
+      },1000); 
+    }
+  },
+  destroyed() {
+    clearInterval(this.interval);    
   },
   watch: {
     cachedinitdata: function (data) {
@@ -399,6 +409,18 @@ export default {
         'sessions': counts
       });
       return buildDict;
+    },
+    getDateTime: function() {
+      var now = Date.now()
+      var date = new Date(now);
+      switch(this.settings.dateTime) {
+        case 'time':
+          return date.toLocaleTimeString();
+        case 'date':
+          return date.toDateString();
+        default:
+          return `${date.toDateString()}<br>${date.toLocaleTimeString()}`;
+      }
     }
   },
   computed: {
@@ -462,9 +484,19 @@ $header_height: 3em;
   }
 }
 
+.filler{
+  flex-grow:1;
+  text-align:center;
+}
+
 .headerbuttons {
   font-size: #{$button_fontsize};
   margin: 0px 10px 0px;
+}
+
+.datetime {
+  text-align: center;
+  align-self: center;
 }
 
 #activityButton input {
@@ -541,6 +573,8 @@ body {
   display: inline-block;
   padding: #{$header_padding}px 0px #{$header_padding}px;
   height: #{$header_height};
+  display: flex;
+  justify-content: center;
 }
 
 .selectbuttons {
@@ -609,9 +643,23 @@ body {
   display: none
 }
 
-@media (max-width: 600px) {
+@media (max-width: 755px) {
   .headerbuttons:not(.menubutton) {
     font-size: .7em;
+  }
+}
+
+@media (max-width: 630px) {
+  .headerbuttons:not(.menubutton) {
+    margin: 0px 2px 0px;
+    padding: 10px 5px;
+  }
+  .datetime {
+    font-size: .8em;
+  }
+  .menubutton {
+    margin-left: 0px;
+    margin-right: 0px;
   }
 }
 
