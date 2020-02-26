@@ -44,6 +44,7 @@
             <i class="fas fa-ban toolbar-icons"></i>
           </button>
         </h3>
+        <div v-if="settings.lastCount && lastCount">Last count for <span v-html="this.locationtitle"></span> recorded at: {{lastCount}}</div>
         <form @submit.prevent="addToCount(countNumber)">
           <div v-if="Object.keys(activities).length > 0" class="activities">
             <div v-for="(value, key) in activities" v-bind:key="key" class="activityGroup" v-bind:class="{required: value.required}">
@@ -366,7 +367,7 @@ export default {
     },
     undoLastCount: function(){
       if (this.counts[this.currentinit] && this.counts[this.currentinit]['counts'].length > 0){
-          let localCounts = this.counts[this.currentinit]['counts'].filter(elem => elem.location == this.location);
+          let localCounts = this.locationCounts(this.location);
           var removeitem = localCounts.pop();          
           if (removeitem){
             this.counts[this.currentinit]['counts'] = _.without(this.counts[this.currentinit]['counts'], removeitem);
@@ -426,6 +427,13 @@ export default {
         default:
           return `${date.toDateString()}<br>${date.toLocaleTimeString()}`;
       }
+    },
+    locationCounts: function() {
+      var counts = ''
+      if (this.counts[this.currentinit] && this.counts[this.currentinit]['counts']){
+        counts = this.counts[this.currentinit]['counts'].filter(elem => elem.location == this.location);
+      }
+      return counts
     }
   },
   computed: {
@@ -434,6 +442,15 @@ export default {
     },
     hasNoCounts: function() {
       return Object.keys(this.counts).length === 0 && this.counts.constructor === Object;
+    },
+    lastCount: function(){
+      var counts = this.locationCounts();
+      var returnvalue = ''
+      if (counts.length > 0){
+        var timestamp = new Date(counts.pop().timestamp*1000);
+        returnvalue = timestamp.toLocaleTimeString()
+      }
+      return returnvalue
     }
   }
 }
