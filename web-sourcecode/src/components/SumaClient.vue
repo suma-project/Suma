@@ -481,20 +481,9 @@ $tippy_textcolor: white;
   box-sizing: border-box;
 }
 
-#activityButton {
-  margin:4px;
-  background-color:#EFEFEF;
-  border-radius:4px;
-  border:1px solid #D0D0D0;
-  width: auto;
-  display: inline-block;
-}
 
-#activityButton label {
-  width:auto;
-}
 
-#activityButton span, .headerbuttons, .resetloccounts{
+#activityButton, .headerbuttons, .resetloccounts{
   text-align:center;
   padding:13px 10px;
   display:inline-block;
@@ -506,6 +495,22 @@ $tippy_textcolor: white;
   button:not([disabled]) {
     color: #184A67;
   }
+}
+
+#activityButton span {
+  padding: .8em 1.1em;
+  width: auto;
+  display: inline-block;
+}
+
+#activityButton {
+  margin:4px;
+  padding: 0px;
+}
+
+#activityButton label {
+  height:100%;
+  display: block;
 }
 
 .resetloccounts {
@@ -542,11 +547,6 @@ $tippy_textcolor: white;
 }
 
 #activityButton input:checked + span {
-  background-color:#3BAAE3;
-  color:#fff;
-}
-
-#activityButton input:checked:hover + span {
   background-color:#3BAAE3;
   color:#fff;
 }
