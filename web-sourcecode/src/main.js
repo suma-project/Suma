@@ -3,7 +3,11 @@ import App from './App.vue'
 import VueTippy from 'vue-tippy';
 import SumaClient from './components/SumaClient.vue'
 import VueRouter from 'vue-router'
+import VModal from 'vue-js-modal'
+import ToggleSwitch from 'vuejs-toggle-switch'
 
+Vue.use(ToggleSwitch)
+Vue.use(VModal)
 Vue.use(VueRouter);
 
 Vue.config.productionTip = false

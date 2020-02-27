@@ -13,13 +13,38 @@
         <span class="buttontext">Undo Last Count</span>
         <i class="fas fa-undo toolbar-icons"></i>
       </button>
-      <div v-if="settings.dateTime" v-html="datetime" class="datetime filler"></div>
-      <div v-if="!settings.dateTime" class="filler"></div>
+      <div v-if="settings.dateTime && settings.dateTime != 'hide'" v-html="datetime" class="datetime filler"></div>
+      <div v-if="!settings.dateTime || settings.dateTime == 'hide'" class="filler"></div>
+      <button v-on:click="$modal.show('settings')" class="headerbuttons rightalign" aria-label="settings">
+        <i class="fas fa-cog"></i>
+      </button>
       <button v-on:click="submitCounts()" class="headerbuttons rightalign" aria-label="finish collecting" v-bind:disabled="hasNoCounts">
         <span class="buttontext">Finish collecting</span>
         <i class="fas fa-check-circle toolbar-icons"></i>
       </button>
     </div>
+    <modal name="settings">
+      <i class="fas fa-times" v-on:click="$modal.hide('settings')" style="float:right;font-size:2em;padding:5px;"></i>
+      <div class="settingslist">
+        <div>
+          <select id="datetime" v-model="settings.dateTime">
+            <option value="" disabled>Select Date/Time Option</option>
+            <option value="time">Time</option>
+            <option value="date">Date</option>
+            <option value="true">Date and Time</option>
+            <option value="hide">Hide</option>
+          </select>
+        </div>
+        <div>
+          <label for="multiCount">Show Multi Count</label>
+          <input type="checkbox" id="multiCount" v-model.lazy="settings['multiCount']">
+        </div>
+        <div>
+          <label for="lastCount">Show Last Count</label>
+          <input type="checkbox" id="lastCount" v-model.lazy="settings['lastCount']">
+        </div>
+      </div>
+    </modal>
     <transition name="sidebar">
       <div class="selectbuttons" v-show="menuShown">
         <div class="alldropdowns">
@@ -126,13 +151,6 @@ export default {
 
     this.loadInitData();
   },
-  mounted() {
-    if (this.settings.dateTime){
-      this.interval = setInterval(() => {
-        this.datetime = this.getDateTime();
-      },1000); 
-    }
-  },
   destroyed() {
     clearInterval(this.interval);    
   },
@@ -145,7 +163,21 @@ export default {
         localforage.setItem('counts', this.counts);
       },
       deep: true
-    }
+    },
+    settings: {
+      handler: function(data) {
+        console.log(this.settings)
+        if(this.settings.dateTime != 'hide'){
+          this.interval = setInterval(() => {
+            this.datetime = this.getDateTime();
+          },1000); 
+        } else {
+          clearInterval(this.interval); 
+        }
+        localforage.setItem('settings', data);
+      },
+      deep: true
+    } 
   },
   methods: {
     clickLocation: function(data){
@@ -175,18 +207,22 @@ export default {
     },
     loadCounts: function(){
       //get counts field from indexDB, load into data
-      localforage.getItem('counts').then((counts) => {
-        if(counts != null){
-          this.counts = counts;
-          return true;
-        } else {
-          return false;
-        }
-      })
-      .then((savedCounts) => { if(savedCounts){this.submitCounts();} })
-      .catch(function(err){
-        console.error('There was an error '+err);
-      });
+      var getItems = ['counts', 'settings']
+      for (var i=0; i<getItems.length; i++){
+        var item = getItems[i];
+        localforage.getItem(item).then((counts) => {
+          if(counts != null){
+            this[item] = counts;
+            return true;
+          } else {
+            return false;
+          }
+        })
+        .then((savedCounts) => { if(savedCounts && item == 'counts'){this.submitCounts();} })
+        .catch(function(err){
+          console.error('There was an error '+err);
+        });
+      }
     },
     loadInitData: function(){
       localforage.getItem('cachedinitdata').then((cache) => {
@@ -777,5 +813,13 @@ li {
   .tippy-arrow {
     border-top-color: #{$tippy_backgroundcolor};
   }
+}
+
+.settingslist {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  height: 100%;
 }
 </style>
