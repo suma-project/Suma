@@ -13,6 +13,8 @@
         <span class="buttontext">Undo Last Count</span>
         <i class="fas fa-undo toolbar-icons"></i>
       </button>
+      <div v-if="settings.dateTime" v-html="datetime" class="datetime filler"></div>
+      <div v-if="!settings.dateTime" class="filler"></div>
       <button v-on:click="submitCounts()" class="headerbuttons rightalign" aria-label="finish collecting" v-bind:disabled="hasNoCounts">
         <span class="buttontext">Finish collecting</span>
         <i class="fas fa-check-circle toolbar-icons"></i>
@@ -35,8 +37,13 @@
     </transition>
     <div id="countsform" v-bind:class="[menuShown ? 'sidebarcounts' : 'fullpagecounts']">
       <div v-if="showcounts">
-        <button v-if="compCounts" v-on:click="resetInitCountsByLocation(location)">reset location counts</button>
-        <h3 v-html="this.locationtitle" id="current_loc_label"></h3>
+        <h3 id="current_loc_label">
+          <span v-html="this.locationtitle"></span> 
+          <button v-if="compCounts" v-on:click="resetInitCountsByLocation(location)" class="resetloccounts">
+            <span class="buttontext">Reset location counts</span>
+            <i class="fas fa-ban toolbar-icons"></i>
+          </button>
+        </h3>
         <form @submit.prevent="addToCount(countNumber)">
           <div v-if="Object.keys(activities).length > 0" class="activities">
             <div v-for="(value, key) in activities" v-bind:key="key" class="activityGroup" v-bind:class="{required: value.required}">
@@ -105,7 +112,8 @@ export default {
       buttonClickable: false,
       menuShown: true,
       settings: this.$route.query,
-      countNumber: 1
+      countNumber: 1,
+      datetime: ''
     }
   },
   created() {
@@ -117,8 +125,15 @@ export default {
 
     this.loadInitData();
   },
-  updated() {
-
+  mounted() {
+    if (this.settings.dateTime){
+      this.interval = setInterval(() => {
+        this.datetime = this.getDateTime();
+      },1000); 
+    }
+  },
+  destroyed() {
+    clearInterval(this.interval);    
   },
   watch: {
     cachedinitdata: function (data) {
@@ -400,6 +415,18 @@ export default {
         'sessions': counts
       });
       return buildDict;
+    },
+    getDateTime: function() {
+      var now = Date.now()
+      var date = new Date(now);
+      switch(this.settings.dateTime) {
+        case 'time':
+          return date.toLocaleTimeString();
+        case 'date':
+          return date.toDateString();
+        default:
+          return `${date.toDateString()}<br>${date.toLocaleTimeString()}`;
+      }
     }
   },
   computed: {
@@ -449,7 +476,7 @@ $header_height: 3em;
   width:auto;
 }
 
-#activityButton span, .headerbuttons {
+#activityButton span, .headerbuttons, .resetloccounts{
   text-align:center;
   padding:13px 10px;
   display:inline-block;
@@ -463,9 +490,27 @@ $header_height: 3em;
   }
 }
 
+.resetloccounts {
+  margin-left: 6px;
+}
+
+#current_loc_label span {
+  align-self: center;
+}
+
+.filler{
+  flex-grow:1;
+  text-align:center;
+}
+
 .headerbuttons {
   font-size: #{$button_fontsize};
   margin: 0px 10px 0px;
+}
+
+.datetime {
+  text-align: center;
+  align-self: center;
 }
 
 #activityButton input {
@@ -509,6 +554,9 @@ i.fa-info-circle {
   display: inline-block;
   cursor: pointer;
   margin-top: 20px;
+  max-width: 100%;
+  display: inline-flex;
+  justify-content: center;
 }
 
 #current_loc_label {
@@ -517,6 +565,8 @@ i.fa-info-circle {
   text-align: center;
   margin: 0px;
   padding: .5em;
+  display: flex;
+  justify-content: center;
 }
 
 select {
@@ -545,6 +595,8 @@ body {
   display: inline-block;
   padding: #{$header_padding}px 0px #{$header_padding}px;
   height: #{$header_height};
+  display: flex;
+  justify-content: center;
 }
 
 .selectbuttons {
@@ -613,9 +665,23 @@ body {
   display: none
 }
 
-@media (max-width: 600px) {
+@media (max-width: 755px) {
   .headerbuttons:not(.menubutton) {
     font-size: .7em;
+  }
+}
+
+@media (max-width: 630px) {
+  .headerbuttons:not(.menubutton) {
+    margin: 0px 2px 0px;
+    padding: 10px 5px;
+  }
+  .datetime {
+    font-size: .8em;
+  }
+  .menubutton {
+    margin-left: 0px;
+    margin-right: 0px;
   }
 }
 
