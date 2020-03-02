@@ -44,6 +44,7 @@
             <i class="fas fa-ban toolbar-icons"></i>
           </button>
         </h3>
+        <div v-if="settings.lastCount && lastCount">Last count for <span v-html="this.locationtitle"></span> recorded at: {{lastCount}}</div>
         <form @submit.prevent="addToCount(countNumber)">
           <div v-if="Object.keys(activities).length > 0" class="activities">
             <div v-for="(value, key) in activities" v-bind:key="key" class="activityGroup" v-bind:class="{required: value.required}">
@@ -52,7 +53,7 @@
                 <span v-if="value.required" class="requiredicon">*</span>
                 <span v-if="value.allowMulti" class="instructions"> (Choose one or more)</span>
                 <span v-else class="instructions"> (Select one)</span> 
-                <i class="fas fa-info-circle " :content='value.description' v-if="value.description" v-tippy="{ theme : 'info' }"></i>
+                <i class="fas fa-info-circle " :content='value.description' v-if="value.description" v-tippy="{ theme : 'info', arrow: true, interactive : true, placement : 'top' }"></i>
               </h3>
               <div id="activityButton" v-for="activitygroup in value.options" v-bind:key="activitygroup.id">
                 <label>
@@ -101,7 +102,7 @@ export default {
       syncurl: syncUrl,
       appVersion: process.env.VUE_APP_VERSION,
       device: '',
-      children: {},
+      children: [],
       activities: {},
       counts: {},
       location: '',
@@ -214,7 +215,7 @@ export default {
       });
     },
     updateInit: function() {
-      this.children = {};
+      this.children = [];
       if (Object.keys(this.cachedinitdata).indexOf(this.currentinit) > -1){
         this.populateInitData(this.cachedinitdata[this.currentinit])
       } else {
@@ -274,8 +275,7 @@ export default {
       this.activityvalues = {};
       this.activityvaluesmulti = [];
       this.countNumber = 1;
-      document.body.scrollTop = 0;
-      document.documentElement.scrollTop = 0;
+      document.getElementById('countsform').scrollTop = 0;
       this.requiredFieldsCheck();
     },
     sendCounts: function(syncObj, totals) {
@@ -367,7 +367,7 @@ export default {
     },
     undoLastCount: function(){
       if (this.counts[this.currentinit] && this.counts[this.currentinit]['counts'].length > 0){
-          let localCounts = this.counts[this.currentinit]['counts'].filter(elem => elem.location == this.location);
+          let localCounts = this.locationCounts(this.location);
           var removeitem = localCounts.pop();          
           if (removeitem){
             this.counts[this.currentinit]['counts'] = _.without(this.counts[this.currentinit]['counts'], removeitem);
@@ -427,6 +427,13 @@ export default {
         default:
           return `${date.toDateString()}<br>${date.toLocaleTimeString()}`;
       }
+    },
+    locationCounts: function() {
+      var counts = ''
+      if (this.counts[this.currentinit] && this.counts[this.currentinit]['counts']){
+        counts = this.counts[this.currentinit]['counts'].filter(elem => elem.location == this.location);
+      }
+      return counts
     }
   },
   computed: {
@@ -435,6 +442,15 @@ export default {
     },
     hasNoCounts: function() {
       return Object.keys(this.counts).length === 0 && this.counts.constructor === Object;
+    },
+    lastCount: function(){
+      var counts = this.locationCounts();
+      var returnvalue = ''
+      if (counts.length > 0){
+        var timestamp = new Date(counts.pop().timestamp*1000);
+        returnvalue = timestamp.toLocaleTimeString()
+      }
+      return returnvalue
     }
   }
 }
@@ -446,6 +462,8 @@ $select_padding: $header_padding*2;
 $sidebar_width: 35%;
 $button_fontsize: 1em;
 $header_height: 3em;
+$tippy_backgroundcolor: #2c3e50;
+$tippy_textcolor: white;
 
 .activities {
   display: flex;
@@ -463,20 +481,9 @@ $header_height: 3em;
   box-sizing: border-box;
 }
 
-#activityButton {
-  margin:4px;
-  background-color:#EFEFEF;
-  border-radius:4px;
-  border:1px solid #D0D0D0;
-  width: auto;
-  display: inline-block;
-}
 
-#activityButton label {
-  width:auto;
-}
 
-#activityButton span, .headerbuttons, .resetloccounts{
+#activityButton, .headerbuttons, .resetloccounts{
   text-align:center;
   padding:13px 10px;
   display:inline-block;
@@ -488,6 +495,22 @@ $header_height: 3em;
   button:not([disabled]) {
     color: #184A67;
   }
+}
+
+#activityButton span {
+  padding: .8em 1.1em;
+  width: auto;
+  display: inline-block;
+}
+
+#activityButton {
+  margin:4px;
+  padding: 0px;
+}
+
+#activityButton label {
+  height:100%;
+  display: block;
 }
 
 .resetloccounts {
@@ -528,11 +551,6 @@ $header_height: 3em;
   color:#fff;
 }
 
-#activityButton input:checked:hover + span {
-  background-color:#3BAAE3;
-  color:#fff;
-}
-
 .instructions {
   margin-top: 1px;
 }
@@ -542,7 +560,7 @@ $header_height: 3em;
   margin-bottom: 0px;
 }
 i.fa-info-circle {
-  padding-left: 10px;
+  margin-left: 10px;
   color: #2c3e50;
 }
 .countButton {
@@ -751,10 +769,13 @@ li {
   text-align: center;
 }
 .tippy-tooltip.info-theme {
-    background-color: #2c3e50;
-    color: white;
-    .tippy-backdrop {
-      background-color: #2c3e50;
-    }
+  background-color: #{$tippy_backgroundcolor};
+  color: #{$tippy_textcolor};
+  .tippy-backdrop {
+    background-color: #{$tippy_backgroundcolor};
   }
+  .tippy-arrow {
+    border-top-color: #{$tippy_backgroundcolor};
+  }
+}
 </style>
