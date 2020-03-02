@@ -24,7 +24,8 @@
       </button>
     </div>
     <modal name="settings">
-      <i class="fas fa-times" v-on:click="$modal.hide('settings')" style="float:right;font-size:2em;padding:5px;"></i>
+      <i class="fas fa-times closemodal" v-on:click="$modal.hide('settings')"></i>      
+      <h2 class="settingsheader" style="text-align:center;">Settings</h2>
       <div class="settingslist">
         <div>
           <select id="datetime" v-model="settings.dateTime">
@@ -820,6 +821,11 @@ li {
   align-items:center;
   justify-content:center;
   flex-direction:column;
-  height: 100%;
+}
+
+.closemodal {
+  float:right;
+  font-size:2em;
+  padding:5px;
 }
 </style>
