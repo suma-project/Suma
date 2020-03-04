@@ -213,7 +213,7 @@ export default {
       //get counts field from indexDB, load into data
       var getItems = ['counts', 'settings']
       for (var i=0; i<getItems.length; i++){
-        var item = getItems[i];
+        const item = getItems[i];
         localforage.getItem(item).then((counts) => {
           if(counts != null){
             this[item] = counts;
