@@ -1,10 +1,12 @@
 import { shallowMount, mount, createLocalVue} from '@vue/test-utils'
+import VModal from 'vue-js-modal'
 import SumaClient from '@/components/SumaClient.vue'
 import flushPromises from 'flush-promises'
 import VueRouter from 'vue-router'
 
 const localVue = createLocalVue()
 localVue.use(VueRouter)
+localVue.use(VModal)
 const router = new VueRouter()
 
 let consoleSpy;
