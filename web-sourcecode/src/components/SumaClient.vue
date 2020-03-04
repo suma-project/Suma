@@ -13,17 +13,47 @@
         <span class="buttontext">Undo Last Count</span>
         <i class="fas fa-undo toolbar-icons"></i>
       </button>
-      <div v-if="settings.dateTime" v-html="datetime" class="datetime filler"></div>
-      <div v-if="!settings.dateTime" class="filler"></div>
+      <div v-if="settings.dateTime && settings.dateTime != 'hide'" v-html="datetime" class="datetime filler"></div>
+      <div v-if="!settings.dateTime || settings.dateTime == 'hide'" class="filler"></div>
+      <button v-on:click="$modal.show('settings')" class="headerbuttons rightalign" aria-label="settings">
+        <i class="fas fa-cog"></i>
+      </button>
       <button v-on:click="submitCounts()" class="headerbuttons rightalign" aria-label="finish collecting" v-bind:disabled="hasNoCounts">
         <span class="buttontext">Finish collecting</span>
         <i class="fas fa-check-circle toolbar-icons"></i>
       </button>
     </div>
+    <modal name="settings">
+      <i class="fas fa-times closemodal" v-on:click="$modal.hide('settings')"></i>      
+      <h2 class="settingsheader" style="text-align:center;">Settings</h2>
+      <div class="settingslist">
+        <div>
+          <select id="datetime" v-model="settings.dateTime">
+            <option value="" disabled>Select Date/Time Option</option>
+            <option value="time">Time</option>
+            <option value="date">Date</option>
+            <option value="true">Date and Time</option>
+            <option value="hide">Hide</option>
+          </select>
+        </div>
+        <div>
+          <label for="multiCount">Show Multi Count</label>
+          <input type="checkbox" id="multiCount" v-model.lazy="settings['multiCount']">
+        </div>
+        <div>
+          <label for="lastCount">Show Last Count</label>
+          <input type="checkbox" id="lastCount" v-model.lazy="settings['lastCount']">
+        </div>
+        <div>
+          <label for="requireLocations">Require All Locations</label>
+          <input type="checkbox" id="requireLocations" v-model.lazy="settings['requireLocations']">
+        </div>
+      </div>
+    </modal>
     <transition name="sidebar">
       <div class="selectbuttons" v-show="menuShown">
         <div class="alldropdowns">
-          <select aria-label="initiative dropdown" id="initiativeDropdown" v-model="currentinit" v-on:change="updateInit()">
+          <select v-bind:disabled="!requiredLocationsCheck.passed" aria-label="initiative dropdown" id="initiativeDropdown" v-model="currentinit" v-on:change="updateInit()">
             <option disabled value="">Select an initiative</option>
             <option v-bind:value="item.initiativeId" v-for="item in initresults" v-bind:key="item.initiativeId" v-html="item.initiativeTitle">
             </option>
@@ -81,7 +111,7 @@
 import axios from 'axios';
 import localforage from 'localforage';
 import DeviceDetector from "device-detector-js";
-import swal from 'sweetalert';
+import swal from 'sweetalert2'
 import pluralize from 'pluralize';
 import treeMenu from './tree';
 import shared from './compontentFunctions';
@@ -126,13 +156,6 @@ export default {
 
     this.loadInitData();
   },
-  mounted() {
-    if (this.settings.dateTime){
-      this.interval = setInterval(() => {
-        this.datetime = this.getDateTime();
-      },1000); 
-    }
-  },
   destroyed() {
     clearInterval(this.interval);    
   },
@@ -145,7 +168,20 @@ export default {
         localforage.setItem('counts', this.counts);
       },
       deep: true
-    }
+    },
+    settings: {
+      handler: function(data) {
+        if(this.settings.dateTime != 'hide'){
+          this.interval = setInterval(() => {
+            this.datetime = this.getDateTime();
+          },1000); 
+        } else {
+          clearInterval(this.interval); 
+        }
+        localforage.setItem('settings', data);
+      },
+      deep: true
+    } 
   },
   methods: {
     clickLocation: function(data){
@@ -175,18 +211,22 @@ export default {
     },
     loadCounts: function(){
       //get counts field from indexDB, load into data
-      localforage.getItem('counts').then((counts) => {
-        if(counts != null){
-          this.counts = counts;
-          return true;
-        } else {
-          return false;
-        }
-      })
-      .then((savedCounts) => { if(savedCounts){this.submitCounts();} })
-      .catch(function(err){
-        console.error('There was an error '+err);
-      });
+      var getItems = ['counts', 'settings']
+      for (var i=0; i<getItems.length; i++){
+        var item = getItems[i];
+        localforage.getItem(item).then((counts) => {
+          if(counts != null){
+            this[item] = counts;
+            return true;
+          } else {
+            return false;
+          }
+        })
+        .then((savedCounts) => { if(savedCounts && item == 'counts'){this.submitCounts();} })
+        .catch(function(err){
+          console.error('There was an error '+err);
+        });
+      }
     },
     loadInitData: function(){
       localforage.getItem('cachedinitdata').then((cache) => {
@@ -295,7 +335,7 @@ export default {
           const sessions = parsedObject.sessions.length; 
           const locations = _.uniq(_.flatten(totals['locations'])).length;
           const total = totals['counts'];
-          swal({
+          swal.fire({
             title: "Counts submitted!",
             text: `${total} ${pluralize('counts',total)} (including "zero" counts) covering ${locations} ${pluralize('locations', locations)} in ${sessions} ${pluralize('initiatives',sessions)} has been sent to the server`,
             icon: "success"
@@ -319,9 +359,17 @@ export default {
             total['locations'].push(session.counts.map(count => count.location))
             return total;
           }, {'counts': 0, 'locations': []})
-        if (allcounts.length !== 0 && totals['counts'] !== 0){
+        var locationscheck = this.requiredLocationsCheck;
+        if (allcounts.length !== 0 && totals['counts'] !== 0 && locationscheck.passed){
           let syncObj = this.syncCountDict(allcounts);
           this.sendCounts(syncObj, totals);
+        } else if(!locationscheck.passed) {
+          swal.fire({
+            title: "Missing Locations!",
+            html: `${locationscheck.text} is missing a count.
+            Make sure all locations have at least a zero count.`,
+            icon: "warning"
+          })
         }
       })
       .then(() => { })
@@ -331,27 +379,31 @@ export default {
     },
     syncError: function(){
       this.clearCounts()
-      swal(`Sync error`,`Error sending data to server. This may be caused by issues including server outages and Wi-Fi \
+      swal.fire(`Sync error`,`Error sending data to server. This may be caused by issues including server outages and Wi-Fi \
             connectivity problems. The data will be retained by the browser. Please contact an administrator if \
             this doesn't resolve itself soon.`, "error");
     },
     clearCounts: function(clearqueue=false) {
       var initresults = this.initresults;
       var cachedinitdata = this.cachedinitdata;
+      var settings = this.settings;
       Object.assign(this.$data, this.$options.data.call(this));
       this.initresults = initresults;   
       this.cachedinitdata = cachedinitdata; 
+      this.settings = settings;
       if (clearqueue){
         localforage.setItem('queuedcounts', []);
       }
     },
     resetCounts: function(){
-      swal({
+      swal.fire({
         title: 'Abandon Session',
         text: "Are you sure you want to delete the data you've just collected? All data you've collected will be deleted permanently.",
-        buttons: { delete: { text: "DELETE", value: "delete", }, cancel: "Keep Collecting",}
+        confirmButtonText: "DELETE",
+        cancelButtonText: "Keep Collecting",
+        showCancelButton: true,
       }).then(parameters => {
-        if (parameters == "delete") {
+        if (parameters.value == true) {
           this.clearCounts();    
         } 
       }).catch(err => {
@@ -451,7 +503,26 @@ export default {
         returnvalue = timestamp.toLocaleTimeString()
       }
       return returnvalue
-    }
+    },
+    requiredLocationsCheck: function() {
+       if (this.settings.requireLocations) {
+         var lowestlevel = Array.from(document.getElementsByClassName('lowestlocation'));
+         var requiredlocations = lowestlevel.map(lle => parseInt(lle.id));
+         var currentlocations = [] 
+         if (this.counts[this.currentinit]){
+           currentlocations = this.counts[this.currentinit]['counts'].map(count => count.location)
+         }
+         var passedCheck = _.difference(requiredlocations, currentlocations);
+         if (passedCheck.length == 0 || passedCheck.length == requiredlocations.length) {
+           return {'passed': true}
+         } else {
+           var items = passedCheck.map(elem => document.getElementById(elem).innerText)
+           return {'text':items.join('<br>'), 'passed': false};
+         }
+       } else {
+         return {'passed':true};
+       }
+     }
   }
 }
 </script>
@@ -777,5 +848,18 @@ li {
   .tippy-arrow {
     border-top-color: #{$tippy_backgroundcolor};
   }
+}
+
+.settingslist {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+}
+
+.closemodal {
+  float:right;
+  font-size:2em;
+  padding:5px;
 }
 </style>
