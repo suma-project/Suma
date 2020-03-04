@@ -171,7 +171,6 @@ export default {
     },
     settings: {
       handler: function(data) {
-        console.log(this.settings)
         if(this.settings.dateTime != 'hide'){
           this.interval = setInterval(() => {
             this.datetime = this.getDateTime();
@@ -387,9 +386,11 @@ export default {
     clearCounts: function(clearqueue=false) {
       var initresults = this.initresults;
       var cachedinitdata = this.cachedinitdata;
+      var settings = this.settings;
       Object.assign(this.$data, this.$options.data.call(this));
       this.initresults = initresults;   
       this.cachedinitdata = cachedinitdata; 
+      this.settings = settings;
       if (clearqueue){
         localforage.setItem('queuedcounts', []);
       }
