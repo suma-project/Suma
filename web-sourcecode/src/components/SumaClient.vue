@@ -53,7 +53,7 @@
     <transition name="sidebar">
       <div class="selectbuttons" v-show="menuShown">
         <div class="alldropdowns">
-          <select v-bind:disabled="!requiredLocationsCheck.passed" aria-label="initiative dropdown" id="initiativeDropdown" v-model="currentinit" v-on:change="updateInit()">
+          <select v-bind:disabled="!requiredLocationsCheck.passed" aria-label="initiative dropdown" id="initiativeDropdown" v-model="currentinit" v-on:click="autoClick=true" v-on:change="updateInit()">
             <option disabled value="">Select an initiative</option>
             <option v-bind:value="item.initiativeId" v-for="item in initresults" v-bind:key="item.initiativeId" v-html="item.initiativeTitle">
             </option>
@@ -144,7 +144,8 @@ export default {
       menuShown: true,
       settings: this.$route.query,
       countNumber: 1,
-      datetime: ''
+      datetime: '',
+      autoClick: false
     }
   },
   created() {
@@ -155,6 +156,8 @@ export default {
     this.loadInitInfo();
 
     this.loadInitData();
+
+    this.loadLastInit();
   },
   destroyed() {
     clearInterval(this.interval);    
@@ -254,6 +257,21 @@ export default {
         }
       });
     },
+    loadLastInit: function(){
+      localforage.getItem('lastInit').then((last) => {
+          //date check here if we want
+          //if(last.lastSelected < some interval){ return null }
+
+          if(last && 'id' in last && last.id.length > 0){
+            this.currentinit = last.id;
+            this.updateInit();
+          }
+      }).catch(function(err) {
+          // This code runs if there were any errors
+          console.error('There was an error: '+err);
+      });
+
+    },
     updateInit: function() {
       this.children = [];
       if (Object.keys(this.cachedinitdata).indexOf(this.currentinit) > -1){
@@ -264,6 +282,7 @@ export default {
           this.$set(this.cachedinitdata,this.currentinit, _.set(response.data, 'retrieved', Date.now()));
         })
       }
+      localforage.setItem('lastInit', {lastSelected: Date.now(), id: this.currentinit});
     },
     populateInitData:function(data){
       this.initdata = data;
@@ -289,7 +308,7 @@ export default {
     singleLocation: function(children) {
       //check to see if there is only one location. 
       //if there is only one location click on that location.
-      if (children && children.length == 1) {
+      if (this.autoClick && children && children.length == 1) {
         this.$nextTick(() => {
           document.getElementById(children[0].id).click();
         })
@@ -391,6 +410,7 @@ export default {
       this.initresults = initresults;   
       this.cachedinitdata = cachedinitdata; 
       this.settings = settings;
+      this.loadLastInit();
       if (clearqueue){
         localforage.setItem('queuedcounts', []);
       }
