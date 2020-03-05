@@ -417,8 +417,7 @@ export default {
       swal.fire({
         title: `Reset Locations Counts`,
         text: `Are you sure you want to delete the data you've just collected? All data you've collected for ${this.locationtitle} be deleted permanently.`,
-        confirmButtonText: "DELETE",
-        cancelButtonText: "Keep Collecting",
+        confirmButtonText: "RESET",
         showCancelButton: true,
       }).then(parameters => {
         if (parameters.value == true) {
