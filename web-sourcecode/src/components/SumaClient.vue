@@ -847,6 +847,9 @@ li {
 .tippy-tooltip.info-theme {
   background-color: #{$tippy_backgroundcolor};
   color: #{$tippy_textcolor};
+  * {
+    max-width: 100%;
+  }
   .tippy-backdrop {
     background-color: #{$tippy_backgroundcolor};
   }
