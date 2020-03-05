@@ -688,6 +688,10 @@ body {
   justify-content: center;
 }
 
+button {
+  touch-action: manipulation;
+}
+
 .selectbuttons {
   height: calc(100% - #{$header_height} - #{$select_padding}px);
   width: #{$sidebar_width}; 
