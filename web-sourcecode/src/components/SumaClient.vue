@@ -68,13 +68,13 @@
     <div id="countsform" v-bind:class="[menuShown ? 'sidebarcounts' : 'fullpagecounts']">
       <div v-if="showcounts">
         <h3 id="current_loc_label">
-          <span v-html="this.locationtitle"></span> 
+          <span v-html="locationtitle"></span> 
           <button v-if="compCounts" v-on:click="resetInitCountsByLocation(location)" class="resetloccounts">
             <span class="buttontext">Reset location counts</span>
             <i class="fas fa-ban toolbar-icons"></i>
           </button>
         </h3>
-        <div v-if="settings.lastCount && lastCount">Last count for <span v-html="this.locationtitle"></span> recorded at: {{lastCount}}</div>
+        <div v-if="settings.lastCount && lastCount">Last count for <span v-html="locationtitle"></span> recorded at: {{lastCount}}</div>
         <form @submit.prevent="addToCount(countNumber)">
           <div v-if="Object.keys(activities).length > 0" class="activities">
             <div v-for="(value, key) in activities" v-bind:key="key" class="activityGroup" v-bind:class="{required: value.required}">
@@ -414,8 +414,20 @@ export default {
       this.counts = _.omitBy(this.counts, v => v['counts'].length===0);
     },
     resetInitCountsByLocation: function(locationID){
-      _.remove(this.counts[this.currentinit]['counts'], v => v.location === locationID);
-      this.cleanEmptyInitCounts();
+      swal.fire({
+        title: `Reset Locations Counts`,
+        text: `Are you sure you want to delete the data you've just collected? All data you've collected for ${this.locationtitle} be deleted permanently.`,
+        confirmButtonText: "DELETE",
+        cancelButtonText: "Keep Collecting",
+        showCancelButton: true,
+      }).then(parameters => {
+        if (parameters.value == true) {
+          _.remove(this.counts[this.currentinit]['counts'], v => v.location === locationID);
+          this.cleanEmptyInitCounts();
+        } 
+      }).catch(err => {
+        console.log(err)
+      });
     },
     undoLastCount: function(){
       if (this.counts[this.currentinit] && this.counts[this.currentinit]['counts'].length > 0){
