@@ -394,7 +394,6 @@ export default {
     },
     clearCounts: function(clearqueue=false) {
       this.counts = {}
-      this.loadLocalForageData(['currentinit', 'children']);
       if (clearqueue){
         localforage.setItem('queuedcounts', []);
       }
@@ -677,6 +676,11 @@ i.fa-info-circle {
   * {
     margin: 0 0.5em 0 0.5em;
   }
+
+  .fa-info-circle {
+    margin: -5px;
+  }
+
   span {
     align-self: center;
   }
@@ -872,6 +876,9 @@ li {
   color: #{$tippy_textcolor};
   * {
     max-width: 100%;
+  }
+  a {
+    color: lightblue;
   }
   .tippy-backdrop {
     background-color: #{$tippy_backgroundcolor};
