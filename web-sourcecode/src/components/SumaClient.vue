@@ -73,7 +73,7 @@
             <i class="fas fa-ban toolbar-icons"></i>
           </button>
           <span v-html="locationtitle"></span> 
-          <i class="fas fa-info-circle" :content="locationDescription | unescapeFilter" v-if="locationDescription" v-tippy="{ theme : 'info', arrow: true, interactive : true, placement : 'top', trigger : 'click' }"></i>     
+          <i class="fas fa-info-circle" :content="locationDescription | unescapeFilter" v-if="locationDescription" v-tippy="{ theme : 'info', arrow: true, interactive : true, placement : 'top', trigger : 'click', 'maxWidth': '1000px'}"></i>     
         </h3>
         <div v-if="settings.lastCount && lastCount">Last count for <span v-html="locationtitle"></span> recorded at: {{lastCount}}</div>
         <form @submit.prevent="addToCount(countNumber)">
