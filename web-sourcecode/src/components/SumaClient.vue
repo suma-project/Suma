@@ -125,7 +125,6 @@ export default {
     return {
       initresults: '',
       currentinit: '',
-      initdata: '',
       cachedinitdata: {},
       initurl: initiativeUrl,
       baseiniturl: baseInitUrl,
@@ -150,7 +149,7 @@ export default {
   created() {
     this.getDeviceData();
     //load and submit any old counts
-    this.loadCounts();
+    this.loadLocalForageData();
 
     this.loadInitInfo();
 
@@ -160,6 +159,15 @@ export default {
     clearInterval(this.interval);    
   },
   watch: {
+    currentinit: function(){
+      localforage.setItem('currentinit', this.currentinit);
+    },
+    children: {
+      handler: function() {
+        localforage.setItem('children', this.children);
+      },
+      deep: true
+    },
     cachedinitdata: function (data) {
       localforage.setItem('cachedinitdata', data);
     },
@@ -209,9 +217,8 @@ export default {
         this.buttonClickable = checked.indexOf(0) == -1;
       });
     },
-    loadCounts: function(){
+    loadLocalForageData: function(getItems=['counts', 'settings', 'currentinit', 'children']){
       //get counts field from indexDB, load into data
-      var getItems = ['counts', 'settings']
       for (var i=0; i<getItems.length; i++){
         const item = getItems[i];
         localforage.getItem(item).then((counts) => {
@@ -266,12 +273,11 @@ export default {
       }
     },
     populateInitData:function(data){
-      this.initdata = data;
-      this.children = this.initdata.locations.children;
+      this.children = data.locations.children;
       
       //combine activityGroup data and initdata.activities in a object so the data is all together
-      var activitykeys = this.initdata.activityGroups;
-      var activities = _.groupBy(this.initdata.activities, 'groupId');
+      var activitykeys = data.activityGroups;
+      var activities = _.groupBy(data.activities, 'groupId');
 
       this.location = '';
       this.showcounts = false;
@@ -384,13 +390,8 @@ export default {
             this doesn't resolve itself soon.`, "error");
     },
     clearCounts: function(clearqueue=false) {
-      var initresults = this.initresults;
-      var cachedinitdata = this.cachedinitdata;
-      var settings = this.settings;
-      Object.assign(this.$data, this.$options.data.call(this));
-      this.initresults = initresults;   
-      this.cachedinitdata = cachedinitdata; 
-      this.settings = settings;
+      this.counts = {}
+      this.loadLocalForageData(['currentinit', 'children']);
       if (clearqueue){
         localforage.setItem('queuedcounts', []);
       }
