@@ -53,7 +53,7 @@
     <transition name="sidebar">
       <div class="selectbuttons" v-show="menuShown">
         <div class="alldropdowns">
-          <select v-bind:disabled="!requiredLocationsCheck.passed" aria-label="initiative dropdown" id="initiativeDropdown" v-model="currentinit" v-on:click="autoClick=true" v-on:change="updateInit()">
+          <select v-bind:disabled="!requiredLocationsCheck.passed" aria-label="initiative dropdown" id="initiativeDropdown" v-model="currentinit" v-on:change="updateInit()">
             <option disabled value="">Select an initiative</option>
             <option v-bind:value="item.initiativeId" v-for="item in initresults" v-bind:key="item.initiativeId" v-html="item.initiativeTitle">
             </option>
@@ -125,7 +125,6 @@ export default {
     return {
       initresults: '',
       currentinit: '',
-      initdata: '',
       cachedinitdata: {},
       initurl: initiativeUrl,
       baseiniturl: baseInitUrl,
@@ -144,25 +143,31 @@ export default {
       menuShown: true,
       settings: this.$route.query,
       countNumber: 1,
-      datetime: '',
-      autoClick: false
+      datetime: ''
     }
   },
   created() {
     this.getDeviceData();
     //load and submit any old counts
-    this.loadCounts();
+    this.loadLocalForageData();
 
     this.loadInitInfo();
 
     this.loadInitData();
-
-    this.loadLastInit();
   },
   destroyed() {
     clearInterval(this.interval);    
   },
   watch: {
+    currentinit: function(){
+      localforage.setItem('currentinit', this.currentinit);
+    },
+    children: {
+      handler: function() {
+        localforage.setItem('children', this.children);
+      },
+      deep: true
+    },
     cachedinitdata: function (data) {
       localforage.setItem('cachedinitdata', data);
     },
@@ -212,9 +217,9 @@ export default {
         this.buttonClickable = checked.indexOf(0) == -1;
       });
     },
-    loadCounts: function(){
+    loadLocalForageData: function(getItems=['counts', 'settings', 'currentinit', 'children']){
+      console.log(getItems)
       //get counts field from indexDB, load into data
-      var getItems = ['counts', 'settings']
       for (var i=0; i<getItems.length; i++){
         const item = getItems[i];
         localforage.getItem(item).then((counts) => {
@@ -257,21 +262,6 @@ export default {
         }
       });
     },
-    loadLastInit: function(){
-      localforage.getItem('lastInit').then((last) => {
-          //date check here if we want
-          //if(last.lastSelected < some interval){ return null }
-
-          if(last && 'id' in last && last.id.length > 0){
-            this.currentinit = last.id;
-            this.updateInit();
-          }
-      }).catch(function(err) {
-          // This code runs if there were any errors
-          console.error('There was an error: '+err);
-      });
-
-    },
     updateInit: function() {
       this.children = [];
       if (Object.keys(this.cachedinitdata).indexOf(this.currentinit) > -1){
@@ -282,15 +272,13 @@ export default {
           this.$set(this.cachedinitdata,this.currentinit, _.set(response.data, 'retrieved', Date.now()));
         })
       }
-      localforage.setItem('lastInit', {lastSelected: Date.now(), id: this.currentinit});
     },
     populateInitData:function(data){
-      this.initdata = data;
-      this.children = this.initdata.locations.children;
+      this.children = data.locations.children;
       
       //combine activityGroup data and initdata.activities in a object so the data is all together
-      var activitykeys = this.initdata.activityGroups;
-      var activities = _.groupBy(this.initdata.activities, 'groupId');
+      var activitykeys = data.activityGroups;
+      var activities = _.groupBy(data.activities, 'groupId');
 
       this.location = '';
       this.showcounts = false;
@@ -308,7 +296,7 @@ export default {
     singleLocation: function(children) {
       //check to see if there is only one location. 
       //if there is only one location click on that location.
-      if (this.autoClick && children && children.length == 1) {
+      if (children && children.length == 1) {
         this.$nextTick(() => {
           document.getElementById(children[0].id).click();
         })
@@ -403,14 +391,8 @@ export default {
             this doesn't resolve itself soon.`, "error");
     },
     clearCounts: function(clearqueue=false) {
-      var initresults = this.initresults;
-      var cachedinitdata = this.cachedinitdata;
-      var settings = this.settings;
-      Object.assign(this.$data, this.$options.data.call(this));
-      this.initresults = initresults;   
-      this.cachedinitdata = cachedinitdata; 
-      this.settings = settings;
-      this.loadLastInit();
+      this.counts = {}
+      this.loadLocalForageData(['currentinit', 'children']);
       if (clearqueue){
         localforage.setItem('queuedcounts', []);
       }
