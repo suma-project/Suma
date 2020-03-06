@@ -83,7 +83,7 @@
                 <span v-if="value.required" class="requiredicon">*</span>
                 <span v-if="value.allowMulti" class="instructions"> (Choose one or more)</span>
                 <span v-else class="instructions"> (Select one)</span> 
-                <i class="fas fa-info-circle " :content='value.description' v-if="value.description" v-tippy="{ theme : 'info', arrow: true, interactive : true, placement : 'top' }"></i>
+                <i class="fas fa-info-circle " :content='value.description | unescapeFilter' v-if="value.description" v-tippy="{ theme : 'info', arrow: true, interactive : true, placement : 'top' }"></i>
               </h3>
               <div id="activityButton" v-for="activitygroup in value.options" v-bind:key="activitygroup.id">
                 <label>
@@ -534,6 +534,11 @@ export default {
          return {'passed':true};
        }
      }
+  },
+  filters: {
+    unescapeFilter: function (value) {
+      return _.unescape(value)
+    }
   }
 }
 </script>
@@ -853,6 +858,9 @@ li {
 .tippy-tooltip.info-theme {
   background-color: #{$tippy_backgroundcolor};
   color: #{$tippy_textcolor};
+  * {
+    max-width: 100%;
+  }
   .tippy-backdrop {
     background-color: #{$tippy_backgroundcolor};
   }
