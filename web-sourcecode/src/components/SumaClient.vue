@@ -68,11 +68,13 @@
     <div id="countsform" v-bind:class="[menuShown ? 'sidebarcounts' : 'fullpagecounts']">
       <div v-if="showcounts">
         <h3 id="current_loc_label">
-          <span v-html="locationtitle"></span> 
           <button v-if="compCounts" v-on:click="resetInitCountsByLocation(location)" class="resetloccounts">
             <span class="buttontext">Reset location counts</span>
             <i class="fas fa-ban toolbar-icons"></i>
           </button>
+          <span v-html="locationtitle"></span> 
+          <i class="fas fa-info-circle " :content="locationDescription | unescapeFilter" v-if="locationDescription" v-tippy="{ theme : 'info', arrow: true, interactive : true, placement : 'top', trigger : 'click' }"></i>
+           
         </h3>
         <div v-if="settings.lastCount && lastCount">Last count for <span v-html="locationtitle"></span> recorded at: {{lastCount}}</div>
         <form @submit.prevent="addToCount(countNumber)">
@@ -516,6 +518,9 @@ export default {
       }
       return returnvalue
     },
+    locationDescription: function(){
+      return this.children?.[this.children.findIndex((x) => x['id']==this.location )]?.description;
+    },
     requiredLocationsCheck: function() {
        if (this.settings.requireLocations) {
          var lowestlevel = Array.from(document.getElementsByClassName('lowestlocation'));
@@ -605,10 +610,6 @@ $tippy_textcolor: white;
   margin-left: 6px;
 }
 
-#current_loc_label span {
-  align-self: center;
-}
-
 .filler{
   flex-grow:1;
   text-align:center;
@@ -673,6 +674,14 @@ i.fa-info-circle {
   padding: .5em;
   display: flex;
   justify-content: center;
+  align-items: center;
+  
+  * {
+    margin: 0 0.5em 0 0.5em;
+  }
+  span {
+    align-self: center;
+  }
 }
 
 select {

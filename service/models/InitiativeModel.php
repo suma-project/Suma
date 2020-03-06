@@ -250,11 +250,11 @@ class InitiativeModel
         {
             if ($children = $this->walkLocTree($result['id']))
             {
-                $array[] = array('id' => (int)$result['id'], 'title' => $result['title'], 'children' => $children);
+                $array[] = array('id' => (int)$result['id'], 'title' => $result['title'], 'description' => $result['description'], 'children' => $children);
             }
             else
             {
-                $array[] = array('id' => (int)$result['id'], 'title' => $result['title']);
+                $array[] = array('id' => (int)$result['id'], 'title' => $result['title'], 'description' => $result['description']);
             }
         }
 
