@@ -218,7 +218,6 @@ export default {
       });
     },
     loadLocalForageData: function(getItems=['counts', 'settings', 'currentinit', 'children']){
-      console.log(getItems)
       //get counts field from indexDB, load into data
       for (var i=0; i<getItems.length; i++){
         const item = getItems[i];
