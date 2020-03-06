@@ -8,6 +8,7 @@
     <tree-menu v-show="showChildren || depth == 0"
       v-for="node in nodes" v-bind:key="node.title" 
       :nodes="node.children"
+      :parentdesc="description"
       :parentdata="parentdata" 
       :label="node.title"
       :id="node.id"
@@ -23,7 +24,7 @@
 import shared from './compontentFunctions'
 
   export default { 
-    props: [ 'label', 'nodes', 'depth', 'id', 'parentdata', 'description'],
+    props: [ 'label', 'nodes', 'depth', 'id', 'parentdata', 'description', 'parentdesc'],
     data() {
       return {
         showChildren: false,
@@ -62,7 +63,8 @@ import shared from './compontentFunctions'
       },
       toggleChildren() {
         this.showChildren = !this.showChildren;
-        this.$emit('clickLocation', {'description': this.description, 'id': this.id, 'title': this.label, 'nodes': this.nodes, 'index': this.depth})
+        var description = this.description ? this.description : this.parentdesc;
+        this.$emit('clickLocation', {'description': description, 'id': this.id, 'title': this.label, 'nodes': this.nodes, 'index': this.depth})
         if (!this.nodes){
           this.addToCount();
         }
