@@ -3,7 +3,7 @@
 ## Data Collection Client
 
 #### Is there a more permanent way to enable settings.
-Settings by themselves are pretty sticky, they only disappear when history is deleted. With that in mind you can make settings more sticky by adding them to your url as a query string. `variable=setting.` There is no limit on 
+Settings by themselves are pretty sticky, they only disappear when history is deleted. With that in mind you can make settings more sticky by adding them to your url as a query string. `variable=setting.` There is no limit on the number of settings added to the query string.
 
 
 | variable | setting | notes |
