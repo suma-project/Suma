@@ -11,6 +11,7 @@
       :parentdata="parentdata" 
       :label="node.title"
       :id="node.id"
+      :description="node.description"
       :depth="depth + 1"
       @addtocounts="addToCount(0)"
       @clickLocation="clickLocation"
@@ -22,7 +23,7 @@
 import shared from './compontentFunctions'
 
   export default { 
-    props: [ 'label', 'nodes', 'depth', 'id', 'parentdata'],
+    props: [ 'label', 'nodes', 'depth', 'id', 'parentdata', 'description'],
     data() {
       return {
         showChildren: false,
@@ -61,7 +62,7 @@ import shared from './compontentFunctions'
       },
       toggleChildren() {
         this.showChildren = !this.showChildren;
-        this.$emit('clickLocation', {'id': this.id, 'title': this.label, 'nodes': this.nodes, 'index': this.depth})
+        this.$emit('clickLocation', {'description': this.description, 'id': this.id, 'title': this.label, 'nodes': this.nodes, 'index': this.depth})
         if (!this.nodes){
           this.addToCount();
         }

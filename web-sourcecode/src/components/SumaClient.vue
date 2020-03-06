@@ -73,8 +73,7 @@
             <i class="fas fa-ban toolbar-icons"></i>
           </button>
           <span v-html="locationtitle"></span> 
-          <i class="fas fa-info-circle " :content="locationDescription | unescapeFilter" v-if="locationDescription" v-tippy="{ theme : 'info', arrow: true, interactive : true, placement : 'top', trigger : 'click' }"></i>
-           
+          <i class="fas fa-info-circle" :content="locationDescription | unescapeFilter" v-if="locationDescription" v-tippy="{ theme : 'info', arrow: true, interactive : true, placement : 'top', trigger : 'click' }"></i>     
         </h3>
         <div v-if="settings.lastCount && lastCount">Last count for <span v-html="locationtitle"></span> recorded at: {{lastCount}}</div>
         <form @submit.prevent="addToCount(countNumber)">
@@ -85,7 +84,7 @@
                 <span v-if="value.required" class="requiredicon">*</span>
                 <span v-if="value.allowMulti" class="instructions"> (Choose one or more)</span>
                 <span v-else class="instructions"> (Select one)</span> 
-                <i class="fas fa-info-circle " :content='value.description | unescapeFilter' v-if="value.description" v-tippy="{ theme : 'info', arrow: true, interactive : true, placement : 'top' }"></i>
+                <i class="fas fa-info-circle" :content='value.description | unescapeFilter' v-if="value.description" v-tippy="{ theme : 'info', arrow: true, interactive : true, placement : 'top' }"></i>
               </h3>
               <div id="activityButton" v-for="activitygroup in value.options" v-bind:key="activitygroup.id">
                 <label>
@@ -145,7 +144,8 @@ export default {
       menuShown: true,
       settings: this.$route.query,
       countNumber: 1,
-      datetime: ''
+      datetime: '',
+      locationDescription: ''
     }
   },
   created() {
@@ -197,6 +197,7 @@ export default {
     clickLocation: function(data){
       if (!data.nodes){
         this.location = data.id;
+        this.locationDescription = data.description;
         this.showcounts = true;
       }
       this.singleLocation(data.nodes);
@@ -517,9 +518,6 @@ export default {
         returnvalue = timestamp.toLocaleTimeString()
       }
       return returnvalue
-    },
-    locationDescription: function(){
-      return this.children?.[this.children.findIndex((x) => x['id']==this.location )]?.description;
     },
     requiredLocationsCheck: function() {
        if (this.settings.requireLocations) {
