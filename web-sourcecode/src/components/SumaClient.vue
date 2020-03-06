@@ -893,6 +893,19 @@ li {
   align-items:center;
   justify-content:center;
   flex-direction:column;
+
+  div  {
+    padding: 5px;
+    font-size: 1.2em;
+  }
+
+  label {
+    padding-right: 10px;
+  }
+
+  input[type=checkbox] {
+    transform: scale(1.8);
+  }
 }
 
 .closemodal {
