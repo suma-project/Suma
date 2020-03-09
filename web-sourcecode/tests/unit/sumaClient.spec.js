@@ -44,7 +44,7 @@ describe('SumaClient.vue', () => {
     expect(data.locationDescription).toBe("")
 
     //select location from items
-    const locationselect = wrapper.findAll('.level-1 > li');
+    const locationselect = wrapper.findAll('.level-1 .menuelement');
     await locationselect.at(0).trigger('click');
     expect(data.currentinit).toBe("2")
     expect(data.location).toBe("")
@@ -53,9 +53,9 @@ describe('SumaClient.vue', () => {
     expect(data.locationDescription).toBe("")
 
     //select second location
-    const locationselect2 = wrapper.findAll('.level-2 > li');
+    const locationselect2 = wrapper.findAll('.level-2 .menuelement');
     await locationselect2.at(0).trigger('click');
-    const locationselect3 = wrapper.findAll('.level-3 > li');
+    const locationselect3 = wrapper.findAll('.level-3 .menuelement');
     await locationselect3.at(0).trigger('click');
 
     const time = Math.round(Date.now() / 1000);
@@ -97,15 +97,15 @@ describe('SumaClient.vue', () => {
     expect(wrapper.find(".countButton").text()).toBe("Count (15)")
 
     //choose another location from location tree
-    await locationselect2.at(1).trigger('click');
+    await locationselect3.at(1).trigger('click');
     expect(data.currentinit).toBe("2")
-    expect(data.location).toBe(6)
+    expect(data.location).toBe(13)
     expect(data.showcounts).toBe(true)
-    expect(data.locationtitle).toBe("West Wing | IT Teaching Center")
-    expect(data.locationDescription).toBe("&lt;img src=&quot;https://www.lib.ncsu.edu/sites/default/files/hunt_level-1.jpg&quot;&gt;")
+    expect(data.locationtitle).toBe("West Wing | Quiet Reading Room | no desc")
+    expect(data.locationDescription).toBe("quiet reading room &lt;a href=&quot;testing....&quot;&gt;testing&lt;/a&gt;")
     expect(data.activities).toEqual({})
     expect(initiativedata['counts'][15]['number']).toEqual(0)
-    expect(initiativedata['counts'][15]['location']).toEqual(6)
+    expect(initiativedata['counts'][15]['location']).toEqual(13)
     expect(initiativedata['counts'].length).toEqual(16)
     expect(initiativedata["startTime"]).toEqual(initiativedata['counts'][0]['timestamp'])
     expect(initiativedata["initiativeID"]).toEqual("2")
@@ -120,11 +120,10 @@ describe('SumaClient.vue', () => {
     expect(wrapper.find(".countButton").text()).toBe("Count (1)")
 
     //click on already clicked initiative (make sure not to add zero count)
-    await locationselect2.at(1).trigger('click');
+    await locationselect3.at(1).trigger('click');
     expect(initiativedata['counts'].length).toEqual(16)
 
     //switch back to first location clicked
-    await locationselect2.at(0).trigger('click');
     await locationselect3.at(0).trigger('click');
     expect(initiativedata['counts'].length).toEqual(16)
     expect(Object.keys(initiativedata)).toEqual(["counts","initiativeID","startTime","endTime"])

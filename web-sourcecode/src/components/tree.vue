@@ -1,22 +1,24 @@
 <template>
   <ul class="tree-menu" v-bind:class="[{toplevel: depth == 0}, 'level-'+depth]" :data-label="label">
-    <li v-if="label" v-bind:class="[{selected: selected}, {lowestlocation:!nodes}]" v-bind:id="id" @click="toggleChildren">
-      <span v-if="nodes" v-bind:class="[showChildren ? 'toggleup' : 'toggledown']" class="toggle"></span>
-      <span v-html="label"></span>
-      <span v-if="currentcount">{{currentcount}}</span>
+    <li>
+      <button v-if="label" v-bind:class="[{selected: selected}, {lowestlocation:!nodes}, 'menuelement']" v-bind:id="id" @click="toggleChildren">
+        <span v-if="nodes" v-bind:class="[showChildren ? 'toggleup' : 'toggledown']" class="toggle"></span>
+        <span v-html="label"></span>
+        <span v-if="currentcount">{{currentcount}}</span>
+      </button>
+      <tree-menu v-show="showChildren || depth == 0"
+        v-for="node in nodes" v-bind:key="node.title" 
+        :nodes="node.children"
+        :parents="{'desc': parentDescription, 'title': parentTitle}"
+        :parentdata="parentdata" 
+        :label="node.title"
+        :id="node.id"
+        :description="node.description"
+        :depth="depth + 1"
+        @addtocounts="addToCount(0)"
+        @clickLocation="clickLocation"
+      ></tree-menu>   
     </li>  
-    <tree-menu v-show="showChildren || depth == 0"
-      v-for="node in nodes" v-bind:key="node.title" 
-      :nodes="node.children"
-      :parents="{'desc': parentDescription, 'title': parentTitle}"
-      :parentdata="parentdata" 
-      :label="node.title"
-      :id="node.id"
-      :description="node.description"
-      :depth="depth + 1"
-      @addtocounts="addToCount(0)"
-      @clickLocation="clickLocation"
-    ></tree-menu>   
   </ul>
 </template>
 <script>
@@ -102,7 +104,14 @@ import shared from './compontentFunctions'
   content: "\f0fe";
 }
 
-li {
+.menuelement {
+  color: blue;
+  font-size: 19.5px;
+  padding-top: .25em!important;
+  padding-bottom: .25em!important;
+  appearance: none;
+  background: none!important;
+  border: none;
   word-break: break-all;
   cursor: pointer;
 }

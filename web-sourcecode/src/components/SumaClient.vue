@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div role="main">
     <div class="header_content">
       <button v-on:click="menuShown = !menuShown" class="headerbuttons leftalign menubutton" aria-label="toggle menu">
         <i class="fas fa-bars" v-if="!menuShown"></i>
@@ -824,7 +824,7 @@ button {
   .buttontext {
     display: none;
   }
-  li {
+  li button {
     font-size: 1em!important;
   }
   ul {
@@ -857,13 +857,6 @@ ul:not(.toplevel) {
 
 .selected {
   font-weight: bold;
-}
-
-li {
-  color: blue;
-  font-size: 19.5px;
-  padding-top: .25em;
-  padding-bottom: .25em;
 }
 
 .noloc {
