@@ -195,14 +195,16 @@ export default {
   },
   methods: {
     clickLocation: function(data){
+      //Used when an item in the <tree> component is clicked
+      //if the link does not have children then set location and show counts
       if (!data.nodes){
         this.location = data.id;
         this.locationDescription = data.description;
+        this.locationtitle = data.title;
         this.showcounts = true;
       }
       this.singleLocation(data.nodes);
       this.resetActivityChecks();
-      this.createLocationTitle();
     },
     getDeviceData: function() {
       // Get device type (Mac, iPad, etc.)
@@ -221,7 +223,7 @@ export default {
       });
     },
     loadLocalForageData: function(getItems=['counts', 'settings', 'currentinit', 'children']){
-      //get counts field from indexDB, load into data
+      //get local forage data from indexDB for each field, load into vue field
       for (var i=0; i<getItems.length; i++){
         const item = getItems[i];
         localforage.getItem(item).then((counts) => {
@@ -265,6 +267,7 @@ export default {
       });
     },
     updateInit: function() {
+      //triggered when dropdown options are changed
       this.children = [];
       if (Object.keys(this.cachedinitdata).indexOf(this.currentinit) > -1){
         this.populateInitData(this.cachedinitdata[this.currentinit])
@@ -304,23 +307,8 @@ export default {
         })
       }
     },
-    createLocationTitle: function() {
-      this.$nextTick(() => {
-        var ullist = document.querySelector("ul > .selected");
-        var titleposition = {}
-        if (ullist) {
-          var classposition = parseInt(ullist.closest("ul").className.replace("tree-menu", "").replace("level-", "").trim());
-          while (classposition > 0){
-            var title = ullist.closest(`ul.level-${classposition}`).getAttribute('data-label');
-            titleposition[classposition] = title;
-            classposition -= 1
-          }
-        }
-        this.locationtitle = Object.values(titleposition).join(" | ")
-      })
-    },
     resetActivityChecks: function() {
-      //unchecks all activities
+      //unchecks all activities and scrolls to top of page
       this.activityvalues = {};
       this.activityvaluesmulti = [];
       this.countNumber = 1;
@@ -328,11 +316,8 @@ export default {
       this.requiredFieldsCheck();
     },
     sendCounts: function(syncObj, totals) {
-      axios({
-        method: 'POST',
-        url: this.syncurl,
+      axios.post(this.syncurl, `json=${syncObj}`, {
         headers: { 'content-type': 'application/x-www-form-urlencoded'},
-        data: `json=${syncObj}`,
       }).then(response => {
         //handle response
         if (response.data != 'Transaction Complete'){
@@ -346,7 +331,7 @@ export default {
           const total = totals['counts'];
           swal.fire({
             title: "Counts submitted!",
-            text: `${total} ${pluralize('counts',total)} (including "zero" counts) covering ${locations} ${pluralize('locations', locations)} in ${sessions} ${pluralize('initiatives',sessions)} has been sent to the server`,
+            text: `${total} ${pluralize('counts',total)} (including "zero" counts) covering ${locations} ${pluralize('locations', locations)} in ${sessions} ${pluralize('sessions',sessions)} has been sent to the server`,
             icon: "success"
           })
           this.clearCounts(true);
@@ -360,15 +345,20 @@ export default {
     submitCounts: function(){
       //get data    
       localforage.getItem('queuedcounts').then((counts) => {
+        //merges queued counts (counts that had previously been sent but failed due problem with server/etc)
+        //with counts currently in localforage
         var currentcounts = Object.values(this.counts);
         var allcounts = counts ? counts.concat(currentcounts) : currentcounts;
+        //sets queued counts to merged counts
         localforage.setItem('queuedcounts', allcounts);
+        //checks all counts and gets locals of locations and counts
         var totals = allcounts.reduce(function(total, session) {
             total['counts'] += shared.getCounts(session, false, false);
             total['locations'].push(session.counts.map(count => count.location))
             return total;
           }, {'counts': 0, 'locations': []})
         var locationscheck = this.requiredLocationsCheck;
+        //if there are counts and requiredLocationsCheck is passed (auto passes when setting is not enabled) then send counts
         if (allcounts.length !== 0 && totals['counts'] !== 0 && locationscheck.passed){
           let syncObj = this.syncCountDict(allcounts);
           this.sendCounts(syncObj, totals);
@@ -387,18 +377,22 @@ export default {
       });
     },
     syncError: function(){
+      //called when there is a sync error in post request. Clears out counts but preserves queued counts
       this.clearCounts()
       swal.fire(`Sync error`,`Error sending data to server. This may be caused by issues including server outages and Wi-Fi \
             connectivity problems. The data will be retained by the browser. Please contact an administrator if \
             this doesn't resolve itself soon.`, "error");
     },
     clearCounts: function(clearqueue=false) {
+      //clears counts and if sent successfully will clear out queued counts. By default will not clear queued counts
       this.counts = {}
       if (clearqueue){
         localforage.setItem('queuedcounts', []);
       }
     },
     resetCounts: function(){
+      //Called when "abandon all counts" button is clicked.
+      //will not clear queued counts because user has already hit finished collecting or closed the previous session
       swal.fire({
         title: 'Abandon Session',
         text: "Are you sure you want to delete the data you've just collected? All data you've collected will be deleted permanently.",
@@ -414,9 +408,12 @@ export default {
       });
     },
     cleanEmptyInitCounts: function(){
+      //removes any initiative data where all the counts have been removed
+      //i.e. this.counts[2] = {'startTime': '12345', 'endtime':'12345', 'counts': []}
       this.counts = _.omitBy(this.counts, v => v['counts'].length===0);
     },
     resetInitCountsByLocation: function(locationID){
+      //clears counts for a specific location. Called when "reset location counts" button is clicked
       swal.fire({
         title: `Reset Locations Counts`,
         text: `Are you sure you want to delete the data you've just collected? All data you've collected for ${this.locationtitle} be deleted permanently.`,
@@ -432,8 +429,9 @@ export default {
       });
     },
     undoLastCount: function(){
+      //undoes the last count on current location. Called when "undo last count" button is clicked
       if (this.counts[this.currentinit] && this.counts[this.currentinit]['counts'].length > 0){
-          let localCounts = this.locationCounts(this.location);
+          let localCounts = this.locationCounts();
           var removeitem = localCounts.pop();          
           if (removeitem){
             this.counts[this.currentinit]['counts'] = _.without(this.counts[this.currentinit]['counts'], removeitem);
@@ -455,11 +453,13 @@ export default {
       //called when count button pressed; adds new counts for each initiative
       var timestamp = Math.round(Date.now() / 1000);
       var activities = this.activityvaluesmulti.concat(Object.values(this.activityvalues));
-      var countDict = this.counts[this.currentinit] ? this.counts[this.currentinit] : {'counts':[], 'initiativeID': this.currentinit, 'startTime': timestamp}; 
+      var countDict = this.counts[this.currentinit] ?? {'counts':[], 'initiativeID': this.currentinit, 'startTime': timestamp}; 
       var location = this.location;
+      //remove all zero counts for current location
       _.remove(countDict['counts'], function(elem) {
         return elem.location == location && elem.number == 0;
       });
+      // if number is zero and there are already counts at that location do not add a zero count
       let check = number==0 ? countDict['counts'].filter(count => count.location == this.location ).length  == 0 : true;
       if(check) {
         countDict['counts'].push({'timestamp': timestamp,'location': this.location, 'activities': activities, 'number': parseInt(number)});
@@ -476,6 +476,7 @@ export default {
       this.requiredFieldsCheck();
     },
     syncCountDict: function(counts) {
+      //builds JSON to get sent across axios request
       var buildDict = JSON.stringify({
         'version': this.appVersion, 'device': this.device, 
         'sessions': counts
@@ -483,6 +484,7 @@ export default {
       return buildDict;
     },
     getDateTime: function() {
+      //used for settings 'dateTime' function.
       var now = Date.now()
       var date = new Date(now);
       switch(this.settings.dateTime) {
@@ -495,6 +497,7 @@ export default {
       }
     },
     locationCounts: function() {
+      //returns a list of counts for current location
       var counts = ''
       if (this.counts[this.currentinit] && this.counts[this.currentinit]['counts']){
         counts = this.counts[this.currentinit]['counts'].filter(elem => elem.location == this.location);
@@ -504,12 +507,15 @@ export default {
   },
   computed: {
     compCounts: function() {
+      //gets current location counts. Called for button counts
       return shared.getCounts(this.counts[this.currentinit], this.location)
     },
     hasNoCounts: function() {
+      //check to see if location has no counts. Used to disable buttons
       return Object.keys(this.counts).length === 0 && this.counts.constructor === Object;
     },
     lastCount: function(){
+      //gets the last count for current location. Used for 'lastCount' setting.
       var counts = this.locationCounts();
       var returnvalue = ''
       if (counts.length > 0){
@@ -519,6 +525,7 @@ export default {
       return returnvalue
     },
     requiredLocationsCheck: function() {
+      //checks to see if all locations have counts if 'requireLocations' setting is enabled.
        if (this.settings.requireLocations) {
          var lowestlevel = Array.from(document.getElementsByClassName('lowestlocation'));
          var requiredlocations = lowestlevel.map(lle => parseInt(lle.id));
@@ -540,6 +547,7 @@ export default {
   },
   filters: {
     unescapeFilter: function (value) {
+      //unescapes data from API for desc
       return _.unescape(value)
     }
   }
