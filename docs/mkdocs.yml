@@ -14,3 +14,4 @@ pages:
 - Developer: developer.md
 - Upgrade 1.0: upgrade_1.0.md
 - Upgrade 2.0: upgrade_2.0.md
+- Upgrade WebSQL: upgrade_client.md
