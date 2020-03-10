@@ -418,9 +418,9 @@ export default {
     },
     resetInitCountsByLocation: function(locationID){
       //clears counts for a specific location. Called when "reset location counts" button is clicked
-      var numbcounts = this.locationCounts().length;
+      var cleancomp = parseInt(this.compCounts.match(/\d+/)[0])
       swal.fire({
-        title: `Reset ${numbcounts} ${pluralize('counts',numbcounts)} for ${this.locationtitle}`,
+        title: `Reset ${cleancomp} ${pluralize('counts',cleancomp)} for ${this.locationtitle}`,
         text: `Are you sure you want to delete the data you've just collected? All data you've collected for ${this.locationtitle} be deleted permanently.`,
         confirmButtonText: "RESET",
         showCancelButton: true,
