@@ -15,7 +15,7 @@
       </button>
       <div v-if="settings.dateTime && settings.dateTime != 'hide'" v-html="datetime" class="datetime filler"></div>
       <div v-if="!settings.dateTime || settings.dateTime == 'hide'" class="filler"></div>
-      <button v-on:click="$modal.show('settings')" class="headerbuttons rightalign" aria-label="settings">
+      <button v-if="ignoreSettings.length < 4" v-on:click="$modal.show('settings')" class="headerbuttons rightalign" aria-label="settings">
         <i class="fas fa-cog"></i>
       </button>
       <button v-on:click="submitCounts()" class="headerbuttons rightalign" aria-label="finish collecting" v-bind:disabled="hasNoCounts">
@@ -27,7 +27,7 @@
       <i class="fas fa-times closemodal" v-on:click="$modal.hide('settings')"></i>      
       <h2 class="settingsheader" style="text-align:center;">Settings</h2>
       <div class="settingslist">
-        <div>
+        <div v-if="ignoreSettings.indexOf('dateTime') == -1">
           <select id="datetime" v-model="settings.dateTime">
             <option value="" disabled>Select Date/Time Option</option>
             <option value="time">Time</option>
@@ -36,15 +36,15 @@
             <option value="hide">Hide</option>
           </select>
         </div>
-        <div>
+        <div v-if="ignoreSettings.indexOf('multiCount') == -1">
           <label for="multiCount">Show Multi Count</label>
           <input type="checkbox" id="multiCount" v-model.lazy="settings['multiCount']">
         </div>
-        <div>
+        <div v-if="ignoreSettings.indexOf('lastCount') == -1">
           <label for="lastCount">Show Last Count</label>
           <input type="checkbox" id="lastCount" v-model.lazy="settings['lastCount']">
         </div>
-        <div>
+        <div v-if="ignoreSettings.indexOf('requireLocations') == -1">
           <label for="requireLocations">Require All Locations</label>
           <input type="checkbox" id="requireLocations" v-model.lazy="settings['requireLocations']">
         </div>
@@ -143,6 +143,7 @@ export default {
       buttonClickable: false,
       menuShown: true,
       settings: this.$route.query,
+      ignoreSettings: Object.keys(this.$route.query),
       countNumber: 1,
       datetime: '',
       locationDescription: ''
@@ -234,7 +235,10 @@ export default {
             return false;
           }
         })
-        .then((savedCounts) => { if(savedCounts && item == 'counts'){this.submitCounts();} })
+        .then((savedCounts) => { 
+          if(savedCounts && item == 'counts'){this.submitCounts();}
+          else if (item == 'settings') {this.settings = Object.assign ( this.settings, this.$route.query )}  
+        })
         .catch(function(err){
           console.error('There was an error '+err);
         });
@@ -414,8 +418,9 @@ export default {
     },
     resetInitCountsByLocation: function(locationID){
       //clears counts for a specific location. Called when "reset location counts" button is clicked
+      var numbcounts = this.locationCounts().length;
       swal.fire({
-        title: `Reset Locations Counts`,
+        title: `Reset ${numbcounts} ${pluralize('counts',numbcounts)} for ${this.locationtitle}`,
         text: `Are you sure you want to delete the data you've just collected? All data you've collected for ${this.locationtitle} be deleted permanently.`,
         confirmButtonText: "RESET",
         showCancelButton: true,
