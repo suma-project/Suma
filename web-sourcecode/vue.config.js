@@ -6,6 +6,7 @@ module.exports = {
   },
   filenameHashing: false,
   devServer: {
+    disableHostCheck: true,
     proxy: {
       "/sumaserver/*": {
         target: "http://localhost:19679",

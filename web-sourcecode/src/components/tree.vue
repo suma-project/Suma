@@ -112,7 +112,7 @@ import shared from './compontentFunctions'
   appearance: none;
   background: none!important;
   border: none;
-  word-break: break-all;
+  word-break: break-word;
   cursor: pointer;
 }
 </style>
