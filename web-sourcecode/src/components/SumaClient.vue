@@ -77,8 +77,8 @@
         </h3>
         <div v-if="settings.lastCount && lastCount">Last count for <span v-html="locationtitle"></span> recorded at: {{lastCount}}</div>
         <form @submit.prevent="addToCount(countNumber)">
-          <div v-if="Object.keys(activities).length > 0" class="activities">
-            <div v-for="(value, key) in activities" v-bind:key="key" class="activityGroup" v-bind:class="{required: value.required}">
+          <div v-if="Object.keys(activityGroups).length > 0" class="activityGroups">
+            <div v-for="(value, key) in activityGroups" v-bind:key="key" class="activityGroup" v-bind:class="{required: value.required}">
               <h3 class="activityTitle">
                 <span v-html="value.title"></span>
                 <span v-if="value.required" class="requiredicon">*</span>
@@ -86,11 +86,11 @@
                 <span v-else class="instructions"> (Select one)</span> 
                 <i class="fas fa-info-circle" :content='value.description | unescapeFilter' v-if="value.description" v-tippy="{ theme : 'info', arrow: true, interactive : true, placement : 'top' }"></i>
               </h3>
-              <div id="activityButton" v-for="activitygroup in value.options" v-bind:key="activitygroup.id">
+              <div id="activityButton" v-for="activity in value.activities" v-bind:key="activity.id">
                 <label>
-                  <input type="checkbox" v-bind:name="value.id" v-on:click="requiredFieldsCheck()" class="button" v-if="value.allowMulti" v-bind:id="activitygroup.id" v-bind:value="activitygroup.id" v-model="activityvaluesmulti">
-                  <input type="radio" v-bind:name="value.id" v-on:click="deselect(activitygroup.id, key)" v-else-if="!value.allowMulti" v-bind:id="activitygroup.id" v-bind:value="activitygroup.id" v-model="activityvalues[key]">
-                  <span v-html="activitygroup.title"></span>
+                  <input type="checkbox" v-bind:name="value.id" v-on:click="requiredFieldsCheck()" class="button" v-if="value.allowMulti" v-bind:id="activity.id" v-bind:value="activity.id" v-model="activityvaluesmulti">
+                  <input type="radio" v-bind:name="value.id" v-on:click="deselect(activity.id, key)" v-else-if="!value.allowMulti" v-bind:id="activity.id" v-bind:value="activity.id" v-model="activityvalues[key]">
+                  <span v-html="activity.title"></span>
                 </label>
               </div>
             </div>
@@ -133,7 +133,7 @@ export default {
       appVersion: process.env.VUE_APP_VERSION,
       device: '',
       children: [],
-      activities: {},
+      activityGroups: {},
       counts: {},
       location: '',
       activityvalues: {},
@@ -291,15 +291,15 @@ export default {
 
       this.location = '';
       this.showcounts = false;
-      this.activities = {};
+      this.activityGroups = {};
       for (var key in activities){
         var dictvalue = activitykeys.filter(elem => elem.id == key)[0];
-        dictvalue['options'] = activities[key];
-        this.activities[key] = dictvalue;
+        dictvalue['activities'] = activities[key];
+        this.activityGroups[key] = dictvalue;
       }
 
       //Check to see if any required fields in the activies 
-      this.buttonClickable = Object.keys(this.activities).map(elem => this.activities[elem].required).indexOf(true) == -1;
+      this.buttonClickable = Object.keys(this.activityGroups).map(elem => this.activityGroups[elem].required).indexOf(true) == -1;
       this.singleLocation(this.children)
     },
     singleLocation: function(children) {
@@ -379,6 +379,7 @@ export default {
       .catch(function(err){
         console.error('There was an error '+err);
       });
+      this.resetActivityChecks();
     },
     syncError: function(){
       //called when there is a sync error in post request. Clears out counts but preserves queued counts
@@ -568,7 +569,7 @@ $header_height: 3em;
 $tippy_backgroundcolor: #2c3e50;
 $tippy_textcolor: white;
 
-.activities {
+.activityGroups {
   display: flex;
   flex-wrap: wrap;
 }
