@@ -4,6 +4,7 @@ import SumaClient from '@/components/SumaClient.vue'
 import flushPromises from 'flush-promises'
 import VueRouter from 'vue-router'
 import VueTippy from 'vue-tippy';
+import localforage from 'localforage';
 
 const localVue = createLocalVue()
 localVue.use(VueRouter)
@@ -23,6 +24,36 @@ describe('SumaClient.vue', () => {
     expect(data.appVersion).toBe("1.1.0")
     expect(data.children).toEqual([])
     expect(data.initresults).toEqual([{"initiativeId":"2","initiativeTitle":"Sample Headcount Initiative"},{"initiativeId":"1","initiativeTitle":"Sample Reference Initiative"},{"initiativeId":"3","initiativeTitle":"test"}])
+  })
+  test('Send data', async () => {
+    const wrapper = mount(SumaClient, {localVue, router, attachToDocument: true});
+    await flushPromises();
+
+    //selects from dropdown
+    const select = wrapper.findAll('#initiativeDropdown > option');
+    select.at(2).element.selected = true;
+    wrapper.find('#initiativeDropdown').trigger('change');
+    await flushPromises();
+    await wrapper.vm.$nextTick()
+    var data = wrapper.vm.$data;
+    const locationselect = wrapper.findAll('.level-1 .menuelement');
+    await locationselect.at(11).trigger('click');
+
+    expect(Object.keys(data.counts)).toEqual(["1"])
+    expect(data.counts["1"]['counts']).toHaveLength(1)
+    localforage.getItem('counts').then((counts) => {
+      expect(Object.keys(counts)).toEqual(["1"])
+      expect(counts["1"]['counts']).toHaveLength(1)
+    })
+
+    const finishcollecting = wrapper.find('#finishcollecting');
+    await finishcollecting.trigger('click');
+    await flushPromises();
+    expect(data.counts).toEqual({})
+
+    localforage.getItem('queuedcounts').then((counts) => {
+      expect(counts).toEqual([])
+    })
   })
   test('Update select options', async () => {
     const wrapper = mount(SumaClient, {localVue, router, attachToDocument: true});
@@ -162,7 +193,7 @@ describe('SumaClient.vue', () => {
     expect(initiativedata['counts'][0]['location']).toEqual(11)
     expect(initiativedata['counts'].length).toEqual(1)
     expect(initiativedata["initiativeID"]).toEqual("3")
-    expect(initiativedata['counts']).toEqual([{"activities": [], "location":11, "number": 0, "timestamp": time}])
+    expect(initiativedata['counts']).toHaveLength(1)
     expect(wrapper.find(".countButton").text()).toBe("Count (0)")
 
     const rightalignbuttons = wrapper.findAll('.rightalign').at(1).trigger('click')
