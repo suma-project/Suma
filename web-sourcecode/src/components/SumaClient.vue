@@ -18,7 +18,7 @@
       <button v-if="ignoreSettings.length < 4" v-on:click="$modal.show('settings')" class="headerbuttons rightalign" aria-label="settings">
         <i class="fas fa-cog"></i>
       </button>
-      <button v-on:click="submitCounts()" class="headerbuttons rightalign" aria-label="finish collecting" v-bind:disabled="hasNoCounts">
+      <button v-on:click="submitCounts()" id="finishcollecting" class="headerbuttons rightalign" aria-label="finish collecting" v-bind:disabled="hasNoCounts">
         <span class="buttontext">Finish collecting</span>
         <i class="fas fa-check-circle toolbar-icons"></i>
       </button>

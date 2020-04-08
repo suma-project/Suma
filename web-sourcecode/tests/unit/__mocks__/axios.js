@@ -24,7 +24,7 @@ module.exports = {
 }),
 post: jest.fn((url) => {
   return Promise.resolve({
-    data: ''
+    data: 'Transaction Complete'
   });
 })
 }
