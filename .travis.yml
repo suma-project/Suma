@@ -4,9 +4,8 @@ node_js:
   - "10"
 jobs:
   include:
-    - node_js: 10
-      script:
-        - npm install && npm test
+    - name: Analysis Tools
+      script: npm install && npm test
 before_install:
   - npm install -g grunt-cli
   - gem install bundler
