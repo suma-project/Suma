@@ -2,12 +2,9 @@ language: node_js
 sudo: false
 node_js:
   - "10"
-jobs:
-  include:
-  - name: Analysis Tools
-    script: cd $TRAVIS_BUILD_DIR && npm install && npm test
-  - name: Client
-    script: cd $TRAVIS_BUILD_DIR && cd web-sourcecode && npm install && npm run test:unit
+script:
+  - cd $TRAVIS_BUILD_DIR && cd web-sourcecode && npm install && npm run test:unit
+  - cd $TRAVIS_BUILD_DIR && npm install && npm test
 before_install:
   - npm install -g grunt-cli
   - gem install bundler
