@@ -4,19 +4,13 @@ node_js:
   - "10"
 jobs:
   include:
-    - language: node_js
-      node_js: 10
-      before_script: cd analysis && bundle install
+    - node_js: 10
       script:
         - npm install && npm test
-    - language: node_js
-      node_js: 10
-      before_script: cd web-sourcecode
-      script:
-        - npm install && npm run test:unit
 before_install:
   - npm install -g grunt-cli
   - gem install bundler
+  - cd analysis && bundle install
 notifications:
   email:
     - casden@gmail.com
