@@ -10,12 +10,14 @@ jobs:
         - npm install -g grunt-cli
         - gem install bundler
         - cd analysis && bundle install
-      script: npm install && npm test
+      script:
+        - npm install && npm test
     - language: node_js
       node_js: 10
       before_install:
         - cd web-sourcecode
-      script: npm install && npm run test:unit
+      script:
+        - npm install && npm run test:unit
 notifications:
   email:
     - casden@gmail.com
