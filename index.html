@@ -7,25 +7,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="None">
   
-  <link rel="shortcut icon" href="img/favicon.ico">
+  <link rel="shortcut icon" href="./img/favicon.ico">
   <title>Overview - Suma</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
-  <link rel="stylesheet" href="css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="css/theme_extra.css" type="text/css" />
-  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+  <link rel="stylesheet" href="./css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="./css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="./css/highlight.css">
   
   <script>
     // Current page data
     var mkdocs_page_name = "Overview";
     var mkdocs_page_input_path = "index.md";
-    var mkdocs_page_url = "/Suma/";
+    var mkdocs_page_url = "/";
   </script>
   
-  <script src="js/jquery-2.1.1.min.js" defer></script>
-  <script src="js/modernizr-2.8.3.min.js" defer></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
-  <script>hljs.initHighlightingOnLoad();</script> 
+  <script src="./js/jquery-2.1.1.min.js"></script>
+  <script src="./js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="./js/highlight.pack.js"></script> 
   
 </head>
 
@@ -39,7 +38,7 @@
         <a href="." class="icon icon-home"> Suma</a>
         <div role="search">
   <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+    <input type="text" name="q" placeholder="Search docs" />
   </form>
 </div>
       </div>
@@ -55,23 +54,21 @@
             
     <li class="toctree-l2"><a href="#overview">Overview</a></li>
     
-
-    <li class="toctree-l2"><a href="#disclaimer">Disclaimer</a></li>
-    
-
-    <li class="toctree-l2"><a href="#documentation">Documentation</a></li>
-    
-
-    <li class="toctree-l2"><a href="#how-to-contribute">How to contribute?</a></li>
-    
-
-    <li class="toctree-l2"><a href="#project-urls">Project URLs</a></li>
-    
-
-    <li class="toctree-l2"><a href="#suma-community">Suma Community</a></li>
-    
-
-    <li class="toctree-l2"><a href="#credits-and-contacts">Credits and contacts</a></li>
+        <ul>
+        
+            <li><a class="toctree-l3" href="#disclaimer">Disclaimer</a></li>
+        
+            <li><a class="toctree-l3" href="#documentation">Documentation</a></li>
+        
+            <li><a class="toctree-l3" href="#suma-support">Suma Support</a></li>
+        
+            <li><a class="toctree-l3" href="#how-to-contribute">How to contribute?</a></li>
+        
+            <li><a class="toctree-l3" href="#project-urls">Project URLs</a></li>
+        
+            <li><a class="toctree-l3" href="#credits">Credits</a></li>
+        
+        </ul>
     
 
     </ul>
@@ -157,10 +154,10 @@
           <div role="main">
             <div class="section">
               
-                <p><img alt="Suma" src="img/suma-logo.png" /></p>
+                <p><img alt="Suma" src="./img/suma-logo.png" /></p>
 <h1 id="overview">Overview</h1>
 <p>Suma comprises a set of tools, including a mobile tablet-based (i.e. Apple iPad) data collection application, that will allow library staff to collect, aggregate, and interactively analyze real-time data about the usage of physical space and services. This tool will support the collection of more fine-grained data about physical space usage patterns by supporting the annotation of users with "activities." The data that this tool provides will allow the libraries to build on existing assessment practices by significantly improving our ability to analyze physical space usage trends against various milestones, as well as generating more dynamic and current data visualizations. As a result, this data can be both collected and utilized more frequently and at a much wider scope than before with relative ease.</p>
-<p>This project is currently being used at NC State as a pilot project for a wider deployment. Examples of the current and planned uses for this toolkit include the collection and analysis of data relating to:</p>
+<p>This project has been in use at NC State University Libraries since 2011. Examples of the current and planned uses for this toolkit include the collection and analysis of data relating to:</p>
 <ul>
 <li>Building headcounts</li>
 <li>Reference desk transactions</li>
@@ -168,27 +165,34 @@
 <li>Media production activities</li>
 <li>Experimental furniture usage</li>
 </ul>
-<h1 id="disclaimer">Disclaimer</h1>
-<p>We have worked hard to make the code as stable as possible, but are eager to receive feedback on any issues you discover. While we at NCSU Libraries' have been using it in a production capacity since July 2011 with great success, and several other institutions have successfully implemented this code, you should still take appropriate precautions when deploying this application. These include but are not limited to carefully backing up databases, monitoring error logs, maintaining close relationships with users, and reporting any problems back to the project team. Thank you for helping to ensure that this project continues to grow.</p>
-<p>As a safeguard, all JSON input from the client is logged. This will lead to large log files, but it allows for data recovery in the case of database problems or improperly rejected data. See the information about "JSON INPUT" entries in LOGS.md for more information. <strong>We at NCSU Libraries have never needed to make use of this recovery feature.</strong></p>
-<h1 id="documentation">Documentation</h1>
-<h1 id="how-to-contribute">How to contribute?</h1>
-<p>You want to contribute some code? Maybe some data reports, bug fixes, new clients, or even new core features? Awesome! Just contact us or fork the code on GitHub and create a pull request.</p>
-<h1 id="project-urls">Project URLs</h1>
+<h2 id="disclaimer">Disclaimer</h2>
+<p>We have worked hard to make the code as stable as possible, but are eager to receive feedback on any issues you discover. While we at NC State University Libraries have been using it in a production capacity since July 2011 with great success, and several other institutions have successfully implemented this code, you should still take appropriate precautions when deploying this application. These include but are not limited to carefully backing up databases, monitoring error logs, maintaining close relationships with users, and reporting any problems back to the project team. Thank you for helping to ensure that this project continues to grow.</p>
+<p>As a safeguard, all JSON input from the client is logged. This will lead to large log files, but it allows for data recovery in the case of database problems or improperly rejected data. See the information about "JSON INPUT" entries in LOGS.md for more information. <strong>We at NC State University Libraries have never needed to make use of this recovery feature.</strong></p>
+<h2 id="documentation">Documentation</h2>
 <ul>
-<li>Project page: http://www.lib.ncsu.edu/dli/projects/spaceassesstool/</li>
-<li>Repository: https://github.com/suma-project/suma</li>
+<li><a href="https://suma-project.github.io/Suma">Suma documentation site</a></li>
+<li><a href="./LICENSE">Suma license</a></li>
 </ul>
-<h1 id="suma-community">Suma Community</h1>
-<p>If you would like to be invited to a google group for the Suma users community, please email Joyce Chapman at joyce DOT chapman AT gmail DOT com</p>
-<h1 id="credits-and-contacts">Credits and contacts</h1>
+<h2 id="suma-support">Suma Support</h2>
+<p>For help installing Suma, creating data collection initiatives, etc., please start by posting to our <a href="https://groups.google.com/d/forum/suma-mobile-library-assessment-toolkit">Google Group</a>.</p>
+<h2 id="how-to-contribute">How to contribute?</h2>
+<p>Do you want to contribute some code? Maybe some data reports, bug fixes, new clients, or even new core features? Awesome! Just contact us or fork the code on GitHub and create a pull request.</p>
+<h2 id="project-urls">Project URLs</h2>
 <ul>
-<li>Bret Davidson (bddavids AT ncsu DOT edu)- Project lead.</li>
-<li>Jason Casden (casden AT gmail DOT com) – Project founder.</li>
-<li>Joyce Chapman (joyce DOT chapman AT gmail DOT com) – Community development and data analysis specialist.</li>
-<li>Rob Rucker – Project team member and our first stakeholder. Research Information Services department head responsible for NCSU D. H. Hill Libraries head counts and reference desk transactions.</li>
-<li>Eric McEachern – Backend developer, responsible for much of the development of the server-side components.</li>
-<li>Rusty Earl – Backend developer and technical consultant.</li>
+<li><a href="https://www.lib.ncsu.edu/dli/projects/spaceassesstool/">Project page</a></li>
+<li><a href="https://github.com/suma-project/Suma">Repository</a></li>
+</ul>
+<h2 id="credits">Credits</h2>
+<ul>
+<li>Bret Davidson – Project lead.</li>
+<li>Jason Casden – Project founder, currently Head, Software Development at the University of North Carolina Chapel Hill University Libraries.</li>
+<li>Joyce Chapman – Community development and data analysis specialist, currently Assessment Analyst &amp; Consultant at Duke University Libraries.</li>
+<li>Rob Rucker – Project team member and our first stakeholder.</li>
+<li>Niqui O'Neill – Developer.</li>
+<li>Jason Raitz – Developer.</li>
+<li>Luke Aeschleman – Developer.</li>
+<li>Eric McEachern –  Developer, responsible for much of the development of the server-side components.</li>
+<li>Rusty Earl – Developer and technical consultant.</li>
 </ul>
               
             </div>
@@ -232,13 +236,14 @@
     </span>
 </div>
     <script>var base_url = '.';</script>
-    <script src="js/theme.js" defer></script>
-      <script src="search/main.js" defer></script>
+    <script src="./js/theme.js"></script>
+      <script src="./search/require.js"></script>
+      <script src="./search/search.js"></script>
 
 </body>
 </html>
 
 <!--
-MkDocs version : 1.0.4
-Build Date UTC : 2019-10-18 15:17:00
+MkDocs version : 0.17.3
+Build Date UTC : 2020-04-27 15:05:36
 -->
