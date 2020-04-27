@@ -19,8 +19,8 @@
         <span class="buttontext">Undo Last Count</span>
         <i class="fas fa-undo toolbar-icons"></i>
       </button>
-      <div v-if="settings.dateTime && settings.dateTime != 'hide'" v-html="datetime" class="datetime filler"></div>
-      <div v-if="!settings.dateTime || settings.dateTime == 'hide'" class="filler"></div>
+      <div v-if="!settings.hideDateTime" v-html="datetime" class="datetime filler"></div>
+      <div v-if="settings.hideDateTime" class="filler"></div>
       <button v-if="ignoreSettings.length < 4" v-on:click="$modal.show('settings')" class="headerbuttons rightalign" aria-label="settings">
         <i class="fas fa-cog"></i>
       </button>
@@ -33,14 +33,9 @@
       <i class="fas fa-times closemodal" v-on:click="$modal.hide('settings')"></i>      
       <h2 class="settingsheader" style="text-align:center;">Settings</h2>
       <div class="settingslist">
-        <div v-if="ignoreSettings.indexOf('dateTime') == -1">
-          <select id="datetime" v-model="settings.dateTime">
-            <option value="" disabled>Select Date/Time Option</option>
-            <option value="time">Time</option>
-            <option value="date">Date</option>
-            <option value="true">Date and Time</option>
-            <option value="hide">Hide</option>
-          </select>
+        <div v-if="ignoreSettings.indexOf('hideDateTime') == -1">
+          <label for="hideDateTime">Hide Date Time</label>
+          <input type="checkbox" id="hideDateTime" v-model.lazy="settings['hideDateTime']">
         </div>
         <div v-if="ignoreSettings.indexOf('multiCount') == -1">
           <label for="multiCount">Show Multi Count</label>
@@ -188,7 +183,7 @@ export default {
     },
     settings: {
       handler: function(data) {
-        if(this.settings.dateTime != 'hide'){
+        if(!this.settings.hideDateTime){
           this.interval = setInterval(() => {
             this.datetime = this.getDateTime();
           },1000); 
@@ -499,14 +494,7 @@ export default {
       //used for settings 'dateTime' function.
       var now = Date.now()
       var date = new Date(now);
-      switch(this.settings.dateTime) {
-        case 'time':
-          return date.toLocaleTimeString();
-        case 'date':
-          return date.toDateString();
-        default:
-          return `${date.toDateString()}<br>${date.toLocaleTimeString()}`;
-      }
+      return `${date.toDateString()}<br>${date.toLocaleTimeString()}`
     },
     locationCounts: function() {
       //returns a list of counts for current location
