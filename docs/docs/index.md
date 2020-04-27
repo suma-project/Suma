@@ -33,7 +33,7 @@ Do you want to contribute some code? Maybe some data reports, bug fixes, new cli
 
 ## Project URLs
 
-* [Project page](https://www.lib.ncsu.edu/dli/projects/spaceassesstool/)
+* [Project page](https://www.lib.ncsu.edu/projects/suma)
 * [Repository](https://github.com/suma-project/Suma)
 
 ## Credits
