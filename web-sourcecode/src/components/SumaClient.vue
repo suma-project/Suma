@@ -1,9 +1,15 @@
 <template>
   <div role="main">
     <div class="header_content">
-      <button v-on:click="menuShown = !menuShown" class="headerbuttons leftalign menubutton" aria-label="toggle menu">
-        <i class="fas fa-bars" v-if="!menuShown"></i>
-        <i class="fas fa-times" v-else></i>
+      <button v-on:click="menuShown = !menuShown" class="menubutton headerbuttons leftalign" v-bind:class="{'fa-stack fa-1x': menuShown}" aria-label="toggle menu">
+          <span v-if="!menuShown">
+            <i class="fas fa-bars"></i>
+          </span>
+          <span v-else>
+            <i class="fas fa-bars fa-stack-1x"></i>
+            <i class="fas fa-caret-left fa-stack-1x barcaret"></i>
+            <span class="fa-stack-text arrowpadding">|</span>
+          </span>
       </button>
       <button v-on:click="resetCounts()" class="headerbuttons leftalign" aria-label="Abandon all counts" v-bind:disabled="hasNoCounts">
         <span class="buttontext">Abandon All Counts</span>
@@ -791,9 +797,11 @@ button {
   font-size: 2em;
   width: 1.5em;
   padding: 0px;
+  height: 1em;
+  line-height: 1em;
   border: 0px solid white;
   background: none;
-  margin-top: 5px;
+  margin-top: 10px;
 }
 
 .toolbar-icons {
@@ -919,5 +927,23 @@ ul:not(.toplevel) {
   float:right;
   font-size:2em;
   padding:5px;
+}
+
+.arrowpadding {
+  font-size:.40em; 
+  color: #A2ADBC; 
+  height: 8px; 
+  position: relative;
+  margin-right:13px;
+  vertical-align:top; 
+  font-weight:900;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+.barcaret {
+  color:black;
+  text-align:left;
+  margin-left: 8px;
+  font-size:.7em
 }
 </style>
