@@ -34,27 +34,26 @@
       <h2 class="settingsheader" style="text-align:center;">Settings</h2>
       <div class="settingslist">
         <div v-if="ignoreSettings.indexOf('hideDateTime') == -1">
-          <label for="hideDateTime">Hide Date Time</label>
           <input type="checkbox" id="hideDateTime" v-model.lazy="settings['hideDateTime']">
+          <label for="hideDateTime">Hide Date Time</label>
+          <i class="fas fa-info-circle settinginfo" content="Hide date time in the toolbar" v-tippy="{ theme : 'info', arrow: true, interactive : true, placement : 'top', trigger : 'click', 'maxWidth': '1000px'}"></i>
         </div>
         <div v-if="ignoreSettings.indexOf('multiCount') == -1">
-          <label for="multiCount">Show Multi Count</label>
           <input type="checkbox" id="multiCount" v-model.lazy="settings['multiCount']">
+          <label for="multiCount">Show Multi Count</label>
+          <i class="fas fa-info-circle settinginfo" content="Will add an input box that allows you to add multiple counts. Please note that all counts will have the same timestamp. We recommended that this feature be used cautiously, as it is much easier to enter large amounts of data this way. Use at your own risk!" v-tippy="{ theme : 'info', arrow: true, interactive : true, placement : 'top', trigger : 'click', 'maxWidth': '1000px'}"></i>
         </div>
         <div v-if="ignoreSettings.indexOf('lastCount') == -1">
-          <label for="lastCount">Show Last Count</label>
           <input type="checkbox" id="lastCount" v-model.lazy="settings['lastCount']">
-        </div>
-        <div v-if="ignoreSettings.indexOf('requireLocations') == -1">
-          <label for="requireLocations">Require All Locations</label>
-          <input type="checkbox" id="requireLocations" v-model.lazy="settings['requireLocations']">
+          <label for="lastCount">Show Last Count</label>
+          <i class="fas fa-info-circle settinginfo" content="Shows the time of the last count for the selected location." v-tippy="{ theme : 'info', arrow: true, interactive : true, placement : 'top', trigger : 'click', 'maxWidth': '1000px'}"></i>
         </div>
       </div>
     </modal>
     <transition name="sidebar">
       <div class="selectbuttons" v-show="menuShown">
         <div class="alldropdowns">
-          <select v-bind:disabled="!requiredLocationsCheck.passed" aria-label="initiative dropdown" id="initiativeDropdown" v-model="currentinit" v-on:change="updateInit()">
+          <select aria-label="initiative dropdown" id="initiativeDropdown" v-model="currentinit" v-on:change="updateInit()">
             <option disabled value="">Select an initiative</option>
             <option v-bind:value="item.initiativeId" v-for="item in initresults" v-bind:key="item.initiativeId" v-html="item.initiativeTitle">
             </option>
@@ -362,18 +361,10 @@ export default {
             total['locations'].push(session.counts.map(count => count.location))
             return total;
           }, {'counts': 0, 'locations': []})
-        var locationscheck = this.requiredLocationsCheck;
-        //if there are counts and requiredLocationsCheck is passed (auto passes when setting is not enabled) then send counts
-        if (allcounts.length !== 0 && totals['counts'] !== 0 && locationscheck.passed){
+        //if there are counts then send counts
+        if (allcounts.length !== 0 && totals['counts'] !== 0){
           let syncObj = this.syncCountDict(allcounts);
           this.sendCounts(syncObj, totals);
-        } else if(!locationscheck.passed) {
-          swal.fire({
-            title: "Missing Locations!",
-            html: `${locationscheck.text} is missing a count.
-            Make sure all locations have at least a zero count.`,
-            icon: "warning"
-          })
         }
       })
       .then(() => { })
@@ -523,27 +514,7 @@ export default {
         returnvalue = timestamp.toLocaleTimeString()
       }
       return returnvalue
-    },
-    requiredLocationsCheck: function() {
-      //checks to see if all locations have counts if 'requireLocations' setting is enabled.
-       if (this.settings.requireLocations) {
-         var lowestlevel = Array.from(document.getElementsByClassName('lowestlocation'));
-         var requiredlocations = lowestlevel.map(lle => parseInt(lle.id));
-         var currentlocations = [] 
-         if (this.counts[this.currentinit]){
-           currentlocations = this.counts[this.currentinit]['counts'].map(count => count.location)
-         }
-         var passedCheck = _.difference(requiredlocations, currentlocations);
-         if (passedCheck.length == 0 || passedCheck.length == requiredlocations.length) {
-           return {'passed': true}
-         } else {
-           var items = passedCheck.map(elem => document.getElementById(elem).innerText)
-           return {'text':items.join('<br>'), 'passed': false};
-         }
-       } else {
-         return {'passed':true};
-       }
-     }
+    }
   },
   filters: {
     unescapeFilter: function (value) {
@@ -892,10 +863,8 @@ ul:not(.toplevel) {
 }
 
 .settingslist {
-  display:flex;
-  align-items:center;
+  display:grid;
   justify-content:center;
-  flex-direction:column;
 
   div  {
     padding: 5px;
@@ -903,7 +872,11 @@ ul:not(.toplevel) {
   }
 
   label {
-    padding-right: 10px;
+    padding-left: 6px;
+  }
+
+  .settinginfo {
+    margin: 0px 0px 0px 6px;
   }
 
   input[type=checkbox] {
