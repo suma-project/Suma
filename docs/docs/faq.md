@@ -8,7 +8,7 @@ Settings by themselves are pretty sticky, they only disappear when history is de
 
 | variable | setting | notes |
 | --- | --- | --- |
-| dateTime | date, time, or true | | 
+| hideDateTime | true | | 
 | lastCount | true | | 
 | requireLocations | true | This will not work if the page is refreshed. Your counts will be sent. This only works when **Finish Collecting** is pressed.|
 | multiCount | true | **Please note that all counts will have the same timestamp. We recommended that this feature be used cautiously, as it is much easier to enter large amounts of data this way. Use at your own risk!** |

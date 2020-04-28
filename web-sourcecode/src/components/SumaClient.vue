@@ -1,9 +1,15 @@
 <template>
   <div role="main">
     <div class="header_content">
-      <button v-on:click="menuShown = !menuShown" class="headerbuttons leftalign menubutton" aria-label="toggle menu">
-        <i class="fas fa-bars" v-if="!menuShown"></i>
-        <i class="fas fa-times" v-else></i>
+      <button v-on:click="menuShown = !menuShown" class="menubutton headerbuttons leftalign" v-bind:class="{'fa-stack fa-1x': menuShown}" aria-label="toggle menu">
+          <span v-if="!menuShown">
+            <i class="fas fa-bars"></i>
+          </span>
+          <span v-else>
+            <i class="fas fa-bars fa-stack-1x"></i>
+            <i class="fas fa-caret-left fa-stack-1x barcaret"></i>
+            <span class="fa-stack-text arrowpadding">|</span>
+          </span>
       </button>
       <button v-on:click="resetCounts()" class="headerbuttons leftalign" aria-label="Abandon all counts" v-bind:disabled="hasNoCounts">
         <span class="buttontext">Abandon All Counts</span>
@@ -13,8 +19,8 @@
         <span class="buttontext">Undo Last Count</span>
         <i class="fas fa-undo toolbar-icons"></i>
       </button>
-      <div v-if="settings.dateTime && settings.dateTime != 'hide'" v-html="datetime" class="datetime filler"></div>
-      <div v-if="!settings.dateTime || settings.dateTime == 'hide'" class="filler"></div>
+      <div v-if="!settings.hideDateTime" v-html="datetime" class="datetime filler"></div>
+      <div v-if="settings.hideDateTime" class="filler"></div>
       <button v-if="ignoreSettings.length < 4" v-on:click="$modal.show('settings')" class="headerbuttons rightalign" aria-label="settings">
         <i class="fas fa-cog"></i>
       </button>
@@ -27,14 +33,9 @@
       <i class="fas fa-times closemodal" v-on:click="$modal.hide('settings')"></i>      
       <h2 class="settingsheader" style="text-align:center;">Settings</h2>
       <div class="settingslist">
-        <div v-if="ignoreSettings.indexOf('dateTime') == -1">
-          <select id="datetime" v-model="settings.dateTime">
-            <option value="" disabled>Select Date/Time Option</option>
-            <option value="time">Time</option>
-            <option value="date">Date</option>
-            <option value="true">Date and Time</option>
-            <option value="hide">Hide</option>
-          </select>
+        <div v-if="ignoreSettings.indexOf('hideDateTime') == -1">
+          <label for="hideDateTime">Hide Date Time</label>
+          <input type="checkbox" id="hideDateTime" v-model.lazy="settings['hideDateTime']">
         </div>
         <div v-if="ignoreSettings.indexOf('multiCount') == -1">
           <label for="multiCount">Show Multi Count</label>
@@ -182,7 +183,7 @@ export default {
     },
     settings: {
       handler: function(data) {
-        if(this.settings.dateTime != 'hide'){
+        if(!this.settings.hideDateTime){
           this.interval = setInterval(() => {
             this.datetime = this.getDateTime();
           },1000); 
@@ -493,14 +494,7 @@ export default {
       //used for settings 'dateTime' function.
       var now = Date.now()
       var date = new Date(now);
-      switch(this.settings.dateTime) {
-        case 'time':
-          return date.toLocaleTimeString();
-        case 'date':
-          return date.toDateString();
-        default:
-          return `${date.toDateString()}<br>${date.toLocaleTimeString()}`;
-      }
+      return `${date.toDateString()}<br>${date.toLocaleTimeString()}`
     },
     locationCounts: function() {
       //returns a list of counts for current location
@@ -791,9 +785,11 @@ button {
   font-size: 2em;
   width: 1.5em;
   padding: 0px;
+  height: 1em;
+  line-height: 1em;
   border: 0px solid white;
   background: none;
-  margin-top: 5px;
+  margin-top: 10px;
 }
 
 .toolbar-icons {
@@ -919,5 +915,23 @@ ul:not(.toplevel) {
   float:right;
   font-size:2em;
   padding:5px;
+}
+
+.arrowpadding {
+  font-size:.40em; 
+  color: #A2ADBC; 
+  height: 8px; 
+  position: relative;
+  margin-right:13px;
+  vertical-align:top; 
+  font-weight:900;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+.barcaret {
+  color:black;
+  text-align:left;
+  margin-left: 8px;
+  font-size:.7em
 }
 </style>
