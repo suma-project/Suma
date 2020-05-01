@@ -123,7 +123,7 @@ import DeviceDetector from "device-detector-js";
 import swal from 'sweetalert2'
 import pluralize from 'pluralize';
 import treeMenu from './tree';
-import shared from './compontentFunctions';
+import shared from './componentFunctions';
 
 var _ = require('lodash');
 

@@ -24,7 +24,7 @@
 </template>
 <script>
 /* eslint-disable no-console */
-import shared from './compontentFunctions'
+import shared from './componentFunctions'
 
   export default { 
     props: [ 'label', 'nodes', 'depth', 'id', 'parentdata', 'description', 'parents'],
