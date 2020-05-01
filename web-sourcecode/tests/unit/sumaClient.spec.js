@@ -39,11 +39,10 @@ describe('SumaClient.vue', () => {
     const locationselect = wrapper.findAll('.level-1 .menuelement');
     await locationselect.at(11).trigger('click');
 
-    expect(Object.keys(data.counts)).toEqual(["1"])
-    expect(data.counts["1"]['counts']).toHaveLength(1)
+    expect(Object.keys(data.counts)).toEqual(["counts", "initiativeID", "startTime", "endTime"])
+    expect(data.counts['counts']).toHaveLength(1)
     localforage.getItem('counts').then((counts) => {
-      expect(Object.keys(counts)).toEqual(["1"])
-      expect(counts["1"]['counts']).toHaveLength(1)
+      expect(counts['counts']).toHaveLength(1)
     })
 
     const finishcollecting = wrapper.find('#finishcollecting');
@@ -90,7 +89,7 @@ describe('SumaClient.vue', () => {
     await locationselect3.at(0).trigger('click');
 
     const time = Math.round(Date.now() / 1000);
-    var initiativedata = data.counts[data.currentinit];
+    var initiativedata = data.counts;
     expect(data.currentinit).toBe("2")
     expect(data.location).toBe(12)
     expect(data.showcounts).toBe(true)
@@ -172,22 +171,21 @@ describe('SumaClient.vue', () => {
     expect(data.showcounts).toBe(false)
     expect(data.activityGroups).toEqual({"1":{"id":1,"title":"Type","rank":1,"required":true,"allowMulti":true,"description":"","activities":[{"id":1,"title":"Reading","rank":0,"groupId":1},{"id":2,"title":"Computing","rank":1,"groupId":1},{"id":3,"title":"Collaborating","rank":2,"groupId":1},{"id":4,"title":"Training/Class","rank":3,"groupId":1}]},"2":{"id":2,"title":"Medium","rank":2,"required":false,"allowMulti":true,"description":"","activities":[{"id":5,"title":"In-Person","rank":4,"groupId":2},{"id":6,"title":"Online","rank":5,"groupId":2}]}})
     expect(wrapper.findAll(".countButton").length).toBe(0)
-    expect(data.counts[data.currentinit]).toBe(undefined)
-    expect(Object.keys(data.counts)).toEqual(["2"])
+    expect(data.counts).toEqual({})
 
     //change initiative with one location
     select.at(3).element.selected = true;
     wrapper.find('#initiativeDropdown').trigger('change');
     await flushPromises();
     await wrapper.vm.$nextTick();
-    initiativedata = data.counts[data.currentinit];
+    initiativedata = data.counts;
     expect(data.showcounts).toBe(true)
     expect(data.locationtitle).toBe("location test")
     expect(data.locationDescription).toBe("")
     expect(data.currentinit).toBe("3")
     expect(data.activityGroups).toEqual({"4": {"allowMulti": true, "id": 4, "activities": [{"groupId": 4, "id": 8, "rank": 0, "title": "New Activity"}, {"groupId": 4, "id": 9, "rank": 1, "title": "test"}, {"groupId": 4, "id": 10, "rank": 2, "title": "test Activity 2"}], "rank": 0, "required": true, "title": "New Activity Group"}})
     expect(wrapper.find(".countButton").text()).toBe("Count (0)")
-    expect(Object.keys(data.counts)).toEqual(["2", "3"])
+    expect(Object.keys(data.counts)).toEqual(["counts", "initiativeID", "startTime", "endTime"])
     expect(data.location).toBe(11)
     expect(initiativedata['counts'][0]['number']).toEqual(0)
     expect(initiativedata['counts'][0]['location']).toEqual(11)

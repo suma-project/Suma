@@ -42,7 +42,7 @@ import shared from './compontentFunctions'
     watch: {
       'parentdata.counts': {
         handler: function(data) {
-          this.currentcount = shared.getCounts(data[this.parentdata.currentinit], this.id);
+          this.currentcount = shared.getCounts(data, this.id);
         },
         deep: true
       },
@@ -56,7 +56,7 @@ import shared from './compontentFunctions'
       },
     },
     created() {      
-      this.currentcount = shared.getCounts(this.parentdata.counts[this.parentdata.currentinit], this.id);
+      this.currentcount = shared.getCounts(this.parentdata.counts, this.id);
       this.selected = this.id == this.parentdata.location;
     },
     methods: {
