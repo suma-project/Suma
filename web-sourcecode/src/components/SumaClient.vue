@@ -204,7 +204,7 @@ export default {
       if (!data.nodes){
         this.location = data.id;
         this.locationDescription = data.description;
-        this.locationtitle = `${this.cachedinitdata[this.currentinit].initiativeTitle} | ${data.title}`;
+        this.locationtitle = data.title;
         this.showcounts = true;
       }
       this.singleLocation(data.nodes);
