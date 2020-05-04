@@ -11,8 +11,8 @@
             <span class="fa-stack-text arrowpadding">|</span>
           </span>
       </button>
-      <button v-on:click="resetCounts()" class="headerbuttons leftalign" aria-label="Abandon all counts" v-bind:disabled="hasNoCounts">
-        <span class="buttontext">Abandon All Counts</span>
+      <button v-on:click="resetCounts()" class="headerbuttons leftalign" aria-label="Abandon initiative counts" v-bind:disabled="hasNoCounts">
+        <span class="buttontext">Abandon Counts</span>
         <i class="fas fa-trash-alt toolbar-icons"></i>
       </button>
       <button v-on:click="undoLastCount()" class="headerbuttons leftalign" aria-label="Undo last count" v-bind:disabled="compCounts===''">
@@ -24,7 +24,7 @@
       <button v-if="ignoreSettings.length < 4" v-on:click="$modal.show('settings')" class="headerbuttons rightalign" aria-label="settings">
         <i class="fas fa-cog"></i>
       </button>
-      <button v-on:click="submitCounts()" id="finishcollecting" class="headerbuttons rightalign" aria-label="finish collecting" v-bind:disabled="hasNoCounts">
+      <button v-on:click="submitCounts()" id="finishcollecting" class="headerbuttons rightalign" aria-label="finish collecting" v-bind:disabled="hasNoStoredCounts">
         <span class="buttontext">Finish collecting</span>
         <i class="fas fa-check-circle toolbar-icons"></i>
       </button>
@@ -154,7 +154,8 @@ export default {
       ignoreSettings: Object.keys(this.$route.query),
       countNumber: 1,
       datetime: '',
-      locationDescription: ''
+      locationDescription: '',
+      queuedcounts: []
     }
   },
   created() {
@@ -273,9 +274,22 @@ export default {
         }
       });
     },
+    buildAllCounts: function(counts){ 
+      let vuecounts = _.isEmpty(this.counts) ? [] : [this.counts];
+      let returncounts = counts ? counts.concat(vuecounts) : vuecounts;
+      return returncounts;
+    },
     updateInit: function() {
       //triggered when dropdown options are changed
       this.children = [];
+      if (!this.hasNoCounts){
+        localforage.getItem('queuedcounts').then((counts) => {
+          let allcounts = this.buildAllCounts(counts)
+          localforage.setItem('queuedcounts', allcounts);
+          this.queuedcounts = allcounts;
+          this.counts = {}
+        })
+      }
       if (Object.keys(this.cachedinitdata).indexOf(this.currentinit) > -1){
         this.populateInitData(this.cachedinitdata[this.currentinit])
       } else {
@@ -354,10 +368,10 @@ export default {
       localforage.getItem('queuedcounts').then((counts) => {
         //merges queued counts (counts that had previously been sent but failed due problem with server/etc)
         //with counts currently in localforage
-        var currentcounts = Object.values(this.counts);
-        var allcounts = counts ? counts.concat(currentcounts) : currentcounts;
+        let allcounts = this.buildAllCounts(counts);
         //sets queued counts to merged counts
         localforage.setItem('queuedcounts', allcounts);
+        this.queuedcounts = allcounts;
         //checks all counts and gets locals of locations and counts
         var totals = allcounts.reduce(function(total, session) {
             total['counts'] += shared.getCounts(session, false, false);
@@ -394,6 +408,7 @@ export default {
       }
       if (clearqueue){
         localforage.setItem('queuedcounts', []);
+        this.queuedcounts = []
       }
     },
     resetCounts: function(){
@@ -413,11 +428,6 @@ export default {
         console.log(err)
       });
     },
-    cleanEmptyInitCounts: function(){
-      //removes any initiative data where all the counts have been removed
-      //i.e. this.counts[2] = {'startTime': '12345', 'endtime':'12345', 'counts': []}
-      this.counts = _.omitBy(this.counts, v => v['counts'].length===0);
-    },
     resetInitCountsByLocation: function(locationID){
       //clears counts for a specific location. Called when "reset location counts" button is clicked
       var cleancomp = parseInt(this.compCounts.match(/\d+/)[0])
@@ -428,8 +438,7 @@ export default {
         showCancelButton: true,
       }).then(parameters => {
         if (parameters.value == true) {
-          _.remove(this.counts[this.currentinit]['counts'], v => v.location === locationID);
-          this.cleanEmptyInitCounts();
+          this.counts['counts'] = this.counts['counts'].filter(v => v.location !== locationID);
         } 
       }).catch(err => {
         console.log(err)
@@ -437,16 +446,13 @@ export default {
     },
     undoLastCount: function(){
       //undoes the last count on current location. Called when "undo last count" button is clicked
-      if (this.counts[this.currentinit] && this.counts[this.currentinit]['counts'].length > 0){
+      if (!this.hasNoCounts){
           let localCounts = this.locationCounts();
           var removeitem = localCounts.pop();          
           if (removeitem){
-            this.counts[this.currentinit]['counts'] = _.without(this.counts[this.currentinit]['counts'], removeitem);
+            this.counts['counts'] = _.without(this.counts['counts'], removeitem);
             if(localCounts.length ===0){
              switch(removeitem.number) {
-               case 0:
-                 this.cleanEmptyInitCounts();
-                 break;
                case 1:
                  this.addToCount(0);
                  break;
@@ -460,7 +466,7 @@ export default {
       //called when count button pressed; adds new counts for each initiative
       var timestamp = Math.round(Date.now() / 1000);
       var activities = this.activityvaluesmulti.concat(Object.values(this.activityvalues));
-      var countDict = this.counts[this.currentinit] ?? {'counts':[], 'initiativeID': this.currentinit, 'startTime': timestamp}; 
+      var countDict = !this.hasNoCounts ? this.counts : {'counts':[], 'initiativeID': this.currentinit, 'startTime': timestamp}; 
       var location = this.location;
       //remove all zero counts for current location
       _.remove(countDict['counts'], function(elem) {
@@ -471,7 +477,7 @@ export default {
       if(check) {
         countDict['counts'].push({'timestamp': timestamp,'location': this.location, 'activities': activities, 'number': parseInt(number)});
         countDict['endTime'] = timestamp;
-        this.$set(this.counts,this.currentinit, countDict);
+        this.counts = countDict;
       }
       this.resetActivityChecks();
     },
@@ -499,8 +505,8 @@ export default {
     locationCounts: function() {
       //returns a list of counts for current location
       var counts = ''
-      if (this.counts[this.currentinit] && this.counts[this.currentinit]['counts']){
-        counts = this.counts[this.currentinit]['counts'].filter(elem => elem.location == this.location);
+      if (!this.hasNoCounts){
+        counts = this.counts['counts'].filter(elem => elem.location == this.location);
       }
       return counts
     }
@@ -508,11 +514,14 @@ export default {
   computed: {
     compCounts: function() {
       //gets current location counts. Called for button counts
-      return shared.getCounts(this.counts[this.currentinit], this.location)
+      return shared.getCounts(this.counts, this.location)
     },
     hasNoCounts: function() {
       //check to see if location has no counts. Used to disable buttons
-      return Object.keys(this.counts).length === 0 && this.counts.constructor === Object;
+      return !this.counts || !this.counts['counts'] || this.counts['counts'].length == 0;
+    },
+    hasNoStoredCounts: function() {
+      return this.hasNoCounts && this.queuedcounts.length == 0;
     },
     lastCount: function(){
       //gets the last count for current location. Used for 'lastCount' setting.

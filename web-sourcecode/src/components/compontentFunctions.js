@@ -2,7 +2,7 @@
 export default {
     getCounts: function(countsarray, location, parens=true) {
         var currentcount = "";
-        if (countsarray){
+        if (countsarray && countsarray['counts']){
             var allcounts = !location ? countsarray['counts'] : countsarray['counts'].filter(element => element.location == location);
             const zerocountssort = allcounts.reduce(function(total, objitem) {
                 objitem.number != 0 ? total['nonzerocounts'].push(objitem) : total['zerocounts'].push(objitem)
