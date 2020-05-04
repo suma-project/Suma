@@ -39,5 +39,10 @@ npm run test
 npm run lint
 ```
 
+### Lints scss in vue files
+```
+npm run lint:css
+```
+
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).

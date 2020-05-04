@@ -552,6 +552,10 @@ $header_height: 3em;
 $tippy_backgroundcolor: #2c3e50;
 $tippy_textcolor: white;
 
+button {
+  touch-action: manipulation;
+}
+
 .activityGroups {
   display: flex;
   flex-wrap: wrap;
@@ -560,7 +564,7 @@ $tippy_textcolor: white;
 .activityGroup {
   border: 1px solid DarkGray;
   border-radius: 5px;
-  padding: 2px 5px 5px;
+  // padding: 2px 5px 5px;
   margin: 10px;
   flex: 1 1 calc(50% - 20px);
   text-align: center;
@@ -568,9 +572,69 @@ $tippy_textcolor: white;
   box-sizing: border-box;
 }
 
+.settingslist {
+  display:grid;
+  justify-content:center;
 
+  div  {
+    padding: 5px;
+    font-size: 1.2em;
+  }
 
-#activityButton, .headerbuttons, .resetloccounts{
+  label {
+    padding-left: 6px;
+  }
+
+  .settinginfo {
+    margin: 0px 0px 0px 6px;
+  }
+
+  input[type=checkbox] {
+    transform: scale(1.8);
+  }
+}
+
+.tippy-tooltip.info-theme {
+  background-color: #{$tippy_backgroundcolor};
+  color: #{$tippy_textcolor};
+  * {
+    max-width: 100%;
+  }
+  a {
+    color: lightblue;
+  }
+  .tippy-backdrop {
+    background-color: #{$tippy_backgroundcolor};
+  }
+  .tippy-arrow {
+    border-top-color: #{$tippy_backgroundcolor};
+  }
+}
+
+#current_loc_label {
+  font-size: 1.6em;
+  border-bottom: 1px dotted;
+  text-align: center;
+  margin: 0px;
+  padding: .5em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  * {
+    margin: 0 0.5em 0 0.5em;
+  }
+
+  .fa-info-circle {
+    margin: -5px;
+  }
+
+  span {
+    align-self: center;
+  }
+}
+
+.headerbuttons, .resetloccounts, #activityButton{
   text-align:center;
   padding:13px 10px;
   display:inline-block;
@@ -652,35 +716,11 @@ i.fa-info-circle {
   padding: 15px 32px;
   text-align: center;
   text-decoration: none;
-  display: inline-block;
   cursor: pointer;
   margin-top: 20px;
   max-width: 100%;
   display: inline-flex;
   justify-content: center;
-}
-
-#current_loc_label {
-  font-size: 1.6em;
-  border-bottom: 1px dotted;
-  text-align: center;
-  margin: 0px;
-  padding: .5em;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  
-  * {
-    margin: 0 0.5em 0 0.5em;
-  }
-
-  .fa-info-circle {
-    margin: -5px;
-  }
-
-  span {
-    align-self: center;
-  }
 }
 
 select {
@@ -706,15 +746,10 @@ body {
   top: 0;
   position: fixed;
   z-index: 3;
-  display: inline-block;
   padding: #{$header_padding}px 0px #{$header_padding}px;
   height: #{$header_height};
   display: flex;
   justify-content: center;
-}
-
-button {
-  touch-action: manipulation;
 }
 
 .selectbuttons {
@@ -862,44 +897,6 @@ ul:not(.toplevel) {
   font-size: 2em;
   margin-bottom: 30px;
   text-align: center;
-}
-.tippy-tooltip.info-theme {
-  background-color: #{$tippy_backgroundcolor};
-  color: #{$tippy_textcolor};
-  * {
-    max-width: 100%;
-  }
-  a {
-    color: lightblue;
-  }
-  .tippy-backdrop {
-    background-color: #{$tippy_backgroundcolor};
-  }
-  .tippy-arrow {
-    border-top-color: #{$tippy_backgroundcolor};
-  }
-}
-
-.settingslist {
-  display:grid;
-  justify-content:center;
-
-  div  {
-    padding: 5px;
-    font-size: 1.2em;
-  }
-
-  label {
-    padding-left: 6px;
-  }
-
-  .settinginfo {
-    margin: 0px 0px 0px 6px;
-  }
-
-  input[type=checkbox] {
-    transform: scale(1.8);
-  }
 }
 
 .closemodal {

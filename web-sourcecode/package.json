@@ -6,6 +6,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --dest ../web",
     "lint": "vue-cli-service lint",
+    "lint:css": "stylelint '**/*.vue'",
     "test:e2e": "vue-cli-service test:e2e",
     "test:unit": "vue-cli-service test:unit"
   },
@@ -41,6 +42,9 @@
     "eslint-plugin-vue": "^5.0.0",
     "flush-promises": "^1.0.2",
     "geckodriver": "^1.19.1",
+    "stylelint": "^13.3.3",
+    "stylelint-config-recommended": "^3.0.0",
+    "stylelint-webpack-plugin": "^2.0.0",
     "vue-template-compiler": "^2.6.10"
   },
   "eslintConfig": {
