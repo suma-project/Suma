@@ -48,13 +48,21 @@
           <label for="lastCount">Show Last Count</label>
           <i class="fas fa-info-circle settinginfo" content="Shows the time of the last count for the selected location." v-tippy="{ theme : 'info', arrow: true, interactive : true, placement : 'top', trigger : 'click', 'maxWidth': '1000px'}"></i>
         </div>
+        <div v-if="ignoreSettings.indexOf('initiative') == -1">
+          <select aria-label="settings initiative dropdown" id="settingsInitiativeDropdown" v-model="settings['initiative']">
+            <option value=undefined>No Default Initiative</option>
+            <option v-bind:value="item.initiativeId" v-for="item in initresults" v-bind:key="item.initiativeId" v-html="item.initiativeTitle">
+            </option>
+          </select>
+          <i class="fas fa-info-circle settinginfo" content="Sets a default initiative so when counts are submitted or the page is refreshed the same initiative will stay selected." v-tippy="{ theme : 'info', arrow: true, interactive : true, placement : 'top', trigger : 'click', 'maxWidth': '1000px'}"></i>
+        </div>
       </div>
     </modal>
     <transition name="sidebar">
       <div class="selectbuttons" v-show="menuShown">
         <div class="alldropdowns">
           <select aria-label="initiative dropdown" id="initiativeDropdown" v-model="currentinit" v-on:change="updateInit()">
-            <option disabled value="">Select an initiative</option>
+            <option disabled value=undefined>Select an initiative</option>
             <option v-bind:value="item.initiativeId" v-for="item in initresults" v-bind:key="item.initiativeId" v-html="item.initiativeTitle">
             </option>
           </select>
@@ -125,7 +133,7 @@ export default {
   data: function() {
     return {
       initresults: '',
-      currentinit: '',
+      currentinit: undefined,
       cachedinitdata: {},
       initurl: initiativeUrl,
       baseiniturl: baseInitUrl,
@@ -162,15 +170,6 @@ export default {
     clearInterval(this.interval);    
   },
   watch: {
-    currentinit: function(){
-      localforage.setItem('currentinit', this.currentinit);
-    },
-    children: {
-      handler: function() {
-        localforage.setItem('children', this.children);
-      },
-      deep: true
-    },
     cachedinitdata: function (data) {
       localforage.setItem('cachedinitdata', data);
     },
@@ -182,6 +181,10 @@ export default {
     },
     settings: {
       handler: function(data) {
+        if (this.settings.initiative && this.settings.initiative != 'undefined' && this.settings.initiative != this.currentinit) {
+          this.currentinit = this.settings.initiative;
+          this.updateInit()
+        }
         if(!this.settings.hideDateTime){
           this.interval = setInterval(() => {
             this.datetime = this.getDateTime();
@@ -223,7 +226,7 @@ export default {
         this.buttonClickable = checked.indexOf(0) == -1;
       });
     },
-    loadLocalForageData: function(getItems=['counts', 'settings', 'currentinit', 'children']){
+    loadLocalForageData: function(getItems=['counts', 'settings']){
       //get local forage data from indexDB for each field, load into vue field
       for (var i=0; i<getItems.length; i++){
         const item = getItems[i];
@@ -382,7 +385,13 @@ export default {
     },
     clearCounts: function(clearqueue=false) {
       //clears counts and if sent successfully will clear out queued counts. By default will not clear queued counts
-      this.counts = {}
+      this.counts = {};
+      this.location = '';
+      this.showcounts = false;
+      this.currentinit = this.settings.initiative;
+      if (!this.currentinit || this.currentinit == 'undefined'){
+        this.children = []
+      }
       if (clearqueue){
         localforage.setItem('queuedcounts', []);
       }

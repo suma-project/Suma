@@ -20,7 +20,7 @@ describe('SumaClient.vue', () => {
     const wrapper = shallowMount(SumaClient, {localVue, router});
     await flushPromises();
     var data = wrapper.vm.$data;
-    expect(data.currentinit).toBe('')
+    expect(data.currentinit).toBe(undefined)
     expect(data.appVersion).toBe("1.1.0")
     expect(data.children).toEqual([])
     expect(data.initresults).toEqual([{"initiativeId":"2","initiativeTitle":"Sample Headcount Initiative"},{"initiativeId":"1","initiativeTitle":"Sample Reference Initiative"},{"initiativeId":"3","initiativeTitle":"test"}])
@@ -200,12 +200,11 @@ describe('SumaClient.vue', () => {
     await flushPromises();
     await wrapper.vm.$nextTick();
     expect(data.counts).toEqual({})
-    expect(data.currentinit).toBe("3")
-    expect(data.children).toEqual([{"id": 11, "title": "location test"}])
-    expect(data.location).toBe(11)
-    expect(data.showcounts).toBe(true)
+    expect(data.currentinit).toBe(undefined)
+    expect(data.children).toEqual([])
+    expect(data.location).toBe('')
+    expect(data.showcounts).toBe(false)
     expect(data.locationtitle).toBe("location test")
     expect(data.locationDescription).toBe("")
-    expect(wrapper.find(".countButton").text()).toEqual("Count")
   })
 })
