@@ -1,4 +1,7 @@
+/* eslint-disable no-useless-escape */
+/* eslint-disable no-console */
 
+/*global jest */
 module.exports = {
   get: jest.fn((url) => {
   if (url === 'http://localhost:19679/sumaserver/clientinit/') {
@@ -23,6 +26,7 @@ module.exports = {
   }
 }),
 post: jest.fn((url) => {
+  console.log('posted mock for '+url)
   return Promise.resolve({
     data: 'Transaction Complete'
   });
