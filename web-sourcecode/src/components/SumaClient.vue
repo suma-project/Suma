@@ -564,7 +564,6 @@ button {
 .activityGroup {
   border: 1px solid DarkGray;
   border-radius: 5px;
-  // padding: 2px 5px 5px;
   margin: 10px;
   flex: 1 1 calc(50% - 20px);
   text-align: center;
