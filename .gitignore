@@ -28,3 +28,6 @@ analysis/reports/lib/php/nightly.sh
 
 web/config/spaceassessConfig.js
 web-sourcecode/public/config/spaceassessConfig.js
+
+#coverage reports
+web-sourcecode/coverage

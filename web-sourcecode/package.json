@@ -72,6 +72,9 @@
     "preset": "@vue/cli-plugin-unit-jest",
     "setupFiles": [
       "<rootDir>/tests/unit/__mocks__/jest.init.js"
-    ]
+    ],
+    "collectCoverage": true,
+    "collectCoverageFrom": ["**/*.{js,vue}", "!**/node_modules/**"],
+    "coveragePathIgnorePatterns": ["/public/", "config.js", "/coverage/"]
   }
 }
