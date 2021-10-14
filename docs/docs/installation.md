@@ -17,9 +17,6 @@ These requirements are based on our local testing. Earlier versions may also wor
 * Zend Framework 1.12.20 - required for Suma server, included with Suma code
 * Various Javascript Libraries - all included with Suma code
 
-Additional Client Requirements:
-
-* Device or computer with WebKit browser (e.g. iOS and Android browsers, Google Chrome, Safari on Mac OS) needed to use Suma client. **NOTE: Suma does not work in Safari for Windows.**
 
 Download Suma
 --------------
@@ -228,7 +225,7 @@ How to create your first initiative
 1. Log in to the administrative console (see below)
 2. Create and populate a location tree by clicking on the "Edit locations" link
 3. Create and populate an initiative by clicking on the "Edit initiatives" link (don't forget also to enable the initiative using this tool)
-4. Collect some data using the Suma client (`http://YOUR_SERVER/suma/web`) with a WebKit-based browser (e.g. Chrome, Safari, or iOS and Android browsers)
+4. Collect some data using the Suma client (`http://YOUR_SERVER/suma/web`)
 5. View your session log in the "Sessions list" page linked from the administrative console
 6. Analyze your data using the analysis tools (`http://YOUR_SERVER/suma/analysis/reports`)
 

@@ -133,9 +133,6 @@ whether member activities can be selected for the same count.
 
 * Open the Suma client in a mobile or desktop browser
 
-> Currently, the Suma client requires a WebKit-compatible browser
-(e.g. Chrome, Safari, or Opera).
-
 ### Select an initiative
 
 * Under "Select a collection program" in the left sidebar, select one of

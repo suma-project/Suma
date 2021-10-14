@@ -4,12 +4,10 @@
 
 ### iOS WebSQL error
 
-* The latest iOS version deprecates WebSQL which the Suma client depends on to
-  work. If you are using iOS version 13 or above, and are running into an error in the
-  Suma collection client that says "Error in browser (Web SQL) database
-  setup..." see the bottom of this page for a workaround to turn WebSQL back on: <https://blog.appstudio.dev/2019/09/the-future-of-sqlite/>
-    * See this GitHub issue for more information and discussion on steps
-      forward for the client: <https://github.com/suma-project/Suma/issues/88>
+* The latest versions of iOS deprecates WebSQL which the Suma client depends on to
+  work.
+    * If you are using iOS version 15 or above, and are running into an error in the Suma collection client that says "Error in browser (Web SQL) database setup...", you need to [upgrade your Suma Client](upgrade_client.md).
+    * If you are using iOS version 13 or 14, and are running into the error above, see the bottom of this page for a workaround to turn WebSQL back on: <https://blog.appstudio.dev/2019/09/the-future-of-sqlite/>
 
 ## Configuration Errors
 
@@ -19,7 +17,7 @@
 ### Suma Server Configuration
 * Issues with the `SUMA_SERVER_PATH` will be reported as a `Possible error in SUMA_SERVER_PATH`.
 
-* An `Invalid controller specified (error)` may indicate an issue with the `SUMA_CONTROLLER_PATH` and will also be reported as a `Possible error in SUMA_CONTROLLER_PATH`. 	
+* An `Invalid controller specified (error)` may indicate an issue with the `SUMA_CONTROLLER_PATH` and will also be reported as a `Possible error in SUMA_CONTROLLER_PATH`.
 
 * Issues `SUMA_BASE_URL` will be reported as a `404 Not Found` error.
 

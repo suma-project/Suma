@@ -25,3 +25,6 @@ analysis/config/config.yaml
 
 #cron job
 analysis/reports/lib/php/nightly.sh
+
+web/config/spaceassessConfig.js
+web-sourcecode/public/config/spaceassessConfig.js

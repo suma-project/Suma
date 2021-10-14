@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS `count_activity_join` (
     `id` BIGINT NOT NULL AUTO_INCREMENT,
     `fk_count` BIGINT NOT NULL,
     `fk_activity` INT NOT NULL,
-    FOREIGN KEY (fk_count) REFERENCES count (id),
+    FOREIGN KEY (fk_count) REFERENCES `count` (id),
     FOREIGN KEY (fk_activity) REFERENCES activity (id),
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB ;

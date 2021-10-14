@@ -250,11 +250,11 @@ class InitiativeModel
         {
             if ($children = $this->walkLocTree($result['id']))
             {
-                $array[] = array('id' => (int)$result['id'], 'title' => $result['title'], 'children' => $children);
+                $array[] = array('id' => (int)$result['id'], 'title' => $result['title'], 'description' => $result['description'], 'children' => $children);
             }
             else
             {
-                $array[] = array('id' => (int)$result['id'], 'title' => $result['title']);
+                $array[] = array('id' => (int)$result['id'], 'title' => $result['title'], 'description' => $result['description']);
             }
         }
 
@@ -286,6 +286,7 @@ class InitiativeModel
                              'rank'     => (int)$group->getMetadata('rank'),
                              'required' => ($group->getMetadata('required')) ? true : false,
                              'allowMulti' => ($group->getMetadata('allowMulti')) ? true : false,
+                             'description' => $group->getMetadata('description'),
                              );
         }
 

@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS `count_activity_join` (
     `id` BIGINT NOT NULL AUTO_INCREMENT,
     `fk_count` BIGINT NOT NULL,
     `fk_activity` INT NOT NULL,
-    FOREIGN KEY (fk_count) REFERENCES count (id),
+    FOREIGN KEY (fk_count) REFERENCES `count` (id),
     FOREIGN KEY (fk_activity) REFERENCES activity (id),
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB ;
@@ -131,12 +131,30 @@ BEGIN
         (6, 'IT Teaching Center', 1, 1, 4, ''),
         (7, 'East Wing', 1, 1, 1, ''),
         (8, 'Media Lab', 0, 1, 7, ''),
-        (9, 'Learning Commons', 1, 1, 7, '');
-
+        (9, 'Learning Commons', 1, 1, 7, ''),
+        (10,'Highly Nested Sample Library',0,1,NULL,'A library with multiple layers of nested locations and some locations are disabled.'),
+        (11,'1st Floor',0,1,10,''),
+        (12,'Study Rooms',0,1,11,'located near the stairs'),
+        (13,'102',0,1,12,''),
+        (14,'103',1,1,12,'Smaller study room'),
+        (15,'104',2,1,12,''),
+        (16,'105',3,0,12,''),
+        (17,'Reading room',1,1,11,'Glass enclosed room near the windows'),
+        (18,'Quiet Study Room',2,1,11,''),
+        (19,'2nd Floor',1,1,10,'[insert map here]'),
+        (20,'Computer lab',0,1,19,''),
+        (21,'Stacks',1,1,19,''),
+        (22,'Makerspace',2,0,19,'Under construction'),
+        (23,'Study Rooms',3,1,19,'2nd Floor group study rooms'),
+        (24,'202',0,1,23,'Don&#39;t count this one if there is a reserved sign.'),
+        (25,'203',1,1,23,''),
+        (26,'204',2,1,23,'');
 
         INSERT INTO `initiative` (`id`, `title`, `enabled`, `fk_root_location`, `description`) VALUES
         (1, 'Sample Reference Initiative', 1, 1, 'Description would go here.'),
-        (2, 'Sample Headcount Initiative', 1, 1, 'Census based observational data.');
+        (2, 'Sample Headcount Initiative', 1, 1, 'Census based observational data.'),
+        (3,'Sample Nested Headcount Initiative',1,10,'Taking headcounts in a highly nested location'),
+        (4,'Sample Single Option Reference Initiative',1,10,'for testing reference initiatives that are single option only.');
 
 
         INSERT INTO `transaction` (`id`, `start`, `end`, `device`, `version`) VALUES
@@ -164,18 +182,35 @@ BEGIN
 
 
 
-        INSERT INTO `activity_group` (`id`, `title`, `rank`, `description`, `required`, `fk_initiative`) VALUES
-        (1, 'Type', 1, '', 1, 1),
-        (2, 'Medium', 2, '', 0, 1);
+        INSERT INTO `activity_group` (`id`, `title`, `rank`, `description`, `required`, `allowMulti`,`fk_initiative`) VALUES
+        (1, 'Type', 1, '', 1, 1, 1),
+        (2, 'Medium', 2, '', 0, 1, 1),
+        (3,'Time taken',0,'',1,0,4),
+        (4,'Type',1,'Remember that any queries that ask for the location of reference material or subject areas should be marked as reference and not directional.',1,0,4),
+        (5,'Librarian referral',2,'Only select one of these if a librarian was requested after the initial inquiry.',0,0,4);
 
 
-        INSERT INTO `activity` (`id`, `title`, `enabled`, `rank`, `description`, `fk_activity_group`) VALUES
-        (1, 'Reading', 1, 0, '', 1),
-        (2, 'Computing', 1, 1, '', 1),
-        (3, 'Collaborating', 1, 2, '', 1),
-        (4, 'Training/Class', 1, 3, '', 1),
-        (5, 'In-Person', 1, 4, '', 2),
-        (6, 'Online', 1, 5, '', 2);
+        INSERT INTO `activity` (`id`, `title`, `enabled`, `fk_activity_group`, `rank`, `description`) VALUES
+        (1, 'Reading', 1, 1, 0, ''),
+        (2, 'Computing', 1, 1, 1, ''),
+        (3, 'Collaborating', 1, 1, 2, ''),
+        (4, 'Training/Class', 1, 1, 3, ''),
+        (5, 'In-Person', 1, 2, 4, ''),
+        (6, 'Online', 1, 2, 5, ''),
+        (7, '&lt;30 seconds',1,3,0,''),
+        (8, '30 seconds - 5 minutes',1,3,1,''),
+        (9, '5-20 minutes',1,3,2,''),
+        (10,'&gt;20 minutes',1,3,3,''),
+        (11,'Directional',1,4,0,''),
+        (12,'Return items',1,4,1,''),
+        (13,'Checkout',1,4,2,''),
+        (14,'Reference',1,4,3,''),
+        (15,'Tech Lending',1,4,4,''),
+        (16,'Hold pickup/checkout',1,4,5,''),
+        (17,'In person',1,5,0,''),
+        (18,'Phone or Chat',1,5,1,''),
+        (19,'Contact info given',1,5,2,''),
+        (20,'Scheduled meeting',1,5,3,'');
 
 
         INSERT INTO `count` (`id`, `occurrence`, `number`, `fk_location`, `fk_session`) VALUES

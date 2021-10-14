@@ -2,7 +2,9 @@ language: node_js
 sudo: false
 node_js:
   - "10"
-script: npm install && npm test
+script:
+  - cd $TRAVIS_BUILD_DIR && cd web-sourcecode && npm install && npm run test:unit
+  - cd $TRAVIS_BUILD_DIR && cd analysis && npm install && npm test
 before_install:
   - npm install -g grunt-cli
   - gem install bundler
