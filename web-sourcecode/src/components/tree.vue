@@ -1,6 +1,6 @@
 <template>
   <ul class="tree-menu" v-bind:class="[{toplevel: depth == 0}, 'level-'+depth]" :data-label="label">
-    <b style="padding:20px" v-if="depth == 0 && parentdata.cachedinitdata[parentdata.currentinit]">{{parentdata.cachedinitdata[parentdata.currentinit].locations.title}}</b>
+    <b style="padding: 20px;" v-if="depth == 0 && parentdata.cachedinitdata[parentdata.currentinit]">{{parentdata.cachedinitdata[parentdata.currentinit].locations.title}}</b>
     <li>
       <button v-if="label" v-bind:class="[{selected: selected}, {lowestlocation:!nodes}, 'menuelement']" v-bind:id="id" @click="toggleChildren">
         <span v-if="nodes" v-bind:class="[showChildren ? 'toggleup' : 'toggledown']" class="toggle"></span>
@@ -24,7 +24,7 @@
 </template>
 <script>
 /* eslint-disable no-console */
-import shared from './compontentFunctions'
+import shared from './componentFunctions'
 
   export default { 
     props: [ 'label', 'nodes', 'depth', 'id', 'parentdata', 'description', 'parents'],

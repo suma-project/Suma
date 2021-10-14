@@ -6,10 +6,12 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --dest ../web",
     "lint": "vue-cli-service lint",
+    "lint:css": "stylelint '**/*.vue'",
     "test:e2e": "vue-cli-service test:e2e",
     "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
+    "@babel/polyfill": "^7.8.7",
     "axios": "^0.19.2",
     "core-js": "^3.4.4",
     "device-detector-js": "^2.2.1",
@@ -25,6 +27,9 @@
     "vue-tippy": "^4.4.0"
   },
   "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.6",
+    "@babel/preset-env": "^7.9.6",
     "@vue/cli-plugin-babel": "^4.1.0",
     "@vue/cli-plugin-e2e-nightwatch": "^4.1.0",
     "@vue/cli-plugin-eslint": "^4.1.0",
@@ -37,6 +42,9 @@
     "eslint-plugin-vue": "^5.0.0",
     "flush-promises": "^1.0.2",
     "geckodriver": "^1.19.1",
+    "stylelint": "^13.3.3",
+    "stylelint-config-recommended": "^3.0.0",
+    "stylelint-webpack-plugin": "^2.0.0",
     "vue-template-compiler": "^2.6.10"
   },
   "eslintConfig": {

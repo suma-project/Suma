@@ -1,0 +1,11 @@
+{
+  "extends": "stylelint-config-recommended",
+  "rules": {
+    "font-family-no-missing-generic-family-keyword": [
+       true,
+       {
+         "ignoreFontFamilies": ["Font Awesome 5 Free", "Font Awesome 5 Pro", "Font Awesome 5 Duotone", "Font Awesome 5 Brands"]
+       }
+   ]
+ }
+}

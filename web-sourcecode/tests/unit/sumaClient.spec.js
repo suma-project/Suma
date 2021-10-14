@@ -12,7 +12,7 @@ localVue.use(VModal)
 localVue.use(VueTippy)
 const router = new VueRouter()
 
-let consoleSpy;
+// let consoleSpy;
 jest.mock('./__mocks__/axios');
 
 describe('SumaClient.vue', () => {
@@ -194,7 +194,7 @@ describe('SumaClient.vue', () => {
     expect(initiativedata['counts']).toHaveLength(1)
     expect(wrapper.find(".countButton").text()).toBe("Count (0)")
 
-    const rightalignbuttons = wrapper.findAll('.rightalign').at(1).trigger('click')
+    await wrapper.findAll('.rightalign').at(1).trigger('click')
     await flushPromises();
     await wrapper.vm.$nextTick();
     expect(data.counts).toEqual({})
