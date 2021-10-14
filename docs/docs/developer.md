@@ -56,3 +56,8 @@ API and Data Retrieval
   * `ServerIO::getInitiatives()`
     * Returns array representation of all initiatives that can be queried
       * Keys include: 'id', 'title', 'description'
+
+
+Suma Client Developer Documentation
+--------------
+See developer documentation for the Suma Client [here](https://github.com/suma-project/Suma/blob/master/web-sourcecode/README.md)
