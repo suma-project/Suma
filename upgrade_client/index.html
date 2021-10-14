@@ -7,9 +7,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   
-  <link rel="canonical" href="http://suma-project.github.io/Suma/upgrade_2.0/">
+  <link rel="canonical" href="http://suma-project.github.io/Suma/upgrade_client/">
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Upgrade 2.0 - Suma</title>
+  <title>Upgrade WebSQL - Suma</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
 
   <link rel="stylesheet" href="../css/theme.css" />
@@ -18,9 +18,9 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Upgrade 2.0";
-    var mkdocs_page_input_path = "upgrade_2.0.md";
-    var mkdocs_page_url = "/Suma/upgrade_2.0/";
+    var mkdocs_page_name = "Upgrade WebSQL";
+    var mkdocs_page_input_path = "upgrade_client.md";
+    var mkdocs_page_url = "/Suma/upgrade_client/";
   </script>
   
   <script src="../js/jquery-2.1.1.min.js" defer></script>
@@ -82,20 +82,22 @@
                     <li class="toctree-l1"><a class="reference internal" href="../upgrade_1.0/">Upgrade 1.0</a>
                     </li>
                 </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../upgrade_2.0/">Upgrade 2.0</a>
+                    </li>
+                </ul>
                 <ul class="current">
-                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Upgrade 2.0</a>
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Upgrade WebSQL</a>
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#upgrade">Upgrade</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#notes">Notes</a>
+    <li class="toctree-l2"><a class="reference internal" href="#changes-to-current-behavior">Changes to current behavior</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#enhancements">Enhancements</a>
     </li>
     </ul>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../upgrade_client/">Upgrade WebSQL</a>
                     </li>
                 </ul>
       </div>
@@ -119,10 +121,10 @@
     
       
     
-    <li>Upgrade 2.0</li>
+    <li>Upgrade WebSQL</li>
     <li class="wy-breadcrumbs-aside">
       
-        <a href="https://github.com/suma-project/Suma/edit/master/docs/upgrade_2.0.md"
+        <a href="https://github.com/suma-project/Suma/edit/master/docs/upgrade_client.md"
           class="icon icon-github"> Edit on GitHub</a>
       
     </li>
@@ -134,16 +136,37 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="suma-20-upgrade-instructions">Suma 2.0 Upgrade Instructions</h1>
+                <h1 id="suma-new-client-upgrade-instructions">Suma new Client Upgrade Instructions</h1>
 <h2 id="overview">Overview</h2>
-<p>This document outlines how to upgrade Suma to version 2.0. Upgrading is only necessary if you have previously installed a Suma version less than v2.0. The general Suma installation instructions have been updated to reflect v2.0 and should be referenced as needed.</p>
-<p>The most significant addition to v2.0 is the use of <a href="http://angularjs.org">Angular JS</a> for the analysis and reporting tools. However, <strong>ALL</strong> components of Suma should be updated. If you are already using Suma v1.0 or higher, updating should be a simple process. <strong>If you are updating from a Suma version earlier than v1.0, please refer to the <a href="../upgrade_1.0/">Version 1.0 Upgrade Docs</a> as necessary.</strong></p>
+<p>This document outlines how to upgrade Suma to the new front end. Upgrading is only necessary if you have Suma installed. This upgrade will fix the WebSQL problem many users have been having. Since WebSQL is going to be deprecated you MUST upgrade the client.</p>
+<p>The client should look and feel very similar to the previous client. Since we rebuilt the client we did make a few minor changes to the current behaivor. We also added some enhancements. Both of these are listed below.</p>
 <h2 id="upgrade">Upgrade</h2>
 <p>Depending upon your installation method, either copy the updated Suma files into place or pull the changes from GitHub (preferred).</p>
-<h2 id="notes">Notes</h2>
+<h2 id="changes-to-current-behavior">Changes to current behavior</h2>
 <ul>
-<li>Nightly Reports
-    Any existing scheduled jobs (cron) for the nightly report will need to be updated to use <code>YOUR_WEB_DIR/suma/analysis/reports/lib/php/nightlyEmail.php</code>.</li>
+<li>No more introduction popup screen to "Start Collecting" when you start up the client or finish a session.</li>
+<li>When syncing data, multiple sessions are now sent with 1 consolidated summary rather than a separate pop up alert for each session.</li>
+<li>When a 'select one' response is selected you no longer have to unselect it before seleinstallcting a different option</li>
+<li>Switching back and forth between initiatives no longer hides the counts from the unsynced counts and keeps those counts in the same session. This only affects start/end time.</li>
+<li>Location navigation has been changed to a more intuitive expand/contract method of drilling down</li>
+<li>Suma will load the last active initiative rather than asking you to choose one every time (currently in development)</li>
+<li>Count and other buttons are now disabled until they can be used</li>
+<li>The initiative endTime has been changed to the timestamp of the last count instead of the time when the data was sent.</li>
+</ul>
+<h2 id="enhancements">Enhancements</h2>
+<ul>
+<li>Suma will work better on phones</li>
+<li>Initiative and location picker sidebar can now be hidden</li>
+<li>Tree view of locations allows users to view all locations for an initiative</li>
+<li>Added some configurable settings including:<ul>
+<li>Time/date display options at the top of the screen</li>
+<li>Turning on/off the multiCount feature, which lets you record more than one count at a time</li>
+<li>An option to display time of last recorded count at a location</li>
+<li>A feature that would require all locations to be counted before allowing a "finish collecting" action (turned off by default)</li>
+</ul>
+</li>
+<li>Added a "reset all counts at a location" button</li>
+<li>Activities and locations can now have descriptions added to them, and these are shown in the client through an information icon that can be tapped or hovered over</li>
 </ul>
               
             </div>
@@ -152,10 +175,8 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../upgrade_client/" class="btn btn-neutral float-right" title="Upgrade WebSQL">Next <span class="icon icon-circle-arrow-right"></span></a>
       
-      
-        <a href="../upgrade_1.0/" class="btn btn-neutral" title="Upgrade 1.0"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../upgrade_2.0/" class="btn btn-neutral" title="Upgrade 2.0"><span class="icon icon-circle-arrow-left"></span> Previous</a>
       
     </div>
   
@@ -185,10 +206,8 @@
         </span>
     
     
-      <span><a href="../upgrade_1.0/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../upgrade_2.0/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
-    
-      <span><a href="../upgrade_client/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>

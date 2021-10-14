@@ -7,25 +7,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   
+  <link rel="canonical" href="http://suma-project.github.io/Suma/installation/">
   <link rel="shortcut icon" href="../img/favicon.ico">
   <title>Installation - Suma</title>
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
 
-  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
-  <link rel="stylesheet" href="../css/highlight.css">
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
   
   <script>
     // Current page data
     var mkdocs_page_name = "Installation";
     var mkdocs_page_input_path = "installation.md";
-    var mkdocs_page_url = "/installation/";
+    var mkdocs_page_url = "/Suma/installation/";
   </script>
   
-  <script src="../js/jquery-2.1.1.min.js"></script>
-  <script src="../js/modernizr-2.8.3.min.js"></script>
-  <script type="text/javascript" src="../js/highlight.pack.js"></script> 
-  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
 </head>
 
 <body class="wy-body-for-nav" role="document">
@@ -34,108 +35,91 @@
 
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
       <div class="wy-side-nav-search">
         <a href=".." class="icon icon-home"> Suma</a>
         <div role="search">
   <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
   </form>
 </div>
       </div>
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-	<ul class="current">
-	  
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="..">Overview</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../quickstart/">Quickstart</a>
-	    </li>
-          
-            <li class="toctree-l1 current">
-		
-    <a class="current" href="./">Installation</a>
-    <ul class="subnav">
-            
-    <li class="toctree-l2"><a href="#suma-install-instructions">Suma Install Instructions</a></li>
-    
-        <ul>
-        
-            <li><a class="toctree-l3" href="#experimental-virtual-machine">Experimental Virtual Machine</a></li>
-        
-            <li><a class="toctree-l3" href="#requirements">Requirements</a></li>
-        
-            <li><a class="toctree-l3" href="#download-suma">Download Suma</a></li>
-        
-            <li><a class="toctree-l3" href="#suma-software-installation-symbolic-links-recommended">Suma Software Installation (symbolic links, RECOMMENDED)</a></li>
-        
-            <li><a class="toctree-l3" href="#suma-software-installation-file-copying">Suma Software Installation (file copying)</a></li>
-        
-            <li><a class="toctree-l3" href="#apache-configuration">Apache Configuration</a></li>
-        
-            <li><a class="toctree-l3" href="#database-setup">Database Setup</a></li>
-        
-            <li><a class="toctree-l3" href="#suma-server-software-configuration">Suma Server Software Configuration</a></li>
-        
-            <li><a class="toctree-l3" href="#suma-client-configuration">Suma Client Configuration</a></li>
-        
-            <li><a class="toctree-l3" href="#suma-analysis-tools-configuration">Suma Analysis Tools Configuration</a></li>
-        
-            <li><a class="toctree-l3" href="#other-things-you-can-configure">Other Things You Can Configure</a></li>
-        
-            <li><a class="toctree-l3" href="#how-to-create-your-first-initiative">How to create your first initiative</a></li>
-        
-            <li><a class="toctree-l3" href="#overview-of-administrative-tools">Overview of administrative tools</a></li>
-        
-        </ul>
-    
-
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="..">Overview</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../quickstart/">Quickstart</a>
+                    </li>
+                </ul>
+                <ul class="current">
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Installation</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#experimental-virtual-machine">Experimental Virtual Machine</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#requirements">Requirements</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#download-suma">Download Suma</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#suma-software-installation-symbolic-links-recommended">Suma Software Installation (symbolic links, RECOMMENDED)</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#suma-software-installation-file-copying">Suma Software Installation (file copying)</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#apache-configuration">Apache Configuration</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#database-setup">Database Setup</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#suma-server-software-configuration">Suma Server Software Configuration</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#suma-client-configuration">Suma Client Configuration</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#suma-analysis-tools-configuration">Suma Analysis Tools Configuration</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#other-things-you-can-configure">Other Things You Can Configure</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#how-to-create-your-first-initiative">How to create your first initiative</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#overview-of-administrative-tools">Overview of administrative tools</a>
+    </li>
     </ul>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../troubleshooting/">Troubleshooting</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../faq/">Frequently Asked Questions</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../logs/">Logs</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../queryserver/">Queryserver</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../developer/">Developer</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../upgrade_1.0/">Upgrade 1.0</a>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../upgrade_2.0/">Upgrade 2.0</a>
-	    </li>
-          
-        </ul>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../troubleshooting/">Troubleshooting</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../faq/">Frequently Asked Questions</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../logs/">Logs</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../queryserver/">Queryserver</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../developer/">Developer</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../upgrade_1.0/">Upgrade 1.0</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../upgrade_2.0/">Upgrade 2.0</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../upgrade_client/">Upgrade WebSQL</a>
+                    </li>
+                </ul>
       </div>
-      &nbsp;
+    </div>
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
@@ -163,8 +147,10 @@
       
     </li>
   </ul>
+  
   <hr/>
 </div>
+
           <div role="main">
             <div class="section">
               
@@ -179,10 +165,6 @@
 <li>PHP required version of at least 7.1.x (including cURL, mbstring, PDO, and DOM). <strong> Please note that different server operating systems may use different module names. If you are experiencing unexpected issues with Suma after installation, check your server logs for missing PHP modules.</strong></li>
 <li>Zend Framework 1.12.20 - required for Suma server, included with Suma code</li>
 <li>Various Javascript Libraries - all included with Suma code</li>
-</ul>
-<p>Additional Client Requirements:</p>
-<ul>
-<li>Device or computer with WebKit browser (e.g. iOS and Android browsers, Google Chrome, Safari on Mac OS) needed to use Suma client. <strong>NOTE: Suma does not work in Safari for Windows.</strong></li>
 </ul>
 <h2 id="download-suma">Download Suma</h2>
 <p>You can find the <a href="http://github.com/suma-project/Suma/releases">latest Suma version</a> on GitHub.</p>
@@ -331,7 +313,7 @@ RewriteRule ^.*$ index.php [NC,L]
 <li><strong>--tab</strong>: formats the report as tab-delimited text. If both --html and --tab flags are set, the --html flag will be ignored and the --tab flag will be respected</li>
 <li><strong>--omit-header</strong>: do not display column or section headers in report; only display hourly counts; best when used for only one initiative at a time, to avoid confusion</li>
 <li><strong>--prepend-date</strong>: include a column giving the report date at the beginning of each line; ideal for use with the --omit-header flag</li>
-<li><strong>--report-inits</strong>: limit reporting to one or more initiative(s); identify the initiative(s) by name, comma separated, e.g.: **--report-inits="Head Counts"<strong><em> or </em>*--report-inits="Reference Transactions","Head Counts"</strong></li>
+<li><strong>--report-inits</strong>: limit reporting to one or more initiative(s); identify the initiative(s) by name, comma separated, e.g.: <strong>--report-inits="Head Counts"</strong><em> or </em><em>--report-inits="Reference Transactions","Head Counts"</em>*</li>
 <li><strong>--report-date</strong>: select the date for which to report; default is "yesterday"; any machine readable date format is acceptable, e.g. <strong>--report-date=2018-03-11</strong> or <strong>--report-date="March 11, 2018"</strong></li>
 <li><strong>--start-hour</strong>: choose the hour with which a reporting period starts. Default is 0000 hours.</li>
 </ul>
@@ -361,7 +343,7 @@ This approach is especially useful if you want to use a shell script to report o
 <li>Log in to the administrative console (see below)</li>
 <li>Create and populate a location tree by clicking on the "Edit locations" link</li>
 <li>Create and populate an initiative by clicking on the "Edit initiatives" link (don't forget also to enable the initiative using this tool)</li>
-<li>Collect some data using the Suma client (<code>http://YOUR_SERVER/suma/web</code>) with a WebKit-based browser (e.g. Chrome, Safari, or iOS and Android browsers)</li>
+<li>Collect some data using the Suma client (<code>http://YOUR_SERVER/suma/web</code>)</li>
 <li>View your session log in the "Sessions list" page linked from the administrative console</li>
 <li>Analyze your data using the analysis tools (<code>http://YOUR_SERVER/suma/analysis/reports</code>)</li>
 </ol>
@@ -407,7 +389,7 @@ This approach is especially useful if you want to use a shell script to report o
     
   </div>
 
-  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
 </footer>
       
         </div>
@@ -417,23 +399,30 @@ This approach is especially useful if you want to use a shell script to report o
 
   </div>
 
-  <div class="rst-versions" role="note" style="cursor: pointer">
-    <span class="rst-current-version" data-toggle="rst-current-version">
-      
-          <a href="https://github.com/suma-project/Suma/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
-      
-      
-        <span><a href="../quickstart/" style="color: #fcfcfc;">&laquo; Previous</a></span>
-      
-      
-        <span style="margin-left: 15px"><a href="../troubleshooting/" style="color: #fcfcfc">Next &raquo;</a></span>
-      
-    </span>
+  <div class="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/suma-project/Suma/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../quickstart/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../troubleshooting/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
 </div>
     <script>var base_url = '..';</script>
-    <script src="../js/theme.js"></script>
-      <script src="../search/require.js"></script>
-      <script src="../search/search.js"></script>
+    <script src="../js/theme_extra.js" defer></script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
 
 </body>
 </html>
