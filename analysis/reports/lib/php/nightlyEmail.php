@@ -38,7 +38,8 @@ $ERROR_SUBJECT    = 'ERROR: Suma Nightly Report: ' . $DAY_DISPLAY;
 
 // Run Script
 $dir = realpath(dirname(__FILE__));
-$data = `php $dir/nightly.php $args`;
+$php_path = PHP_BINDIR . '/php';
+$data = `{$php_path} $dir/nightly.php $args`;
 
 $errorCheck = explode(" ", $data);
 
