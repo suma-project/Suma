@@ -405,6 +405,8 @@ export default {
       this.currentinit = this.settings.initiative;
       if (!this.currentinit || this.currentinit == 'undefined'){
         this.children = []
+      } else {
+        this.updateInit();
       }
       if (clearqueue){
         localforage.setItem('queuedcounts', []);
