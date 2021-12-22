@@ -380,6 +380,13 @@ export default {
           }, {'counts': 0, 'locations': []})
         //if there are counts then send counts
         if (allcounts.length !== 0 && totals['counts'] !== 0){
+          swal.fire({
+            title: 'Submitting counts...',
+            didOpen: () => { swal.showLoading()},
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            allowEnterKey: false
+            });
           let syncObj = this.syncCountDict(allcounts);
           this.sendCounts(syncObj, totals);
         }
