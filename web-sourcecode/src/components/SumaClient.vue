@@ -24,7 +24,7 @@
       <button v-if="ignoreSettings.length < 4" v-on:click="$modal.show('settings')" class="headerbuttons rightalign" aria-label="settings">
         <i class="fas fa-cog"></i>
       </button>
-      <button v-on:click="submitCounts()" id="finishcollecting" class="headerbuttons rightalign" aria-label="finish collecting" v-bind:disabled="hasNoStoredCounts">
+      <button v-on:click="submitCounts()" id="finishcollecting" class="headerbuttons rightalign" aria-label="finish collecting" v-bind:disabled="hasNoStoredCounts || submitDisabled">
         <span class="buttontext">Finish collecting</span>
         <i class="fas fa-check-circle toolbar-icons"></i>
       </button>
@@ -145,6 +145,7 @@ export default {
       counts: {},
       location: '',
       activityvalues: {},
+      submitDisabled: false,
       activityvaluesmulti: [],
       showcounts: false,
       locationtitle: '',
@@ -364,7 +365,8 @@ export default {
       });
     },
     submitCounts: function(){
-      //get data    
+      //get data
+      this.submitDisabled = true;
       localforage.getItem('queuedcounts').then((counts) => {
         //merges queued counts (counts that had previously been sent but failed due problem with server/etc)
         //with counts currently in localforage
@@ -389,6 +391,7 @@ export default {
         console.error('There was an error '+err);
       });
       this.resetActivityChecks();
+      this.submitDisabled = false;
     },
     syncError: function(){
       //called when there is a sync error in post request. Clears out counts but preserves queued counts
