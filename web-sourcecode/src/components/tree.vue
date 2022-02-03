@@ -113,7 +113,7 @@ import shared from './componentFunctions'
   appearance: none;
   background: none!important;
   border: none;
-  word-break: break-all;
+  text-align: left;
   cursor: pointer;
 }
 </style>
