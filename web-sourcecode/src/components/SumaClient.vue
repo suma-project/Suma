@@ -384,14 +384,16 @@ export default {
         if (allcounts.length !== 0 && totals['counts'] !== 0){
           let syncObj = this.syncCountDict(allcounts);
           this.sendCounts(syncObj, totals);
+        } else {
+          this.submitDisabled = false;
         }
       })
       .then(() => { })
       .catch(function(err){
+        this.submitDisabled = false;
         console.error('There was an error '+err);
       });
       this.resetActivityChecks();
-      this.submitDisabled = false;
     },
     syncError: function(){
       //called when there is a sync error in post request. Clears out counts but preserves queued counts
@@ -415,6 +417,7 @@ export default {
         localforage.setItem('queuedcounts', []);
         this.queuedcounts = []
       }
+      this.submitDisabled = false;
     },
     resetCounts: function(){
       //Called when "abandon all counts" button is clicked.
