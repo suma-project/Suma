@@ -24,7 +24,7 @@
       <button v-if="ignoreSettings.length < 4" v-on:click="$modal.show('settings')" class="headerbuttons rightalign" aria-label="settings">
         <i class="fas fa-cog"></i>
       </button>
-      <button v-on:click="submitCounts()" id="finishcollecting" class="headerbuttons rightalign" aria-label="finish collecting" v-bind:disabled="hasNoStoredCounts">
+      <button v-on:click="submitCounts()" id="finishcollecting" class="headerbuttons rightalign" aria-label="finish collecting" v-bind:disabled="hasNoStoredCounts || submitDisabled">
         <span class="buttontext">Finish collecting</span>
         <i class="fas fa-check-circle toolbar-icons"></i>
       </button>
@@ -145,6 +145,7 @@ export default {
       counts: {},
       location: '',
       activityvalues: {},
+      submitDisabled: false,
       activityvaluesmulti: [],
       showcounts: false,
       locationtitle: '',
@@ -364,7 +365,8 @@ export default {
       });
     },
     submitCounts: function(){
-      //get data    
+      //get data
+      this.submitDisabled = true;
       localforage.getItem('queuedcounts').then((counts) => {
         //merges queued counts (counts that had previously been sent but failed due problem with server/etc)
         //with counts currently in localforage
@@ -382,10 +384,13 @@ export default {
         if (allcounts.length !== 0 && totals['counts'] !== 0){
           let syncObj = this.syncCountDict(allcounts);
           this.sendCounts(syncObj, totals);
+        } else {
+          this.submitDisabled = false;
         }
       })
       .then(() => { })
       .catch(function(err){
+        this.submitDisabled = false;
         console.error('There was an error '+err);
       });
       this.resetActivityChecks();
@@ -412,6 +417,7 @@ export default {
         localforage.setItem('queuedcounts', []);
         this.queuedcounts = []
       }
+      this.submitDisabled = false;
     },
     resetCounts: function(){
       //Called when "abandon all counts" button is clicked.
