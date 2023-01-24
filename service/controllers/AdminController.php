@@ -96,13 +96,6 @@ class AdminController extends BaseController
         $description = Zend_Filter::filterStatic($this->getRequest()->getParam('desc'), 'StripTags');
         $locRootID = Zend_Filter::filterStatic($this->getRequest()->getParam('locRootID'), 'StripTags');
 
-        if (get_magic_quotes_gpc())
-        {
-            $title = Zend_Filter::filterStatic(stripslashes($this->getRequest()->getParam('title')), 'StripTags');
-            $description = Zend_Filter::filterStatic(stripslashes($this->getRequest()->getParam('desc')), 'StripTags');
-            $locRootID = Zend_Filter::filterStatic(stripslashes($this->getRequest()->getParam('locRootID')), 'StripTags');
-        }
-
         if ((!empty($title) || is_numeric($title)) && is_numeric($locRootID))
         {
             $data['title'] = $title;
@@ -300,12 +293,6 @@ class AdminController extends BaseController
     {
         $title = Zend_Filter::filterStatic($this->getRequest()->getParam('title'), 'StripTags');
         $description = Zend_Filter::filterStatic($this->getRequest()->getParam('desc'), 'StripTags');
-
-        if (get_magic_quotes_gpc())
-        {
-            $title = Zend_Filter::filterStatic(stripslashes($this->getRequest()->getParam('title')), 'StripTags');
-            $description = Zend_Filter::filterStatic(stripslashes($this->getRequest()->getParam('desc')), 'StripTags');
-        }
 
         if (!empty($title) || is_numeric($title))
         {

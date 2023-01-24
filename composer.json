@@ -1,0 +1,11 @@
+{
+    "require-dev": {
+        "phpcompatibility/php-compatibility": "dev-develop",
+        "phpcsstandards/phpcsutils": "@alpha"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    }
+}

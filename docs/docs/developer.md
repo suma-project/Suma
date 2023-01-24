@@ -61,3 +61,12 @@ API and Data Retrieval
 Suma Client Developer Documentation
 --------------
 See developer documentation for the Suma Client [here](https://github.com/suma-project/Suma/blob/master/web-sourcecode/README.md)
+
+PHP Compatibility audits
+--------------
+
+To run a check for PHP version compatibility issues, you can run `composer install` in the main project directory and then use the `phpcs` command with the `PHPCompatibility` standard. For example:
+
+```
+./vendor/bin/phpcs --error-severity=1 --warning-severity=8 -p . --standard=PHPCompatibility --extensions=php
+```

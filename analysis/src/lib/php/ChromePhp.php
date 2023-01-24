@@ -235,8 +235,9 @@ class ChromePhp
      * @param string $type
      * @return void
      */
-    protected static function _log(array $args)
+    protected static function _log(array $f_args)
     {
+        $args = $f_args;
         $type = $args['type'];
         unset($args['type']);
 

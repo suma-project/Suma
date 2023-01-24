@@ -3,7 +3,7 @@ site_url: http://suma-project.github.io/Suma
 theme: readthedocs
 repo_url: https://github.com/suma-project/Suma
 include_next_prev: false
-pages:
+nav:
 - Overview: index.md
 - Quickstart: quickstart.md
 - Installation: installation.md
