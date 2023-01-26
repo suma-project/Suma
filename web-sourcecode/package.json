@@ -12,13 +12,13 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.8.7",
-    "axios": "^0.19.2",
+    "axios": "^0.25.0",
     "core-js": "^3.4.4",
     "device-detector-js": "^2.2.1",
     "localforage": "^1.7.3",
-    "lodash": "^4.17.15",
-    "node-sass": "^4.13.1",
+    "lodash": "^4.17.21",
     "pluralize": "^8.0.0",
+    "sass": "^1.49.7",
     "sass-loader": "^8.0.2",
     "sweetalert2": "^9.8.2",
     "vue": "^2.6.10",
@@ -27,14 +27,14 @@
     "vue-tippy": "^4.4.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.8.4",
+    "@babel/cli": "^7.17.0",
     "@babel/core": "^7.9.6",
     "@babel/preset-env": "^7.9.6",
     "@vue/cli-plugin-babel": "^4.1.0",
     "@vue/cli-plugin-e2e-nightwatch": "^4.1.0",
     "@vue/cli-plugin-eslint": "^4.1.0",
     "@vue/cli-plugin-unit-jest": "^4.1.0",
-    "@vue/cli-service": "^4.1.0",
+    "@vue/cli-service": "^4.5.15",
     "@vue/test-utils": "1.0.0-beta.29",
     "babel-eslint": "^10.0.3",
     "chromedriver": "79",
@@ -82,7 +82,14 @@
       "<rootDir>/tests/unit/__mocks__/jest.init.js"
     ],
     "collectCoverage": true,
-    "collectCoverageFrom": ["**/*.{js,vue}", "!**/node_modules/**"],
-    "coveragePathIgnorePatterns": ["/public/", "config.js", "/coverage/"]
+    "collectCoverageFrom": [
+      "**/*.{js,vue}",
+      "!**/node_modules/**"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/public/",
+      "config.js",
+      "/coverage/"
+    ]
   }
 }
