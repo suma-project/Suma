@@ -107,7 +107,7 @@ class LcaTransformer extends BaseTransformer
         {
             foreach($activities as &$activity)
             {
-                if ($activity['id'] == $row['act'])
+                if ($activity == $row['act'])
                 {
                     unset($activity);
                     return null;
@@ -120,7 +120,7 @@ class LcaTransformer extends BaseTransformer
         {
             foreach($activities as &$activity)
             {
-                if ($activity['id'] == -1)
+                if ($activity == -1)
                 {
                     unset($activity);
                     return null;
