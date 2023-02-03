@@ -23,7 +23,7 @@ $SUMA_BASE_URL = $config['SUMA_BASE_URL'];
 // Debug Mode Setup
 if ($config['SUMA_DEBUG'] == true)
 {
-    $SUMA_ERROR_REPORTING  = E_ERROR | E_WARNING | E_PARSE | E_NOTICE;
+    $SUMA_ERROR_REPORTING  = E_ERROR | E_WARNING | E_PARSE;
     $SUMA_DISPLAY_ERRORS   = 'on';
     $SUMA_THROW_EXCEPTIONS =  true;
     error_reporting($SUMA_ERROR_REPORTING);
