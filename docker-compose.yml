@@ -1,0 +1,55 @@
+# version: '3.8'
+
+services:
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS}
+    volumes:
+      - db_data:/var/lib/mysql
+
+  init-db:
+    image: mysql:8.4
+    depends_on:
+      - db
+    entrypoint: ["/bin/sh", "-c"]
+    command: >
+      "
+      for i in {1..30}; do
+        mysqladmin ping -h db --silent && break || sleep 2;
+      done;
+      if ! mysql -h db -u root -p${DB_ROOT_PASSWORD} -e 'SELECT 1 FROM location LIMIT 1;' ${DB_NAME}; then
+        echo 'Initializing database...';
+        mysql -h db -u root -p${DB_ROOT_PASSWORD} ${DB_NAME} < /docker-entrypoint-initdb.d/schema.sql;
+      else
+        echo 'Schema already initialized, skipping.';
+      fi
+      "
+    volumes:
+      - ./service/config/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+
+  suma:
+    build: .
+    ports:
+      - "80:80"
+    depends_on:
+      - db
+      - init-db
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+    restart: unless-stopped
+    env_file:
+      - .env
+
+volumes:
+  db_data:

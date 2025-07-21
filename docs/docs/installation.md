@@ -61,6 +61,10 @@ For Suma Server Installation:
 * Copy contents of `/SUMA_DOWNLOAD_DIR/service/web` to `/YOUR_WEB_DIR/sumaserver`
 
 
+Suma Software Installation (Docker install)
+-------------------------------------------
+This is setup to bootstrap, configure and make Suma available at the documented endpoints. Provided are example `.env` and `docker-compose.yml` files that can be used to start the container. It will create a database if one has not already been initalized. The log file is stored in `/var/log/suma.log`.
+
 Apache Configuration
 ---------------------
 
